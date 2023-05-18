@@ -169,7 +169,7 @@ class Simulated_Universe(Universe_Utils):
             self.click((self.tx,self.ty))
         elif self.check('arrow_1',0.1828,0.5000,mask='mask_event'):
             self.click((self.tx,self.ty))
-        elif self.check('star',0.1828,0.5000,mask='mask_event'):
+        elif self.check('star',0.1828,0.5000,mask='mask_event',threshold=0.965):
             self.click((self.tx,self.ty))
             self.click((0.1167,self.ty-0.4685+0.3546))
             time.sleep(1.5)

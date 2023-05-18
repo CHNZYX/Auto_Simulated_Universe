@@ -347,6 +347,7 @@ class Universe_Utils:
                         for j in deepcopy(self.target):
                             if j[1]==type:
                                 self.target.remove(j)
+                        break
                     else:
                         if i==0:
                            pyautogui.click()
