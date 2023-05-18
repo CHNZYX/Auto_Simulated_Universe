@@ -311,11 +311,11 @@ class Universe_Utils:
                 if dls[-4]==nds:
                     ts=' da'
                     if t>0:
-                        t-=1
                         pyautogui.keyUp('w')
                         self.press('s',0.35)
                         self.press(ts[t],0.5)
                         pyautogui.keyDown('w')
+                        t-=1
                     else:
                         pyautogui.keyUp('w')
                         break
