@@ -348,6 +348,8 @@ class Universe_Utils:
                             if j[1]==type:
                                 self.target.remove(j)
                     else:
+                        if i==0:
+                           pyautogui.click()
                         self.press(key[i],0.2-0.1*(i==0))
                         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
             else:
