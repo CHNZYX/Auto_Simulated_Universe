@@ -134,7 +134,7 @@ class Universe_Utils:
         self.tx=x-(max_loc[0]-0.5*local_screen.shape[1])/self.xx
         self.ty=y-(max_loc[1]-0.5*local_screen.shape[0])/self.yy
         self.tm=max_val
-        if max_val>threshold:
+        if max_val>threshold and path!='./imgs/run.jpg':
             print(path,max_val,threshold)
         return max_val>threshold
     # 计算旋转变换矩阵
@@ -282,6 +282,7 @@ class Universe_Utils:
             dls=[100000,100000,100000,ds]
             sds=ds
             td=0
+            t=2
             for i in range(1000):
                 ctm=time.time()
                 bw_map=self.get_bw_map(sbl=(i<=4 and bl))
@@ -306,8 +307,19 @@ class Universe_Utils:
                 self.big_map[self.real_loc[0]-1:self.real_loc[0]+2,self.real_loc[1]-1:self.real_loc[1]+2]=49
                 cv.imwrite('imgs/bigmap.jpg',self.big_map)
                 nds=self.get_dis(self.real_loc,loc)
-                print('upd',ds,sds,nds,self.real_loc,loc,sub)
-                if nds<=ps or dls[-4]==nds or self.check('f',0.3901,0.5093):
+                #print('upd',ds,sds,nds,self.real_loc,loc,sub)
+                if dls[-4]==nds:
+                    ts=' da'
+                    if t>0:
+                        t-=1
+                        pyautogui.keyUp('w')
+                        self.press('s',0.35)
+                        self.press(ts[t],0.35)
+                        pyautogui.keyDown('w')
+                    else:
+                        pyautogui.keyUp('w')
+                        break
+                if nds<=ps or self.check('f',0.3901,0.5093)or self.check('run',0.9844,0.7889,threshold=0.93)==0:
                     pyautogui.keyUp('w')
                     #if type==0:
                     #    self.mouse_move(180)
@@ -402,7 +414,7 @@ class Universe_Utils:
             return
         self.now_loc=(max_loc[0]+88-rge+self.now_loc[0],max_loc[1]+88-rge+self.now_loc[1])
         self.real_loc=(self.now_loc[0],self.now_loc[1])
-        print(self.real_loc,max_val)
+        #print(self.real_loc,max_val)
 
     def get_map(self):
         x1,x2,y1,y2=0,8191,0,8191
