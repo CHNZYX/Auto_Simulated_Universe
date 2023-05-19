@@ -10,6 +10,7 @@ import win32con
 import json
 from copy import deepcopy
 import math
+import random
 
 class Universe_Utils:
     def __init__(self):
@@ -346,7 +347,8 @@ class Universe_Utils:
                 self.mouse_move(180)
                 self.press('w',0.2)
             if type==2 or type==3:
-                key='sasddww'
+                key_list=['sasddww','sdsaaww','wwasddw']
+                key=key_list[random.randint(0,2)]
                 for i in range(7):
                     time.sleep(0.4)
                     self.get_screen()
