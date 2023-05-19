@@ -49,7 +49,7 @@ class Simulated_Universe(Universe_Utils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             #cv.imwrite('imgs/scr.jpg',self.screen)
-            #self.click_target('imgs/fail.jpg',0.9,False)#0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            #self.click_target('imgs/init.jpg',0.9,False)#0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res=self.normal()
             if res==0:
                 if self.threshold>0.95:
@@ -147,7 +147,7 @@ class Simulated_Universe(Universe_Utils):
             self.click((0.3969,0.3898))
         elif self.check('close',0.5016,0.1259,mask='mask_close') or self.check('close_1',0.5016,0.1259,mask='mask_close'):
             self.click((0.2062,0.2054))
-        elif self.check('init',0.9724,0.6630):
+        elif self.check('init',0.9276,0.6731):
             self.click((0.3448,0.4926))
         elif self.check('begin',0.3339,0.7741):
             self.click((0.1083,0.1009))
