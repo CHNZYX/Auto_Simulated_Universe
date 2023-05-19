@@ -28,6 +28,7 @@ class Simulated_Universe(Universe_Utils):
         self.big_map=np.zeros((8192,8192),dtype=np.uint8)
         self.big_map_c=0
         self.lst_tm=0
+        self.tries=0
         self.his_loc=(30,30)
         self.offset=(30,30)
         self.now_loc=(4096,4096)

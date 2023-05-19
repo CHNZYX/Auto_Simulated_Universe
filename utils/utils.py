@@ -364,6 +364,13 @@ class Universe_Utils:
                            time.sleep(1)
                         self.press(key[i],0.2-0.1*(i==0))
                         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
+                if type==2:
+                    self.tries+=1
+                    if self.tries==4:
+                        try:
+                            self.target.remove((loc,type))
+                        except:
+                            pass
             elif ds<=12:
                 self.target.remove((loc,type))
             print('loc',loc,self.real_loc)
