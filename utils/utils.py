@@ -23,6 +23,7 @@ class Universe_Utils:
                 self.xx=self.x1-self.x0
                 self.yy=self.y1-self.y0
                 self.x0,self.y0,self.x1,self.y1 = win32gui.GetWindowRect(hwnd)
+                self.full=(self.x0==0 and self.y0==0)
                 self.x0=max(0,self.x1-self.xx)
                 self.y0=max(0,self.y1-self.yy)
                 self.scx=self.xx/self.bx
@@ -172,7 +173,10 @@ class Universe_Utils:
         self.screen = pyautogui.screenshot()
         self.screen = np.array(self.screen)
         self.screen = self.screen[self.y0:self.y1,self.x0:self.x1,:]
+        if self.full:
+            self.screen[:-12,:-12]=self.screen[12:,12:]
         self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
+        cv.imwrite('imgs/screen.jpg',self.screen)
 
     def get_bw_map(self,gs=1,sbl=0):
         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
@@ -491,6 +495,8 @@ class Universe_Utils:
             except:
                 pass
         print(sim,ans)
+        #if sim<0.5:
+        #    time.sleep(1000000)
         return ans
     
     def get_dis(self,x,y):
