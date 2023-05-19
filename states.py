@@ -50,7 +50,7 @@ class Simulated_Universe(Universe_Utils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             #cv.imwrite('imgs/scr.jpg',self.screen)
-            #self.click_target('imgs/init.jpg',0.9,False)#0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            #self.click_target('imgs/init.jpg',0.9,False)#0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res=self.normal()
             if res==0:
                 if self.threshold>0.95:
