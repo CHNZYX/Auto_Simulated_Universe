@@ -362,7 +362,7 @@ class Universe_Utils:
                         if i==0:
                            pyautogui.click()
                            time.sleep(1)
-                        self.press(key[i],0.2-0.1*(i==0))
+                        self.press(key[i],0.35-0.15*(i==0))
                         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
                 if type==2:
                     self.tries+=1
