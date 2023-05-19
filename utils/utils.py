@@ -133,8 +133,8 @@ class Universe_Utils:
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
         #print(max_loc,target.shape,max_val,local_screen.shape)
-        self.tx=x-(max_loc[0]-0.5*local_screen.shape[1])/self.xx
-        self.ty=y-(max_loc[1]-0.5*local_screen.shape[0])/self.yy
+        self.tx=x-(max_loc[0]-0.5*local_screen.shape[1])/self.xx-0.01
+        self.ty=y-(max_loc[1]-0.5*local_screen.shape[0])/self.yy-0.01
         self.tm=max_val
         if max_val>threshold and path!='./imgs/run.jpg':
             print(path,max_val,threshold)
@@ -174,7 +174,7 @@ class Universe_Utils:
         self.screen = np.array(self.screen)
         self.screen = self.screen[self.y0:self.y1,self.x0:self.x1,:]
         if self.full:
-            self.screen[:-12,:-12]=self.screen[12:,12:]
+            self.screen[:-11,:-11]=self.screen[11:,11:]
         self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
         cv.imwrite('imgs/screen.jpg',self.screen)
 
