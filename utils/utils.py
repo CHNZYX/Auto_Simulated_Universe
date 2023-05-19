@@ -1,4 +1,3 @@
-from pickle import FALSE
 import pyautogui
 import cv2 as cv
 import numpy as np
@@ -7,13 +6,18 @@ import win32api
 import win32gui
 import win32print
 import win32con
-import json
 from copy import deepcopy
 import math
 import random
 
 class Universe_Utils:
     def __init__(self):
+        with open('info.txt','r') as fh:
+            s=fh.readlines()
+            if len(s)>1:
+                self.multi=float(s[1])
+            else:
+                self.multi=1
         self.bx,self.by=1920,1080
         while True:
             try:
@@ -214,25 +218,14 @@ class Universe_Utils:
             cv.imwrite(self.map_file+'bwmap.jpg',bw_map)
         return bw_map
     
-    def get_direc(self):
-        gray=np.array([55,55,55])
+    def get_now_direc(self,loc_scr):
         blue=np.array([234,191,4])
-        white=np.array([210,210,210])
-        blue=np.array([234,191,4])
-        sred=np.array([49,49,140])
-        yellow=np.array([145,192,220])
-        black=np.array([0,0,0])
         arrow=self.format_path('loc_arrow')
         arrow=cv.imread(arrow)
-        shape=(int(self.scx*190),int(self.scx*190))
-        local_screen=self.get_local(0.9333,0.8657,shape)
-        local_screen[np.sum(np.abs(local_screen-blue),axis=-1)<=150]=blue
-        self.loc_scr=local_screen
-        loc_tp=deepcopy(self.loc_scr)
+        loc_tp=deepcopy(loc_scr)
         loc_tp[np.sum(np.abs(loc_tp-blue),axis=-1)>0]=[0,0,0]
         mx_acc=0
-        mx_loc=(0,0)
-        self.ang=0
+        ang=0
         for i in range(360):
             rt=self.image_rotate(arrow,i)
             result = cv.matchTemplate(loc_tp, rt, cv.TM_CCORR_NORMED)
@@ -240,8 +233,20 @@ class Universe_Utils:
             if max_val>mx_acc:
                 mx_acc=max_val
                 mx_loc=(max_loc[0]+12,max_loc[1]+12)
-                self.ang=i
-        self.ang=360-self.ang-90
+                ang=i
+        return ang
+
+    def get_direc(self):
+        gray=np.array([55,55,55])
+        blue=np.array([234,191,4])
+        white=np.array([210,210,210])
+        sred=np.array([49,49,140])
+        yellow=np.array([145,192,220])
+        black=np.array([0,0,0])
+        shape=(int(self.scx*190),int(self.scx*190))
+        local_screen=self.get_local(0.9333,0.8657,shape)
+        local_screen[np.sum(np.abs(local_screen-blue),axis=-1)<=150]=blue
+        self.ang=360-self.get_now_direc(local_screen)-90
         bw_map=self.get_bw_map(gs=0)
         cv.imwrite('imgs/tmp2.jpg',bw_map)
         self.get_loc(bw_map,35-self.find*10)
@@ -269,6 +274,7 @@ class Universe_Utils:
             while sub>180:
                 sub-=360
             if bl==0:
+                print(loc,self.real_loc,ang,self.ang,sub)
                 self.mouse_move(sub)
                 self.ang=ang
             if type==1:
@@ -386,7 +392,7 @@ class Universe_Utils:
             y=-40
         else:
             y=x
-        dx = int(9800 * y * 1295 / self.real_width/180)
+        dx = int(9800 * y * 1295 / self.real_width/180*self.multi)
         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
         time.sleep(0.05)
         if x!=y:

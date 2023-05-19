@@ -1,4 +1,3 @@
-from pickle import FALSE
 import pyautogui
 import cv2 as cv
 import numpy as np
@@ -6,7 +5,6 @@ import time
 import win32api
 import win32gui
 import win32con
-import json
 import random
 import sys
 from utils.utils import Universe_Utils
