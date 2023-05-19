@@ -255,6 +255,8 @@ class Universe_Utils:
                     mn_dis=self.get_dis(i,self.real_loc)
                     loc=i
                     type=j
+            if loc==0:
+                loc=self.last
             ang=math.atan2(loc[0]-self.real_loc[0],loc[1]-self.real_loc[1])/math.pi*180
             sub=ang-self.ang
             while sub<-180:
@@ -351,6 +353,7 @@ class Universe_Utils:
                     if self.check('f',0.3901,0.5093):
                         for j in deepcopy(self.target):
                             if j[1]==type:
+                                self.last=j
                                 self.target.remove(j)
                         break
                     else:
