@@ -319,11 +319,17 @@ class Universe_Utils:
                     else:
                         pyautogui.keyUp('w')
                         break
-                if nds<=ps or self.check('f',0.3901,0.5093)or self.check('run',0.9844,0.7889,threshold=0.93)==0:
-                    pyautogui.keyUp('w')
-                    #if type==0:
-                    #    self.mouse_move(180)
-                    #    self.press('w',0.3)
+                if nds<=ps or self.check('f',0.3901,0.5093) or self.check('run',0.9844,0.7889,threshold=0.93)==0:
+                    if self.check('f',0.3901,0.5093):
+                        pyautogui.keyUp('w')
+                        time.sleep(0.4)
+                        self.get_screen()
+                        if self.check('f',0.3901,0.5093):
+                            break
+                        else:
+                            pyautogui.keyDown('w')
+                    else:
+                        pyautogui.keyUp('w')
                     break
                 ds=nds
                 dls.append(ds)
@@ -340,8 +346,7 @@ class Universe_Utils:
             if type==2 or type==3:
                 key='sasddww'
                 for i in range(7):
-                    if i==0:
-                        time.sleep(0.3)
+                    time.sleep(0.4)
                     self.get_screen()
                     if self.check('f',0.3901,0.5093):
                         for j in deepcopy(self.target):
@@ -354,7 +359,7 @@ class Universe_Utils:
                            time.sleep(1)
                         self.press(key[i],0.2-0.1*(i==0))
                         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
-            else:
+            elif ds<=12:
                 self.target.remove((loc,type))
             print('loc',loc,self.real_loc)
         
