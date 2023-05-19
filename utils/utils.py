@@ -87,6 +87,9 @@ class Universe_Utils:
         x, y = points
         if type(x)!=type(0):
             x, y = self.x1-int(x*self.xx),self.y1-int(y*self.yy)
+        if self.full:
+            x+=11
+            y+=11
         win32api.SetCursorPos((x, y))
         win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
         time.sleep(0.3)
@@ -137,8 +140,8 @@ class Universe_Utils:
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
         #print(max_loc,target.shape,max_val,local_screen.shape)
-        self.tx=x-(max_loc[0]-0.5*local_screen.shape[1])/self.xx-0.01
-        self.ty=y-(max_loc[1]-0.5*local_screen.shape[0])/self.yy-0.01
+        self.tx=x-(max_loc[0]-0.5*local_screen.shape[1])/self.xx
+        self.ty=y-(max_loc[1]-0.5*local_screen.shape[0])/self.yy
         self.tm=max_val
         if max_val>threshold and path!='./imgs/run.jpg':
             print(path,max_val,threshold)
