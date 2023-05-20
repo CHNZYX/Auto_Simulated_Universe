@@ -17,6 +17,7 @@ class Simulated_Universe(Universe_Utils):
         self.img_set=[]
         self.find=find
         self.debug=debug
+        self.lst_changed=time.time()
         for file in os.listdir('imgs/maps'):
             pth='imgs/maps/'+file+'/init.jpg'
             if os.path.exists(pth):
@@ -64,6 +65,8 @@ class Simulated_Universe(Universe_Utils):
                     time.sleep(0.7)
 
     def normal(self):
+        bk_lst_changed=self.lst_changed
+        self.lst_changed=time.time()
         if self.check('auto_2',0.3760,0.0370):
             if self.check('z',0.3047,0.9685,mask='mask_z'):
                 self.click((0.0891,0.9676))
@@ -107,6 +110,7 @@ class Simulated_Universe(Universe_Utils):
             self.battle=0
             return 1
         elif self.check('run',0.9844,0.7889,threshold=0.93):
+            self.lst_changed=bk_lst_changed
             self.battle=0
             if self.big_map_c==0:
                 self.big_map_c=1
@@ -139,7 +143,6 @@ class Simulated_Universe(Universe_Utils):
                     time.sleep(0.2)
                     pyautogui.keyUp('w')
                     self.get_screen()
-                self.lst_changed=time.time()
             self.lst_tm=time.time()
             if time.time()-self.lst_changed>=90 and find==1 and debug==0:
                 self.press('esc')

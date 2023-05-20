@@ -20,7 +20,10 @@ class Universe_Utils:
                 self.multi=1
         self.my_nd=win32gui.GetForegroundWindow()
         self.game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
-        win32gui.SetForegroundWindow(self.game_nd)
+        try:
+            win32gui.SetForegroundWindow(self.game_nd)
+        except:
+            pass
         self.debug,self.find=0,1
         self.bx,self.by=1920,1080
         while True:
