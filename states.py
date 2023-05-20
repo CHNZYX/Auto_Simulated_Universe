@@ -105,6 +105,7 @@ class Simulated_Universe(Universe_Utils):
         elif self.check('fail',0.5073,0.0676):
             self.click((0.5073,0.0676))
             self.battle=0
+            return 1
         elif self.check('run',0.9844,0.7889,threshold=0.93):
             self.battle=0
             if self.big_map_c==0:
