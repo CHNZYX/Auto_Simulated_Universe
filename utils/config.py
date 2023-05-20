@@ -7,6 +7,7 @@ class Config:
         self.order_text = "1 2 3 4"
         self.angle = "1.0"
         self.text = "info.txt"
+        self.read()
 
     @property
     def multi(self) -> float:
@@ -21,6 +22,8 @@ class Config:
             with open(self.text, "r", encoding="utf-8") as f:
                 self.order_text = f.readline().strip()
                 self.angle = f.readline().strip()
+        else:
+            self.save()
 
     def save(self):
         with open(self.text, "w", encoding="utf-8") as f:

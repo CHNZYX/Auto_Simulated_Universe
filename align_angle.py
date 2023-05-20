@@ -1,6 +1,7 @@
 import time
 
 import numpy as np
+import pywintypes
 import win32api
 import win32con
 import win32gui
@@ -45,7 +46,10 @@ def main():
             ay += i
     config.angle = str(ax / ay)
     config.save()
-    win32gui.SetForegroundWindow(su.my_nd)
+    try:
+        win32gui.SetForegroundWindow(su.my_nd)
+    except pywintypes.error:
+        pass
     print('校准完成')
 
 
