@@ -252,6 +252,7 @@ class Universe_Utils:
         self.ang=360-self.get_now_direc(local_screen)-90
         bw_map=self.get_bw_map(gs=0)
         cv.imwrite('imgs/tmp2.jpg',bw_map)
+        self.loc_off=0
         self.get_loc(bw_map,35-self.find*10)
         if self.find==0:
             self.write_map(bw_map)
@@ -408,7 +409,8 @@ class Universe_Utils:
                         self.big_map[self.now_loc[0]-88+i,self.now_loc[1]-88+j]+=50
         #cv.imwrite('imgs/tmps/tmp'+str(self.now_loc[0])+'_'+str(self.now_loc[1])+'_.jpg',bw_map)
 
-    def get_loc(self,bw_map,rg=12,fbw=0):
+    def get_loc(self,bw_map,rg=5,fbw=0):
+        rg+=self.loc_off//2
         rge=88+rg
         loc_big=np.zeros((rge*2,rge*2),dtype=self.big_map.dtype)
         tpl=(self.now_loc[0],self.now_loc[1])
@@ -443,9 +445,16 @@ class Universe_Utils:
         tp=deepcopy(loc_big[max_loc[0]:max_loc[0]+176,max_loc[1]:max_loc[1]+176])
         tp[86:90,86:90]=100
         cv.imwrite('imgs/maxloc.jpg',tp)
+        if rg<=8:
+            time.sleep(0.1)
         if max_val==0:
             return
+        lst=self.now_loc
         self.now_loc=(max_loc[0]+88-rge+self.now_loc[0],max_loc[1]+88-rge+self.now_loc[1])
+        if lst==self.now_loc:
+            self.loc_off=min(self.loc_off+1,18)
+        else:
+            self.loc_off=0
         self.real_loc=(self.now_loc[0],self.now_loc[1])
         #print(self.real_loc,max_val)
 
