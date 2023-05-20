@@ -1,4 +1,4 @@
-numpy==1.22.4
-opencv_python==4.6.0.66
-PyAutoGUI==0.9.53
-pywin32==305
+numpy
+opencv_python
+PyAutoGUI
+pywin32
