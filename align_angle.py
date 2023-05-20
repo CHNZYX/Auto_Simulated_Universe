@@ -33,10 +33,10 @@ def main():
         su.mouse_move(60)
         now_ang = get_angle(su)
         sub = lst_ang - now_ang
-        ang_list.append(sub)
-        lst_ang = now_ang
         while sub < 0:
             sub += 360
+        ang_list.append(sub)
+        lst_ang = now_ang
     ang_list = np.array(ang_list)
     ax = 0
     ay = 0
