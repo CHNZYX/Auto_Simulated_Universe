@@ -2,6 +2,8 @@ import pyautogui
 import cv2 as cv
 import numpy as np
 import time
+
+import pywintypes
 import win32api
 import win32gui
 import win32print
@@ -10,23 +12,22 @@ from copy import deepcopy
 import math
 import random
 
+from utils.config import config
+
+
 class Universe_Utils:
     def __init__(self):
-        with open('info.txt','r') as fh:
-            s=fh.readlines()
-            if len(s)>1:
-                self.multi=float(s[1])
-            else:
-                self.multi=1
-        self.my_nd=win32gui.GetForegroundWindow()
+        self.multi=config.multi
+        self.my_nd = win32gui.GetForegroundWindow()
         self.game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
         try:
             win32gui.SetForegroundWindow(self.game_nd)
-        except:
+        except pywintypes.error:
             pass
         self.debug,self.find=0,1
         self.bx,self.by=1920,1080
         while True:
+            print("等待游戏窗口")
             try:
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
@@ -56,11 +57,8 @@ class Universe_Utils:
                     time.sleep(0.3)
             except:
                 time.sleep(0.3)
-        with open('info.txt','r') as fh:
-            s=fh.readlines()
-            self.order=s[0].strip('\n').split(' ')
-            self.order=[int(x) for x in self.order]
-                
+        self.order = config.order
+
     def press(self,c,t=0):
         pyautogui.keyDown(c)
         time.sleep(t)
