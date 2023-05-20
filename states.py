@@ -232,10 +232,8 @@ class Simulated_Universe(Universe_Utils):
         return (i+rx/rt,j+ry/rt)
             
 find=1
-if len(sys.argv)>1:
-    find=int(sys.argv[1].split('=')[-1])
 debug=0
-if len(sys.argv)>2:
-    debug=int(sys.argv[2].split('=')[-1])
+for i in sys.argv[1:]:
+    exec(i.split('-')[-1])
 su = Simulated_Universe(find,debug)
 su.route()

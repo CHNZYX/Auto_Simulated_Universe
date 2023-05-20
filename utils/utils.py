@@ -305,6 +305,7 @@ class Universe_Utils:
                     fx=0.2/(ctm-ltm)*(self.real_loc[0]-sloc[0])
                     fy=0.2/(ctm-ltm)*(self.real_loc[1]-sloc[1])
                     self.offset=(int(fx),int(fy))
+                    print(self.offset,self.his_loc)
                 else:
                     self.real_loc=(self.real_loc[0]+self.his_loc[0]+self.offset[0],self.real_loc[1]+self.his_loc[1]+self.offset[1])
                 ang=math.atan2(loc[0]-self.real_loc[0],loc[1]-self.real_loc[1])/math.pi*180
