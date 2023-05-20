@@ -12,10 +12,11 @@ import os
 
 
 class Simulated_Universe(Universe_Utils):
-    def __init__(self,find):
+    def __init__(self,find,debug):
         super().__init__()
         self.img_set=[]
         self.find=find
+        self.debug=debug
         for file in os.listdir('imgs/maps'):
             pth='imgs/maps/'+file+'/init.jpg'
             if os.path.exists(pth):
@@ -48,7 +49,7 @@ class Simulated_Universe(Universe_Utils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             #cv.imwrite('imgs/scr.jpg',self.screen)
-            #self.click_target('imgs/init.jpg',0.9,False)#0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            self.click_target('imgs/tp.jpg',0.9,False)#0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res=self.normal()
             if res==0:
                 if self.threshold>0.95:
@@ -137,8 +138,14 @@ class Simulated_Universe(Universe_Utils):
                     time.sleep(0.2)
                     pyautogui.keyUp('w')
                     self.get_screen()
+                self.lst_changed=time.time()
             self.lst_tm=time.time()
-            self.get_direc()
+            if time.time()-self.lst_changed>=0 and find==1 and debug==0:
+                self.press('esc')
+                time.sleep(2)
+                self.click((0.2708,0.1324))
+            else:
+                self.get_direc()
             return 2
         elif self.battle:
             return 1
@@ -226,6 +233,9 @@ class Simulated_Universe(Universe_Utils):
             
 find=1
 if len(sys.argv)>1:
-    find=int(sys.argv[1].split('=')[1])
-su = Simulated_Universe(find)
+    find=int(sys.argv[1].split('=')[-1])
+debug=0
+if len(sys.argv)>2:
+    debug=int(sys.argv[2].split('=')[-1])
+su = Simulated_Universe(find,debug)
 su.route()
