@@ -49,5 +49,8 @@ with open('info.txt','r') as fh:
 with open('info.txt','w') as fh:
     fh.write(s[0])
     fh.write(s[1])
-win32gui.SetForegroundWindow(su.my_nd)
+try:
+    win32gui.SetForegroundWindow(su.my_nd)
+except:
+    pass
 print('success')
