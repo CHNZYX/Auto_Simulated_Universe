@@ -18,6 +18,9 @@ class Universe_Utils:
                 self.multi=float(s[1])
             else:
                 self.multi=1
+        self.my_nd=win32gui.GetForegroundWindow()
+        self.game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
+        win32gui.SetForegroundWindow(self.game_nd)
         self.debug,self.find=0,1
         self.bx,self.by=1920,1080
         while True:
@@ -306,7 +309,7 @@ class Universe_Utils:
                     fx=0.2/(ctm-ltm)*(self.real_loc[0]-sloc[0])
                     fy=0.2/(ctm-ltm)*(self.real_loc[1]-sloc[1])
                     self.offset=(int(fx),int(fy))
-                    print(self.offset,self.his_loc)
+                    #print(self.offset,self.his_loc)
                 else:
                     self.real_loc=(self.real_loc[0]+self.his_loc[0]+self.offset[0],self.real_loc[1]+self.his_loc[1]+self.offset[1])
                 ang=math.atan2(loc[0]-self.real_loc[0],loc[1]-self.real_loc[1])/math.pi*180
@@ -384,7 +387,6 @@ class Universe_Utils:
                             pass
             elif ds<=12:
                 self.target.remove((loc,type))
-            print('loc',loc,self.real_loc)
         
     def mouse_move(self, x):
         if x>40:
@@ -447,10 +449,9 @@ class Universe_Utils:
         cv.imwrite('imgs/maxloc.jpg',tp)
         if rg<=8:
             time.sleep(0.1)
-        if max_val==0:
-            return
         lst=self.now_loc
-        self.now_loc=(max_loc[0]+88-rge+self.now_loc[0],max_loc[1]+88-rge+self.now_loc[1])
+        if max_val!=0:
+            self.now_loc=(max_loc[0]+88-rge+self.now_loc[0],max_loc[1]+88-rge+self.now_loc[1])
         if lst==self.now_loc:
             self.loc_off=min(self.loc_off+1,18)
         else:
