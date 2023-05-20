@@ -2,6 +2,8 @@ import pyautogui
 import cv2 as cv
 import numpy as np
 import time
+
+import pywintypes
 import win32api
 import win32gui
 import win32print
@@ -18,7 +20,10 @@ class Universe_Utils:
         self.multi=config.multi
         self.my_nd = win32gui.GetForegroundWindow()
         self.game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
-        win32gui.SetForegroundWindow(self.game_nd)
+        try:
+            win32gui.SetForegroundWindow(self.game_nd)
+        except pywintypes.error:
+            pass
         self.debug,self.find=0,1
         self.bx,self.by=1920,1080
         while True:
