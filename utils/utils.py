@@ -18,6 +18,7 @@ class Universe_Utils:
                 self.multi=float(s[1])
             else:
                 self.multi=1
+        self.debug,self.find=0,1
         self.bx,self.by=1920,1080
         while True:
             try:
@@ -213,7 +214,6 @@ class Universe_Utils:
                     if bw_map[88+i,88+j]==150 and i**2+j**2<ii**2+jj**2:
                         ii,jj=i,j
             bw_map[bw_map==150]=0
-            print(ii,jj)
             if ii**2+jj**2<self.his_loc[0]**2+self.his_loc[1]**2:
                 self.his_loc=(ii,jj)
         bw_map[bw_map==200]=255
@@ -277,7 +277,6 @@ class Universe_Utils:
             while sub>180:
                 sub-=360
             if bl==0:
-                print(loc,self.real_loc,ang,self.ang,sub)
                 self.mouse_move(sub)
                 self.ang=ang
             if type==1:
@@ -286,7 +285,6 @@ class Universe_Utils:
                 ps=6
             else:
                 ps=6
-            print(self.real_loc,loc)
             pyautogui.keyDown('w')
             time.sleep(0.5)
             ltm=time.time()
@@ -306,7 +304,6 @@ class Universe_Utils:
                 if i<=4 and bl:
                     fx=0.2/(ctm-ltm)*(self.real_loc[0]-sloc[0])
                     fy=0.2/(ctm-ltm)*(self.real_loc[1]-sloc[1])
-                    print('off',fx,fy)
                     self.offset=(int(fx),int(fy))
                 else:
                     self.real_loc=(self.real_loc[0]+self.his_loc[0]+self.offset[0],self.real_loc[1]+self.his_loc[1]+self.offset[1])
@@ -323,7 +320,6 @@ class Universe_Utils:
                 self.big_map[self.real_loc[0]-1:self.real_loc[0]+2,self.real_loc[1]-1:self.real_loc[1]+2]=49
                 cv.imwrite('imgs/bigmap.jpg',self.big_map)
                 nds=self.get_dis(self.real_loc,loc)
-                #print('upd',ds,sds,nds,self.real_loc,loc,sub)
                 if dls[-4]==nds:
                     ts=' da'
                     if t>0:
@@ -503,9 +499,9 @@ class Universe_Utils:
                     ans=i
             except:
                 pass
-        print(sim,ans)
-        #if sim<0.5:
-        #    time.sleep(1000000)
+        print('相似度：',sim,'地图编号：',ans)
+        if sim<0.5 and self.debug:
+            time.sleep(1000000)
         return ans
     
     def get_dis(self,x,y):
