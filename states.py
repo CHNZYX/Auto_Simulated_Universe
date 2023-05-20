@@ -140,7 +140,7 @@ class Simulated_Universe(Universe_Utils):
                     self.get_screen()
                 self.lst_changed=time.time()
             self.lst_tm=time.time()
-            if time.time()-self.lst_changed>=0 and find==1 and debug==0:
+            if time.time()-self.lst_changed>=600 and find==1 and debug==0:
                 self.press('esc')
                 time.sleep(2)
                 self.click((0.2708,0.1324))
