@@ -49,7 +49,7 @@ class Simulated_Universe(Universe_Utils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             #cv.imwrite('imgs/scr.jpg',self.screen)
-            self.click_target('imgs/tp.jpg',0.9,False)#0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            #self.click_target('imgs/mask_z.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res=self.normal()
             if res==0:
                 if self.threshold>0.95:
@@ -64,9 +64,9 @@ class Simulated_Universe(Universe_Utils):
                     time.sleep(0.7)
 
     def normal(self):
-        self.check('auto_1',0.0891,0.9676)
-        if self.tm<0.95 and self.check('auto_2',0.3760,0.0370) and self.battle==0:
-            self.click((0.0891,0.9676))
+        if self.check('auto_2',0.3760,0.0370):
+            if self.check('z',0.3047,0.9685,mask='mask_z'):
+                self.click((0.0891,0.9676))
             self.battle=1
             return 1
         if self.check('choose_bless',0.9266,0.9491):
@@ -140,7 +140,7 @@ class Simulated_Universe(Universe_Utils):
                     self.get_screen()
                 self.lst_changed=time.time()
             self.lst_tm=time.time()
-            if time.time()-self.lst_changed>=600 and find==1 and debug==0:
+            if time.time()-self.lst_changed>=90 and find==1 and debug==0:
                 self.press('esc')
                 time.sleep(2)
                 self.click((0.2708,0.1324))

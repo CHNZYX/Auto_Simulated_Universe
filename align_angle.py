@@ -19,13 +19,6 @@ def get_angle():
     local_screen[np.sum(np.abs(local_screen-blue),axis=-1)<=150]=blue
     return su.get_now_direc(local_screen)
 
-hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-Text = win32gui.GetWindowText(hwnd)
-while Text != '崩坏：星穹铁道':
-    time.sleep(0.5)
-    hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-    Text = win32gui.GetWindowText(hwnd)
-
 su = Universe_Utils()
 su.multi=1
 init_ang=get_angle()
@@ -56,4 +49,5 @@ with open('info.txt','r') as fh:
 with open('info.txt','w') as fh:
     fh.write(s[0])
     fh.write(s[1])
+win32gui.SetForegroundWindow(su.my_nd)
 print('success')
