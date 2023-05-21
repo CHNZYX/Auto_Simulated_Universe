@@ -112,23 +112,29 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         elif self.check('f', 0.3901, 0.5093):
             is_killed=0
-            if self.check('quit', 0.3563, 0.5120):
-                if time.time() - self.quit > 30:
-                    self.quit = time.time()
-                    self.press('f')
+            time.sleep(0.3)
+            self.get_screen()
+            if self.check('f', 0.3901, 0.5093):
+                if self.check('quit', 0.3563, 0.5120):
+                    if time.time() - self.quit > 30:
+                        self.quit = time.time()
+                        self.press('f')
+                        self.battle = 0
+                else:
+                    if self.debug:
+                        self.check('tele', 0.3719, 0.5083)
+                        print(self.tm,end=' ')
+                        self.check('exit', 0.3719, 0.5083)
+                        print(self.tm)
+                    if self.check('tele', 0.3719, 0.5083, threshold=0.965) or self.check('exit', 0.3719, 0.5083, threshold=0.965):
+                        # self.get_map()
+                        self.init_map()
+                    is_killed=self.check('bonus',0.3578,0.5083) or self.check('rescure',0.3578,0.5083) or self.check('download',0.3578,0.5083)
+                    if is_killed==0:
+                        self.press('f')
                     self.battle = 0
-            else:
-                if self.debug:
-                    print(self.check('tele', 0.3719, 0.5083),self.check('exit', 0.3719, 0.5083))
-                if self.check('tele', 0.3719, 0.5083) or self.check('exit', 0.3719, 0.5083):
-                    # self.get_map()
-                    self.init_map()
-                is_killed=self.check('bonus',0.3578,0.5083) or self.check('rescure',0.3578,0.5083) or self.check('download',0.3578,0.5083)
                 if is_killed==0:
-                    self.press('f')
-                self.battle = 0
-            if is_killed==0:
-                return 1
+                    return 1
         elif self.check('fail', 0.5073, 0.0676):
             self.click((0.5073, 0.0676))
             self.battle = 0
