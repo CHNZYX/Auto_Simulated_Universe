@@ -17,3 +17,6 @@ basicConfig(level=INFO)
 
 def set_debug(debug: bool = False):
     log.setLevel(DEBUG if debug else INFO)
+
+
+set_debug()
