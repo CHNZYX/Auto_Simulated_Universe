@@ -242,7 +242,6 @@ class UniverseUtils:
             time.sleep(dt)
 
         cv.imwrite('imgs/fine_minimap.jpg', total_img)
->>>>>>> 1abcd7fc09582ba4ddf8ea62eac22335c1dcb42c
         cv.imwrite('imgs/fine_mask.jpg', total_mask)
         return total_img, total_mask
 
@@ -569,17 +568,16 @@ class UniverseUtils:
         return
 
 
-    def match_scr(self, img, mask):
+    def match_scr(self, img):
         key = self.extract_features(img)
         sim = -1
         ans = -1
         for i, j in self.img_set:
             matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
             try:
-                matches = matcher.match(key, self.extract_features(cv.bitwise_and(mask, j)))
+                matches = matcher.match(key, j)
                 similarity_score = len(matches) / max(len(key), len(j))
                 if similarity_score > sim:
-                    cv.imwrite('imgs/minimap_high.jpg',cv.bitwise_and(mask, j))
                     sim = similarity_score
                     ans = i
             except:
