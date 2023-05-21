@@ -171,8 +171,10 @@ class SimulatedUniverse(UniverseUtils):
             if time.time() - self.lst_changed >= 25 and self.find == 1 and self.debug == 0:
                 self.press('esc')
                 time.sleep(2)
-                self.click((0.2927, 0.2602))
-                #self.click((0.2708, 0.1324))
+                if random.randint(0,2)!=2:
+                    self.click((0.2927, 0.2602))
+                else:
+                    self.click((0.2708, 0.1324))
             else:
                 self.get_direc()
             return 2
