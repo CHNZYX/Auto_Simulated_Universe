@@ -13,7 +13,7 @@ from utils.log import log, set_debug
 from utils.utils import UniverseUtils
 import os
 
-version = "v3.64"
+version = "v3.75"
 
 
 class SimulatedUniverse(UniverseUtils):
