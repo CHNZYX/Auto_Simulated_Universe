@@ -124,12 +124,13 @@ class SimulatedUniverse(UniverseUtils):
                 if self.check('bonus',0.3578,0.5083)==0:
                     self.press('f')
                 self.battle = 0
-            return 1
+            if self.check('bonus',0.3578,0.5083)==0:
+                return 1
         elif self.check('fail', 0.5073, 0.0676):
             self.click((0.5073, 0.0676))
             self.battle = 0
             return 1
-        elif self.check('run', 0.9844, 0.7889, threshold=0.93):
+        if self.check('run', 0.9844, 0.7889, threshold=0.93):
             self.lst_changed = bk_lst_changed
             self.battle = 0
             if self.big_map_c == 0:
