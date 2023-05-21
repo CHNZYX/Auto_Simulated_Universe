@@ -218,7 +218,7 @@ class UniverseUtils:
         b_map[:,1:]|=b_map[:,:-1]
         b_map[:,:-1]|=b_map[:,1:]
         bw_map[(np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 1800)&b_map] = 200
-        bw_map[(np.sum((local_screen - white) ** 2, axis=-1) <= 800 + self.find * 1800)&b_map] = 255
+        bw_map[np.sum((local_screen - white) ** 2, axis=-1) <= 800 + self.find * 800] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
         if self.find==0:
