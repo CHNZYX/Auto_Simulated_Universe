@@ -239,6 +239,7 @@ class SimulatedUniverse(UniverseUtils):
                 if img[i, j, 2] > 180 and img[i, j, 1] > 180 and img[i, j, 0] < 70:
                     res.add((self.get_center(img, i, j), 3))
                     img[max(i - 7, 0):i + 7, max(j - 7, 0):j + 7] = [0, 0, 0]
+                    self.last=(i,j)
         return res
 
     def get_center(self, img, i, j):
