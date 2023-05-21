@@ -424,7 +424,7 @@ class UniverseUtils:
                         self.big_map[self.now_loc[0] - 88 + i, self.now_loc[1] - 88 + j] += 50
         # cv.imwrite('imgs/tmps/tmp'+str(self.now_loc[0])+'_'+str(self.now_loc[1])+'_.jpg',bw_map)
 
-    def get_loc(self, bw_map, rg=7, fbw=0):
+    def get_loc(self, bw_map, rg=10, fbw=0):
         rg += self.loc_off // 2
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)
@@ -461,13 +461,11 @@ class UniverseUtils:
         tp = deepcopy(loc_big[max_loc[0]:max_loc[0] + 176, max_loc[1]:max_loc[1] + 176])
         tp[86:90, 86:90] = 100
         cv.imwrite('imgs/maxloc.jpg', tp)
-        if rg <= 8:
-            time.sleep(0.1)
         lst = self.now_loc
         if max_val != 0:
             self.now_loc = (max_loc[0] + 88 - rge + self.now_loc[0], max_loc[1] + 88 - rge + self.now_loc[1])
         if lst == self.now_loc:
-            self.loc_off = min(self.loc_off + 1, 18)
+            self.loc_off = min(self.loc_off + 1, 14)
         else:
             self.loc_off = 0
         self.real_loc = (self.now_loc[0], self.now_loc[1])
