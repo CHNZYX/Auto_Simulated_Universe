@@ -1,4 +1,3 @@
-import signal
 import threading
 
 import keyboard
@@ -15,7 +14,7 @@ from utils.log import log, set_debug
 from utils.utils import UniverseUtils
 import os
 
-version = "v3.25"
+version = "v3.5"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -297,7 +296,6 @@ class SimulatedUniverse(UniverseUtils):
         self._stop = False
         t = threading.Thread(target=self.check_f8)
         t.start()
-        signal.signal(signal.SIGINT, self.stop)
         try:
             self.route()
         except KeyboardInterrupt:
