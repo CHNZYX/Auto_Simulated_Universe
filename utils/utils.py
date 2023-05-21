@@ -202,7 +202,6 @@ class UniverseUtils:
         cv.imwrite('imgs/screen.jpg', self.screen)
 
     def get_bw_map(self, gs=1, sbl=0):
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
         yellow = np.array([145, 192, 220])
         black = np.array([0, 0, 0])
         white = np.array([210, 210, 210])
@@ -394,7 +393,6 @@ class UniverseUtils:
                             pyautogui.click()
                             time.sleep(1)
                         self.press(key[i], 0.4)
-                        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
                 if type == 2:
                     self.tries += 1
                     if self.tries == 4:
