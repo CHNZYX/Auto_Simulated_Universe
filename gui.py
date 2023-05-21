@@ -1,4 +1,5 @@
 import traceback
+from typing import Optional
 
 from flet_core import MainAxisAlignment, CrossAxisAlignment, Page
 
@@ -6,9 +7,10 @@ import flet as ft
 import pyuac
 
 from align_angle import main as align_angle
-from states import Simulated_Universe, version
+from states import SimulatedUniverse, version
 
 debug_mode = False
+su: Optional[SimulatedUniverse] = None
 
 
 def show_snack_bar(page, text, color, selectable=False):
@@ -26,6 +28,7 @@ def choose_view(page: Page):
         for i in page.views[0].controls[0].controls:
             if isinstance(i, ft.FilledButton):
                 i.disabled = value
+        page.views[0].controls[0].controls[-1].disabled = False
         page.update()
 
     def run(func, *args, **kwargs):
@@ -43,14 +46,21 @@ def choose_view(page: Page):
         run(align_angle)
 
     def start(_e):
+        global su
         show_snack_bar(page, "开始运行，请切换回游戏", ft.colors.GREEN)
-        su = run(Simulated_Universe, 1, int(debug_mode))
-        run(su.route)
+        su = run(SimulatedUniverse, 1, int(debug_mode))
+        run(su.start)
 
     def start_new(_e):
+        global su
         show_snack_bar(page, "开始录入，请切换回游戏", ft.colors.GREEN)
-        su = run(Simulated_Universe, 0, int(debug_mode))
-        run(su.route)
+        su = run(SimulatedUniverse, 0, int(debug_mode))
+        run(su.start)
+
+    def stop(_e):
+        show_snack_bar(page, "尝试停止运行", ft.colors.GREEN)
+        if su is not None:
+            run(su.stop)
 
     def checkbox_changed(_e):
         global debug_mode
@@ -89,6 +99,11 @@ def choose_view(page: Page):
                             "录入",
                             icon=ft.icons.ADD,
                             on_click=start_new,
+                        ),
+                        ft.FilledButton(
+                            "停止",
+                            icon=ft.icons.STOP,
+                            on_click=stop,
                         ),
                     ],
                     alignment=MainAxisAlignment.CENTER,

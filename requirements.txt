@@ -5,4 +5,5 @@ pywin32
 flet
 pyinstaller
 pyuac
-flet
+pillow
+keyboard
