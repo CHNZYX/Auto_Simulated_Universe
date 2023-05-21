@@ -56,6 +56,8 @@ class UniverseUtils:
                     break
                 else:
                     time.sleep(0.3)
+            except KeyboardInterrupt:
+                raise KeyboardInterrupt
             except:
                 time.sleep(0.3)
         self.order = config.order
