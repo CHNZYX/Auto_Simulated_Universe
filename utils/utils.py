@@ -201,6 +201,35 @@ class UniverseUtils:
         self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
         cv.imwrite('imgs/screen.jpg', self.screen)
 
+    def take_screenshot(self, rect):
+        # 返回RGB图像
+        hwnd = win32gui.FindWindow("UnityWndClass", "崩坏：星穹铁道")
+        left, top, right, bottom = win32gui.GetWindowRect(hwnd)
+        rect[0] += left
+        rect[1] += top 
+        temp = pyautogui.screenshot(region=rect)
+        screenshot = np.array(temp)
+        screenshot = cv.cvtColor(screenshot, cv.COLOR_BGR2RGB)
+        return screenshot
+
+    def take_fine_minimap(self, rect = [77,88,127,127], n = 5, dt=0.01, dy=200):
+        total = self.take_screenshot(rect)
+        n = 5
+        for i in range(n):
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -dy, 0, 0)
+            mask = cv.compare(total, self.take_screenshot(rect), cv.CMP_EQ )
+            total = cv.bitwise_and(total, mask )
+            time.sleep(dt)
+        time.sleep(0.1)
+        for i in range(n):
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, dy, 0, 0)
+            mask = cv.compare(total, self.take_screenshot(rect), cv.CMP_EQ )
+            total = cv.bitwise_and(total, mask )
+            time.sleep(dt)
+        minimap = cv.bitwise_and(total, mask )
+        cv.imwrite('imgs/fine_minimap.jpg', minimap)
+        return minimap
+
     def get_bw_map(self, gs=1, sbl=0):
         yellow = np.array([145, 192, 220])
         black = np.array([0, 0, 0])
