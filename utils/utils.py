@@ -431,7 +431,10 @@ class UniverseUtils:
                         except:
                             pass
             elif ds <= 12:
-                self.target.remove((loc, type))
+                try:
+                    self.target.remove((loc, type))
+                except:
+                    pass
 
     def mouse_move(self, x):
         if x > 40:
