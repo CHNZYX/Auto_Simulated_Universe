@@ -30,7 +30,7 @@ class SimulatedUniverse(UniverseUtils):
             pth = 'imgs/maps/' + file + '/init.jpg'
             if os.path.exists(pth):
                 image = cv.imread(pth)
-                self.img_set.append((file, self.extract_features(image)))
+                self.img_set.append((file, image))
         log.info("加载地图完成，共 %d 张" % len(self.img_set))
 
     def init_map(self):
@@ -138,11 +138,9 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             if self.big_map_c == 0:
                 self.big_map_c = 1
-                time.sleep(2.2)
-                self.get_screen()
-                self.exist_minimap()
                 if self.find:
-                    self.now_map = self.match_scr(self.loc_scr)
+                    img, mask = self.take_fine_minimap()
+                    self.now_map = self.match_scr(img,mask)
                     self.now_pth = 'imgs/maps/' + self.now_map + '/'
                     files = self.find_latest_modified_file(self.now_pth)
                     print('地图文件：',files)
@@ -155,6 +153,8 @@ class SimulatedUniverse(UniverseUtils):
                     # self.big_map[self.now_loc[0],self.now_loc[1]]=255
                     cv.imwrite('imgs/tmp4.jpg', self.big_map)
                 else:
+                    self.get_screen()
+                    self.exist_minimap()
                     cv.imwrite(self.map_file + 'init.jpg', self.loc_scr)
             if time.time() - self.lst_tm > 5:
                 if self.find == 0:
