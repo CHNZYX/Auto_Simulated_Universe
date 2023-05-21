@@ -1,7 +1,7 @@
 from logging import getLogger, StreamHandler, FileHandler, Formatter, basicConfig, INFO, DEBUG, CRITICAL
 
 log = getLogger()
-logging_format = "%(levelname)s [%(asctime)s] [%(name)s] %(message)s"
+logging_format = "%(levelname)s [%(asctime)s] [%(filename)s:%(lineno)d] %(message)s"
 logging_handler = StreamHandler()
 logging_handler.setFormatter(Formatter(logging_format))
 file_handler = FileHandler(filename="log.txt", mode="w", encoding="utf-8")
