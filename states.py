@@ -1,3 +1,6 @@
+import threading
+
+import keyboard
 import pyautogui
 import cv2 as cv
 import numpy as np
@@ -7,24 +10,29 @@ import win32gui
 import win32con
 import random
 import sys
-from utils.utils import Universe_Utils
+from utils.log import log, set_debug
+from utils.utils import UniverseUtils
 import os
 
-version = "v3.21"
+version = "v3.25"
 
 
-class Simulated_Universe(Universe_Utils):
+class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug):
         super().__init__()
-        self.img_set=[]
-        self.find=find
-        self.debug=debug
-        self.lst_changed=time.time()
+        self._stop = False
+        self.img_set = []
+        self.find = find
+        self.debug = debug
+        set_debug(debug)
+        self.lst_changed = time.time()
+        log.info("加载地图")
         for file in os.listdir('imgs/maps'):
             pth = 'imgs/maps/' + file + '/init.jpg'
             if os.path.exists(pth):
                 image = cv.imread(pth)
                 self.img_set.append((file, self.extract_features(image)))
+        log.info("加载地图完成，共 %d 张" % len(self.img_set))
 
     def init_map(self):
         self.big_map = np.zeros((8192, 8192), dtype=np.uint8)
@@ -44,20 +52,25 @@ class Simulated_Universe(Universe_Utils):
         self.quit = 0
         self.init_map()
         while True:
+            if self._stop:
+                break
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
             Text = win32gui.GetWindowText(hwnd)
+            warn_game = False
             while Text != '崩坏：星穹铁道':
-                print("等待游戏窗口")
+                if not warn_game:
+                    warn_game = True
+                    log.warning("等待游戏窗口")
                 time.sleep(0.5)
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            #cv.imwrite('imgs/scr.jpg',self.screen)
-            #self.click_target('imgs/mask_z.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
-            res=self.normal()
-            if res==0:
-                if self.threshold>0.95:
-                    self.threshold-=0.015
+            # cv.imwrite('imgs/scr.jpg',self.screen)
+            # self.click_target('imgs/mask_z.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            res = self.normal()
+            if res == 0:
+                if self.threshold > 0.95:
+                    self.threshold -= 0.015
                 else:
                     self.click((0.5062, 0.1454))
                     self.threshold = 0.98
@@ -66,14 +79,15 @@ class Simulated_Universe(Universe_Utils):
                 self.threshold = 0.98
                 if res == 1:
                     time.sleep(0.7)
+        log.info("停止运行")
 
     def normal(self):
-        bk_lst_changed=self.lst_changed
-        self.lst_changed=time.time()
-        if self.check('auto_2',0.3760,0.0370):
-            if self.check('z',0.3047,0.9685,mask='mask_z'):
-                self.click((0.0891,0.9676))
-            self.battle=1
+        bk_lst_changed = self.lst_changed
+        self.lst_changed = time.time()
+        if self.check('auto_2', 0.3760, 0.0370):
+            if self.check('z', 0.3047, 0.9685, mask='mask_z'):
+                self.click((0.0891, 0.9676))
+            self.battle = 1
             return 1
         if self.check('choose_bless', 0.9266, 0.9491):
             self.battle = 0
@@ -108,15 +122,15 @@ class Simulated_Universe(Universe_Utils):
                 self.press('f')
                 self.battle = 0
             return 1
-        elif self.check('fail',0.5073,0.0676):
-            self.click((0.5073,0.0676))
-            self.battle=0
+        elif self.check('fail', 0.5073, 0.0676):
+            self.click((0.5073, 0.0676))
+            self.battle = 0
             return 1
-        elif self.check('run',0.9844,0.7889,threshold=0.93):
-            self.lst_changed=bk_lst_changed
-            self.battle=0
-            if self.big_map_c==0:
-                self.big_map_c=1
+        elif self.check('run', 0.9844, 0.7889, threshold=0.93):
+            self.lst_changed = bk_lst_changed
+            self.battle = 0
+            if self.big_map_c == 0:
+                self.big_map_c = 1
                 time.sleep(2)
                 self.get_screen()
                 self.exist_minimap()
@@ -128,7 +142,7 @@ class Simulated_Universe(Universe_Utils):
                     xy = files.split('/')[-1].split('_')[1:3]
                     self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
                     self.target = self.get_target(self.now_pth + 'target.jpg')
-                    print(self.target)
+                    log.info("target %s" % self.target)
                     self.monster = (-1, -1)
                     # self.big_map[self.now_loc[0],self.now_loc[1]]=255
                     cv.imwrite('imgs/tmp4.jpg', self.big_map)
@@ -146,8 +160,8 @@ class Simulated_Universe(Universe_Utils):
                     time.sleep(0.2)
                     pyautogui.keyUp('w')
                     self.get_screen()
-            self.lst_tm=time.time()
-            if time.time()-self.lst_changed>=90 and self.find==1 and self.debug==0:
+            self.lst_tm = time.time()
+            if time.time() - self.lst_changed >= 90 and self.find == 1 and self.debug == 0:
                 self.press('esc')
                 time.sleep(2)
                 self.click((0.2708, 0.1324))
@@ -195,7 +209,7 @@ class Simulated_Universe(Universe_Utils):
         # elif self.check('run',0.9844,0.7889,threshold=0.95):
         #    return 2
         else:
-            print('no')
+            log.info("匹配不到任何图标")
             return 0
         return 1
 
@@ -239,14 +253,35 @@ class Simulated_Universe(Universe_Utils):
                         ry += y
         return (i + rx / rt, j + ry / rt)
 
+    def stop(self):
+        log.info("尝试停止运行")
+        self._stop = True
+
+    def check_f8(self):
+        """检测F8键是否被按下，如果按下则停止运行"""
+        while True:
+            if keyboard.is_pressed('f8'):
+                log.info("F8 已被按下，尝试停止运行")
+                self.stop()
+                break
+            elif self._stop:
+                break
+            time.sleep(0.5)
+
+    def start(self):
+        self._stop = False
+        t = threading.Thread(target=self.check_f8)
+        t.start()
+        self.route()
+
 
 def main():
     find = 1
     debug = 0
     for i in sys.argv[1:]:
         exec(i.split('-')[-1])
-    su = Simulated_Universe(find, debug)
-    su.route()
+    su = SimulatedUniverse(find, debug)
+    su.start()
 
 
 if __name__ == '__main__':
