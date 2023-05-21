@@ -1,13 +1,14 @@
 import traceback
 from typing import Optional
 
-from flet_core import MainAxisAlignment, CrossAxisAlignment, Page
+from flet_core import MainAxisAlignment, CrossAxisAlignment, Page, ControlEvent
 
 import flet as ft
 import pyuac
 
 from align_angle import main as align_angle
 from states import SimulatedUniverse, version
+from utils.config import config
 
 debug_mode = False
 su: Optional[SimulatedUniverse] = None
@@ -66,6 +67,10 @@ def choose_view(page: Page):
         global debug_mode
         debug_mode = not debug_mode
 
+    def difficult_changed(e: ControlEvent):
+        config.difficult = e.data
+        config.save()
+
     # View
     page.views.append(
         ft.View(
@@ -116,6 +121,17 @@ def choose_view(page: Page):
                             value=False,
                             on_change=checkbox_changed,
                         ),
+                        ft.Dropdown(
+                            width=100,
+                            label="难度",
+                            hint_text="选择世界难度",
+                            options=[
+                                ft.dropdown.Option("1"),
+                                ft.dropdown.Option("2"),
+                            ],
+                            value=config.difficult,
+                            on_change=difficult_changed,
+                        )
                     ],
                 ),
             ],
