@@ -415,7 +415,7 @@ class UniverseUtils:
                     if self.check('f', 0.3901, 0.5093):
                         for j in deepcopy(self.target):
                             if j[1] == type:
-                                self.last = j
+                                self.last = j[0]
                                 self.target.remove(j)
                         break
                     else:

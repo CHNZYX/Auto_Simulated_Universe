@@ -299,6 +299,7 @@ class SimulatedUniverse(UniverseUtils):
         try:
             self.route()
         except KeyboardInterrupt:
+            print("KeyboardInterrupt")
             if not self._stop:
                 self.stop()
 
