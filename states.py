@@ -17,12 +17,13 @@ version = "v3.64"
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug):
+    def __init__(self, find, debug,diffi):
         super().__init__()
         self._stop = False
         self.img_set = []
         self.find = find
         self.debug = debug
+        self.diffi = diffi
         set_debug(debug)
         self.lst_changed = time.time()
         log.info("加载地图")
@@ -66,8 +67,8 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            # cv.imwrite('imgs/scr.jpg',self.screen)
-            #self.click_target('imgs/bonus.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            # cv.imwrite('imgs/scr.jpg',self.screen) #0.9375,0.8565 0.9385,0.7574 
+            #self.click_target('imgs/tp.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res = self.normal()
             if res == 0:
                 if self.threshold > 0.95:
@@ -183,6 +184,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('init', 0.9276, 0.6731):
             self.click((0.3448, 0.4926))
         elif self.check('begin', 0.3339, 0.7741):
+            self.click((0.9375,0.8565-0.01*(self.diffi-1)))
             self.click((0.1083, 0.1009))
         elif self.check('start', 0.6594, 0.8389):
             dx = 0.9266 - 0.8552
@@ -213,7 +215,6 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.1365, 0.1093))
         elif self.check('drop',0.9406,0.9491):
             self.click((0.4714,0.5500))
-            time.sleep(0.3)
             self.click((0.1339,0.1028))
         # elif self.check('run',0.9844,0.7889,threshold=0.95):
         #    return 2
@@ -307,7 +308,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}")
-    su = SimulatedUniverse(find, debug)
+    su = SimulatedUniverse(find, debug, d)
     try:
         su.start()
     except Exception:
@@ -319,6 +320,7 @@ def main():
 if __name__ == '__main__':
     find = 1
     debug = 0
+    d = 2
     for i in sys.argv[1:]:
         exec(i.split('-')[-1])
     main()

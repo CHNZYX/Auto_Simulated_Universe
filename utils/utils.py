@@ -407,9 +407,9 @@ class UniverseUtils:
                 self.mouse_move(180)
                 self.press('w', 0.2)
             if type == 2 or type == 3:
-                key_list = ['sasddww', 'sdsaaww', 'sssssss']
+                key_list = ['sasddww', 'sdsaaww', 'sssw']
                 key = key_list[random.randint(0, 2)]
-                for i in range(7):
+                for i in range(len(key)):
                     time.sleep(0.4)
                     self.get_screen()
                     if self.check('f', 0.3901, 0.5093):
