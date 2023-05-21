@@ -1,20 +1,19 @@
 import threading
+import traceback
 
 import keyboard
 import pyautogui
 import cv2 as cv
 import numpy as np
 import time
-import win32api
 import win32gui
-import win32con
 import random
 import sys
 from utils.log import log, set_debug
 from utils.utils import UniverseUtils
 import os
 
-version = "v3.5"
+version = "v3.64"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -309,6 +308,8 @@ def main():
     su = SimulatedUniverse(find, debug)
     try:
         su.start()
+    except Exception:
+        traceback.print_exc()
     finally:
         su.stop()
 
