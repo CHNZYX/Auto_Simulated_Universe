@@ -201,6 +201,8 @@ class UniverseUtils:
         self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
         cv.imwrite('imgs/screen.jpg', self.screen)
 
+        return self.screen
+
     def take_screenshot(self, rect):
         # 返回RGB图像
         hwnd = win32gui.FindWindow("UnityWndClass", "崩坏：星穹铁道")
@@ -212,23 +214,35 @@ class UniverseUtils:
         screenshot = cv.cvtColor(screenshot, cv.COLOR_BGR2RGB)
         return screenshot
 
-    def take_fine_minimap(self, rect = [77,88,127,127], n = 5, dt=0.01, dy=200):
-        total = self.take_screenshot(rect)
+    def take_fine_minimap(self, n = 5, dt=0.01, dy=200):
+        # total = self.take_screenshot(rect)
+        self.get_screen()
+        self.exist_minimap()
+        total_img = self.loc_scr
+        total_mask = 255 * np.array(total_img.shape)
         n = 5
         for i in range(n):
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -dy, 0, 0)
-            mask = cv.compare(total, self.take_screenshot(rect), cv.CMP_EQ )
-            total = cv.bitwise_and(total, mask )
+            self.get_screen()
+            self.exist_minimap()
+            mask = cv.compare(total_img, self.loc_scr, cv.CMP_EQ )
+            total_mask = cv.bitwise_and(total_mask, mask )
+            total_img = cv.bitwise_and(total_mask, total_img )
             time.sleep(dt)
         time.sleep(0.1)
         for i in range(n):
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, dy, 0, 0)
-            mask = cv.compare(total, self.take_screenshot(rect), cv.CMP_EQ )
-            total = cv.bitwise_and(total, mask )
+            self.get_screen()
+            self.exist_minimap()
+            mask = cv.compare(total_img, self.loc_scr, cv.CMP_EQ )
+            total_mask = cv.bitwise_and(total_mask, mask )
+            total_img = cv.bitwise_and(total_mask, total_img )
             time.sleep(dt)
-        minimap = cv.bitwise_and(total, mask )
-        cv.imwrite('imgs/fine_minimap.jpg', minimap)
-        return minimap
+
+        self.loc_scr = total_img
+        cv.imwrite('imgs/fine_minimap.jpg', total_img)
+        cv.imwrite('imgs/fine_mask.jpg', total_mask)
+        return total_img, total_mask
 
     def get_bw_map(self, gs=1, sbl=0):
         yellow = np.array([145, 192, 220])
@@ -539,6 +553,16 @@ class UniverseUtils:
         # 检测关键点和计算描述符
         keypoints, descriptors = orb.detectAndCompute(img, None)
         return descriptors
+
+    def match_two(self, img1, img2):
+        key1 = self.extract_features(img1)
+        key2 = self.extract_features(img2)
+        matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+        matches = matcher.match(key1, key2)
+        similarity_score = len(matches) / max(len(key1), len(key2))
+        log.info(f'相似度：{similarity_score}')
+        return
+
 
     def match_scr(self, img):
         key = self.extract_features(img)
