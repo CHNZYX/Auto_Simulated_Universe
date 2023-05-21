@@ -6,6 +6,7 @@ class Config:
     def __init__(self):
         self.order_text = "1 2 3 4"
         self.angle = "1.0"
+        self.diffi = 2
         self.text = "info.txt"
         self.read()
 
@@ -20,8 +21,12 @@ class Config:
     def read(self):
         if os.path.exists(self.text):
             with open(self.text, "r", encoding="utf-8") as f:
-                self.order_text = f.readline().strip()
-                self.angle = f.readline().strip()
+                try:
+                    self.order_text = f.readline().strip()
+                    self.angle = f.readline().strip()
+                    self.diffi = int(f.readline().strip())
+                except:
+                    pass
         else:
             self.save()
 
