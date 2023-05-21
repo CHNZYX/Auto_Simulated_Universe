@@ -131,7 +131,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             if self.big_map_c == 0:
                 self.big_map_c = 1
-                time.sleep(2)
+                time.sleep(3)
                 self.get_screen()
                 self.exist_minimap()
                 if self.find:
@@ -276,14 +276,11 @@ class SimulatedUniverse(UniverseUtils):
         self.route()
 
 
-def main():
-    find = 1
-    debug = 0
-    for i in sys.argv[1:]:
-        exec(i.split('-')[-1])
-    su = SimulatedUniverse(find, debug)
-    su.start()
-
-
-if __name__ == '__main__':
-    main()
+find = 1
+debug = 0
+for i in sys.argv[1:]:
+    exec(i.split('-')[-1])
+    print(i.split('-')[-1])
+    print(find)
+su = SimulatedUniverse(find, debug)
+su.route()
