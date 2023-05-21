@@ -5,3 +5,4 @@ build/
 dist/
 *.spec
 info.txt
+log.txt

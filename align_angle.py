@@ -7,7 +7,8 @@ import win32con
 import win32gui
 
 from utils.config import config
-from utils.utils import Universe_Utils
+from utils.log import log
+from utils.utils import UniverseUtils
 
 
 def get_angle(su):
@@ -21,8 +22,8 @@ def get_angle(su):
 
 
 def main():
-    print("开始校准")
-    su = Universe_Utils()
+    log.info("开始校准")
+    su = UniverseUtils()
     su.multi = 1
     init_ang = get_angle(su)
     lst_ang = init_ang
@@ -50,7 +51,7 @@ def main():
         win32gui.SetForegroundWindow(su.my_nd)
     except pywintypes.error:
         pass
-    print('校准完成')
+    log.info('校准完成')
 
 
 if __name__ == '__main__':
