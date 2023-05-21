@@ -19,6 +19,7 @@ from utils.log import log
 class UniverseUtils:
     def __init__(self):
         self.multi = config.multi
+        self.diffi = config.diffi
         self.my_nd = win32gui.GetForegroundWindow()
         self.game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
         try:

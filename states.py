@@ -17,13 +17,12 @@ version = "v3.64"
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug,diffi):
+    def __init__(self, find, debug):
         super().__init__()
         self._stop = False
         self.img_set = []
         self.find = find
         self.debug = debug
-        self.diffi = diffi
         set_debug(debug)
         self.lst_changed = time.time()
         log.info("加载地图")
@@ -308,7 +307,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}")
-    su = SimulatedUniverse(find, debug, d)
+    su = SimulatedUniverse(find, debug)
     try:
         su.start()
     except Exception:
@@ -320,7 +319,6 @@ def main():
 if __name__ == '__main__':
     find = 1
     debug = 0
-    d = 2
     for i in sys.argv[1:]:
         exec(i.split('-')[-1])
     main()
