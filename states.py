@@ -69,7 +69,7 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             # cv.imwrite('imgs/scr.jpg',self.screen)
-            # self.click_target('imgs/mask_z.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            #self.click_target('imgs/fate_3.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res = self.normal()
             if res == 0:
                 if self.threshold > 0.95:
@@ -134,7 +134,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             if self.big_map_c == 0:
                 self.big_map_c = 1
-                time.sleep(3)
+                time.sleep(2.2)
                 self.get_screen()
                 self.exist_minimap()
                 if self.find:
@@ -193,7 +193,7 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.3885, 0.4972))
         elif self.check('fate_2', 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
-            time.sleep(7)
+        elif self.check('fate_3', 0.9422,0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
         elif self.check('arrow', 0.1828, 0.5000, mask='mask_event'):
@@ -260,6 +260,7 @@ class SimulatedUniverse(UniverseUtils):
     def stop(self, *_, **__):
         log.info("尝试停止运行")
         self._stop = True
+        exit()
 
     def check_f8(self):
         """检测F8键是否被按下，如果按下则停止运行"""
