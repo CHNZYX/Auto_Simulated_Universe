@@ -118,6 +118,8 @@ class SimulatedUniverse(UniverseUtils):
                     self.press('f')
                     self.battle = 0
             else:
+                if self.debug:
+                    print(self.check('tele', 0.3719, 0.5083),self.check('exit', 0.3719, 0.5083))
                 if self.check('tele', 0.3719, 0.5083) or self.check('exit', 0.3719, 0.5083):
                     # self.get_map()
                     self.init_map()
@@ -166,10 +168,11 @@ class SimulatedUniverse(UniverseUtils):
                     pyautogui.keyUp('w')
                     self.get_screen()
             self.lst_tm = time.time()
-            if time.time() - self.lst_changed >= 90 and self.find == 1 and self.debug == 0:
+            if time.time() - self.lst_changed >= 25 and self.find == 1 and self.debug == 0:
                 self.press('esc')
                 time.sleep(2)
-                self.click((0.2708, 0.1324))
+                self.click((0.2927, 0.2602))
+                #self.click((0.2708, 0.1324))
             else:
                 self.get_direc()
             return 2
