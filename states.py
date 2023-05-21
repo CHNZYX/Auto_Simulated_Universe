@@ -204,6 +204,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('fate_3', 0.9422,0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
+            self.init_map()
         elif self.check('arrow', 0.1828, 0.5000, mask='mask_event'):
             self.click((self.tx, self.ty))
         elif self.check('arrow_1', 0.1828, 0.5000, mask='mask_event'):
