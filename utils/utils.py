@@ -216,8 +216,12 @@ class UniverseUtils:
         bw_map[np.sum((local_screen - white) ** 2, axis=-1) <= 800 + self.find * 1600] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
-        bw_map = bw_map[int(shape[0] * 0.5) - 68:int(shape[0] * 0.5) + 108,
-                 int(shape[1] * 0.5) - 48:int(shape[1] * 0.5) + 128]
+        if self.find==0:
+            bw_map = bw_map[int(shape[0] * 0.5) - 68:int(shape[0] * 0.5) + 108,
+                    int(shape[1] * 0.5) - 48:int(shape[1] * 0.5) + 128]
+        else:
+            bw_map = bw_map[int(shape[0] * 0.5) - 68-2:int(shape[0] * 0.5) + 108-2,
+                    int(shape[1] * 0.5) - 48-8:int(shape[1] * 0.5) + 128-8]
         for i in range(bw_map.shape[0]):
             for j in range(bw_map.shape[1]):
                 if ((i - 88) ** 2 + (j - 88) ** 2) > 85 ** 2:
@@ -227,7 +231,7 @@ class UniverseUtils:
             cv.imwrite('imgs/sbl.jpg', bw_map)
             for i in range(-20, 21):
                 for j in range(-20, 21):
-                    if bw_map[88 + i, 88 + j] == 150 and i ** 2 + j ** 2 < ii ** 2 + jj ** 2:
+                    if np.sum(bw_map[88 + i-1:88 + i+2, 88 + j-1:88 + j+2]) == 150*9 and i ** 2 + j ** 2 < ii ** 2 + jj ** 2:
                         ii, jj = i, j
             bw_map[bw_map == 150] = 0
             if ii ** 2 + jj ** 2 < self.his_loc[0] ** 2 + self.his_loc[1] ** 2:
@@ -319,11 +323,11 @@ class UniverseUtils:
                 bw_map = self.get_bw_map(sbl=(i <= 4 and bl))
                 self.get_loc(bw_map, fbw=1)
                 if i <= 4 and bl:
-                    fx = 0.2 / (ctm - ltm) * (self.real_loc[0] - sloc[0])
-                    fy = 0.2 / (ctm - ltm) * (self.real_loc[1] - sloc[1])
+                    fx = 0.4 / (ctm - ltm) * (self.real_loc[0] - sloc[0])
+                    fy = 0.4 / (ctm - ltm) * (self.real_loc[1] - sloc[1])
                     self.offset = (int(fx), int(fy))
-                    # print(self.offset,self.his_loc)
-                else:
+                    #print(self.offset,self.his_loc)
+                if i > 4 or bl == 0:
                     self.real_loc = (self.real_loc[0] + self.his_loc[0] + self.offset[0],
                                      self.real_loc[1] + self.his_loc[1] + self.offset[1])
                 ang = math.atan2(loc[0] - self.real_loc[0], loc[1] - self.real_loc[1]) / math.pi * 180
@@ -334,6 +338,7 @@ class UniverseUtils:
                     sub -= 360
                 # if (abs(sub)<10 and ds>10 and i>2) or i==1:
                 if i > 4 or bl == 0:
+                    #print(sub,loc,self.real_loc,self.ang,ang)
                     self.mouse_move(sub)
                     self.ang = ang
                 self.big_map[self.real_loc[0] - 1:self.real_loc[0] + 2, self.real_loc[1] - 1:self.real_loc[1] + 2] = 49
@@ -426,7 +431,7 @@ class UniverseUtils:
                         self.big_map[self.now_loc[0] - 88 + i, self.now_loc[1] - 88 + j] += 50
         # cv.imwrite('imgs/tmps/tmp'+str(self.now_loc[0])+'_'+str(self.now_loc[1])+'_.jpg',bw_map)
 
-    def get_loc(self, bw_map, rg=12, fbw=0):
+    def get_loc(self, bw_map, rg=8, fbw=0):
         rg += self.loc_off // 3
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)
