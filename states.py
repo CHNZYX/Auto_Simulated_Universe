@@ -218,8 +218,18 @@ class SimulatedUniverse(UniverseUtils):
 
     def find_latest_modified_file(self, folder_path):
         files = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.split('/')[-1][0] == 'm']
-        sorted_files = sorted(files, key=lambda file: os.path.getmtime(file), reverse=True)
-        return sorted_files[0]
+        nx,ny=4096,4096
+        file=''
+        for i in files:
+            try:
+                x,y=i.split('_')[-3:-1]
+                x,y=int(x),int(y)
+                if x<nx or y<ny:
+                    nx,ny=x,y
+                    file=i
+            except: 
+                pass
+        return file
 
     def get_target(self, pth):
         img = cv.imread(pth)
