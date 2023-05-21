@@ -256,14 +256,14 @@ class UniverseUtils:
             self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
-        b_map=(np.sum((local_screen - gray) ** 2, axis=-1) <= 3200)
+        b_map=(np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600)
         bb_map=deepcopy(b_map)
         b_map[2:]|=bb_map[:-2]|bb_map[1:-1]
         b_map[:-2]|=bb_map[2:]|bb_map[1:-1]
         b_map[:,2:]|=bb_map[:,:-2]|bb_map[:,1:-1]
         b_map[:,:-2]|=bb_map[:,2:]|bb_map[:,1:-1]
-        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 1600 + self.find * 800] = 200
-        bw_map[(np.sum((local_screen - white) ** 2, axis=-1) <= 2400 + self.find * 800)&b_map] = 255
+        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 1600 + self.find * 1600] = 200
+        bw_map[(np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)&b_map] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
         if self.find==0:
