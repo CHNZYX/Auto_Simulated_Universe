@@ -207,13 +207,19 @@ class UniverseUtils:
         black = np.array([0, 0, 0])
         white = np.array([210, 210, 210])
         sblue = np.array([222, 198, 121])
+        gray = np.array([55, 55, 55])
         shape = (int(self.scx * 190), int(self.scx * 190))
         if gs:
             self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
-        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 1600] = 200
-        bw_map[np.sum((local_screen - white) ** 2, axis=-1) <= 800 + self.find * 1600] = 255
+        b_map=(np.sum((local_screen - gray) ** 2, axis=-1) <= 800 + self.find * 1800)
+        b_map[1:]|=b_map[:-1]
+        b_map[:-1]|=b_map[1:]
+        b_map[:,1:]|=b_map[:,:-1]
+        b_map[:,:-1]|=b_map[:,1:]
+        bw_map[(np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 1800)&b_map] = 200
+        bw_map[(np.sum((local_screen - white) ** 2, axis=-1) <= 800 + self.find * 1800)&b_map] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
         if self.find==0:
@@ -301,11 +307,11 @@ class UniverseUtils:
                 self.mouse_move(sub)
                 self.ang = ang
             if type == 1:
-                ps = 8
+                ps = 6
             elif type == 0:
-                ps = 6
+                ps = 4
             else:
-                ps = 6
+                ps = 4
             pyautogui.keyDown('w')
             time.sleep(0.5)
             ltm = time.time()
@@ -357,16 +363,7 @@ class UniverseUtils:
                         break
                 if nds <= ps or self.check('f', 0.3901, 0.5093) or self.check('run', 0.9844, 0.7889,
                                                                               threshold=0.93) == 0:
-                    if self.check('f', 0.3901, 0.5093):
-                        pyautogui.keyUp('w')
-                        time.sleep(0.4)
-                        self.get_screen()
-                        if self.check('f', 0.3901, 0.5093):
-                            break
-                        else:
-                            pyautogui.keyDown('w')
-                    else:
-                        pyautogui.keyUp('w')
+                    pyautogui.keyUp('w')
                     break
                 ds = nds
                 dls.append(ds)
@@ -381,7 +378,7 @@ class UniverseUtils:
                 self.mouse_move(180)
                 self.press('w', 0.2)
             if type == 2 or type == 3:
-                key_list = ['sasddww', 'sdsaaww', 'wwasddw', 'sssssss']
+                key_list = ['sasddww', 'sdsaaww', 'sssssss']
                 key = key_list[random.randint(0, 2)]
                 for i in range(7):
                     time.sleep(0.4)
@@ -396,7 +393,7 @@ class UniverseUtils:
                         if i == 0:
                             pyautogui.click()
                             time.sleep(1)
-                        self.press(key[i], 0.4 - 0.15 * (i == 0))
+                        self.press(key[i], 0.4)
                         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
                 if type == 2:
                     self.tries += 1

@@ -69,7 +69,7 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             # cv.imwrite('imgs/scr.jpg',self.screen)
-            #self.click_target('imgs/fate_3.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            #self.click_target('imgs/bonus.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res = self.normal()
             if res == 0:
                 if self.threshold > 0.95:
@@ -122,7 +122,8 @@ class SimulatedUniverse(UniverseUtils):
                 if self.check('tele', 0.3719, 0.5083) or self.check('exit', 0.3719, 0.5083):
                     # self.get_map()
                     self.init_map()
-                self.press('f')
+                if self.check('bonus',0.3578,0.5083)==0:
+                    self.press('f')
                 self.battle = 0
             return 1
         elif self.check('fail', 0.5073, 0.0676):
@@ -141,6 +142,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.now_map = self.match_scr(self.loc_scr)
                     self.now_pth = 'imgs/maps/' + self.now_map + '/'
                     files = self.find_latest_modified_file(self.now_pth)
+                    print('地图文件：',files)
                     self.big_map = cv.imread(files, cv.IMREAD_GRAYSCALE)
                     xy = files.split('/')[-1].split('_')[1:3]
                     self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
@@ -209,6 +211,10 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('strange', 0.9417, 0.9481):
             self.click((0.5 + random.randint(0, 2) * 0.1, 0.5))
             self.click((0.1365, 0.1093))
+        elif self.check('drop',0.9406,0.9491):
+            self.click((0.4714,0.5500))
+            time.sleep(0.3)
+            self.click((0.1339,0.1028))
         # elif self.check('run',0.9844,0.7889,threshold=0.95):
         #    return 2
         else:
