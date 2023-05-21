@@ -184,7 +184,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('init', 0.9276, 0.6731):
             self.click((0.3448, 0.4926))
         elif self.check('begin', 0.3339, 0.7741):
-            self.click((0.9375,0.8565-0.01*(self.diffi-1)))
+            self.click((0.9375,0.8565-0.1*(self.diffi-1)))
             self.click((0.1083, 0.1009))
         elif self.check('start', 0.6594, 0.8389):
             dx = 0.9266 - 0.8552
