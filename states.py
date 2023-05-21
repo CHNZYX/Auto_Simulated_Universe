@@ -1,3 +1,4 @@
+import signal
 import threading
 
 import keyboard
@@ -58,6 +59,8 @@ class SimulatedUniverse(UniverseUtils):
             Text = win32gui.GetWindowText(hwnd)
             warn_game = False
             while Text != '崩坏：星穹铁道':
+                if self._stop:
+                    raise KeyboardInterrupt
                 if not warn_game:
                     warn_game = True
                     log.warning("等待游戏窗口")
@@ -254,7 +257,7 @@ class SimulatedUniverse(UniverseUtils):
                         ry += y
         return (i + rx / rt, j + ry / rt)
 
-    def stop(self):
+    def stop(self, *_, **__):
         log.info("尝试停止运行")
         self._stop = True
 
@@ -267,20 +270,36 @@ class SimulatedUniverse(UniverseUtils):
                 break
             elif self._stop:
                 break
-            time.sleep(0.5)
+            try:
+                time.sleep(0.5)
+            except KeyboardInterrupt:
+                self.stop()
+                break
 
     def start(self):
         self._stop = False
         t = threading.Thread(target=self.check_f8)
         t.start()
-        self.route()
+        signal.signal(signal.SIGINT, self.stop)
+        try:
+            self.route()
+        except KeyboardInterrupt:
+            if not self._stop:
+                self.stop()
 
 
-find = 1
-debug = 0
-for i in sys.argv[1:]:
-    exec(i.split('-')[-1])
-    print(i.split('-')[-1])
-    print(find)
-su = SimulatedUniverse(find, debug)
-su.route()
+def main():
+    log.info(f"find: {find}, debug: {debug}")
+    su = SimulatedUniverse(find, debug)
+    try:
+        su.start()
+    finally:
+        su.stop()
+
+
+if __name__ == '__main__':
+    find = 1
+    debug = 0
+    for i in sys.argv[1:]:
+        exec(i.split('-')[-1])
+    main()
