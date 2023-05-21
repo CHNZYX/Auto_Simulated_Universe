@@ -160,7 +160,6 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
                 else:
                     pyautogui.keyDown('w')
-                    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 3000)
                     time.sleep(0.2)
                     pyautogui.keyUp('w')
                     self.get_screen()
