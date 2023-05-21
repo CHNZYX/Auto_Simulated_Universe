@@ -214,11 +214,11 @@ class UniverseUtils:
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
         b_map=(np.sum((local_screen - gray) ** 2, axis=-1) <= 1600 + self.find * 800)
         bb_map=deepcopy(b_map)
-        b_map[1:]|=bb_map[:-1]
-        b_map[:-1]|=bb_map[1:]
-        b_map[:,1:]|=bb_map[:,:-1]
-        b_map[:,:-1]|=bb_map[:,1:]
-        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 1600 + self.find * 800] = 200
+        b_map[2:]|=bb_map[:-2]|bb_map[1:-1]
+        b_map[:-2]|=bb_map[2:]|bb_map[1:-1]
+        b_map[:,2:]|=bb_map[:,:-2]|bb_map[:,1:-1]
+        b_map[:,:-2]|=bb_map[:,2:]|bb_map[:,1:-1]
+        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 1200 + self.find * 800] = 200
         bw_map[(np.sum((local_screen - white) ** 2, axis=-1) <= 1600 + self.find * 800)&b_map] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
