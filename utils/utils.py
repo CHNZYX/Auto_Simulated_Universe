@@ -240,21 +240,6 @@ class UniverseUtils:
             total_mask = cv.bitwise_and(total_mask, mask )
             total_img = cv.bitwise_and(total_mask, total_img )
             time.sleep(dt)
-        total_mask[np.sum(np.abs(total_mask - [255,255,255]), axis=-1) > 128] = [0,0,0]
-<<<<<<< HEAD
-        for i in range(total_mask.shape[0]):
-            for j in range(total_mask.shape[1]):
-                if ((i - total_mask.shape[0]//2) ** 2 + (j - total_mask.shape[1]//2) ** 2) > (total_mask.shape[0]//2-16) ** 2:
-                    total_mask[i, j] = [0,0,0]
-        kernele = np.ones((3,3),np.uint8)
-        kerneld = np.ones((5,5),np.uint8)
-        total_mask = cv.erode(total_mask,kernele,iterations=2)
-        total_mask = cv.dilate(total_mask,kerneld,iterations=2)
-        img = cv.bitwise_and(total_mask, img )
-
-        cv.imwrite('imgs/fine_minimap.jpg', img)
-=======
-        total_img = cv.bitwise_and(total_mask, total_img )
 
         cv.imwrite('imgs/fine_minimap.jpg', total_img)
 >>>>>>> 1abcd7fc09582ba4ddf8ea62eac22335c1dcb42c
