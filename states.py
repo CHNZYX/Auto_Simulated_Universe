@@ -142,10 +142,10 @@ class SimulatedUniverse(UniverseUtils):
         if self.check('run', 0.9844, 0.7889, threshold=0.93):
             self.lst_changed = bk_lst_changed
             self.battle = 0
-            time.sleep(2.2)
-            self.get_screen()
-            self.exist_minimap()
             if self.big_map_c == 0:
+                time.sleep(2.2)
+                self.get_screen()
+                self.exist_minimap()
                 self.big_map_c = 1
                 if self.find:
                     self.now_map = self.match_scr(self.loc_scr)

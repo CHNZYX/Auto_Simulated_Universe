@@ -262,7 +262,7 @@ class UniverseUtils:
         b_map[:-2]|=bb_map[2:]|bb_map[1:-1]
         b_map[:,2:]|=bb_map[:,:-2]|bb_map[:,1:-1]
         b_map[:,:-2]|=bb_map[:,2:]|bb_map[:,1:-1]
-        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 1600 + self.find * 1600] = 200
+        bw_map[np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 800] = 200
         bw_map[(np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)&b_map] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
@@ -319,15 +319,15 @@ class UniverseUtils:
         shape = (int(self.scx * 190), int(self.scx * 190))
         local_screen = self.get_local(0.9333, 0.8657, shape)
         local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
-        self.ang = 360 - self.get_now_direc(local_screen) - 90
         bw_map = self.get_bw_map(gs=0)
         cv.imwrite('imgs/tmp2.jpg', bw_map)
         self.loc_off = 0
-        self.get_loc(bw_map, 35 - self.find * 10)
+        self.get_loc(bw_map, 40 - self.find * 15)
         if self.find == 0:
             self.write_map(bw_map)
             self.get_map()
         else:
+            self.ang = 360 - self.get_now_direc(local_screen) - 90
             mn_dis = 100000
             loc = 0
             type = -1
