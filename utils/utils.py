@@ -424,8 +424,8 @@ class UniverseUtils:
                         self.big_map[self.now_loc[0] - 88 + i, self.now_loc[1] - 88 + j] += 50
         # cv.imwrite('imgs/tmps/tmp'+str(self.now_loc[0])+'_'+str(self.now_loc[1])+'_.jpg',bw_map)
 
-    def get_loc(self, bw_map, rg=10, fbw=0):
-        rg += self.loc_off // 2
+    def get_loc(self, bw_map, rg=12, fbw=0):
+        rg += self.loc_off // 3
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)
         tpl = (self.now_loc[0], self.now_loc[1])
