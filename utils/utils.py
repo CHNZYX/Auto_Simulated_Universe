@@ -219,9 +219,10 @@ class UniverseUtils:
         # total = self.take_screenshot(rect)
         self.get_screen()
         self.exist_minimap()
+        img = deepcopy(self.loc_scr)
         total_img = self.loc_scr
         total_mask = 255 * np.array(total_img.shape)
-        n = 5
+        n = 4
         for i in range(n):
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -dy, 0, 0)
             self.get_screen()
@@ -231,17 +232,32 @@ class UniverseUtils:
             total_img = cv.bitwise_and(total_mask, total_img )
             time.sleep(dt)
         time.sleep(0.1)
-        for i in range(n):
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, dy, 0, 0)
+        for i in range(n//2):
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 2*dy, 0, 0)
             self.get_screen()
             self.exist_minimap()
             mask = cv.compare(total_img, self.loc_scr, cv.CMP_EQ )
             total_mask = cv.bitwise_and(total_mask, mask )
             total_img = cv.bitwise_and(total_mask, total_img )
             time.sleep(dt)
+        total_mask[np.sum(np.abs(total_mask - [255,255,255]), axis=-1) > 128] = [0,0,0]
+<<<<<<< HEAD
+        for i in range(total_mask.shape[0]):
+            for j in range(total_mask.shape[1]):
+                if ((i - total_mask.shape[0]//2) ** 2 + (j - total_mask.shape[1]//2) ** 2) > (total_mask.shape[0]//2-16) ** 2:
+                    total_mask[i, j] = [0,0,0]
+        kernele = np.ones((3,3),np.uint8)
+        kerneld = np.ones((5,5),np.uint8)
+        total_mask = cv.erode(total_mask,kernele,iterations=2)
+        total_mask = cv.dilate(total_mask,kerneld,iterations=2)
+        img = cv.bitwise_and(total_mask, img )
 
-        self.loc_scr = total_img
+        cv.imwrite('imgs/fine_minimap.jpg', img)
+=======
+        total_img = cv.bitwise_and(total_mask, total_img )
+
         cv.imwrite('imgs/fine_minimap.jpg', total_img)
+>>>>>>> 1abcd7fc09582ba4ddf8ea62eac22335c1dcb42c
         cv.imwrite('imgs/fine_mask.jpg', total_mask)
         return total_img, total_mask
 
@@ -351,11 +367,11 @@ class UniverseUtils:
                 self.mouse_move(sub)
                 self.ang = ang
             if type == 1:
-                ps = 6
+                ps = 8
             elif type == 0:
-                ps = 4
+                ps = 6
             else:
-                ps = 4
+                ps = 6
             pyautogui.keyDown('w')
             time.sleep(0.5)
             ltm = time.time()
@@ -568,16 +584,17 @@ class UniverseUtils:
         return
 
 
-    def match_scr(self, img):
+    def match_scr(self, img, mask):
         key = self.extract_features(img)
         sim = -1
         ans = -1
         for i, j in self.img_set:
             matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
             try:
-                matches = matcher.match(key, j)
+                matches = matcher.match(key, self.extract_features(cv.bitwise_and(mask, j)))
                 similarity_score = len(matches) / max(len(key), len(j))
                 if similarity_score > sim:
+                    cv.imwrite('imgs/minimap_high.jpg',cv.bitwise_and(mask, j))
                     sim = similarity_score
                     ans = i
             except:
