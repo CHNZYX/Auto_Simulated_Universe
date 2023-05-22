@@ -123,7 +123,7 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         elif self.check('f', 0.3901, 0.5093):
             is_killed=0
-            time.sleep(0.3)
+            time.sleep(0.45)
             self.get_screen()
             if self.check('f', 0.3901, 0.5093):
                 if self.check('quit', 0.3563, 0.5120):
