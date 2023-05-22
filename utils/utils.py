@@ -422,7 +422,7 @@ class UniverseUtils:
             if type == 2 or type == 3:
                 key_list = ['sasddww', 'sdsaaww', 'sssw']
                 key = key_list[random.randint(0, 2)]
-                for i in range(len(key)):
+                for i in range(-1,len(key)):
                     time.sleep(0.4)
                     self.get_screen()
                     if self.check('f', 0.3901, 0.5093):
@@ -432,10 +432,11 @@ class UniverseUtils:
                                 self.target.remove(j)
                         break
                     else:
-                        if i == 0:
+                        if i == -1:
                             pyautogui.click()
-                            time.sleep(1)
-                        self.press(key[i], 0.4)
+                            time.sleep(1.6)
+                        else:
+                            self.press(key[i], 0.25)
                 if type == 2:
                     self.tries += 1
                     if self.tries == 4:
