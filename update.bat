@@ -1,6 +1,7 @@
 @echo off
 setlocal
-git reset --hard HEAD
+git stash
 git pull
+git stash apply
 endlocal
 pause
