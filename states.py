@@ -194,7 +194,6 @@ class SimulatedUniverse(UniverseUtils):
                     self.click((0.2927, 0.2602))
                 else:
                     self.click((0.2708, 0.1324))
-                time.sleep(8)
             else:
                 self.get_direc()
             return 2
