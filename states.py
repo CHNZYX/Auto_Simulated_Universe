@@ -14,7 +14,7 @@ from utils.map_log import map_log
 from utils.utils import UniverseUtils
 import os
 
-version = "v3.75"
+version = "v4.0"
 
 
 class SimulatedUniverse(UniverseUtils):
