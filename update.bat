@@ -1,6 +1,6 @@
 @echo off
 setlocal
-git stash
+git stash push -- info.txt
 git pull
 git stash apply
 endlocal
