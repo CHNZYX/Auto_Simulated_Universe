@@ -198,6 +198,7 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.2062, 0.2054))
         elif self.check('init', 0.9276, 0.6731):
             self.click((0.3448, 0.4926))
+            self.init_map()
         elif self.check('begin', 0.3339, 0.7741):
             self.click((0.9375,0.8565-0.1*(self.diffi-1)))
             self.click((0.1083, 0.1009))
@@ -215,7 +216,6 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('fate_3', 0.9422,0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
-            self.init_map()
         elif self.check('arrow', 0.1828, 0.5000, mask='mask_event'):
             self.click((self.tx, self.ty))
         elif self.check('arrow_1', 0.1828, 0.5000, mask='mask_event'):
