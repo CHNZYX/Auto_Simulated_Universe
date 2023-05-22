@@ -70,7 +70,7 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             # cv.imwrite('imgs/scr.jpg',self.screen) #0.9375,0.8565 0.9385,0.7574 
-            #self.click_target('imgs/tp.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            #self.click_target('imgs/mask_echo.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res = self.normal()
             if res == 0:
                 if self.threshold > 0.95:
@@ -101,7 +101,15 @@ class SimulatedUniverse(UniverseUtils):
                 self.get_screen()
                 self.check('bless', 0.5062, 0.3157, mask='mask')
                 if self.tm > 0.96:
-                    self.click((self.tx, self.ty))
+                    time.sleep(0.2)
+                    self.get_screen()
+                    tx,ty=self.tx, self.ty
+                    if self.check('echo1',0.5047,0.4130,mask='mask_echo'):
+                        self.click((self.tx,self.ty))
+                    elif self.check('echo2',0.5047,0.4130,mask='mask_echo'):
+                        self.click((self.tx,self.ty))
+                    else:
+                        self.click((tx, ty))
                     ok = 1
                     break
             if ok == 0:
