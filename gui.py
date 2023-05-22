@@ -128,6 +128,9 @@ def choose_view(page: Page):
                             options=[
                                 ft.dropdown.Option("1"),
                                 ft.dropdown.Option("2"),
+                                ft.dropdown.Option("3"),
+                                ft.dropdown.Option("4"),
+                                ft.dropdown.Option("5"),
                             ],
                             value=config.difficult,
                             on_change=difficult_changed,
