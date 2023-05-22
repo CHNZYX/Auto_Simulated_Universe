@@ -10,6 +10,7 @@ import win32gui
 import random
 import sys
 from utils.log import log, set_debug
+from utils.map_log import map_log
 from utils.utils import UniverseUtils
 import os
 
@@ -19,6 +20,8 @@ version = "v3.75"
 class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug):
         super().__init__()
+        self.now_map = None
+        self.now_map_sim = None
         self._stop = False
         self.img_set = []
         self.find = find
@@ -128,6 +131,7 @@ class SimulatedUniverse(UniverseUtils):
                         print(self.tm)
                     if self.check('tele', 0.3719, 0.5083, threshold=0.965) or self.check('exit', 0.3719, 0.5083, threshold=0.965):
                         # self.get_map()
+                        map_log.info(f'地图{self.now_map}已完成,相似度{self.now_map_sim}')
                         self.init_map()
                     is_killed=self.check('bonus',0.3578,0.5083) or self.check('rescure',0.3578,0.5083) or self.check('download',0.3578,0.5083)
                     if is_killed==0:
@@ -148,7 +152,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.exist_minimap()
                 self.big_map_c = 1
                 if self.find:
-                    self.now_map = self.match_scr(self.loc_scr)
+                    self.now_map,self.now_map_sim = self.match_scr(self.loc_scr)
                     self.now_pth = 'imgs/maps/' + self.now_map + '/'
                     files = self.find_latest_modified_file(self.now_pth)
                     print('地图文件：',files)
@@ -175,6 +179,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             if time.time() - self.lst_changed >= 25 and self.find == 1 and self.debug == 0:
+                map_log.error(f'地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进')
                 self.press('esc')
                 time.sleep(2)
                 if random.randint(0,2)!=2:
