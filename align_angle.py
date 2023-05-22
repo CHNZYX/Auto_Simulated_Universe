@@ -13,6 +13,7 @@ from utils.utils import UniverseUtils
 
 def get_angle(su):
     su.press('w', 0.2)
+    time.sleep(0.3)
     su.get_screen()
     blue = np.array([234, 191, 4])
     shape = (int(su.scx * 190), int(su.scx * 190))
@@ -39,6 +40,7 @@ def main():
         ang_list.append(sub)
         lst_ang = now_ang
     ang_list = np.array(ang_list)
+    print(ang_list)
     ax = 0
     ay = 0
     for i in ang_list:
