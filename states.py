@@ -155,6 +155,8 @@ class SimulatedUniverse(UniverseUtils):
             self.lst_changed = bk_lst_changed
             self.battle = 0
             if self.big_map_c == 0:
+                while 1:              
+                    if np.mean(self.get_screen()) >30: break
                 time.sleep(2.2)
                 self.get_screen()
                 self.exist_minimap()
