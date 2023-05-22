@@ -419,8 +419,6 @@ class UniverseUtils:
                 time.sleep(1)
                 pyautogui.click()
                 time.sleep(1)
-                self.mouse_move(180)
-                self.press('w', 0.2)
             if type == 2 or type == 3:
                 key_list = ['sasddww', 'sdsaaww', 'sssw']
                 key = key_list[random.randint(0, 2)]
