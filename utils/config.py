@@ -7,7 +7,7 @@ class Config:
         self.order_text = "1 2 3 4"
         self.angle = "1.0"
         self.difficult = "2"
-        self.allow_difficult = [1, 2]
+        self.allow_difficult = [1, 2, 3, 4, 5]
         self.text = "info.txt"
         self.read()
 
