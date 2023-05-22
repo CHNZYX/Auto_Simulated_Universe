@@ -188,7 +188,7 @@ class SimulatedUniverse(UniverseUtils):
                     pyautogui.keyUp('w')
                     self.get_screen()
             self.lst_tm = time.time()
-            if time.time() - self.lst_changed >= 25 and self.find == 1 and self.debug == 0:
+            if time.time() - self.lst_changed >= 35 and self.find == 1 and self.debug == 0:
                 map_log.error(f'地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进')
                 self.press('esc')
                 time.sleep(2)
