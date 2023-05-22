@@ -362,7 +362,7 @@ class UniverseUtils:
             bw_map = self.get_bw_map(sbl=bl)
             self.get_loc(bw_map, rg=18)
             sloc = self.real_loc
-            self.big_map[self.real_loc[0] - 1:self.real_loc[0] + 2, self.real_loc[1] - 1:self.real_loc[1] + 2] = 49
+            #self.big_map[self.real_loc[0] - 1:self.real_loc[0] + 2, self.real_loc[1] - 1:self.real_loc[1] + 2] = 49
             ds = self.get_dis(self.real_loc, loc)
             dls = [100000, 100000, 100000, ds]
             sds = ds
