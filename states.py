@@ -11,6 +11,7 @@ import random
 import sys
 from utils.log import log, set_debug
 from utils.map_log import map_log
+from utils.update_map import update_map
 from utils.utils import UniverseUtils
 import os
 
@@ -155,7 +156,7 @@ class SimulatedUniverse(UniverseUtils):
             self.lst_changed = bk_lst_changed
             self.battle = 0
             if self.big_map_c == 0:
-                while 1:              
+                while 1:
                     if np.mean(self.get_screen()) >30: break
                 time.sleep(2.2)
                 self.get_screen()
@@ -260,7 +261,7 @@ class SimulatedUniverse(UniverseUtils):
                 if x<nx or y<ny:
                     nx,ny=x,y
                     file=i
-            except: 
+            except:
                 pass
         return file
 
@@ -333,6 +334,10 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
+    try:
+        update_map()
+    except Exception:
+        print("更新地图失败")
     log.info(f"find: {find}, debug: {debug}")
     su = SimulatedUniverse(find, debug)
     try:
