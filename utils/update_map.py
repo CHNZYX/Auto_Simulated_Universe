@@ -70,8 +70,6 @@ def set_local_sha(sha):
     # 判断是否有sha信息,没有则填补空行
     if len(lines) < 4:
         lines.extend(['\n'] * (4 - len(lines)))
-        with open(config_path, 'w') as file:
-            file.writelines(lines)
     lines[3] = sha + '\n'
     with open(config_path, 'w') as file:
         file.writelines(lines)
@@ -108,13 +106,14 @@ def update_map():
     if remote_sha == local_sha:
         print("map无需更新")
         return
-    map_path = root_path + '\\imgs\\maps'
+    map_path = root_path + 'imgs\\maps'
     # 下载map仓库并解压
     sync_github_repo(repo_url, root_path)
     print("下载完成")
     # 找出下载的map文件夹
-    chn_folders = [item for item in os.listdir(root_path) if os.path.isdir(item) and item.startswith("CHNZYX-maps")]
-    downloaded_map_path = root_path + '\\' + chn_folders[0] + '\\maps'
+    t = os.listdir(root_path)
+    chn_folders = [item for item in t if item.startswith("CHNZYX")]
+    downloaded_map_path = root_path + chn_folders[0] + '\\maps'
     # 删除原有map文件夹，复制新的map文件夹
     shutil.rmtree(map_path)
     shutil.copytree(downloaded_map_path, map_path)
