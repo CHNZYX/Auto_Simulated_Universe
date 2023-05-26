@@ -376,7 +376,7 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    if not debug:
+    if not debug and find:
         update_map()
     log.info(f"find: {find}, debug: {debug}")
     su = SimulatedUniverse(find, debug)
