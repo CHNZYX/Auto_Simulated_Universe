@@ -71,6 +71,10 @@ def choose_view(page: Page):
         config.difficult = e.data
         config.save()
 
+    def fate_changed(e: ControlEvent):
+        config.fate = e.data
+        config.save()
+
     # View
     page.views.append(
         ft.View(
@@ -134,6 +138,22 @@ def choose_view(page: Page):
                             ],
                             value=config.difficult,
                             on_change=difficult_changed,
+                        ),
+                        ft.Dropdown(
+                            width=100,
+                            label="命途",
+                            hint_text="选择命途",
+                            options=[
+                                ft.dropdown.Option("存护"),
+                                ft.dropdown.Option("记忆"),
+                                ft.dropdown.Option("虚无"),
+                                ft.dropdown.Option("丰饶"),
+                                ft.dropdown.Option("巡猎"),
+                                ft.dropdown.Option("毁灭"),
+                                ft.dropdown.Option("欢愉"),
+                            ],
+                            value=config.fate,
+                            on_change=fate_changed,
                         )
                     ],
                 ),

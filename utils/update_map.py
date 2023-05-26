@@ -56,11 +56,11 @@ def get_local_sha():
     with open(config_path, 'r') as file:
         lines = file.readlines()
     # 判断是否有sha信息,没有则填补空行
-    if len(lines) < 4:
-        lines.extend(['\n'] * (4 - len(lines)))
+    if len(lines) < 5:
+        lines.extend(['\n'] * (5 - len(lines)))
         with open(config_path, 'w') as file:
             file.writelines(lines)
-    return lines[3].strip()
+    return lines[4].strip()
 
 
 def set_local_sha(sha):
@@ -68,9 +68,9 @@ def set_local_sha(sha):
     with open(config_path, 'r') as file:
         lines = file.readlines()
     # 判断是否有sha信息,没有则填补空行
-    if len(lines) < 4:
-        lines.extend(['\n'] * (4 - len(lines)))
-    lines[3] = sha + '\n'
+    if len(lines) < 5:
+        lines.extend(['\n'] * (5 - len(lines)))
+    lines[4] = sha + '\n'
     with open(config_path, 'w') as file:
         file.writelines(lines)
 
