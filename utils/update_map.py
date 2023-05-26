@@ -65,25 +65,25 @@ def get_latest_branch_sha(repo_url):
 
 def get_local_sha():
     # 读取
-    with open(config_path, 'r') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
     # 判断是否有sha信息,没有则填补空行
     if len(lines) < 5:
         lines.extend(['\n'] * (5 - len(lines)))
-        with open(config_path, 'w') as file:
+        with open(config_path, 'w', encoding='utf-8') as file:
             file.writelines(lines)
     return lines[4].strip()
 
 
 def set_local_sha(sha):
     # 读取
-    with open(config_path, 'r') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         lines = file.readlines()
     # 判断是否有sha信息,没有则填补空行
     if len(lines) < 5:
         lines.extend(['\n'] * (5 - len(lines)))
     lines[4] = sha + '\n'
-    with open(config_path, 'w') as file:
+    with open(config_path, 'w', encoding='utf-8') as file:
         file.writelines(lines)
 
 
