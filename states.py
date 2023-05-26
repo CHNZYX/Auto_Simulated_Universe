@@ -29,6 +29,8 @@ class SimulatedUniverse(UniverseUtils):
         self.find = find
         self.debug = debug
         set_debug(debug)
+        if not self.debug and self.find:
+            update_map()
         self.lst_changed = time.time()
         log.info("加载地图")
         for file in os.listdir('imgs/maps'):
@@ -376,8 +378,6 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    if not debug and find:
-        update_map()
     log.info(f"find: {find}, debug: {debug}")
     su = SimulatedUniverse(find, debug)
     try:
