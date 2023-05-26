@@ -33,6 +33,7 @@ class Config:
                 try:
                     self.difficult = str(int(f.readline().strip()))
                     self.fate = f.readline().strip()
+                    self.map_sha = f.readline().strip()
                 except:
                     pass
         else:
@@ -40,7 +41,7 @@ class Config:
 
     def save(self):
         with open(self.text, "w", encoding="utf-8") as f:
-            f.write(f"{self.order_text}\n{self.angle}\n{self.diffi}\n{self.fate}")
+            f.write(f"{self.order_text}\n{self.angle}\n{self.diffi}\n{self.fate}\n{self.map_sha}")
 
 
 config = Config()
