@@ -18,7 +18,7 @@ import os
 version = "v4.0"
 
 echos = {"火堆外的夜":"hdwdy"}
-stranges = {"随便什么但别重复":"new","随便什么":"bszp","香涎干酪":"xygl"}
+stranges = {"未收集祝福":"new","博士之袍":"bszp","香涎干酪":"xygl"}
 
 class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug):
@@ -266,6 +266,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('strange', 0.9417, 0.9481):
             flag = True
             # 优先选择stranges中的奇物
+            if strange
             for strange in stranges.values():
                 img_path = "stranges/" + strange
                 if self.check(img_path, 0.5000, 0.7333,'mask_strange',0.5):
