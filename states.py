@@ -91,8 +91,8 @@ class SimulatedUniverse(UniverseUtils):
         bk_lst_changed = self.lst_changed
         self.lst_changed = time.time()
         if self.check('auto_2', 0.3760, 0.0370):
-            if self.check('z', 0.3047, 0.9685, mask='mask_z') or (self.check('z',0.7146,0.9759,mask='mask_z2',threshold=0.96) and self.battle==0):
-                self.click((0.0891, 0.9676))
+            #if self.check('z', 0.3047, 0.9685, mask='mask_z') or (self.check('z',0.7146,0.9759,mask='mask_z2',threshold=0.96) and self.battle==0):
+            #    self.click((0.0891, 0.9676))
             self.battle = 1
             return 1
         if self.check('choose_bless', 0.9266, 0.9491):
