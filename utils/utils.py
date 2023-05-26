@@ -281,7 +281,7 @@ class UniverseUtils:
             cv.imwrite('imgs/sbl.jpg', bw_map)
             for i in range(-20, 21):
                 for j in range(-20, 21):
-                    if np.sum(bw_map[88 + i-1:88 + i+2, 88 + j-1:88 + j+2]) == 150*9 and i ** 2 + j ** 2 < ii ** 2 + jj ** 2:
+                    if bw_map[88 + i, 88 + j] == 150 and i ** 2 + j ** 2 < ii ** 2 + jj ** 2:
                         ii, jj = i, j
             bw_map[bw_map == 150] = 0
             if ii ** 2 + jj ** 2 < self.his_loc[0] ** 2 + self.his_loc[1] ** 2:
@@ -376,7 +376,7 @@ class UniverseUtils:
                     fx = 0.4 / (ctm - ltm) * (self.real_loc[0] - sloc[0])
                     fy = 0.4 / (ctm - ltm) * (self.real_loc[1] - sloc[1])
                     self.offset = (int(fx), int(fy))
-                    #print(self.offset,self.his_loc)
+                    print(self.offset,self.his_loc)
                 if i > 4 or bl == 0:
                     self.real_loc = (self.real_loc[0] + self.his_loc[0] + self.offset[0],
                                      self.real_loc[1] + self.his_loc[1] + self.offset[1])

@@ -163,6 +163,9 @@ class SimulatedUniverse(UniverseUtils):
                 self.big_map_c = 1
                 if self.find:
                     self.now_map,self.now_map_sim = self.match_scr(self.loc_scr)
+                    if self.now_map==-1:
+                        self.init_map()
+                        return 0
                     self.now_pth = 'imgs/maps/' + self.now_map + '/'
                     files = self.find_latest_modified_file(self.now_pth)
                     print('地图文件：',files)
