@@ -101,11 +101,12 @@ class SimulatedUniverse(UniverseUtils):
             for i in range(4):
                 time.sleep(0.6)
                 self.get_screen()
+                # cv.imwrite('imgs/collect/'+time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+'.jpg',self.screen)
                 # 特殊优先级buf
                 flag = True
                 for echo in echos.values():
                     img_path = "echos/" + echo
-                    if self.check(img_path, 0.5047, 0.4130, mask='mask_echo'):
+                    if self.check(img_path, 0.5047, 0.4130, mask='mask_echo',threshold=0.9):
                         self.click((self.tx, self.ty))
                         ok = 1
                         flag = False
@@ -131,11 +132,12 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.2990, 0.1046))
                 time.sleep(2.5)
                 self.get_screen()
+                # cv.imwrite('imgs/collect/'+time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+'.jpg',self.screen)
                 # 特殊优先级buf
                 flag = True
                 for echo in echos.values():
                     img_path = "echos/" + echo
-                    if self.check(img_path, 0.5047, 0.4130, mask='mask_echo'):
+                    if self.check(img_path, 0.5047, 0.4130, mask='mask_echo',threshold=0.9):
                         self.click((self.tx, self.ty))
                         ok = 1
                         flag = False
@@ -266,11 +268,13 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check('strange', 0.9417, 0.9481):
+            self.get_screen()
+            # cv.imwrite('imgs/collect/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.jpg', self.screen)
             flag = True
             # 优先选择stranges中的奇物
             for strange in stranges.values():
                 img_path = "stranges/" + strange
-                if self.check(img_path, 0.5000, 0.7333,'mask_strange',0.5):
+                if self.check(img_path, 0.5000, 0.7333,'mask_strange',threshold=0.9):
                     self.click((self.tx, self.ty))
                     flag = False
                     break
@@ -372,7 +376,8 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    update_map()
+    if not debug:
+        update_map()
     log.info(f"find: {find}, debug: {debug}")
     su = SimulatedUniverse(find, debug)
     try:
