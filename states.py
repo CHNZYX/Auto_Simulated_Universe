@@ -11,11 +11,14 @@ import random
 import sys
 from utils.log import log, set_debug
 from utils.map_log import map_log
+from utils.update_map import update_map
 from utils.utils import UniverseUtils
 import os
 
 version = "v4.0"
 
+echos = {"火堆外的夜":"hdwdy"}
+stranges = {"未收集祝福":"new","博士之袍":"bszp","香涎干酪":"xygl"}
 
 class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug):
@@ -99,25 +102,48 @@ class SimulatedUniverse(UniverseUtils):
             for i in range(4):
                 time.sleep(0.6)
                 self.get_screen()
-                self.check('bless', 0.5062, 0.3157, mask='mask')
-                if self.tm > 0.96:
-                    time.sleep(0.2)
-                    self.get_screen()
-                    tx,ty=self.tx, self.ty
-                    if self.check('echo1',0.5047,0.4130,mask='mask_echo'):
-                        self.click((self.tx,self.ty))
-                    elif self.check('echo2',0.5047,0.4130,mask='mask_echo'):
-                        self.click((self.tx,self.ty))
-                    else:
-                        self.click((tx, ty))
-                    ok = 1
+                # 特殊优先级buf
+                flag = True
+                for echo in echos.values():
+                    img_path = "echos/" + echo
+                    if self.check(img_path, 0.5047, 0.4130, mask='mask_echo'):
+                        self.click((self.tx, self.ty))
+                        ok = 1
+                        flag = False
+                        break
+                if flag:
+                    # 是否有巡猎buf
+                    self.check('bless', 0.5062, 0.3157, mask='mask')
+                    if self.tm > 0.96:
+                        time.sleep(0.2)
+                        self.get_screen()
+                        tx,ty=self.tx, self.ty
+                        if self.check('echo1',0.5047,0.4130,mask='mask_echo'):
+                            self.click((self.tx,self.ty))
+                        elif self.check('echo2',0.5047,0.4130,mask='mask_echo'):
+                            self.click((self.tx,self.ty))
+                        else:
+                            self.click((tx, ty))
+                        ok = 1
+                        break
+                else:
                     break
             if ok == 0:
                 self.click((0.2990, 0.1046))
                 time.sleep(2.5)
                 self.get_screen()
-                self.check('bless', 0.5062, 0.3157, mask='mask')
-                self.click((self.tx, self.ty))
+                # 特殊优先级buf
+                flag = True
+                for echo in echos.values():
+                    img_path = "echos/" + echo
+                    if self.check(img_path, 0.5047, 0.4130, mask='mask_echo'):
+                        self.click((self.tx, self.ty))
+                        ok = 1
+                        flag = False
+                        break
+                if flag:
+                    self.check('bless', 0.5062, 0.3157, mask='mask')
+                    self.click((self.tx, self.ty))
             self.click((0.1203, 0.1093))
             time.sleep(1)
             return 1
@@ -155,7 +181,7 @@ class SimulatedUniverse(UniverseUtils):
             self.lst_changed = bk_lst_changed
             self.battle = 0
             if self.big_map_c == 0:
-                while 1:              
+                while 1:
                     if np.mean(self.get_screen()) >30: break
                 time.sleep(2.2)
                 self.get_screen()
@@ -239,8 +265,20 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1.5)
         elif self.check('event', 0.9479, 0.9565):
             self.click((0.9479, 0.9565))
+        # 选取奇物
         elif self.check('strange', 0.9417, 0.9481):
-            self.click((0.5 + random.randint(0, 2) * 0.1, 0.5))
+            flag = True
+            # 优先选择stranges中的奇物
+            if strange
+            for strange in stranges.values():
+                img_path = "stranges/" + strange
+                if self.check(img_path, 0.5000, 0.7333,'mask_strange',0.5):
+                    self.click((self.tx, self.ty))
+                    flag = False
+                    break
+            # 如果没有stranges中的奇物，则随机选择一个奇物
+            if flag:
+                self.click((0.5 + random.randint(0, 2) * 0.1, 0.5))
             self.click((0.1365, 0.1093))
         elif self.check('drop',0.9406,0.9491):
             self.click((0.4714,0.5500))
@@ -263,7 +301,7 @@ class SimulatedUniverse(UniverseUtils):
                 if x<nx or y<ny:
                     nx,ny=x,y
                     file=i
-            except: 
+            except:
                 pass
         return file
 
@@ -336,6 +374,10 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
+    try:
+        update_map()
+    except Exception:
+        print("更新地图失败")
     log.info(f"find: {find}, debug: {debug}")
     su = SimulatedUniverse(find, debug)
     try:
