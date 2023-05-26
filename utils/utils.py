@@ -381,7 +381,7 @@ class UniverseUtils:
                     fx = 0.4 / (ctm - ltm) * (self.real_loc[0] - sloc[0])
                     fy = 0.4 / (ctm - ltm) * (self.real_loc[1] - sloc[1])
                     self.offset = (int(fx), int(fy))
-                    print(self.offset,self.his_loc)
+                    #print(self.offset,self.his_loc)
                 if i > 4 or bl == 0:
                     self.real_loc = (self.real_loc[0] + self.his_loc[0] + self.offset[0],
                                      self.real_loc[1] + self.his_loc[1] + self.offset[1])
