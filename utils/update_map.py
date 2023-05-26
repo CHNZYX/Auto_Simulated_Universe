@@ -5,7 +5,7 @@ from base64 import b64decode
 
 import requests
 
-root_path = os.getcwd()
+root_path = os.getcwd()+'\\'
 config_path = root_path + '//info.txt'
 gat = "Z2l0aHViX3BhdF8xMUJBQkhHNkEwa1JRZEM1dFByczhVXzU0cERCS21URXRGYm" \
       "FYRElUWE5KVUk4VkUxVTdjb0dHbElMSWdhVnI2Qkc3QzVCN0lCWlhWdDJMOUo2"
@@ -89,9 +89,9 @@ def test_github_connectivity():
 
 def update_map():
     # 测试github连接
-    if not test_github_connectivity():
-        print("github连接失败，请检查网络连接。")
-        return
+    #if not test_github_connectivity():
+    #    print("github连接失败，请检查网络连接。")
+    #    return
     print("github连接正常")
     repo_url = 'CHNZYX/maps'
     # 获取远端sha

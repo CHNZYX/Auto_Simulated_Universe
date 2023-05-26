@@ -372,11 +372,7 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    try:
-        pass
-        #update_map()
-    except Exception:
-        print("更新地图失败")
+    update_map()
     log.info(f"find: {find}, debug: {debug}")
     su = SimulatedUniverse(find, debug)
     try:
