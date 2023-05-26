@@ -269,7 +269,6 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check('strange', 0.9417, 0.9481):
             flag = True
             # 优先选择stranges中的奇物
-            if strange
             for strange in stranges.values():
                 img_path = "stranges/" + strange
                 if self.check(img_path, 0.5000, 0.7333,'mask_strange',0.5):
