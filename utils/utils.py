@@ -156,7 +156,7 @@ class UniverseUtils:
             mask_img = cv.imread(self.format_path(mask))
             shape = (int(self.scx * mask_img.shape[0]), int(self.scx * mask_img.shape[1]))
         local_screen = self.get_local(x, y, shape)
-        if 1:  # path=='./imgs/close_1.jpg':
+        if path=='./imgs/z.jpg':
             cv.imwrite('imgs/tmp.jpg', local_screen)
             cv.imwrite('imgs/tmp1.jpg', target)
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
