@@ -1,6 +1,5 @@
 import threading
 import traceback
-
 import keyboard
 import pyautogui
 import cv2 as cv
@@ -72,8 +71,8 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            # cv.imwrite('imgs/scr.jpg',self.screen) #0.9375,0.8565 0.9385,0.7574 
-            #self.click_target('imgs/mask_echo.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            # cv.imwrite('imgs/scr.jpg',self.screen) #0.8547,0.4963 0.7375,0.4898
+            #self.click_target('imgs/tp.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res = self.normal()
             if res == 0:
                 if self.threshold > 0.95:
@@ -113,7 +112,7 @@ class SimulatedUniverse(UniverseUtils):
                         break
                 if flag:
                     # 是否有巡猎buf
-                    self.check('bless', 0.5062, 0.3157, mask='mask')
+                    self.check('bless/'+str(self.my_fate), 0.5062, 0.3157, mask='mask')
                     if self.tm > 0.96:
                         time.sleep(0.2)
                         self.get_screen()
@@ -142,7 +141,7 @@ class SimulatedUniverse(UniverseUtils):
                         flag = False
                         break
                 if flag:
-                    self.check('bless', 0.5062, 0.3157, mask='mask')
+                    self.check('bless/'+str(self.my_fate), 0.5062, 0.3157, mask='mask')
                     self.click((self.tx, self.ty))
             self.click((0.1203, 0.1093))
             time.sleep(1)
@@ -248,10 +247,10 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.9266 - dx * ((i - 1) % 3), 0.8194 - dy * ((i - 1) // 3)))
                 time.sleep(0.3)
             self.click((0.1635, 0.1056))
-        elif self.check('fate_1', 0.3885, 0.4972):
-            self.click((0.3885, 0.4972))
         elif self.check('fate_2', 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
+        elif self.check('fate', 0.9458, 0.9481):#0.8547,0.4963 0.7375,0.4898
+            self.click((0.8547-self.my_fate*(0.8547-0.7375),0.4963))
         elif self.check('fate_3', 0.9422,0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
@@ -374,7 +373,8 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     try:
-        update_map()
+        pass
+        #update_map()
     except Exception:
         print("更新地图失败")
     log.info(f"find: {find}, debug: {debug}")
