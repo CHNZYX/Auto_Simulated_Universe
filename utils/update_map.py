@@ -92,16 +92,17 @@ def update_map():
     if not test_github_connectivity():
         print("github连接失败，请检查网络连接。")
         return
+    print("github连接正常")
     repo_url = 'CHNZYX/maps'
     # 获取远端sha
     remote_sha = get_latest_branch_sha(repo_url)
     if remote_sha is None:
-        print("远端sha获取失败")
+        print("远端地图sha获取失败")
         return
-    print("远端sha: " + remote_sha)
+    print("远端地图sha: " + remote_sha)
     # 获取本地sha
     local_sha = get_local_sha()
-    print("本地sha: " + local_sha)
+    print("本地地图sha: " + local_sha)
     # 判断是否需要更新
     if remote_sha == local_sha:
         print("map无需更新")
