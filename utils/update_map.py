@@ -55,7 +55,10 @@ def get_latest_branch_sha(repo_url):
         "Accept": "application/vnd.github.v3+json",
         "Authorization": b64decode(gat).decode('utf-8')
     }
-    response = requests.get(url, headers=headers)
+    try:
+        response = requests.get(url, headers=headers,timeout=3)
+    except:
+        return None
     if response.status_code == 200:
         branches = response.json()
         if branches:
