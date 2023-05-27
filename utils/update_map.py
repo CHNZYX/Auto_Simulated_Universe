@@ -2,21 +2,35 @@ import os
 import shutil
 import zipfile
 from base64 import b64decode
-
+from utils.config import config
 import requests
 
 root_path = os.getcwd()
-config_path = os.path.join(root_path, 'info.txt')
 gat = "Z2l0aHViX3BhdF8xMUJBQkhHNkEwa1JRZEM1dFByczhVXzU0cERCS21URXRGYm" \
       "FYRElUWE5KVUk4VkUxVTdjb0dHbElMSWdhVnI2Qkc3QzVCN0lCWlhWdDJMOUo2"
 
 
 def download_and_extract_zip(url, root_path):
-    response = requests.get(url)
     zip_file_path = os.path.join(root_path, 'repository.zip')
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    total_size = int(response.headers.get('Content-Length', 0))
+    if total_size == 0:
+        print("下载失败！")
+        return
+    block_size = 1024  # 每次下载的块大小
+    progress = 0
     with open(zip_file_path, 'wb') as file:
-        file.write(response.content)
+        for data in response.iter_content(block_size):
+            progress += len(data)
+            file.write(data)
 
+            # 计算下载进度并显示进度条
+            percent = (progress / total_size) * 100
+            progress_bar = '=' * int(percent // 5) + '>'
+            print(f"下载进度: {percent:.2f}% [{progress_bar:<20}] ", end='\r')
+
+    print("\n下载完成！")
     # 解压ZIP文件
     with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
         zip_ref.extractall(root_path)
@@ -51,29 +65,6 @@ def get_latest_branch_sha(repo_url):
         return None
 
 
-def get_local_sha():
-    # 读取
-    with open(config_path, 'r') as file:
-        lines = file.readlines()
-    # 判断是否有sha信息,没有则填补空行
-    if len(lines) < 5:
-        lines.extend(['\n'] * (5 - len(lines)))
-        with open(config_path, 'w') as file:
-            file.writelines(lines)
-    return lines[4].strip()
-
-
-def set_local_sha(sha):
-    # 读取
-    with open(config_path, 'r') as file:
-        lines = file.readlines()
-    # 判断是否有sha信息,没有则填补空行
-    if len(lines) < 5:
-        lines.extend(['\n'] * (5 - len(lines)))
-    lines[4] = sha + '\n'
-    with open(config_path, 'w') as file:
-        file.writelines(lines)
-
 
 def update_map():
     repo_url = 'CHNZYX/maps'
@@ -84,7 +75,7 @@ def update_map():
         return
     print("远端地图sha: " + remote_sha)
     # 获取本地sha
-    local_sha = get_local_sha()
+    local_sha = config.map_sha
     print("本地地图sha: " + local_sha)
     # 判断是否需要更新
     if remote_sha == local_sha:
@@ -106,11 +97,5 @@ def update_map():
     shutil.rmtree(os.path.dirname(downloaded_map_path))
     print("更新完成")
     # 更新sha
-    set_local_sha(remote_sha)
-
-
-# 测试用
-if __name__ == '__main__':
-    root_path = os.path.dirname(os.getcwd())
-    config_path = os.path.join(root_path, 'info.txt')
-    update_map()
+    config.map_sha = remote_sha
+    config.save()
