@@ -113,6 +113,7 @@ class SimulatedUniverse(UniverseUtils):
                         ok = 1
                         flag = False
                         break
+                if self._stop:return 1
                 if flag:
                     # 是否有巡猎buf
                     self.check('bless/'+str(self.my_fate), 0.5062, 0.3157, mask='mask')
@@ -133,6 +134,7 @@ class SimulatedUniverse(UniverseUtils):
             if ok == 0:
                 self.click((0.2990, 0.1046))
                 time.sleep(2.5)
+                if self._stop:return 1
                 self.get_screen()
                 # cv.imwrite('imgs/collect/'+time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+'.jpg',self.screen)
                 # 特殊优先级buf
@@ -186,7 +188,10 @@ class SimulatedUniverse(UniverseUtils):
             if self.big_map_c == 0:
                 while 1:
                     if np.mean(self.get_screen()) >30: break
+                    time.sleep(0.1)
+                    if self._stop:return 1
                 time.sleep(2.2)
+                if self._stop:return 1
                 self.get_screen()
                 self.exist_minimap()
                 self.big_map_c = 1
@@ -211,13 +216,12 @@ class SimulatedUniverse(UniverseUtils):
             if time.time() - self.lst_tm > 5:
                 if self.find == 0:
                     self.press('s', 0.5)
-                    pyautogui.keyDown('w')
+                    if self._stop==0:
+                        pyautogui.keyDown('w')
                     time.sleep(0.5)
                     self.get_screen()
                 else:
-                    pyautogui.keyDown('w')
-                    time.sleep(0.2)
-                    pyautogui.keyUp('w')
+                    self.press('w',0.2)
                     self.get_screen()
             self.lst_tm = time.time()
             if time.time() - self.lst_changed >= 35 and self.find == 1 and self.debug == 0:
@@ -348,7 +352,6 @@ class SimulatedUniverse(UniverseUtils):
     def stop(self, *_, **__):
         log.info("尝试停止运行")
         self._stop = True
-        exit()
 
     def check_f8(self):
         """检测F8键是否被按下，如果按下则停止运行"""
