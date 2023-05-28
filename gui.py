@@ -210,4 +210,5 @@ if __name__ == "__main__":
         pyuac.runAsAdmin()
     else:
         mynd = win32gui.GetForegroundWindow()
+        win32gui.ShowWindow(mynd, 0)
         ft.app(target=main)
