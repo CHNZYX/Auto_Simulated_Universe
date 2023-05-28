@@ -99,7 +99,7 @@ class SimulatedUniverse(UniverseUtils):
         if self.check('auto_2', 0.3760, 0.0370):
             if self.check('z', 0.3047, 0.9685, mask='mask_z'):# or (self.check('z',0.7146,0.9759,mask='mask_z2',threshold=0.96) and self.battle==0):
                 self.click((0.0891, 0.9676))
-            self.battle = 1
+            self.battle = time.time()
             return 1
         if self.check('choose_bless', 0.9266, 0.9491):
             self.battle = 0
@@ -125,9 +125,9 @@ class SimulatedUniverse(UniverseUtils):
                         time.sleep(0.2)
                         self.get_screen()
                         tx,ty=self.tx, self.ty
-                        if self.check('echo1',0.5047,0.4130,mask='mask_echo'):
+                        if self.opt and self.check('bless/'+str(self.my_fate)+'/echo1',0.5047,0.4130,mask='mask_echo'):
                             self.click((self.tx,self.ty))
-                        elif self.check('echo2',0.5047,0.4130,mask='mask_echo'):
+                        elif self.opt and self.check('bless/'+str(self.my_fate)+'/echo2',0.5047,0.4130,mask='mask_echo'):
                             self.click((self.tx,self.ty))
                         else:
                             self.click((tx, ty))
@@ -240,7 +240,7 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.get_direc()
             return 2
-        elif self.battle:
+        elif self.battle+15<time.time():
             return 1
         if self.check('yes', 0.3969, 0.3898):
             self.click((0.3969, 0.3898))
