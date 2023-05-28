@@ -240,7 +240,7 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.get_direc()
             return 2
-        elif self.battle+15<time.time():
+        elif self.battle+15>time.time():
             return 1
         if self.check('yes', 0.3969, 0.3898):
             self.click((0.3969, 0.3898))
