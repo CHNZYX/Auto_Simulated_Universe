@@ -5,7 +5,7 @@ from utils.log import logs_path
 
 map_log = getLogger('map_logger')
 map_log.setLevel(INFO)
-logging_format = "[%(levelname)s] %(message)s"
+logging_format = "[%(levelname)s] [%(asctime)s] %(message)s"
 
 # 根据日期生成日志文件名
 filename = logs_path / ("log_" + time.strftime("%Y-%m-%d-%H-%M", time.localtime()) + ".txt")
