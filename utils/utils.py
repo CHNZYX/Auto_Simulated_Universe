@@ -11,13 +11,26 @@ import win32con
 from copy import deepcopy
 import math
 import random
+import win32gui,win32com.client,pythoncom
 
 from utils.config import config
 from utils.log import log
 
 
+def set_forground():
+    config.read()
+    try:
+        pythoncom.CoInitialize()
+        shell = win32com.client.Dispatch("WScript.Shell")
+        shell.SendKeys(' ') #Undocks my focus from Python IDLE
+        game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
+        win32gui.SetForegroundWindow(game_nd)
+    except:
+        pass
 class UniverseUtils:
     def __init__(self):
+        self.my_nd = win32gui.GetForegroundWindow()
+        set_forground()
         self.multi = config.multi
         self.diffi = config.diffi
         self.fate = config.fate
@@ -25,12 +38,6 @@ class UniverseUtils:
         for i in range(len(config.fates)):
             if config.fates[i]==self.fate:
                 self.my_fate=i
-        self.my_nd = win32gui.GetForegroundWindow()
-        self.game_nd = win32gui.FindWindow('UnityWndClass', "崩坏：星穹铁道")
-        try:
-            win32gui.SetForegroundWindow(self.game_nd)
-        except pywintypes.error:
-            pass
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
@@ -59,6 +66,7 @@ class UniverseUtils:
                 # xx yy:窗口大小
                 # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
                 if Text == '崩坏：星穹铁道':
+                    time.sleep(1)
                     break
                 else:
                     time.sleep(0.3)
@@ -70,9 +78,11 @@ class UniverseUtils:
 
     def press(self, c, t=0):
         log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
-        pyautogui.keyDown(c)
+        if self._stop==0:
+            pyautogui.keyDown(c)
         time.sleep(t)
-        pyautogui.keyUp(c)
+        if self._stop==0:
+            pyautogui.keyUp(c)
 
     def get_point(self, x, y):
         # 得到一个点的浮点表示
@@ -111,10 +121,12 @@ class UniverseUtils:
         if self.full:
             x += 11
             y += 11
-        win32api.SetCursorPos((x, y))
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
+        if self._stop==0:
+            win32api.SetCursorPos((x, y))
+            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
         time.sleep(0.3)
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x, y, 0, 0)
+        if self._stop==0:
+            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x, y, 0, 0)
         time.sleep(0.5)
 
     def click_target(self, target_path, threshold, flag=True):
@@ -361,7 +373,8 @@ class UniverseUtils:
                 ps = 6
             else:
                 ps = 6
-            pyautogui.keyDown('w')
+            if self._stop==0:
+                pyautogui.keyDown('w')
             time.sleep(0.5)
             ltm = time.time()
             bw_map = self.get_bw_map(sbl=bl)
@@ -374,6 +387,8 @@ class UniverseUtils:
             td = 0
             t = 2
             for i in range(1000):
+                if self._stop==1:
+                    return
                 ctm = time.time()
                 bw_map = self.get_bw_map(sbl=(i <= 4 and bl))
                 self.get_loc(bw_map, fbw=1)
@@ -402,17 +417,21 @@ class UniverseUtils:
                 if dls[-4] == nds:
                     ts = ' da'
                     if t > 0:
-                        pyautogui.keyUp('w')
+                        if self._stop==0:
+                            pyautogui.keyUp('w')
                         self.press('s', 0.35)
                         self.press(ts[t], 0.5)
-                        pyautogui.keyDown('w')
+                        if self._stop==0:
+                            pyautogui.keyDown('w')
                         t -= 1
                     else:
-                        pyautogui.keyUp('w')
+                        if self._stop==0:
+                            pyautogui.keyUp('w')
                         break
                 if nds <= ps or self.check('f', 0.3901, 0.5093) or self.check('run', 0.9844, 0.7889,
                                                                               threshold=0.93) == 0:
-                    pyautogui.keyUp('w')
+                    if self._stop==0:
+                        pyautogui.keyUp('w')
                     break
                 ds = nds
                 dls.append(ds)
@@ -420,14 +439,17 @@ class UniverseUtils:
             if type == 0:
                 self.lst_tm = time.time()
             if type == 1:
-                pyautogui.click()
+                if self._stop==0:
+                    pyautogui.click()
                 time.sleep(1)
-                pyautogui.click()
+                if self._stop==0:
+                    pyautogui.click()
                 time.sleep(1)
             if type == 2 or type == 3:
                 key_list = ['sasddww', 'sdsaaww', 'sssw']
                 key = key_list[random.randint(0, 2)]
                 for i in range(-1,len(key)):
+                    if self._stop:return
                     time.sleep(0.4)
                     self.get_screen()
                     if self.check('f', 0.3901, 0.5093):
@@ -438,7 +460,8 @@ class UniverseUtils:
                         break
                     else:
                         if i == -1:
-                            pyautogui.click()
+                            if self._stop==0:
+                                pyautogui.click()
                             time.sleep(1.6)
                         else:
                             self.press(key[i], 0.25)
@@ -463,7 +486,8 @@ class UniverseUtils:
         else:
             y = x
         dx = int(9800 * y * 1295 / self.real_width / 180 * self.multi)
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
+        if self._stop==0:
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
         time.sleep(0.05)
         if x != y:
             self.mouse_move(x - y)
