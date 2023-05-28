@@ -12,7 +12,7 @@ from copy import deepcopy
 from utils.log import log, set_debug
 from utils.map_log import map_log
 from utils.update_map import update_map
-from utils.utils import UniverseUtils
+from utils.utils import UniverseUtils,set_forground
 import os
 
 version = "v4.1"
@@ -67,6 +67,7 @@ class SimulatedUniverse(UniverseUtils):
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
             Text = win32gui.GetWindowText(hwnd)
             warn_game = False
+            cnt=0
             while Text != '崩坏：星穹铁道':
                 if self._stop:
                     raise KeyboardInterrupt
@@ -74,11 +75,14 @@ class SimulatedUniverse(UniverseUtils):
                     warn_game = True
                     log.warning("等待游戏窗口")
                 time.sleep(0.5)
+                cnt+=1
+                if cnt==1200:
+                    set_forground()
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
             # cv.imwrite('imgs/scr.jpg',self.screen) #0.8547,0.4963 0.7375,0.4898
-            #self.click_target('imgs/mask_z2.jpg',0.9,False)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
+            # self.click_target('imgs/c.jpg',0.9,True)#0.3375,0.9685 0.9417,0.9472 0.1167,0.5491  0.2938,0.4685  0.1167,0.3546
             res = self.normal()
             if res == 0:
                 if self.threshold > 0.95:
@@ -97,7 +101,7 @@ class SimulatedUniverse(UniverseUtils):
         bk_lst_changed = self.lst_changed
         self.lst_changed = time.time()
         if self.check('auto_2', 0.3760, 0.0370):
-            if self.check('z', 0.3047, 0.9685, mask='mask_z'):# or (self.check('z',0.7146,0.9759,mask='mask_z2',threshold=0.96) and self.battle==0):
+            if self.check('c', 0.9453,0.1296,threshold=0.99):
                 self.click((0.0891, 0.9676))
             self.battle = time.time()
             return 1
@@ -229,9 +233,11 @@ class SimulatedUniverse(UniverseUtils):
                     self.press('w',0.2)
                     self.get_screen()
             self.lst_tm = time.time()
-            if time.time() - self.lst_changed >= 35 and self.find == 1 and self.debug == 0:
+            if time.time() - self.lst_changed >= 35 and self.find == 1:
                 map_log.error(f'地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进')
                 self.press('esc')
+                if self.debug == 1:
+                    time.sleep(1000000)
                 time.sleep(2)
                 if random.randint(0,2)!=2:
                     self.click((0.2927, 0.2602))
