@@ -54,6 +54,7 @@ def main():
     except pywintypes.error:
         pass
     log.info('校准完成')
+    return 1
 
 
 if __name__ == '__main__':
