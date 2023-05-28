@@ -21,7 +21,7 @@ echos = {"火堆外的夜":"hdwdy"}
 stranges = {"未收集奇物":"new","降维骰子":"jwtz","福灵胶":"flj","巡猎火漆":"xlhq","博士之袍":"bszp","香涎干酪":"xygl"}
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map):
+    def __init__(self, find, debug, show_map, update=0):
         super().__init__()
         self.now_map = None
         self.now_map_sim = None
@@ -33,7 +33,7 @@ class SimulatedUniverse(UniverseUtils):
         self.debug = debug
         self._show_map = show_map
         set_debug(debug)
-        if not self.debug and self.find:
+        if update:
             update_map()
         self.lst_changed = time.time()
         log.info("加载地图")
@@ -409,7 +409,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map)
+    su = SimulatedUniverse(find, debug, show_map, update)
     try:
         su.start()
     except Exception:
@@ -422,6 +422,7 @@ if __name__ == '__main__':
     find = 1
     debug = 0
     show_map = 0
+    update = 0
     for i in sys.argv[1:]:
         exec(i.split('-')[-1])
     main()

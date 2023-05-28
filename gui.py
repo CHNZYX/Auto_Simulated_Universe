@@ -10,6 +10,8 @@ from align_angle import main as align_angle
 from states import SimulatedUniverse, version
 from utils.config import config
 import win32gui
+from utils.update_map import update_map
+import atexit
 
 debug_mode = False
 show_map_mode = False
@@ -46,7 +48,11 @@ def choose_view(page: Page):
 
     def angle(_e):
         show_snack_bar(page, "开始校准，请切换回游戏", ft.colors.GREEN)
-        run(align_angle)
+        res = run(align_angle)
+        if res==1:
+            show_snack_bar(page, "校准成功", ft.colors.GREEN)
+        else:
+            show_snack_bar(page, "校准失败", ft.colors.RED)
 
     def start(_e):
         global su
@@ -73,6 +79,11 @@ def choose_view(page: Page):
             show_snack_bar(page, "显示命令行窗口", ft.colors.GREEN)
             win32gui.ShowWindow(mynd, 1)  # 显示命令行窗口
 
+    def update_maps(_e):
+        show_snack_bar(page, "开始更新地图", ft.colors.GREEN)
+        msg,col = update_map()
+        show_snack_bar(page, msg, col)
+
     def show_map_checkbox_changed(_e):
         global show_map_mode
         show_map_mode = not show_map_mode
@@ -87,6 +98,10 @@ def choose_view(page: Page):
 
     def fate_changed(e: ControlEvent):
         config.fate = e.data
+        config.save()
+
+    def textbox_changed(e):
+        config.order_text = e.control.value
         config.save()
 
     # View
@@ -137,49 +152,66 @@ def choose_view(page: Page):
                     alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
                 ),
-                ft.Column(
+                ft.Row(
                     [
-                        ft.Checkbox(
-                            label="显示地图",
-                            value=False,
-                            on_change=show_map_checkbox_changed,
-                        ),
-                        ft.Checkbox(
-                            label="调试模式",
-                            value=False,
-                            on_change=debug_checkbox_changed,
-                        ),
-                        ft.Dropdown(
-                            width=100,
-                            label="难度",
-                            hint_text="选择世界难度",
-                            options=[
-                                ft.dropdown.Option("1"),
-                                ft.dropdown.Option("2"),
-                                ft.dropdown.Option("3"),
-                                ft.dropdown.Option("4"),
-                                ft.dropdown.Option("5"),
+                        ft.Column(
+                            [
+                                ft.Checkbox(
+                                    label="显示地图",
+                                    value=False,
+                                    on_change=show_map_checkbox_changed,
+                                ),
+                                ft.Checkbox(
+                                    label="调试模式",
+                                    value=False,
+                                    on_change=debug_checkbox_changed,
+                                ),
+                                ft.Dropdown(
+                                    width=100,
+                                    label="难度",
+                                    hint_text="选择世界难度",
+                                    options=[
+                                        ft.dropdown.Option("1"),
+                                        ft.dropdown.Option("2"),
+                                        ft.dropdown.Option("3"),
+                                        ft.dropdown.Option("4"),
+                                        ft.dropdown.Option("5"),
+                                    ],
+                                    value=config.difficult,
+                                    on_change=difficult_changed,
+                                ),
+                                ft.Dropdown(
+                                    width=100,
+                                    label="命途",
+                                    hint_text="选择命途",
+                                    options=[
+                                        ft.dropdown.Option("存护"),
+                                        ft.dropdown.Option("记忆"),
+                                        ft.dropdown.Option("虚无"),
+                                        ft.dropdown.Option("丰饶"),
+                                        ft.dropdown.Option("巡猎"),
+                                        ft.dropdown.Option("毁灭"),
+                                        ft.dropdown.Option("欢愉"),
+                                    ],
+                                    value=config.fate,
+                                    on_change=fate_changed,
+                                )
                             ],
-                            value=config.difficult,
-                            on_change=difficult_changed,
                         ),
-                        ft.Dropdown(
-                            width=100,
-                            label="命途",
-                            hint_text="选择命途",
-                            options=[
-                                ft.dropdown.Option("存护"),
-                                ft.dropdown.Option("记忆"),
-                                ft.dropdown.Option("虚无"),
-                                ft.dropdown.Option("丰饶"),
-                                ft.dropdown.Option("巡猎"),
-                                ft.dropdown.Option("毁灭"),
-                                ft.dropdown.Option("欢愉"),
-                            ],
-                            value=config.fate,
-                            on_change=fate_changed,
-                        )
+                        ft.Row(
+                            [
+                                ft.TextField(label="配队",width=80,value=config.order_text,on_change=textbox_changed),
+                                ft.Text('           ')
+                            ]
+                        ),
+                        ft.IconButton(
+                            icon=ft.icons.UPDATE,
+                            icon_size=30,
+                            on_click=update_maps,
+                        ),
                     ],
+                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=CrossAxisAlignment.END,
                 ),
             ],
             horizontal_alignment=CrossAxisAlignment.CENTER,
@@ -204,8 +236,14 @@ def main(page: Page):
     page.window_min_height = 600
     page.go(page.route)
 
+def cleanup():
+    try:
+        win32gui.ShowWindow(mynd, 1)
+    except:
+        pass
 
 if __name__ == "__main__":
+    atexit.register(cleanup)
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:

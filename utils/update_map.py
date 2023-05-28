@@ -76,7 +76,7 @@ def update_map():
     remote_sha = get_latest_branch_sha(repo_url)
     if remote_sha is None:
         print("远端地图sha获取失败, 请检查网络连接")
-        return
+        return "远端地图sha获取失败, 请检查网络连接","red"
     print("远端地图sha: " + remote_sha)
     # 获取本地sha
     local_sha = config.map_sha
@@ -84,13 +84,13 @@ def update_map():
     # 判断是否需要更新
     if remote_sha == local_sha:
         print("map无需更新")
-        return
+        return "地图已是最新版本","green"
     map_path = os.path.join(root_path, 'imgs\\maps')
     print("Map path: " + map_path)
     # 下载map仓库并解压
     status = sync_github_repo(repo_url, root_path)
     if status==0:
-        return
+        return "下载失败","red"
     print("下载完成")
     # 找出下载的map文件夹
     t = os.listdir(root_path)
@@ -101,7 +101,8 @@ def update_map():
     shutil.rmtree(map_path)
     shutil.copytree(downloaded_map_path, map_path)
     shutil.rmtree(os.path.dirname(downloaded_map_path))
-    print("更新完成")
     # 更新sha
     config.map_sha = remote_sha
     config.save()
+    print("更新完成")
+    return "更新完成","green"
