@@ -32,6 +32,7 @@ class UniverseUtils:
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self._stop = 0
+        self.opt = 0
         self.multi = config.multi
         self.diffi = config.diffi
         self.fate = config.fate
