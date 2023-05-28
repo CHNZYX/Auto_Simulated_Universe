@@ -17,7 +17,7 @@ def download_and_extract_zip(url, root_path):
     total_size = int(response.headers.get('Content-Length', 0))
     if total_size == 0:
         print("下载失败！")
-        return
+        return 0
     block_size = 1024  # 每次下载的块大小
     progress = 0
     with open(zip_file_path, 'wb') as file:
@@ -36,6 +36,7 @@ def download_and_extract_zip(url, root_path):
         zip_ref.extractall(root_path)
 
     os.remove(zip_file_path)  # 删除ZIP文件
+    return 1
 
 
 def sync_github_repo(repo_url, root_path):
@@ -46,7 +47,7 @@ def sync_github_repo(repo_url, root_path):
     os.makedirs(root_path, exist_ok=True)
 
     # 下载并解压ZIP文件
-    download_and_extract_zip(api_url, root_path)
+    return download_and_extract_zip(api_url, root_path)
 
 
 def get_latest_branch_sha(repo_url):
@@ -87,7 +88,9 @@ def update_map():
     map_path = os.path.join(root_path, 'imgs\\maps')
     print("Map path: " + map_path)
     # 下载map仓库并解压
-    sync_github_repo(repo_url, root_path)
+    status = sync_github_repo(repo_url, root_path)
+    if status==0:
+        return
     print("下载完成")
     # 找出下载的map文件夹
     t = os.listdir(root_path)
