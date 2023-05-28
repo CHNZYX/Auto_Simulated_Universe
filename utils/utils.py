@@ -39,6 +39,8 @@ class UniverseUtils:
         for i in range(len(config.fates)):
             if config.fates[i]==self.fate:
                 self.my_fate=i
+        if self.my_fate in [0,4]:
+            self.opt = 1
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
