@@ -191,7 +191,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             if self.big_map_c == 0:
                 while 1:
-                    if np.mean(self.get_screen()) >30: break
+                    if np.mean(self.get_screen()) > 12: break
                     time.sleep(0.1)
                     if self._stop:return 1
                 time.sleep(2.2)
