@@ -1,11 +1,5 @@
-<<<<<<< Updated upstream
 9 3 5 2
 0.713436385255648
 2
 巡猎
 c1feb69b4d6b166def00a597e272cabaca770c2f
-=======
-8 3 4 1
-0.722222
-2
->>>>>>> Stashed changes
