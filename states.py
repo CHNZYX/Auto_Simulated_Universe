@@ -8,6 +8,7 @@ import time
 import win32gui
 import random
 import sys
+from copy import deepcopy
 from utils.log import log, set_debug
 from utils.map_log import map_log
 from utils.update_map import update_map
@@ -17,17 +18,20 @@ import os
 version = "v4.0"
 
 echos = {"火堆外的夜":"hdwdy"}
-stranges = {"未收集祝福":"new","博士之袍":"bszp","香涎干酪":"xygl"}
+stranges = {"未收集奇物":"new","降维骰子":"jwtz","福灵胶":"flj","巡猎火漆":"xlhq","博士之袍":"bszp","香涎干酪":"xygl"}
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug):
+    def __init__(self, find, debug, show_map):
         super().__init__()
         self.now_map = None
         self.now_map_sim = None
+        self.real_loc = [0,0]
+        self.debug_map = np.zeros((8192, 8192), dtype=np.uint8)
         self._stop = False
         self.img_set = []
         self.find = find
         self.debug = debug
+        self._show_map = show_map
         set_debug(debug)
         if not self.debug and self.find:
             update_map()
@@ -204,6 +208,7 @@ class SimulatedUniverse(UniverseUtils):
                     files = self.find_latest_modified_file(self.now_pth)
                     print('地图文件：',files)
                     self.big_map = cv.imread(files, cv.IMREAD_GRAYSCALE)
+                    self.debug_map = deepcopy(self.big_map)
                     xy = files.split('/')[-1].split('_')[1:3]
                     self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
                     self.target = self.get_target(self.now_pth + 'target.jpg')
@@ -368,10 +373,42 @@ class SimulatedUniverse(UniverseUtils):
                 self.stop()
                 break
 
+
+    def show_map(self):
+        # Create a window to display the image
+        cv.namedWindow("Map",cv.WINDOW_AUTOSIZE)
+
+        # Update the image every second
+        while not self._stop:
+            if self.debug_map.shape[0] == 8192:
+                continue
+            # Load the updated image
+            updated_image = self.debug_map.copy()
+
+            # 灰度图转RGB
+            updated_image = cv.cvtColor(updated_image, cv.COLOR_GRAY2RGB)
+            updated_image[self.real_loc[0] - 2:self.real_loc[0] + 3, self.real_loc[1] - 2:self.real_loc[1] + 3] = [49, 49, 140]
+
+            # 将图片放大两倍
+            updated_image = cv.resize(updated_image, None, fx=2, fy=2, interpolation=cv.INTER_LINEAR)
+
+            # Update the displayed image
+            cv.imshow("Map", updated_image)
+
+            # Wait for one second
+            cv.waitKey(1000)
+
+        # Destroy the window
+        cv.destroyAllWindows()
+
+
     def start(self):
         self._stop = False
         t = threading.Thread(target=self.check_f8)
         t.start()
+        if self._show_map:
+            t_map = threading.Thread(target=self.show_map)
+            t_map.start()
         try:
             self.route()
         except KeyboardInterrupt:
@@ -381,8 +418,8 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    log.info(f"find: {find}, debug: {debug}")
-    su = SimulatedUniverse(find, debug)
+    log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
+    su = SimulatedUniverse(find, debug, show_map)
     try:
         su.start()
     except Exception:
@@ -394,6 +431,7 @@ def main():
 if __name__ == '__main__':
     find = 1
     debug = 0
+    show_map = 0
     for i in sys.argv[1:]:
         exec(i.split('-')[-1])
     main()

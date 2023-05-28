@@ -11,6 +11,7 @@ from states import SimulatedUniverse, version
 from utils.config import config
 
 debug_mode = False
+show_map_mode = False
 su: Optional[SimulatedUniverse] = None
 
 
@@ -49,13 +50,13 @@ def choose_view(page: Page):
     def start(_e):
         global su
         show_snack_bar(page, "开始运行，请切换回游戏", ft.colors.GREEN)
-        su = run(SimulatedUniverse, 1, int(debug_mode))
+        su = run(SimulatedUniverse, 1, int(debug_mode), int(show_map_mode))
         run(su.start)
 
     def start_new(_e):
         global su
         show_snack_bar(page, "开始录入，请切换回游戏", ft.colors.GREEN)
-        su = run(SimulatedUniverse, 0, int(debug_mode))
+        su = run(SimulatedUniverse, 0, int(debug_mode), int(show_map_mode))
         run(su.start)
 
     def stop(_e):
@@ -63,7 +64,11 @@ def choose_view(page: Page):
         if su is not None:
             run(su.stop)
 
-    def checkbox_changed(_e):
+    def show_map_checkbox_changed(_e):
+        global show_map_mode
+        show_map_mode = not show_map_mode
+
+    def debug_checkbox_changed(_e):
         global debug_mode
         debug_mode = not debug_mode
 
@@ -121,9 +126,14 @@ def choose_view(page: Page):
                 ft.Column(
                     [
                         ft.Checkbox(
+                            label="显示地图",
+                            value=False,
+                            on_change=show_map_checkbox_changed,
+                        ),
+                        ft.Checkbox(
                             label="调试模式",
                             value=False,
-                            on_change=checkbox_changed,
+                            on_change=debug_checkbox_changed,
                         ),
                         ft.Dropdown(
                             width=100,
