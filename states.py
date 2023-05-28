@@ -15,7 +15,7 @@ from utils.update_map import update_map
 from utils.utils import UniverseUtils
 import os
 
-version = "v4.0"
+version = "v4.1"
 
 echos = {"火堆外的夜":"hdwdy"}
 stranges = {"未收集奇物":"new","降维骰子":"jwtz","福灵胶":"flj","巡猎火漆":"xlhq","博士之袍":"bszp","香涎干酪":"xygl"}
@@ -358,20 +358,11 @@ class SimulatedUniverse(UniverseUtils):
         log.info("尝试停止运行")
         self._stop = True
 
-    def check_f8(self):
-        """检测F8键是否被按下，如果按下则停止运行"""
-        while True:
-            if keyboard.is_pressed('f8'):
-                log.info("F8 已被按下，尝试停止运行")
-                self.stop()
-                break
-            elif self._stop:
-                break
-            try:
-                time.sleep(0.5)
-            except KeyboardInterrupt:
-                self.stop()
-                break
+    def on_key_press(self, event):
+        global stop_flag
+        if event.name == "f8":
+            print("F8 已被按下，尝试停止运行")
+            self.stop()
 
 
     def show_map(self):
@@ -404,8 +395,7 @@ class SimulatedUniverse(UniverseUtils):
 
     def start(self):
         self._stop = False
-        t = threading.Thread(target=self.check_f8)
-        t.start()
+        keyboard.on_press(self.on_key_press)
         if self._show_map:
             t_map = threading.Thread(target=self.show_map)
             t_map.start()
