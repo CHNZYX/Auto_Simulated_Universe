@@ -9,6 +9,7 @@ import pyuac
 from align_angle import main as align_angle
 from states import SimulatedUniverse, version
 from utils.config import config
+import win32gui
 
 debug_mode = False
 show_map_mode = False
@@ -60,9 +61,17 @@ def choose_view(page: Page):
         run(su.start)
 
     def stop(_e):
-        show_snack_bar(page, "尝试停止运行", ft.colors.GREEN)
+        show_snack_bar(page, "停止运行", ft.colors.GREEN)
         if su is not None:
-            run(su.stop)
+            run(su.stop)    
+
+    def hide(_e):
+        if win32gui.IsWindowVisible(mynd):
+            show_snack_bar(page, "隐藏命令行窗口", ft.colors.GREEN)
+            win32gui.ShowWindow(mynd, 0)  # 隐藏命令行窗口
+        else:
+            show_snack_bar(page, "显示命令行窗口", ft.colors.GREEN)
+            win32gui.ShowWindow(mynd, 1)  # 显示命令行窗口
 
     def show_map_checkbox_changed(_e):
         global show_map_mode
@@ -118,6 +127,11 @@ def choose_view(page: Page):
                             "停止",
                             icon=ft.icons.STOP,
                             on_click=stop,
+                        ),
+                        ft.FilledButton(
+                            "显隐",
+                            icon=ft.icons.HIDE_SOURCE,
+                            on_click=hide,
                         ),
                     ],
                     alignment=MainAxisAlignment.CENTER,
@@ -195,4 +209,5 @@ if __name__ == "__main__":
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:
+        mynd = win32gui.GetForegroundWindow()
         ft.app(target=main)
