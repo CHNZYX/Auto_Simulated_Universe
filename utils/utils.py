@@ -450,7 +450,7 @@ class UniverseUtils:
                     pyautogui.click()
                 time.sleep(1)
             if type == 2 or type == 3:
-                key_list = ['sasddww', 'sdsaaww', 'sssw']
+                key_list = ['sasddwwwaw', 'sdsaawwwdw']
                 key = key_list[random.randint(0, 2)]
                 for i in range(-1,len(key)):
                     if self._stop:return
