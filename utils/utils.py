@@ -424,7 +424,8 @@ class UniverseUtils:
                         if self._stop==0:
                             pyautogui.keyUp('w')
                         self.press('s', 0.35)
-                        self.press(ts[t], 0.5)
+                        self.press(ts[t], 0.4)
+                        self.press('w', 0.6)
                         if self._stop==0:
                             pyautogui.keyDown('w')
                         t -= 1
