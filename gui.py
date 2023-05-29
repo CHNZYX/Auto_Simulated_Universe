@@ -30,10 +30,14 @@ def show_snack_bar(page, text, color, selectable=False):
 
 def choose_view(page: Page):
     def change_all_button(value: bool = True):
+        cnt=0
         for i in page.views[0].controls[0].controls:
             if isinstance(i, ft.FilledButton):
-                i.disabled = value
-        page.views[0].controls[0].controls[-1].disabled = False
+                if cnt<=2:
+                    i.disabled = value
+                    cnt+=1
+                else:
+                    i.disabled = False
         page.update()
 
     def run(func, *args, **kwargs):
@@ -66,8 +70,9 @@ def choose_view(page: Page):
         su = run(SimulatedUniverse, 0, int(debug_mode), int(show_map_mode))
         run(su.start)
 
-    def stop(_e):
+    def stops(_e):
         show_snack_bar(page, "停止运行", ft.colors.GREEN)
+        global su
         if su is not None:
             run(su.stop)    
 
@@ -139,14 +144,14 @@ def choose_view(page: Page):
                             on_click=start_new,
                         ),
                         ft.FilledButton(
-                            "停止",
-                            icon=ft.icons.STOP,
-                            on_click=stop,
-                        ),
-                        ft.FilledButton(
                             "显隐",
                             icon=ft.icons.HIDE_SOURCE,
                             on_click=hide,
+                        ),
+                        ft.FilledButton(
+                            "停止",
+                            icon=ft.icons.STOP,
+                            on_click=stops,
                         ),
                     ],
                     alignment=MainAxisAlignment.CENTER,
