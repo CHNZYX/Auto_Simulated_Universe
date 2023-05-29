@@ -77,12 +77,15 @@ def choose_view(page: Page):
             run(su.stop)    
 
     def hide(_e):
-        if win32gui.IsWindowVisible(mynd):
-            show_snack_bar(page, "隐藏命令行窗口", ft.colors.GREEN)
-            win32gui.ShowWindow(mynd, 0)  # 隐藏命令行窗口
-        else:
-            show_snack_bar(page, "显示命令行窗口", ft.colors.GREEN)
-            win32gui.ShowWindow(mynd, 1)  # 显示命令行窗口
+        try:
+            if win32gui.IsWindowVisible(mynd):
+                show_snack_bar(page, "隐藏命令行窗口", ft.colors.GREEN)
+                win32gui.ShowWindow(mynd, 0)  # 隐藏命令行窗口
+            else:
+                show_snack_bar(page, "显示命令行窗口", ft.colors.GREEN)
+                win32gui.ShowWindow(mynd, 1)  # 显示命令行窗口
+        except:
+            pass
 
     def update_maps(_e):
         show_snack_bar(page, "开始更新地图", ft.colors.GREEN)
@@ -260,6 +263,7 @@ def enum_windows_callback(hwnd, hwnds):
 def list_handles():
     hwnds = []
     win32gui.EnumWindows(enum_windows_callback, hwnds)
+    hwnds.append(0)
     return hwnds
 
 if __name__ == "__main__":
@@ -268,5 +272,8 @@ if __name__ == "__main__":
         pyuac.runAsAdmin()
     else:
         mynd = list_handles()[0]
-        win32gui.ShowWindow(mynd, 0)
+        try:
+            win32gui.ShowWindow(mynd, 0)
+        except:
+            pass
         ft.app(target=main)
