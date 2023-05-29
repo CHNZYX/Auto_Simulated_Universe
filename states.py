@@ -15,7 +15,7 @@ from utils.update_map import update_map
 from utils.utils import UniverseUtils,set_forground
 import os
 
-version = "v4.1"
+version = "v4.2"
 
 echos = {"火堆外的夜":"hdwdy"}
 stranges = {"未收集奇物":"new","降维骰子":"jwtz","福灵胶":"flj","巡猎火漆":"xlhq","博士之袍":"bszp","香涎干酪":"xygl"}
@@ -195,7 +195,9 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             if self.big_map_c == 0:
                 while 1:
-                    if np.mean(self.get_screen()) > 12: break
+                    men = np.mean(self.get_screen())
+                    if men > 12: break
+                    print(men)
                     time.sleep(0.1)
                     if self._stop:return 1
                 time.sleep(2.2)
