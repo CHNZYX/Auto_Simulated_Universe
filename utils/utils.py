@@ -85,8 +85,7 @@ class UniverseUtils:
         if self._stop==0:
             pyautogui.keyDown(c)
         time.sleep(t)
-        if self._stop==0:
-            pyautogui.keyUp(c)
+        pyautogui.keyUp(c)
 
     def get_point(self, x, y):
         # 得到一个点的浮点表示
@@ -421,8 +420,7 @@ class UniverseUtils:
                 if dls[-4] == nds:
                     ts = ' da'
                     if t > 0:
-                        if self._stop==0:
-                            pyautogui.keyUp('w')
+                        pyautogui.keyUp('w')
                         self.press('s', 0.35)
                         self.press(ts[t], 0.4)
                         self.press('w', 0.6)
@@ -430,13 +428,11 @@ class UniverseUtils:
                             pyautogui.keyDown('w')
                         t -= 1
                     else:
-                        if self._stop==0:
-                            pyautogui.keyUp('w')
+                        pyautogui.keyUp('w')
                         break
                 if nds <= ps or self.check('f', 0.3901, 0.5093) or self.check('run', 0.9844, 0.7889,
                                                                               threshold=0.93) == 0:
-                    if self._stop==0:
-                        pyautogui.keyUp('w')
+                    pyautogui.keyUp('w')
                     break
                 ds = nds
                 dls.append(ds)
