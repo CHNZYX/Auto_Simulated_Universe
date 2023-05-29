@@ -451,7 +451,7 @@ class UniverseUtils:
                 time.sleep(1)
             if type == 2 or type == 3:
                 key_list = ['sasddwwwaw', 'sdsaawwwdw']
-                key = key_list[random.randint(0, 1)]
+                key = key_list[random.randint(0, len(key_list)-1)]
                 for i in range(-1,len(key)):
                     if self._stop:return
                     time.sleep(0.4)
