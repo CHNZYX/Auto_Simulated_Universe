@@ -235,7 +235,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.press('w',0.2)
                     self.get_screen()
             self.lst_tm = time.time()
-            if time.time() - self.lst_changed >= 35 and self.find == 1:
+            if time.time() - self.lst_changed >= 45 and self.find == 1:
                 map_log.error(f'地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进')
                 self.press('esc')
                 if self.debug == 1:
