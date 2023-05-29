@@ -247,11 +247,26 @@ def cleanup():
     except:
         pass
 
+def enum_windows_callback(hwnd, hwnds):
+    class_name = win32gui.GetClassName(hwnd)
+    name = win32gui.GetWindowText(hwnd)
+    try:
+        if class_name == "ConsoleWindowClass" and win32gui.IsWindowVisible(hwnd) and 'gui' in name[-7:]:
+            hwnds.append(hwnd)
+    except:
+        pass
+    return True
+
+def list_handles():
+    hwnds = []
+    win32gui.EnumWindows(enum_windows_callback, hwnds)
+    return hwnds
+
 if __name__ == "__main__":
     atexit.register(cleanup)
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:
-        mynd = win32gui.FindWindow('ConsoleWindowClass', None)
+        mynd = list_handles()[0]
         win32gui.ShowWindow(mynd, 0)
         ft.app(target=main)
