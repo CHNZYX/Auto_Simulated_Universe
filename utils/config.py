@@ -11,7 +11,7 @@ class Config:
         self.text = "info.txt"
         self.fate = '巡猎'
         self.map_sha = ''
-        self.fates = ["存护","记忆","虚无","丰饶","巡猎","毁灭","欢愉"]
+        self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
         self.read()
 
     @property
