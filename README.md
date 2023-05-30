@@ -68,11 +68,11 @@ info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己
 
 支持增加地图，具体方法为
 
-运行 python states.py --debug=1 --find=1
+运行 python states.py --debug=2 --find=1
 
 如果遇到新图会角色停住，这时候结束自动化并且游戏中暂离模拟宇宙
 
-然后运行 python states.py --debug=1 --find=0
+然后运行 python states.py --debug=2 --find=0
 
 注意，一开始的状态必须是刚进图、视角也没有改变的状态
 
