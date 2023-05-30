@@ -376,6 +376,12 @@ class UniverseUtils:
                 ps = 6
             else:
                 ps = 6
+            if self.check('f', 0.3901, 0.5093):
+                for j in deepcopy(self.target):
+                    if j[1] == type:
+                        self.last = j[0]
+                        self.target.remove(j)
+                return
             if self._stop==0:
                 pyautogui.keyDown('w')
             time.sleep(0.5)
