@@ -385,7 +385,8 @@ class UniverseUtils:
             sloc = self.real_loc
             #self.big_map[self.real_loc[0] - 1:self.real_loc[0] + 2, self.real_loc[1] - 1:self.real_loc[1] + 2] = 49
             ds = self.get_dis(self.real_loc, loc)
-            dls = [100000, 100000, 100000, ds]
+            dls = [100000]
+            dtm = [time.time()]
             sds = ds
             td = 0
             t = 2
@@ -417,15 +418,21 @@ class UniverseUtils:
                 self.big_map[self.real_loc[0] - 1:self.real_loc[0] + 2, self.real_loc[1] - 1:self.real_loc[1] + 2] = 49
                 cv.imwrite('imgs/bigmap.jpg', self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
-                if dls[-4] == nds:
+                if dls[0] <= nds + 1:
                     ts = ' da'
                     if t > 0:
                         pyautogui.keyUp('w')
                         self.press('s', 0.35)
                         self.press(ts[t], 0.4)
-                        self.press('w', 0.6)
                         if self._stop==0:
                             pyautogui.keyDown('w')
+                        bw_map = self.get_bw_map()
+                        local_screen = self.get_local(0.9333, 0.8657, shape)
+                        local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
+                        self.ang = 360 - self.get_now_direc(local_screen) - 90
+                        self.get_loc(bw_map, rg=28, fbw=1)
+                        self.real_loc = (self.real_loc[0] + self.his_loc[0] + self.offset[0],
+                                         self.real_loc[1] + self.his_loc[1] + self.offset[1])
                         t -= 1
                     else:
                         pyautogui.keyUp('w')
@@ -436,6 +443,10 @@ class UniverseUtils:
                     break
                 ds = nds
                 dls.append(ds)
+                dtm.append(time.time())
+                while len(dtm)>0 and dtm[0]<time.time()-1:
+                    dtm=dtm[1:]
+                    dls=dls[1:]
             log.info("进入新地图或者进入战斗")
             if type == 0:
                 self.lst_tm = time.time()

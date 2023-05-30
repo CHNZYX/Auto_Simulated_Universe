@@ -31,7 +31,7 @@ class SimulatedUniverse(UniverseUtils):
         self.img_set = []
         self.find = find
         self.debug = debug
-        self._show_map = show_map
+        self._show_map = show_map&find
         set_debug(debug)
         if update:
             update_map()
@@ -238,10 +238,8 @@ class SimulatedUniverse(UniverseUtils):
             if time.time() - self.lst_changed >= 45 and self.find == 1:
                 map_log.error(f'地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进')
                 self.press('esc')
-                if self.debug == 1:
-                    time.sleep(1000000)
                 time.sleep(2)
-                if random.randint(0,2)!=2:
+                if random.randint(0,2)!=2 or self.debug == 1:
                     self.click((0.2927, 0.2602))
                 else:
                     self.click((0.2708, 0.1324))
