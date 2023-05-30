@@ -60,6 +60,9 @@ def choose_view(page: Page):
 
     def start(_e):
         global su
+        if config.angle==1.0:
+            show_snack_bar(page, "没有校准,不准运行!", ft.colors.RED)
+            return
         show_snack_bar(page, "开始运行，请切换回游戏", ft.colors.GREEN)
         su = run(SimulatedUniverse, 1, int(debug_mode), int(show_map_mode))
         run(su.start)
