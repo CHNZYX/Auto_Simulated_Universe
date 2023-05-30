@@ -15,7 +15,7 @@ from utils.update_map import update_map
 from utils.utils import UniverseUtils,set_forground
 import os
  
-version = "v4.2"
+version = "v4.3"
 
 echos = {"火堆外的夜":"hdwdy"}
 stranges = {"未收集奇物":"new","降维骰子":"jwtz","福灵胶":"flj","巡猎火漆":"xlhq","博士之袍":"bszp","香涎干酪":"xygl"}
