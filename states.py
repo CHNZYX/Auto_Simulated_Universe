@@ -33,7 +33,7 @@ class SimulatedUniverse(UniverseUtils):
         self.debug = debug
         self._show_map = show_map&find
         set_debug(debug)
-        if update:
+        if update and find:
             update_map()
         self.lst_changed = time.time()
         log.info("加载地图")
