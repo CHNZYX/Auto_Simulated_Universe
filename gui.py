@@ -13,7 +13,7 @@ import win32gui
 from utils.update_map import update_map
 import atexit
 
-debug_mode = False
+debug_mode = 0
 show_map_mode = False
 su: Optional[SimulatedUniverse] = None
 
@@ -101,7 +101,7 @@ def choose_view(page: Page):
 
     def debug_checkbox_changed(_e):
         global debug_mode
-        debug_mode = not debug_mode
+        debug_mode = (debug_mode+1)%3
 
     def difficult_changed(e: ControlEvent):
         config.difficult = e.data
@@ -175,6 +175,7 @@ def choose_view(page: Page):
                                 ft.Checkbox(
                                     label="调试模式",
                                     value=False,
+                                    tristate=True,
                                     on_change=debug_checkbox_changed,
                                 ),
                                 ft.Dropdown(
