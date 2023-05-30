@@ -6,8 +6,6 @@ if not exist ".\.git" (
     git fetch
 )
 setlocal
-git stash push info.txt
 git pull
-git stash apply
 endlocal
 pause
