@@ -51,30 +51,30 @@ def choose_view(page: Page):
             change_all_button(False)
 
     def angle(_e):
-        show_snack_bar(page, "开始校准，请切换回游戏", ft.colors.GREEN)
+        show_snack_bar(page, "开始校准，请切换回游戏（¬､¬）", ft.colors.GREEN)
         res = run(align_angle)
         if res==1:
-            show_snack_bar(page, "校准成功", ft.colors.GREEN)
+            show_snack_bar(page, "校准成功（＾∀＾●）", ft.colors.GREEN)
         else:
-            show_snack_bar(page, "校准失败", ft.colors.RED)
+            show_snack_bar(page, "校准失败（⊙.⊙）", ft.colors.RED)
 
     def start(_e):
         global su
-        if config.angle==1.0:
-            show_snack_bar(page, "没有校准,不准运行!", ft.colors.RED)
+        if config.angle=="1.0":
+            show_snack_bar(page, "没有校准,不准运行（￣^￣）", ft.colors.RED)
             return
-        show_snack_bar(page, "开始运行，请切换回游戏", ft.colors.GREEN)
+        show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         su = run(SimulatedUniverse, 1, int(debug_mode), int(show_map_mode))
         run(su.start)
 
     def start_new(_e):
         global su
-        show_snack_bar(page, "开始录入，请切换回游戏", ft.colors.GREEN)
+        show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
         su = run(SimulatedUniverse, 0, int(debug_mode), int(show_map_mode))
         run(su.start)
 
     def stops(_e):
-        show_snack_bar(page, "停止运行", ft.colors.GREEN)
+        show_snack_bar(page, "停止运行（>∀<）", ft.colors.GREEN)
         global su
         if su is not None:
             run(su.stop)    
@@ -91,7 +91,7 @@ def choose_view(page: Page):
             pass
 
     def update_maps(_e):
-        show_snack_bar(page, "开始更新地图", ft.colors.GREEN)
+        show_snack_bar(page, "开始更新地图（´・н・‘）", ft.colors.GREEN)
         msg,col = update_map()
         show_snack_bar(page, msg, col)
 
