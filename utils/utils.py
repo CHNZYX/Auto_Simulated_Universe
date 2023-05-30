@@ -630,7 +630,7 @@ class UniverseUtils:
             except:
                 pass
         log.info(f"地图编号：{ans}  相似度：{sim}")
-        if sim < 0.5 and self.debug:
+        if sim < 0.5 and self.debug==2:
             time.sleep(1000000)
         return ans,sim
 
