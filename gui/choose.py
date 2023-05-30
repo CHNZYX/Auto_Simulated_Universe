@@ -46,12 +46,16 @@ def choose_view(page: Page):
             show_snack_bar(page, "没有校准,不准运行（￣^￣）", ft.colors.RED)
             return
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
-        page.su = run(SimulatedUniverse, 1, int(page.debug_mode), int(page.show_map_mode))
+        page.su = run(
+            SimulatedUniverse, 1, int(page.debug_mode), int(page.show_map_mode)
+        )
         run(page.su.start)
 
     def start_new(_e):
         show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
-        page.su = run(SimulatedUniverse, 0, int(page.debug_mode), int(page.show_map_mode))
+        page.su = run(
+            SimulatedUniverse, 0, int(page.debug_mode), int(page.show_map_mode)
+        )
         run(page.su.start)
 
     def stops(_e):

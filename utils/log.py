@@ -1,4 +1,13 @@
-from logging import getLogger, StreamHandler, FileHandler, Formatter, basicConfig, INFO, DEBUG, CRITICAL
+from logging import (
+    getLogger,
+    StreamHandler,
+    FileHandler,
+    Formatter,
+    basicConfig,
+    INFO,
+    DEBUG,
+    CRITICAL,
+)
 from pathlib import Path
 
 logs_path = Path("logs")
