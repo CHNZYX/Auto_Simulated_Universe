@@ -69,6 +69,7 @@ class SimulatedUniverse(UniverseUtils):
             warn_game = False
             cnt=0
             while Text != '崩坏：星穹铁道':
+                self.lst_changed = time.time()
                 if self._stop:
                     raise KeyboardInterrupt
                 if not warn_game:
