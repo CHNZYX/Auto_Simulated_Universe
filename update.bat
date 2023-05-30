@@ -5,7 +5,7 @@ if not exist ".\.git" (
     git remote add origin https://github.com/CHNZYX/Auto_Simulated_Universe.git
 )
 setlocal
-git stash push -- info.txt
+git stash push info.txt
 git pull
 git stash apply
 endlocal
