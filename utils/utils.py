@@ -487,6 +487,7 @@ class UniverseUtils:
             elif ds <= 12:
                 try:
                     self.target.remove((loc, type))
+                    self.lst_changed=time.time()
                 except:
                     pass
 
