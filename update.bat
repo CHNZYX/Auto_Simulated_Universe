@@ -5,7 +5,6 @@ if not exist ".\.git" (
     git remote add origin https://github.com/CHNZYX/Auto_Simulated_Universe.git
     git fetch
 )
-setlocal
+git reset --hard HEAD
 git pull
-endlocal
 pause
