@@ -13,7 +13,7 @@ def extract_features(img):
 def load_images(path):
     img_set = []
     for file in os.listdir(path):
-        pth = path + '/' +file + '/init.jpg'
+        pth = path + "/" + file + "/init.jpg"
         if os.path.exists(pth):
             image = cv.imread(pth)
             img_set.append((file, extract_features(image)))
@@ -30,7 +30,9 @@ def filter_similar_images(img_set, threshold):
             matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
             try:
                 matches = matcher.match(current_img, img_set[j][1])
-                similarity_score = len(matches) / max(len(current_img), len(img_set[j][1]))
+                similarity_score = len(matches) / max(
+                    len(current_img), len(img_set[j][1])
+                )
                 if similarity_score > sim:
                     sim = similarity_score
                     similar_img_index = j
@@ -41,5 +43,5 @@ def filter_similar_images(img_set, threshold):
     return similar_images
 
 
-path = '../imgs/maps'
+path = "../imgs/maps"
 print(filter_similar_images(load_images(path), 0.5))

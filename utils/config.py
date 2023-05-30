@@ -9,8 +9,8 @@ class Config:
         self.difficult = "2"
         self.allow_difficult = [1, 2, 3, 4, 5]
         self.text = "info.txt"
-        self.fate = '巡猎'
-        self.map_sha = ''
+        self.fate = "巡猎"
+        self.map_sha = ""
         self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
         self.read()
 
@@ -42,7 +42,9 @@ class Config:
 
     def save(self):
         with open(self.text, "w", encoding="utf-8") as f:
-            f.write(f"{self.order_text}\n{self.angle}\n{self.diffi}\n{self.fate}\n{self.map_sha}")
+            f.write(
+                f"{self.order_text}\n{self.angle}\n{self.diffi}\n{self.fate}\n{self.map_sha}"
+            )
 
 
 config = Config()

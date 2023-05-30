@@ -132,11 +132,12 @@ def config_view(page: Page):
                             horizontal_alignment=CrossAxisAlignment.CENTER,
                         ),
                     ],
-                    alignment=MainAxisAlignment.SPACE_AROUND,
+                    alignment=MainAxisAlignment.CENTER,
                     vertical_alignment=CrossAxisAlignment.CENTER,
+                    height=200
                 ),
             ],
-            padding=0,
+            padding=20,
             spacing=0,
         )
     )

@@ -39,7 +39,11 @@ def enum_windows_callback(hwnd, hwnds):
     class_name = win32gui.GetClassName(hwnd)
     name = win32gui.GetWindowText(hwnd)
     try:
-        if class_name == "ConsoleWindowClass" and win32gui.IsWindowVisible(hwnd) and 'gui' in name[-7:]:
+        if (
+            class_name == "ConsoleWindowClass"
+            and win32gui.IsWindowVisible(hwnd)
+            and "gui" in name[-7:]
+        ):
             hwnds.append(hwnd)
     except:
         pass

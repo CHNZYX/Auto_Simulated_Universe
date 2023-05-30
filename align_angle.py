@@ -12,7 +12,7 @@ from utils.utils import UniverseUtils
 
 
 def get_angle(su):
-    su.press('w', 0.2)
+    su.press("w", 0.2)
     time.sleep(0.3)
     su.get_screen()
     blue = np.array([234, 191, 4])
@@ -21,7 +21,8 @@ def get_angle(su):
     local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
     return su.get_now_direc(local_screen)
 
-
+# 不同电脑鼠标移动速度、放缩比、分辨率等不同，因此需要校准
+# 基本逻辑：每次转60度，然后计算实际转了几度，计算出误差比
 def main():
     log.info("开始校准")
     su = UniverseUtils()
@@ -40,6 +41,7 @@ def main():
         ang_list.append(sub)
         lst_ang = now_ang
     ang_list = np.array(ang_list)
+    # 十次转身的角度
     print(ang_list)
     ax = 0
     ay = 0
@@ -53,9 +55,9 @@ def main():
         win32gui.SetForegroundWindow(su.my_nd)
     except pywintypes.error:
         pass
-    log.info('校准完成')
+    log.info("校准完成")
     return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
