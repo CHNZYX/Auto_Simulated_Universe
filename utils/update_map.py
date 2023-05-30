@@ -97,6 +97,7 @@ def update_map():
     chn_folders = [item for item in t if item.startswith("CHNZYX")]
     downloaded_map_path = os.path.join(os.path.join(root_path, chn_folders[0]), "maps")
     print("download_map_path: " + downloaded_map_path)
+    print("解压中...")
     # 删除原有map文件夹，复制新的map文件夹
     shutil.rmtree(map_path)
     shutil.copytree(downloaded_map_path, map_path)
