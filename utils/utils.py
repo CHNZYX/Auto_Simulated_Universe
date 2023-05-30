@@ -418,7 +418,7 @@ class UniverseUtils:
                 self.big_map[self.real_loc[0] - 1:self.real_loc[0] + 2, self.real_loc[1] - 1:self.real_loc[1] + 2] = 49
                 cv.imwrite('imgs/bigmap.jpg', self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
-                if dls[0] <= nds + 1:
+                if dls[0] <= nds:
                     ts = ' da'
                     if t > 0:
                         pyautogui.keyUp('w')
@@ -444,7 +444,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while len(dtm)>0 and dtm[0]<time.time()-1:
+                while dtm[0]<time.time()-1:
                     dtm=dtm[1:]
                     dls=dls[1:]
             log.info("进入新地图或者进入战斗")
