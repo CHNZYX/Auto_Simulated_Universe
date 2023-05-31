@@ -13,12 +13,20 @@ def config_view(page: Page):
     def save(_):
         config.save()
         show_snack_bar(page, "保存成功", ft.colors.GREEN)
+        page.go("/")
+        page.update()
 
     def show_map_checkbox_changed(_e):
         page.show_map_mode = not page.show_map_mode
+        config.show_map_mode = page.show_map_mode
 
     def debug_checkbox_changed(_e):
         page.debug_mode = (page.debug_mode + 1) % 3
+        config.debug_mode = page.debug_mode
+
+    def force_update_checkbox_changed(_e):
+        page.force_update = not page.force_update
+        config.force_update = page.force_update
 
     def difficult_changed(e: ControlEvent):
         config.difficult = e.data
@@ -28,6 +36,10 @@ def config_view(page: Page):
 
     def textbox_changed(e):
         config.order_text = e.control.value
+
+    def get_debug_mode(d):
+        ls = [False,True,None]
+        return ls[d]
 
     page.views.append(
         ft.View(
@@ -76,14 +88,19 @@ def config_view(page: Page):
                                     [
                                         ft.Checkbox(
                                             label="显示地图",
-                                            value=False,
+                                            value=config.show_map_mode,
                                             on_change=show_map_checkbox_changed,
                                         ),
                                         ft.Checkbox(
                                             label="调试模式",
-                                            value=False,
+                                            value=get_debug_mode(config.debug_mode),
                                             tristate=True,
                                             on_change=debug_checkbox_changed,
+                                        ),
+                                        ft.Checkbox(
+                                            label="强制更新",
+                                            value=config.force_update,
+                                            on_change=force_update_checkbox_changed,
                                         ),
                                     ]
                                 ),

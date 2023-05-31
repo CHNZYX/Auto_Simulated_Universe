@@ -10,12 +10,14 @@ class Page(ft.Page):
     su: Optional[SimulatedUniverse]
     debug_mode: int
     show_map_mode: bool
+    force_update: bool
 
 
 def init_page(page: Page):
     page.su = None
     page.debug_mode = 0
     page.show_map_mode = False
+    page.force_update = False
 
 
 def show_snack_bar(page, text, color, selectable=False):
