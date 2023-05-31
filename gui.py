@@ -3,6 +3,7 @@ import atexit
 import flet as ft
 import pyuac
 import win32gui
+import keyboard
 
 from gui.choose import choose_view
 from gui.config import config_view

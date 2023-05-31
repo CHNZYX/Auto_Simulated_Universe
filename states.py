@@ -64,7 +64,7 @@ class SimulatedUniverse(UniverseUtils):
         self.his_loc = (30, 30)
         self.offset = (30, 30)
         self.now_loc = (4096, 4096)
-        self.map_file = "imgs/maps/" + str(random.randint(0, 99999)) + "/"
+        self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
 

@@ -70,8 +70,24 @@ def get_latest_branch_sha(repo_url):
     else:
         return None
 
+def copy_folder_contents(source_folder, destination_folder):
+    # 检查目标文件夹是否存在，如果不存在则创建
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+    
+    # 遍历源文件夹中的所有文件和子文件夹
+    for item in os.listdir(source_folder):
+        source = os.path.join(source_folder, item)
+        destination = os.path.join(destination_folder, item)
+        
+        if os.path.isfile(source):
+            # 如果源项是文件，则直接复制并覆盖同名文件
+            shutil.copy2(source, destination)
+        elif os.path.isdir(source):
+            # 如果源项是文件夹，则递归地调用复制函数
+            copy_folder_contents(source, destination)
 
-def update_map():
+def update_map(force = False):
     repo_url = "CHNZYX/maps"
     # 获取远端sha
     remote_sha = get_latest_branch_sha(repo_url)
@@ -100,8 +116,11 @@ def update_map():
     print("download_map_path: " + downloaded_map_path)
     print("解压中...")
     # 删除原有map文件夹，复制新的map文件夹
-    shutil.rmtree(map_path)
-    shutil.copytree(downloaded_map_path, map_path)
+    if force:
+        shutil.rmtree(map_path)
+        shutil.copytree(downloaded_map_path, map_path)
+    else:
+        copy_folder_contents(downloaded_map_path, map_path)
     shutil.rmtree(os.path.dirname(downloaded_map_path))
     # 更新sha
     config.map_sha = remote_sha
