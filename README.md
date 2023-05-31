@@ -26,9 +26,9 @@ This software is open source, free of charge and for learning and exchange purpo
 
 双击install_requirements.bat安装依赖库
 
-进入游戏，将人物传送到黑塔的办公室，然后双击 **校准.bat** ，切回游戏界面，等待视角转换/原地转圈结束
+进入游戏，将人物传送到黑塔的办公室，然后双击 **align.bat** ，切回游戏界面，等待视角转换/原地转圈结束
 
-如果**校准.bat**闪退，可以尝试管理员运行<pre><code>python align_angle.py
+如果**align.bat**闪退，可以尝试管理员运行<pre><code>python align_angle.py
 </code></pre>
 
 如果改变了鼠标dpi或游戏分辨率/屏幕分辨率/窗口缩放倍率，需要重新校准！
