@@ -16,7 +16,7 @@ from utils.utils import UniverseUtils, set_forground
 import os
 
 # 版本号
-version = "v4.3"
+version = "v4.4"
 
 # 优先祝福
 echos = {"火堆外的夜": "hdwdy"}

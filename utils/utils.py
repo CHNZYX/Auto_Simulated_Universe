@@ -436,6 +436,7 @@ class UniverseUtils:
             t = 2
             for i in range(1000):
                 if self._stop == 1:
+                    pyautogui.keyUp("w")
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map(sbl=(i <= 4 and bl))
