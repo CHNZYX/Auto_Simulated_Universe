@@ -40,7 +40,7 @@ This software is open source, free of charge and for learning and exchange purpo
 双击run.bat 或者 管理员权限运行 <pre><code>python states.py --find=1
 </code></pre>
 
-只支持1920\*1080(窗口化或全屏幕)，开启祝福详细描述。
+只支持1920\*1080(窗口化或全屏幕)，开启祝福详细描述，文本语言选择简体中文。
 
 info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己的配队，1表示第一个角色。最好在一号位选远程角色（艾丝妲、三月七）方便开怪。第二行是校准数据，不要改第二行！
 
