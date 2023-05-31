@@ -71,7 +71,7 @@ info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己
 
 在设置中选择自己想要的难度和命途，配队请用三个空格隔开四个数字，1表示第一个角色（编号规则示意见下图）。最好在一号位选远程角色（艾丝妲、三月七）方便开怪。
 
-![image](​​https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg​​)
+![配队编号示意](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
 
 **运行自动化**
 
