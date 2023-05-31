@@ -1,5 +1,5 @@
 # Auto_Simulated_Universe
-Star Rail - Auto Simulation Universe Automation
+Star Rail - Auto Simulation Universe
 
 There is a breakpoint resumption function, so you can switch to do other things and come back to continue the automation.
 
