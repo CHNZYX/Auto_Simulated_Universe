@@ -532,6 +532,7 @@ class UniverseUtils:
                             if j[1] == type:
                                 self.last = j[0]
                                 self.target.remove(j)
+                                self.lst_changed = time.time()
                         break
                     else:
                         if i == -1:
@@ -546,6 +547,7 @@ class UniverseUtils:
                     if self.tries == 4:
                         try:
                             self.target.remove((loc, type))
+                            self.lst_changed = time.time()
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
