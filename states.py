@@ -296,10 +296,15 @@ class SimulatedUniverse(UniverseUtils):
                 map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进")
                 self.press("esc")
                 time.sleep(2)
-                if random.randint(0, 2) != 2 or self.debug >= 1:
+                if random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
                 else:
-                    self.click((0.2708, 0.1324))
+                    if self.debug == 0:
+                        self.click((0.2708, 0.1324))
+                    elif self.debug == 1:
+                        self.click((0.2927, 0.2602))
+                    else:
+                        time.sleep(100000)
             # 寻路
             else:
                 self.get_direc()
