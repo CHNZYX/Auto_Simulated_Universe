@@ -75,7 +75,7 @@ info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己
 
 ![配队编号示意](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
 
-比如说这张图中，你想选择景元，希儿，娜塔莎，彦卿，那么请在配队中输入：4 3 6 2
+比如说这张图中，你想选择娜塔莎，景元，希儿，彦卿，那么请在配队中输入：6 4 3 2
 
 **运行自动化**
 
