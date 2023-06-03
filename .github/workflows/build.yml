@@ -23,6 +23,8 @@ jobs:
           pip install -r requirements.txt
           pyinstaller --uac-admin -F --i imgs/icon.ico gui.py
           xcopy imgs dist\imgs /I /E
+          xcopy README.md dist /I /E
+          xcopy utils\本地多用户远程登陆1.12.7z dist /I /E
           ren dist AutoSimulatedUniverse
       - name: Upload artifact
         uses: actions/upload-artifact@v3
