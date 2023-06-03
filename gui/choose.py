@@ -9,6 +9,7 @@ from gui.common import show_snack_bar, mynd, Page
 from states import SimulatedUniverse, version
 from utils.config import config
 from utils.update_map import update_map
+import time
 
 
 def choose_view(page: Page):
@@ -36,6 +37,11 @@ def choose_view(page: Page):
             change_all_button(False)
 
     def angle(_e):
+        if config.angle=='1.0':
+            go_about()
+            time.sleep(2)
+            page.dialog.open = False
+            page.update()
         show_snack_bar(page, "开始校准，请切换回游戏（¬､¬）", ft.colors.GREEN)
         res = run(align_angle)
         if res == 1:
@@ -84,6 +90,15 @@ def choose_view(page: Page):
     def go_config(_e):
         page.go("/config")
 
+    def go_about(e=None):
+        dlg = ft.AlertDialog(
+            title=ft.Text("此程序为免费开源项目"),
+            content=ft.Text("链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526")
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
     # View
     page.views.append(
         ft.View(
@@ -103,35 +118,40 @@ def choose_view(page: Page):
                                 size=20,
                             ),
                         ),
-                        ft.FilledButton(
+                        ft.ElevatedButton(
                             "校准",
                             icon=ft.icons.ADD_TASK,
                             on_click=angle,
                         ),
-                        ft.FilledButton(
+                        ft.ElevatedButton(
                             "运行",
                             icon=ft.icons.LOGIN,
                             on_click=start,
                         ),
-                        ft.FilledButton(
+                        ft.ElevatedButton(
                             "录入",
                             icon=ft.icons.ADD,
                             on_click=start_new,
                         ),
-                        ft.FilledButton(
+                        ft.ElevatedButton(
                             "显隐",
                             icon=ft.icons.HIDE_SOURCE,
                             on_click=hide,
                         ),
-                        ft.FilledButton(
+                        ft.ElevatedButton(
                             "停止",
                             icon=ft.icons.STOP,
                             on_click=stops,
                         ),
-                        ft.FilledButton(
+                        ft.ElevatedButton(
                             "设置",
                             icon=ft.icons.SETTINGS,
                             on_click=go_config,
+                        ),
+                        ft.ElevatedButton(
+                            "关于",
+                            icon=ft.icons.INFO,
+                            on_click=go_about,
                         ),
                     ],
                     alignment=MainAxisAlignment.CENTER,
