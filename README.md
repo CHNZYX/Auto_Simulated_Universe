@@ -24,7 +24,7 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ### 用法
 
-只支持1920\*1080(窗口化或全屏幕)，开启祝福详细描述，文本语言选择简体中文。
+只支持1920\*1080(窗口化或全屏幕)，开启祝福详细描述，文本语言选择简体中文。（屏幕分辨率等于1920\*1080开全屏幕，大于的开窗口化）
 
 默认世界：比如说如果你当前模拟宇宙默认世界4，但是想自动化世界6，那么请先进入一次世界6来改变默认世界
 
@@ -73,7 +73,9 @@ info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己
 
 在设置中选择自己想要的难度和命途，配队请用三个空格隔开四个数字，1表示第一个角色（编号规则示意见下图）。最好在一号位选远程角色（艾丝妲、三月七）方便开怪。
 
-![配队编号示意](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
+![配队编号](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
+
+比如说这张图中，你想选择娜塔莎，景元，希儿，彦卿，那么请在配队中输入：6 4 3 2
 
 **运行自动化**
 
@@ -96,6 +98,10 @@ F8/‘停止’按钮停止运行。
 左下角为更新地图按钮（只会更新地图，不会更新本体）
 
 录制地图参见后文
+
+推荐最低画质配置：
+
+![画质](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/image_quality.jpg)
 
 ----------------------------------------------------------------------------------------------
 
