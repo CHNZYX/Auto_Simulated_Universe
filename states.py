@@ -265,9 +265,9 @@ class SimulatedUniverse(UniverseUtils):
                 if self.find:
                     self.now_map, self.now_map_sim = self.match_scr(self.loc_scr)
                     # 地图相似度过低，判定为黑塔空间站或非跑图状态
-                    if self.now_map_sim < 0.3:
-                        self.init_map()
-                        return 0
+                    #if self.now_map_sim < 0.3:
+                    #    self.init_map()
+                    #    return 0
                     self.now_pth = "imgs/maps/" + self.now_map + "/"
                     files = self.find_latest_modified_file(self.now_pth)
                     print("地图文件：", files)
@@ -292,19 +292,19 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if time.time() - self.lst_changed >= 45 and self.find == 1:
+            if time.time() - self.lst_changed >= 35 and self.find == 1:
                 map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进")
                 self.press("esc")
                 time.sleep(2)
+                if self.debug == 2:
+                    time.sleep(100000)
                 if random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
                 else:
                     if self.debug == 0:
                         self.click((0.2708, 0.1324))
-                    elif self.debug == 1:
-                        self.click((0.2927, 0.2602))
                     else:
-                        time.sleep(100000)
+                        self.click((0.2927, 0.2602))
             # 寻路
             else:
                 self.get_direc()

@@ -235,7 +235,7 @@ class UniverseUtils:
         if self.full:
             self.screen[:-11, :-11] = self.screen[11:, 11:]
         self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
-        cv.imwrite("imgs/screen.jpg", self.screen)
+        #cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
 
     # 移动视角，获得小地图中不变的部分（白线、灰块）
@@ -356,6 +356,14 @@ class UniverseUtils:
                 ang = i
         return ang
 
+    def goodf(self):
+        is_killed = (
+            self.check("bonus", 0.3578, 0.5083)
+            or self.check("rescure", 0.3578, 0.5083)
+            or self.check("download", 0.3578, 0.5083)
+        )
+        return self.check("f", 0.3901, 0.5093) and not is_killed
+
     # 寻路函数
     def get_direc(self):
         gray = np.array([55, 55, 55])
@@ -414,7 +422,7 @@ class UniverseUtils:
             else:
                 ps = 6
             # 如果当前就在交互点上：直接返回
-            if self.check("f", 0.3901, 0.5093):
+            if self.goodf():
                 for j in deepcopy(self.target):
                     if j[1] == type:
                         self.last = j[0]
@@ -497,7 +505,7 @@ class UniverseUtils:
                         break
                 if (
                     nds <= ps
-                    or self.check("f", 0.3901, 0.5093)
+                    or self.goodf()
                     or self.check("run", 0.9844, 0.7889, threshold=0.93) == 0
                 ):
                     pyautogui.keyUp("w")
@@ -505,7 +513,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1:
+                while dtm[0] < time.time() - 1.5:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info("进入新地图或者进入战斗")
@@ -527,7 +535,7 @@ class UniverseUtils:
                         return
                     time.sleep(0.4)
                     self.get_screen()
-                    if self.check("f", 0.3901, 0.5093):
+                    if self.goodf():
                         for j in deepcopy(self.target):
                             if j[1] == type:
                                 self.last = j[0]
@@ -544,14 +552,14 @@ class UniverseUtils:
                 # 多次找不到交互点，放弃寻找（不能放弃传送点）
                 if type == 2:
                     self.tries += 1
-                    if self.tries == 4:
+                    if self.tries == 3:
                         try:
                             self.target.remove((loc, type))
                             self.lst_changed = time.time()
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
-            elif ds <= 12:
+            elif ds <= 10:
                 try:
                     self.target.remove((loc, type))
                     self.lst_changed = time.time()
@@ -712,7 +720,7 @@ class UniverseUtils:
             except:
                 pass
         log.info(f"地图编号：{ans}  相似度：{sim}")
-        if sim < 0.5 and self.debug == 2 and ans != '54544':
+        if (ans in ['78566','75973']) and self.debug == 2:
             time.sleep(1000000)
         return ans, sim
 

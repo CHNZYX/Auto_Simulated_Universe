@@ -26,7 +26,9 @@ def choose_view(page: Page):
     def run(func, *args, **kwargs):
         try:
             change_all_button()
-            return func(*args, **kwargs)
+            res=func(*args, **kwargs)
+            change_all_button(False)
+            return res
         except Exception:
             print("E: 运行函数时出现错误")
             traceback.print_exc()
