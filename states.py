@@ -19,7 +19,7 @@ from align_angle import main as align_angle
 from utils.config import config
 
 # 版本号
-version = "v4.4"
+version = "v4.5"
 
 # 优先祝福
 echos = {"火堆外的夜": "hdwdy"}
@@ -122,7 +122,10 @@ class SimulatedUniverse(UniverseUtils):
 
     def end_of_uni(self):
         self.count+=1
-        ToastNotifier().show_toast('已完成', f'计数:{self.count}')
+        try:
+            ToastNotifier().show_toast('已完成', f'计数:{self.count}', 'imgs/icon.ico', 5, True)
+        except:
+            pass
         self.floor = 0
 
     def normal(self):
@@ -243,7 +246,7 @@ class SimulatedUniverse(UniverseUtils):
                         if self.check("exit", 0.3719, 0.5083, threshold=0.965):
                             self.end_of_uni()
                     elif self.re_align == 1:
-                        align_angle(18,1)
+                        align_angle(10,1)
                         self.multi = config.multi
                         self.re_align += 1
                     is_killed = (
@@ -336,7 +339,10 @@ class SimulatedUniverse(UniverseUtils):
                     self.click((0.2927, 0.2602))
                 else:
                     if self.debug == 0:
-                        ToastNotifier().show_toast('中途结算', f'当前层数:{self.floor+1}')
+                        try:
+                            ToastNotifier().show_toast('中途结算', f'当前层数:{self.floor+1}', 'imgs/icon.ico', 5, True)
+                        except:
+                            pass
                         self.floor=0
                         self.click((0.2708, 0.1324))
                     else:
