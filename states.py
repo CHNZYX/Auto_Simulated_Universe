@@ -14,6 +14,9 @@ from utils.map_log import map_log
 from utils.update_map import update_map
 from utils.utils import UniverseUtils, set_forground
 import os
+from win10toast import ToastNotifier
+from align_angle import main as align_angle
+from utils.config import config
 
 # 版本号
 version = "v4.4"
@@ -29,10 +32,12 @@ stranges = {
     "博士之袍": "bszp",
     "香涎干酪": "xygl",
 }
+# 优先事件
+events = len(os.listdir("imgs/events"))
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map, update=0):
+    def __init__(self, find, debug, show_map, speed, update=0):
         super().__init__()
         self.now_map = None
         self.now_map_sim = None
@@ -42,7 +47,11 @@ class SimulatedUniverse(UniverseUtils):
         self.img_set = []
         self.find = find
         self.debug = debug
+        self.speed = speed
         self._show_map = show_map & find
+        self.floor = 0
+        self.count = 0
+        self.re_align = 0
         set_debug(debug > 0)
         if update and find:
             update_map()
@@ -110,6 +119,11 @@ class SimulatedUniverse(UniverseUtils):
                 if res == 1:
                     time.sleep(0.7)
         log.info("停止运行")
+
+    def end_of_uni(self):
+        self.count+=1
+        ToastNotifier().show_toast('已完成', f'计数:{self.count}')
+        self.floor = 0
 
     def normal(self):
         # self.lst_changed：最后一次交互时间，长时间无交互则暂离
@@ -223,8 +237,15 @@ class SimulatedUniverse(UniverseUtils):
                         "tele", 0.3719, 0.5083, threshold=0.965
                     ) or self.check("exit", 0.3719, 0.5083, threshold=0.965):
                         # self.get_map()
-                        map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim}")
                         self.init_map()
+                        self.floor += 1
+                        map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
+                        if self.check("exit", 0.3719, 0.5083, threshold=0.965):
+                            self.end_of_uni()
+                    elif self.re_align == 1:
+                        align_angle(18,1)
+                        self.multi = config.multi
+                        self.re_align += 1
                     is_killed = (
                         self.check("bonus", 0.3578, 0.5083)
                         or self.check("rescure", 0.3578, 0.5083)
@@ -255,15 +276,22 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.1)
                     if self._stop:
                         return 1
-                time.sleep(2.2)
                 if self._stop:
                     return 1
-                self.get_screen()
-                self.exist_minimap()
                 self.big_map_c = 1
                 # 寻路模式，匹配最接近的地图
                 if self.find:
-                    self.now_map, self.now_map_sim = self.match_scr(self.loc_scr)
+                    now_time = time.time()
+                    self.now_map_sim = 0
+                    while True:
+                        self.exist_minimap()
+                        now_map, now_map_sim = self.match_scr(self.loc_scr)
+                        if self.now_map_sim < now_map_sim:
+                            self.now_map, self.now_map_sim = now_map, now_map_sim
+                        if self.now_map_sim>0.7 or time.time()-now_time>2.6 or self._stop:
+                            break
+                    if self._stop:return 1
+                    log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                     # 地图相似度过低，判定为黑塔空间站或非跑图状态
                     #if self.now_map_sim < 0.3:
                     #    self.init_map()
@@ -279,6 +307,8 @@ class SimulatedUniverse(UniverseUtils):
                     log.info("target %s" % self.target)
                 # 录制模式，保存初始小地图
                 else:
+                    time.sleep(3)
+                    self.exist_minimap()
                     cv.imwrite(self.map_file + "init.jpg", self.loc_scr)
             if time.time() - self.lst_tm > 5:
                 if self.find == 0:
@@ -292,19 +322,26 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if time.time() - self.lst_changed >= 35 and self.find == 1:
-                map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进")
+            if ((time.time() - self.lst_changed >= 35 - 7 * self.debug) or (self.debug==2 and self.floor==12)) and self.find == 1:
                 self.press("esc")
                 time.sleep(2)
+                self.init_map()
                 if self.debug == 2:
-                    time.sleep(100000)
-                if random.randint(0, 2) != 3:
+                    if self.floor != 12:
+                        map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进")
+                    time.sleep(1+1000000*(self.floor != 12))
+                    self.floor=0
+                    self.click((0.2708, 0.1324))
+                elif random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
                 else:
                     if self.debug == 0:
+                        ToastNotifier().show_toast('中途结算', f'当前层数:{self.floor+1}')
+                        self.floor=0
                         self.click((0.2708, 0.1324))
                     else:
                         self.click((0.2927, 0.2602))
+                self.re_align += 1
             # 寻路
             else:
                 self.get_direc()
@@ -338,20 +375,26 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("fate_3", 0.9422, 0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
-        # 事件界面：选择
-        elif self.check("arrow", 0.1828, 0.5000, mask="mask_event"):
-            self.click((self.tx, self.ty))
-        # 事件界面：退出
-        elif self.check("arrow_1", 0.1828, 0.5000, mask="mask_event"):
-            self.click((self.tx, self.ty))
-        # 事件选择界面
-        elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
-            self.click((self.tx, self.ty))
-            self.click((0.1167, self.ty - 0.4685 + 0.3546))
-            time.sleep(1.5)
         # 事件界面
         elif self.check("event", 0.9479, 0.9565):
-            self.click((0.9479, 0.9565))
+        # 事件界面：选择
+            if self.check("arrow", 0.1828, 0.5000, mask="mask_event"):
+                self.click((self.tx, self.ty))
+            # 事件界面：退出
+            elif self.check("arrow_1", 0.1828, 0.5000, mask="mask_event"):
+                self.click((self.tx, self.ty))
+            # 事件选择界面
+            elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
+                tx, ty = self.tx, self.ty
+                for i in range(events):
+                    if self.check("events/"+str(i), 0.1828, 0.5000, mask="mask_event", threshold=0.965):
+                        tx, ty = self.tx, self.ty
+                        break
+                self.click((tx, ty))
+                self.click((0.1167, ty - 0.4685 + 0.3546))
+                time.sleep(1.5)
+            else:
+                self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
             self.get_screen()
@@ -395,28 +438,47 @@ class SimulatedUniverse(UniverseUtils):
                 pass
         return file
 
+    def del_pt(self,img,A,S,f):
+        if (img[A] == [0,0,0]).all() or (not f(img[A]) and not (abs(A[0]-S[0])>5 or abs(A[1]-S[1])>5))\
+        or A[0]<0 or A[1]<0 or A[0]>=img.shape[0] or A[1]>=img.shape[1]:
+            return
+        else:
+            img[A] = [0,0,0]
+        for dx,dy in [(0,-1),(0,1),(1,0),(-1,0)]:
+            self.del_pt(img,(A[0]+dx,A[1]+dy),S,f)
+
     def get_target(self, pth):
         img = cv.imread(pth)
         res = set()
+        f_set=[
+            lambda p:p[2]<85 and p[1]<85 and p[0]>180, # 路径点 蓝
+            lambda p:p[2]>180 and p[1]<70 and p[0]<70, # 怪 红
+            lambda p:p[2]<90 and p[1]>150 and p[0]<90, # 交互点 绿
+            lambda p:p[2]>180 and p[1]>180 and p[0]<70, # 终点 黄
+        ]
         for i in range(img.shape[0]):
             for j in range(img.shape[1]):
-                # 路径点 蓝
-                if img[i, j, 2] < 85 and img[i, j, 1] < 85 and img[i, j, 0] > 180:
-                    res.add((self.get_center(img, i, j), 0))
-                    img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
-                # 怪 红
-                if img[i, j, 2] > 180 and img[i, j, 1] < 70 and img[i, j, 0] < 70:
-                    res.add((self.get_center(img, i, j), 1))
-                    img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
-                # 交互点 绿
-                if img[i, j, 2] < 90 and img[i, j, 1] > 150 and img[i, j, 0] < 90:
-                    res.add((self.get_center(img, i, j), 2))
-                    img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
-                # 终点 黄
-                if img[i, j, 2] > 180 and img[i, j, 1] > 180 and img[i, j, 0] < 70:
-                    res.add((self.get_center(img, i, j), 3))
-                    img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
-                    self.last = (i, j)
+                for k in range(4):
+                    if f_set[k](img[i,j]):
+                        p = self.get_center(img, i, j)
+                        res.add((p, k))
+                        p = (int(p[0]),int(p[1]))
+                        self.del_pt(img,p,p,f_set[k])
+                        if k==3:
+                            self.last = (i, j)
+        if self.speed:
+            dis = 1000000
+            pt = None
+            for i in res:
+                if i[1]==1 and self.get_dis(i[0],self.last)<dis:
+                    dis=self.get_dis(i[0],self.last)
+                    pt=i
+            for i in deepcopy(res):
+                if i[1]==1 and pt!=i:
+                    res.remove(i)
+                    res.add((i[0],0))
+        if len(res)==1:
+            pyautogui.click()
         return res
 
     def get_center(self, img, i, j):
@@ -494,7 +556,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, update)
+    su = SimulatedUniverse(find, debug, show_map, speed, update)
     try:
         su.start()
     except Exception:
@@ -508,6 +570,7 @@ if __name__ == "__main__":
     debug = 0
     show_map = 0
     update = 0
+    speed = 0
     for i in sys.argv[1:]:
         exec(i.split("-")[-1])
     main()

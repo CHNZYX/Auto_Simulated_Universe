@@ -24,6 +24,10 @@ def config_view(page: Page):
         page.debug_mode = (page.debug_mode + 1) % 3
         config.debug_mode = page.debug_mode
 
+    def speed_checkbox_changed(_e):
+        page.speed_mode = (page.speed_mode + 1) % 3
+        config.speed_mode = page.speed_mode
+
     def force_update_checkbox_changed(_e):
         page.force_update = not page.force_update
         config.force_update = page.force_update
@@ -96,6 +100,12 @@ def config_view(page: Page):
                                             value=get_debug_mode(config.debug_mode),
                                             tristate=True,
                                             on_change=debug_checkbox_changed,
+                                        ),
+                                        ft.Checkbox(
+                                            label="速通模式",
+                                            tristate=True,
+                                            value=get_debug_mode(config.speed_mode),
+                                            on_change=speed_checkbox_changed,
                                         ),
                                         ft.Checkbox(
                                             label="强制更新",

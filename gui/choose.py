@@ -55,14 +55,14 @@ def choose_view(page: Page):
             return
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         page.su = run(
-            SimulatedUniverse, 1, int(config.debug_mode), int(config.show_map_mode)
+            SimulatedUniverse, 1, int(config.debug_mode), int(config.show_map_mode), int(config.speed_mode)
         )
         run(page.su.start)
 
     def start_new(_e):
         show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
         page.su = run(
-            SimulatedUniverse, 0, int(config.debug_mode), int(config.show_map_mode)
+            SimulatedUniverse, 0, int(config.debug_mode), int(config.show_map_mode), int(config.speed_mode)
         )
         run(page.su.start)
 
