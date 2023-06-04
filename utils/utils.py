@@ -424,7 +424,9 @@ class UniverseUtils:
                 ps = 6
             else:
                 ps = 6
-            if self.speed == 2:
+            if self.speed == 2 and type != 3:
+                ps += 4
+            if self.speed == 2 and type == 2:
                 ps += 3
             # 如果当前就在交互点上：直接返回
             if self.goodf():
@@ -447,12 +449,11 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
-            if self.speed==2:
-                pyautogui.keyDown("shift")
+            if self.speed==2 and type != 3:
+                self.press("shift")
             for i in range(3000):
                 if self._stop == 1:
                     pyautogui.keyUp("w")
-                    pyautogui.keyUp("shift")
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map(sbl=(i <= 4 and bl))
@@ -510,9 +511,10 @@ class UniverseUtils:
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
+                        if self._stop == 0:
+                            self.press("shift")
                     else:
                         pyautogui.keyUp("w")
-                        pyautogui.keyUp("shift")
                         break
                 if (
                     nds <= ps
@@ -534,7 +536,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 2:
+                while dtm[0] < time.time() - 1.5:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info("进入新地图或者进入战斗")
@@ -560,6 +562,8 @@ class UniverseUtils:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
                 key = key_list[random.randint(0, len(key_list) - 1)]
+                if type==2 and self.speed==2:
+                    time.sleep(1)
                 for i in range(-1, len(key)):
                     if self._stop:
                         return
@@ -589,9 +593,17 @@ class UniverseUtils:
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
-            elif ds <= 10:
+            elif nds <= 10 + (self.speed==2)*4:
                 try:
                     self.target.remove((loc, type))
+                    self.lst_changed = time.time()
+                except:
+                    pass
+            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0:
+                try:
+                    self.target.remove((loc, type))
+                    if type != 0 and ds > 15:
+                        self.target.add((loc, 0))
                     self.lst_changed = time.time()
                 except:
                     pass

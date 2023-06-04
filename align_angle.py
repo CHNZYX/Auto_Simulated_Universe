@@ -33,7 +33,8 @@ def main(cnt=10,safe=0):
     lst_ang = init_ang
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 3000)
     ang_list = []
-    su.press('w',0.2)
+    if safe:
+        su.press('w',0.2)
     for i in range(cnt):
         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
         su.mouse_move(60)
