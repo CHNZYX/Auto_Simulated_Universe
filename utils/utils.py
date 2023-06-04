@@ -218,14 +218,12 @@ class UniverseUtils:
 
     # 初步裁剪小地图，并增强小地图中的蓝色箭头
     def exist_minimap(self):
+        self.get_screen()
         shape = (int(self.scx * 190), int(self.scx * 190))
         local_screen = self.get_local(0.9333, 0.8657, shape)
-        arrow = self.format_path("loc_arrow")
-        arrow = cv.imread(arrow)
         blue = np.array([234, 191, 4])
         local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 50] = blue
         self.loc_scr = local_screen
-        return 1
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
@@ -364,6 +362,22 @@ class UniverseUtils:
         )
         return self.check("f", 0.3901, 0.5093) and not is_killed
 
+    def get_tar(self):
+        # 寻找最近的目标点
+        mn_dis = 100000
+        loc = 0
+        type = -1
+        for i, j in self.target:
+            if self.get_dis(i, self.real_loc) < mn_dis:
+                mn_dis = self.get_dis(i, self.real_loc)
+                loc = i
+                type = j
+        # 如果找不到，将最后一个完成的目标点作为目标点
+        if loc == 0:
+            loc = self.last
+            type = 3
+        return loc,type
+
     # 寻路函数
     def get_direc(self):
         gray = np.array([55, 55, 55])
@@ -385,21 +399,10 @@ class UniverseUtils:
         # 寻路模式
         else:
             self.ang = 360 - self.get_now_direc(local_screen) - 90
-            mn_dis = 100000
-            loc = 0
-            type = -1
             bl = 0
             if self.his_loc[0] == 30:
                 bl = 1
-            # 寻找最近的目标点
-            for i, j in self.target:
-                if self.get_dis(i, self.real_loc) < mn_dis:
-                    mn_dis = self.get_dis(i, self.real_loc)
-                    loc = i
-                    type = j
-            # 如果找不到，将最后一个完成的目标点作为目标点
-            if loc == 0:
-                loc = self.last
+            loc, type = self.get_tar()
             # 当前坐标与目标点连成的直线的斜率（大概）
             ang = (
                 math.atan2(loc[0] - self.real_loc[0], loc[1] - self.real_loc[1])
@@ -442,9 +445,12 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
-            for i in range(1000):
+            if self.speed==2:
+                pyautogui.keyDown("shift")
+            for i in range(3000):
                 if self._stop == 1:
                     pyautogui.keyUp("w")
+                    pyautogui.keyUp("shift")
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map(sbl=(i <= 4 and bl))
@@ -500,20 +506,33 @@ class UniverseUtils:
                             self.real_loc[1] + self.his_loc[1] + self.offset[1],
                         )
                         t -= 1
+                        dls = [100000]
+                        dtm = [time.time()]
                     else:
                         pyautogui.keyUp("w")
+                        pyautogui.keyUp("shift")
                         break
                 if (
                     nds <= ps
                     or self.goodf()
                     or self.check("run", 0.9844, 0.7889, threshold=0.93) == 0
                 ):
-                    pyautogui.keyUp("w")
-                    break
+                    if nds <= ps and type == 0:
+                        dls = [100000]
+                        dtm = [time.time()]
+                        self.target.remove((loc, type))
+                        self.lst_changed = time.time()
+                        loc, type = self.get_tar()
+                        ds = self.get_dis(self.real_loc, loc)
+                        t = 2
+                    else:
+                        pyautogui.keyUp("w")
+                        pyautogui.keyUp("shift")
+                        break
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5:
+                while dtm[0] < time.time() - 2:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info("进入新地图或者进入战斗")
@@ -526,6 +545,15 @@ class UniverseUtils:
                 if self._stop == 0:
                     pyautogui.click()
                 time.sleep(1)
+                if len(self.target)<=2:
+                    self.press('s')
+                    pyautogui.click()
+                    time.sleep(0.6)
+                    self.press('s',0.5)
+                    pyautogui.click()
+                    time.sleep(0.6)
+                    self.press('w')
+                    pyautogui.click()
             if type == 2 or type == 3:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
@@ -568,10 +596,10 @@ class UniverseUtils:
 
     # 视角转动x度
     def mouse_move(self, x):
-        if x > 40:
-            y = 40
-        elif x < -40:
-            y = -40
+        if x > 30:
+            y = 30
+        elif x < -30:
+            y = -30
         else:
             y = x
         dx = int(9800 * y * 1295 / self.real_width / 180 * self.multi)
@@ -719,8 +747,8 @@ class UniverseUtils:
                     ans = i
             except:
                 pass
-        log.info(f"地图编号：{ans}  相似度：{sim}")
-        if (ans in ['78566','75973']) and self.debug == 2:
+        # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
+        if ((ans in ['65576'] and sim<0.42)) and self.debug == 2:
             time.sleep(1000000)
         return ans, sim
 

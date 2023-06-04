@@ -10,6 +10,7 @@ class Page(ft.Page):
     su: Optional[SimulatedUniverse]
     debug_mode: int
     show_map_mode: bool
+    speed_mode: int
     force_update: bool
 
 
@@ -17,6 +18,7 @@ def init_page(page: Page):
     page.su = None
     page.debug_mode = 0
     page.show_map_mode = False
+    page.speed_mode = 0
     page.force_update = False
 
 
