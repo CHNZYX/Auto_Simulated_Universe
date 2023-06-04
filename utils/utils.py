@@ -427,7 +427,7 @@ class UniverseUtils:
             if self.speed == 2 and type != 3:
                 ps += 4
             if self.speed == 2 and type == 2:
-                ps += 3
+                ps += 2
             # 如果当前就在交互点上：直接返回
             if self.goodf():
                 for j in deepcopy(self.target):
