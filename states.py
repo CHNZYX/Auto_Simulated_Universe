@@ -439,7 +439,7 @@ class SimulatedUniverse(UniverseUtils):
         return file
 
     def del_pt(self,img,A,S,f):
-        if (img[A] == [0,0,0]).all() or (not f(img[A]) and not (abs(A[0]-S[0])>5 or abs(A[1]-S[1])>5))\
+        if (img[A] == [0,0,0]).all() or (not f(img[A]) and self.get_dis(A,S)>5)\
         or A[0]<0 or A[1]<0 or A[0]>=img.shape[0] or A[1]>=img.shape[1]:
             return
         else:
@@ -466,6 +466,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.del_pt(img,p,p,f_set[k])
                         if k==3:
                             self.last = (i, j)
+        cv.imwrite('imgs/tmp1.jpg',img)
         if self.speed:
             dis = 1000000
             pt = None
