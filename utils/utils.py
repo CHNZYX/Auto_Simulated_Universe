@@ -563,7 +563,7 @@ class UniverseUtils:
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
                 key = key_list[random.randint(0, len(key_list) - 1)]
                 if type==2 and self.speed==2:
-                    time.sleep(1)
+                    time.sleep(1.5)
                 for i in range(-1, len(key)):
                     if self._stop:
                         return
