@@ -73,6 +73,5 @@ def main(cnt=10,safe=0):
     log.info("校准完成")
     return 1
 
-
 if __name__ == "__main__":
     main()
