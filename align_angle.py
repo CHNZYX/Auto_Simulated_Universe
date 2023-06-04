@@ -60,16 +60,16 @@ def main(cnt=10,safe=0):
             win32gui.SetForegroundWindow(su.my_nd)
         except pywintypes.error:
             pass
-        
-    key = "sasddwwwaw"
-    su.threshold = 0.97
-    for i in range(len(key)):
-        time.sleep(0.5)
-        su.get_screen()
-        if su.goodf():
-            break
-        else:
-            su.press(key[i], 0.2)
+    else:
+        key = "sasddwwwaw"
+        su.threshold = 0.97
+        for i in range(len(key)):
+            time.sleep(0.5)
+            su.get_screen()
+            if su.goodf():
+                break
+            else:
+                su.press(key[i], 0.2)
     log.info("校准完成")
     return 1
 
