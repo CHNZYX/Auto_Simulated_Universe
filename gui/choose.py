@@ -99,6 +99,15 @@ def choose_view(page: Page):
         dlg.open = True
         page.update()
 
+    def go_money(e=None):
+        dlg = ft.AlertDialog(
+            title=ft.Text("送杯咖啡喵 QWQ"),
+            content=ft.Image('imgs/money.jpg')
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
     # View
     page.views.append(
         ft.View(
@@ -164,6 +173,12 @@ def choose_view(page: Page):
                             tooltip="更新地图",
                             icon_size=30,
                             on_click=update_maps,
+                        ),
+                        ft.IconButton(
+                            icon=ft.icons.THUMB_UP,
+                            tooltip="赞赏",
+                            icon_size=30,
+                            on_click=go_money,
                         ),
                     ],
                     alignment=MainAxisAlignment.SPACE_BETWEEN,
