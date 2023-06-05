@@ -24,7 +24,7 @@ class Config:
 
     @property
     def order(self) -> List[int]:
-        return [int(i) for i in self.order_text.strip(' ').split(" ")]
+        return [int(i) for i in self.order_text.strip(" ").split(" ")]
 
     @property
     def diffi(self) -> int:

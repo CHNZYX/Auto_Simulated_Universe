@@ -16,6 +16,7 @@ import win32gui, win32com.client, pythoncom
 from utils.config import config
 from utils.log import log
 
+
 # 将游戏窗口设为前台
 def set_forground():
     config.read()
@@ -233,7 +234,7 @@ class UniverseUtils:
         if self.full:
             self.screen[:-11, :-11] = self.screen[11:, 11:]
         self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
-        #cv.imwrite("imgs/screen.jpg", self.screen)
+        # cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
 
     # 移动视角，获得小地图中不变的部分（白线、灰块）
@@ -376,7 +377,7 @@ class UniverseUtils:
         if loc == 0:
             loc = self.last
             type = 3
-        return loc,type
+        return loc, type
 
     # 寻路函数
     def get_direc(self):
@@ -449,7 +450,7 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
-            if self.speed==2 and type != 3:
+            if self.speed == 2 and type != 3:
                 self.press("shift")
             for i in range(3000):
                 if self._stop == 1:
@@ -549,20 +550,20 @@ class UniverseUtils:
                 if self._stop == 0:
                     pyautogui.click()
                 time.sleep(1)
-                if len(self.target)<=2:
-                    self.press('s')
+                if len(self.target) <= 2:
+                    self.press("s")
                     pyautogui.click()
                     time.sleep(0.6)
-                    self.press('s',0.5)
+                    self.press("s", 0.5)
                     pyautogui.click()
                     time.sleep(0.6)
-                    self.press('w')
+                    self.press("w")
                     pyautogui.click()
             if type == 2 or type == 3:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
                 key = key_list[random.randint(0, len(key_list) - 1)]
-                if type==2 and self.speed==2:
+                if type == 2 and self.speed == 2:
                     time.sleep(1.5)
                 for i in range(-1, len(key)):
                     if self._stop:
@@ -593,7 +594,7 @@ class UniverseUtils:
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 10 + (self.speed==2)*4:
+            elif nds <= 10 + (self.speed == 2) * 4:
                 try:
                     self.target.remove((loc, type))
                     self.lst_changed = time.time()
@@ -762,7 +763,7 @@ class UniverseUtils:
             except:
                 pass
         # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
-        if ((ans in ['65576'] and sim<0.42)) and self.debug == 2:
+        if ((ans in ["65576"] and sim < 0.42)) and self.debug == 2:
             time.sleep(1000000)
         return ans, sim
 

@@ -121,8 +121,13 @@ class SimulatedUniverse(UniverseUtils):
         log.info("停止运行")
 
     def end_of_uni(self):
-        self.count+=1
-        Notification(app_id="椰羊自动化",title='已完成',msg=f'计数:{self.count}',icon=os.getcwd()+'\\\\imgs\\\\icon.ico').show()
+        self.count += 1
+        Notification(
+            app_id="椰羊自动化",
+            title="已完成",
+            msg=f"计数:{self.count}",
+            icon=os.getcwd() + "\\\\imgs\\\\icon.ico",
+        ).show()
         self.floor = 0
 
     def normal(self):
@@ -239,11 +244,13 @@ class SimulatedUniverse(UniverseUtils):
                         # self.get_map()
                         self.init_map()
                         self.floor += 1
-                        map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
+                        map_log.info(
+                            f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
+                        )
                         if self.check("exit", 0.3719, 0.5083, threshold=0.965):
                             self.end_of_uni()
                     elif self.re_align == 1:
-                        align_angle(10,1)
+                        align_angle(10, 1)
                         self.multi = config.multi
                         self.re_align += 1
                     is_killed = (
@@ -288,12 +295,17 @@ class SimulatedUniverse(UniverseUtils):
                         now_map, now_map_sim = self.match_scr(self.loc_scr)
                         if self.now_map_sim < now_map_sim:
                             self.now_map, self.now_map_sim = now_map, now_map_sim
-                        if self.now_map_sim>0.7 or time.time()-now_time>2.6 or self._stop:
+                        if (
+                            self.now_map_sim > 0.7
+                            or time.time() - now_time > 2.6
+                            or self._stop
+                        ):
                             break
-                    if self._stop:return 1
+                    if self._stop:
+                        return 1
                     log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                     # 地图相似度过低，判定为黑塔空间站或非跑图状态
-                    #if self.now_map_sim < 0.3:
+                    # if self.now_map_sim < 0.3:
                     #    self.init_map()
                     #    return 0
                     self.now_pth = "imgs/maps/" + self.now_map + "/"
@@ -322,22 +334,32 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 35 - 7 * self.debug) or (self.debug==2 and self.floor==12)) and self.find == 1:
+            if (
+                (time.time() - self.lst_changed >= 35 - 7 * self.debug)
+                or (self.debug == 2 and self.floor == 12)
+            ) and self.find == 1:
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
                 if self.debug == 2:
                     if self.floor != 12:
-                        map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进")
-                    time.sleep(1+1000000*(self.floor != 12))
-                    self.floor=0
+                        map_log.error(
+                            f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
+                        )
+                    time.sleep(1 + 1000000 * (self.floor != 12))
+                    self.floor = 0
                     self.click((0.2708, 0.1324))
                 elif random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
                 else:
                     if self.debug == 0:
-                        Notification(app_id="椰羊自动化",title='中途结算',msg=f'当前层数:{self.floor+1}',icon=os.getcwd()+'\\\\imgs\\\\icon.ico').show()
-                        self.floor=0
+                        Notification(
+                            app_id="椰羊自动化",
+                            title="中途结算",
+                            msg=f"当前层数:{self.floor+1}",
+                            icon=os.getcwd() + "\\\\imgs\\\\icon.ico",
+                        ).show()
+                        self.floor = 0
                         self.click((0.2708, 0.1324))
                     else:
                         self.click((0.2927, 0.2602))
@@ -377,7 +399,7 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.5062, 0.1065))
         # 事件界面
         elif self.check("event", 0.9479, 0.9565):
-        # 事件界面：选择
+            # 事件界面：选择
             if self.check("arrow", 0.1828, 0.5000, mask="mask_event"):
                 self.click((self.tx, self.ty))
             # 事件界面：退出
@@ -387,7 +409,13 @@ class SimulatedUniverse(UniverseUtils):
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                 tx, ty = self.tx, self.ty
                 for i in range(events):
-                    if self.check("events/"+str(i), 0.1828, 0.5000, mask="mask_event", threshold=0.965):
+                    if self.check(
+                        "events/" + str(i),
+                        0.1828,
+                        0.5000,
+                        mask="mask_event",
+                        threshold=0.965,
+                    ):
                         tx, ty = self.tx, self.ty
                         break
                 self.click((tx, ty))
@@ -410,7 +438,7 @@ class SimulatedUniverse(UniverseUtils):
             if flag:
                 self.click((0.5 + random.randint(0, 2) * 0.1, 0.5))
             self.click((0.1365, 0.1093))
-        #丢弃奇物
+        # 丢弃奇物
         elif self.check("drop", 0.9406, 0.9491):
             self.click((0.4714, 0.5500))
             self.click((0.1339, 0.1028))
@@ -442,47 +470,53 @@ class SimulatedUniverse(UniverseUtils):
                 pass
         return file
 
-    def del_pt(self,img,A,S,f):
-        if (img[A] == [0,0,0]).all() or (not f(img[A]) and self.get_dis(A,S)>5)\
-        or A[0]<0 or A[1]<0 or A[0]>=img.shape[0] or A[1]>=img.shape[1]:
+    def del_pt(self, img, A, S, f):
+        if (
+            (img[A] == [0, 0, 0]).all()
+            or (not f(img[A]) and self.get_dis(A, S) > 5)
+            or A[0] < 0
+            or A[1] < 0
+            or A[0] >= img.shape[0]
+            or A[1] >= img.shape[1]
+        ):
             return
         else:
-            img[A] = [0,0,0]
-        for dx,dy in [(0,-1),(0,1),(1,0),(-1,0)]:
-            self.del_pt(img,(A[0]+dx,A[1]+dy),S,f)
+            img[A] = [0, 0, 0]
+        for dx, dy in [(0, -1), (0, 1), (1, 0), (-1, 0)]:
+            self.del_pt(img, (A[0] + dx, A[1] + dy), S, f)
 
     def get_target(self, pth):
         img = cv.imread(pth)
         res = set()
-        f_set=[
-            lambda p:p[2]<85 and p[1]<85 and p[0]>180, # 路径点 蓝
-            lambda p:p[2]>180 and p[1]<70 and p[0]<70, # 怪 红
-            lambda p:p[2]<90 and p[1]>150 and p[0]<90, # 交互点 绿
-            lambda p:p[2]>180 and p[1]>180 and p[0]<70, # 终点 黄
+        f_set = [
+            lambda p: p[2] < 85 and p[1] < 85 and p[0] > 180,  # 路径点 蓝
+            lambda p: p[2] > 180 and p[1] < 70 and p[0] < 70,  # 怪 红
+            lambda p: p[2] < 90 and p[1] > 150 and p[0] < 90,  # 交互点 绿
+            lambda p: p[2] > 180 and p[1] > 180 and p[0] < 70,  # 终点 黄
         ]
         for i in range(img.shape[0]):
             for j in range(img.shape[1]):
                 for k in range(4):
-                    if f_set[k](img[i,j]):
+                    if f_set[k](img[i, j]):
                         p = self.get_center(img, i, j)
                         res.add((p, k))
-                        p = (int(p[0]),int(p[1]))
-                        self.del_pt(img,p,p,f_set[k])
-                        if k==3:
+                        p = (int(p[0]), int(p[1]))
+                        self.del_pt(img, p, p, f_set[k])
+                        if k == 3:
                             self.last = (i, j)
-        cv.imwrite('imgs/tmp1.jpg',img)
+        cv.imwrite("imgs/tmp1.jpg", img)
         if self.speed:
             dis = 1000000
             pt = None
             for i in res:
-                if i[1]==1 and self.get_dis(i[0],self.last)<dis:
-                    dis=self.get_dis(i[0],self.last)
-                    pt=i
+                if i[1] == 1 and self.get_dis(i[0], self.last) < dis:
+                    dis = self.get_dis(i[0], self.last)
+                    pt = i
             for i in deepcopy(res):
-                if i[1]==1 and pt!=i:
+                if i[1] == 1 and pt != i:
                     res.remove(i)
-                    res.add((i[0],0))
-        if len(res)==1:
+                    res.add((i[0], 0))
+        if len(res) == 1:
             pyautogui.click()
         return res
 

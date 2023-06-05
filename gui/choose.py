@@ -27,7 +27,7 @@ def choose_view(page: Page):
     def run(func, *args, **kwargs):
         try:
             change_all_button()
-            res=func(*args, **kwargs)
+            res = func(*args, **kwargs)
             change_all_button(False)
             return res
         except Exception:
@@ -37,7 +37,7 @@ def choose_view(page: Page):
             change_all_button(False)
 
     def angle(_e):
-        if config.angle=='1.0':
+        if config.angle == "1.0":
             go_about()
             time.sleep(2)
             page.dialog.open = False
@@ -55,14 +55,22 @@ def choose_view(page: Page):
             return
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         page.su = run(
-            SimulatedUniverse, 1, int(config.debug_mode), int(config.show_map_mode), int(config.speed_mode)
+            SimulatedUniverse,
+            1,
+            int(config.debug_mode),
+            int(config.show_map_mode),
+            int(config.speed_mode),
         )
         run(page.su.start)
 
     def start_new(_e):
         show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
         page.su = run(
-            SimulatedUniverse, 0, int(config.debug_mode), int(config.show_map_mode), int(config.speed_mode)
+            SimulatedUniverse,
+            0,
+            int(config.debug_mode),
+            int(config.show_map_mode),
+            int(config.speed_mode),
         )
         run(page.su.start)
 
@@ -93,7 +101,9 @@ def choose_view(page: Page):
     def go_about(e=None):
         dlg = ft.AlertDialog(
             title=ft.Text("此程序为免费开源项目"),
-            content=ft.Text("链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526")
+            content=ft.Text(
+                "链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
+            ),
         )
         page.dialog = dlg
         dlg.open = True
@@ -101,8 +111,7 @@ def choose_view(page: Page):
 
     def go_money(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("送杯咖啡喵 QWQ"),
-            content=ft.Image('imgs/money.jpg')
+            title=ft.Text("送杯咖啡喵 QWQ"), content=ft.Image("imgs/money.jpg")
         )
         page.dialog = dlg
         dlg.open = True

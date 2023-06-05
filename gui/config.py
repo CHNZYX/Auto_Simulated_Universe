@@ -42,7 +42,7 @@ def config_view(page: Page):
         config.order_text = e.control.value
 
     def get_debug_mode(d):
-        ls = [False,True,None]
+        ls = [False, True, None]
         return ls[d]
 
     page.views.append(
@@ -161,7 +161,7 @@ def config_view(page: Page):
                     ],
                     alignment=MainAxisAlignment.CENTER,
                     vertical_alignment=CrossAxisAlignment.CENTER,
-                    height=200
+                    height=200,
                 ),
             ],
             padding=20,
