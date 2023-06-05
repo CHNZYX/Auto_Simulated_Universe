@@ -54,6 +54,7 @@ class SimulatedUniverse(UniverseUtils):
         self.count_tm = time.time()
         self.re_align = 0
         self.update_count()
+        notif('开始运行',f'初始计数：{self.count}')
         set_debug(debug > 0)
         if update and find:
             update_map()
@@ -465,16 +466,18 @@ class SimulatedUniverse(UniverseUtils):
         return file
 
     def update_count(self,read=True):
-        file_name = '.notif'
+        file_name = 'logs/notif.txt'
         if read:
             if os.path.exists(file_name):
                 with open(file_name,'r') as fh:
                     new_cnt = int(fh.readline().strip('\n'))
+                    fh.close()
             else:
                 new_cnt = 0
                 with open(file_name, 'w') as file:
                     file.write("0")
-                win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
+                    file.close()
+                #win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
             time_cnt = os.path.getmtime(file_name)
         else:
             new_cnt = self.count + 1
