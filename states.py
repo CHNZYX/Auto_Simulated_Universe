@@ -484,7 +484,7 @@ class SimulatedUniverse(UniverseUtils):
         monday = dt + datetime.timedelta(days=-current_weekday)
         target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0)
         monday_ts = target_datetime.timestamp()
-        if dt>=monday_ts and time_cnt<monday_ts:
+        if dt.timestamp()>=monday_ts and time_cnt<monday_ts:
             self.count=not read
         else:
             self.count=new_cnt
