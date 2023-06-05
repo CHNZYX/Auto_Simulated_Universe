@@ -1,6 +1,5 @@
 import os
 import ctypes
-import tkinter as tk
 import time
 from PIL import Image
 from pystray import Icon, MenuItem as item
