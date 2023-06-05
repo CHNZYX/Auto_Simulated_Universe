@@ -7,16 +7,8 @@ import win32con, win32api
 import threading
 from winotify import Notification
 
-def notif(title,msg,write=True,cnt=None):
+def notif(title,msg):
     Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
-    if write:
-        if os.path.exists('.notif'):
-            with open('.notif','r') as fh:
-                cnt=fh.readline().strip('\n')
-        if cnt is None:
-            cnt = '0'
-        with open('.notif','w') as fh:
-            fh.write(cnt+'\n'+title+'\n'+msg)
 
 def show_notification(icon, item):
     ctypes.windll.user32.MessageBoxW(0, "程序已在运行！", "提示", 0x40)
@@ -28,14 +20,16 @@ def exit_program(icon, item):
     os._exit(0)
 
 def maopao(icon, item):
-    file_name = '.notif'
+    file_name = 'logs/notif.txt'
     cnt='0'
     if os.path.exists(file_name):
         with open(file_name, 'r') as file:
             cnt=file.readline().strip('\n')
+            file.close()
     with open(file_name, 'w') as file:
-        file.write(f"{cnt}\n喵\nQwQ")
-    win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
+        file.write(f"{cnt}\n喵\n计数:{cnt}")
+        file.close()
+    #win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
 
 def notify():
     file_name = '.notif'
@@ -46,11 +40,12 @@ def notify():
     last = os.path.getmtime(file_name)
     while 1:
         time.sleep(0.5)
+        print(1)
         if last != os.path.getmtime(file_name):
             with open(file_name,'r') as fh:
                 s=fh.readlines()
             if len(s)>=3:
-                notif(s[1].strip('\n'),s[2].strip('\n'),0)
+                notif(s[1].strip('\n'),s[2].strip('\n'))
             last = os.path.getmtime(file_name)
 
 def main():
