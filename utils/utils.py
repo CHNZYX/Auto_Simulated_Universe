@@ -19,8 +19,11 @@ from utils.config import config
 from utils.log import log
 
 
-def notif(title,msg):
-    Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.jpg",).show()
+def notif(title,msg,write=True):
+    Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
+    if write:
+        with open('.notif','w') as fh:
+            fh.write(title+'\n'+msg)
 
 # 将游戏窗口设为前台
 def set_forground():
