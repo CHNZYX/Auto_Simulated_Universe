@@ -5,7 +5,7 @@ import pyautogui
 import cv2 as cv
 import numpy as np
 import time
-import win32gui
+import win32gui, win32api, win32con
 import random
 import sys
 from copy import deepcopy
@@ -465,13 +465,17 @@ class SimulatedUniverse(UniverseUtils):
         return file
 
     def update_count(self,read=True):
+        file_name = '.notif'
         if read:
-            if os.path.exists('.notif'):
-                with open('.notif','r') as fh:
+            if os.path.exists(file_name):
+                with open(file_name,'r') as fh:
                     new_cnt = int(fh.readline().strip('\n'))
             else:
                 new_cnt = 0
-            time_cnt = os.path.getmtime('.notif')
+                with open(file_name, 'w') as file:
+                    file.write("0")
+                win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
+            time_cnt = os.path.getmtime(file_name)
         else:
             new_cnt = self.count + 1
             time_cnt = self.count_tm
