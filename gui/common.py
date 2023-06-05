@@ -39,14 +39,14 @@ def cleanup():
         pass
 
 
-def enum_windows_callback(hwnd, hwnds, f):
+def enum_windows_callback(hwnd, hwnds):
     class_name = win32gui.GetClassName(hwnd)
     name = win32gui.GetWindowText(hwnd)
     try:
         if (
             class_name == "ConsoleWindowClass"
             and win32gui.IsWindowVisible(hwnd)
-            and f(name)
+            and "gui" in name[-7:]
         ):
             hwnds.append(hwnd)
     except:
@@ -54,9 +54,9 @@ def enum_windows_callback(hwnd, hwnds, f):
     return True
 
 
-def list_handles(f=lambda n:"gui" in n[-7:]):
+def list_handles():
     hwnds = []
-    win32gui.EnumWindows(enum_windows_callback, hwnds, f)
+    win32gui.EnumWindows(enum_windows_callback, hwnds)
     hwnds.append(0)
     return hwnds
 
