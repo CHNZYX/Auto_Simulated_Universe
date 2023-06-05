@@ -300,6 +300,7 @@ class SimulatedUniverse(UniverseUtils):
                         ):
                             break
                     if self.now_map_sim<0.42 and self.debug==2:
+                        notif('相似度过低','DEBUG')
                         self._stop=1
                     if self._stop:return 1
                     self.press('1')
