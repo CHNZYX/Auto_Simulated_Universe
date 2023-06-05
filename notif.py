@@ -19,7 +19,7 @@ def exit_program(icon, item):
     icon.stop()
     os._exit(0)
 
-def maopao(icon, item):
+def maopao(icon=None, item=None):
     file_name = 'logs/notif.txt'
     cnt='0'
     if os.path.exists(file_name):
@@ -60,6 +60,7 @@ def main():
         item('退出', exit_program),
     )
     icon.menu = menu
+    maopao()
 
     '''
     try:
