@@ -6,8 +6,18 @@ from pystray import Icon, MenuItem as item
 import win32gui, win32con, win32api
 from gui.common import list_handles
 import threading
-from utils.utils import notif
+from winotify import Notification
 
+def notif(title,msg,write=True,cnt=None):
+    Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
+    if write:
+        if os.path.exists('.notif'):
+            with open('.notif','r') as fh:
+                cnt=fh.readline().strip('\n')
+        if cnt is None:
+            cnt = '0'
+        with open('.notif','w') as fh:
+            fh.write(cnt+'\n'+title+'\n'+msg)
 
 def show_notification(icon, item):
     ctypes.windll.user32.MessageBoxW(0, "程序已在运行！", "提示", 0x40)
@@ -49,11 +59,13 @@ def main():
     )
     icon.menu = menu
 
-    mynd = list_handles(f=lambda n:"notif" in n[-9:])[0]
+    '''
     try:
+        mynd = list_handles(f=lambda n:"notif" in n[-9:])[0]
         win32gui.ShowWindow(mynd, 0)
     except:
         pass
+    '''
 
     t_notify = threading.Thread(target=notify)
     t_notify.start()
