@@ -12,11 +12,10 @@ from copy import deepcopy
 from utils.log import log, set_debug
 from utils.map_log import map_log
 from utils.update_map import update_map
-from utils.utils import UniverseUtils, set_forground
+from utils.utils import UniverseUtils, set_forground, notif
 import os
 from align_angle import main as align_angle
 from utils.config import config
-from winotify import Notification
 
 # 版本号
 version = "v4.5"
@@ -122,12 +121,7 @@ class SimulatedUniverse(UniverseUtils):
 
     def end_of_uni(self):
         self.count += 1
-        Notification(
-            app_id="椰羊自动化",
-            title="已完成",
-            msg=f"计数:{self.count}",
-            icon=os.getcwd() + "\\\\imgs\\\\icon.ico",
-        ).show()
+        notif("已完成",f"计数:{self.count}")
         self.floor = 0
 
     def normal(self):
@@ -353,12 +347,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.click((0.2927, 0.2602))
                 else:
                     if self.debug == 0:
-                        Notification(
-                            app_id="椰羊自动化",
-                            title="中途结算",
-                            msg=f"当前层数:{self.floor+1}",
-                            icon=os.getcwd() + "\\\\imgs\\\\icon.ico",
-                        ).show()
+                        notif("中途结算",f"当前层数:{self.floor+1}")
                         self.floor = 0
                         self.click((0.2708, 0.1324))
                     else:

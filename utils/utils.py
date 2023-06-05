@@ -12,10 +12,15 @@ from copy import deepcopy
 import math
 import random
 import win32gui, win32com.client, pythoncom
+import os
+from winotify import Notification
 
 from utils.config import config
 from utils.log import log
 
+
+def notif(title,msg):
+    Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.jpg",).show()
 
 # 将游戏窗口设为前台
 def set_forground():
@@ -762,7 +767,7 @@ class UniverseUtils:
             except:
                 pass
         # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
-        if ((ans in ['65576','42250'] and sim<0.42)) and self.debug == 2:
+        if sim<0.42 and self.debug == 2:
             time.sleep(1000000)
         return ans, sim
 

@@ -9,6 +9,7 @@ from gui.common import show_snack_bar, mynd, Page
 from states import SimulatedUniverse, version
 from utils.config import config
 from utils.update_map import update_map
+from utils.utils import notif
 import time
 
 
@@ -62,6 +63,7 @@ def choose_view(page: Page):
             int(config.speed_mode),
         )
         run(page.su.start)
+        notif('已退出自动化',' ')
 
     def start_new(_e):
         show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
