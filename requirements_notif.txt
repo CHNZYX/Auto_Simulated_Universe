@@ -1,0 +1,4 @@
+pywin32
+pyinstaller
+winotify
+pystray
