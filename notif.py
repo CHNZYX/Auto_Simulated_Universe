@@ -29,18 +29,15 @@ def maopao(icon, item):
     with open(file_name, 'w') as file:
         file.write(f"{cnt}\n喵\n计数:{cnt}")
         file.close()
-    #win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
 
 def notify():
-    file_name = '.notif'
+    file_name = 'logs/notif.txt'
     if not os.path.exists(file_name):
         with open(file_name, 'w') as file:
             file.write("0")
-        win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
     last = os.path.getmtime(file_name)
     while 1:
         time.sleep(0.5)
-        print(1)
         if last != os.path.getmtime(file_name):
             with open(file_name,'r') as fh:
                 s=fh.readlines()
