@@ -29,6 +29,10 @@ def exit_program(icon, item):
 
 def exit_program(icon, item):
     file_name = '.notif'
+    cnt='0'
+    if os.path.exists(file_name):
+        with open(file_name, 'r') as file:
+            cnt=file.readline().strip('\n')
     with open(file_name, 'w') as file:
         file.write("0\n喵\nQwQ")
     win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
