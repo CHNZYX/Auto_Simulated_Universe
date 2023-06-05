@@ -16,6 +16,7 @@ from utils.utils import UniverseUtils, set_forground, notif
 import os
 from align_angle import main as align_angle
 from utils.config import config
+import datetime
 
 # 版本号
 version = "v4.5"
@@ -50,7 +51,9 @@ class SimulatedUniverse(UniverseUtils):
         self._show_map = show_map & find
         self.floor = 0
         self.count = 0
+        self.count_tm = time.time()
         self.re_align = 0
+        self.update_count()
         set_debug(debug > 0)
         if update and find:
             update_map()
@@ -120,8 +123,8 @@ class SimulatedUniverse(UniverseUtils):
         log.info("停止运行")
 
     def end_of_uni(self):
-        self.count += 1
-        notif("已完成",f"计数:{self.count}")
+        self.update_count(0)
+        notif("已完成",f"计数:{self.count}",cnt=str(self.count))
         self.floor = 0
 
     def normal(self):
@@ -460,6 +463,28 @@ class SimulatedUniverse(UniverseUtils):
             except:
                 pass
         return file
+
+    def update_count(self,read=True):
+        if read:
+            if os.path.exists('.notif'):
+                with open('.notif','r') as fh:
+                    new_cnt = int(fh.readline().strip('\n'))
+            else:
+                new_cnt = 0
+            time_cnt = os.path.getmtime('.notif')
+        else:
+            new_cnt = self.count + 1
+            time_cnt = self.count_tm
+        dt = datetime.datetime.fromtimestamp(time.time())
+        current_weekday = dt.weekday()
+        monday = dt + datetime.timedelta(days=-current_weekday)
+        target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0)
+        monday_ts = target_datetime.timestamp()
+        if dt>=monday_ts and time_cnt<monday_ts:
+            self.count=not read
+        else:
+            self.count=new_cnt
+        self.count_tm = time.time()
 
     def del_pt(self, img, A, S, f):
         if (

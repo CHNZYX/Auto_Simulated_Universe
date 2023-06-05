@@ -9,11 +9,6 @@ import threading
 from utils.utils import notif
 
 
-def hide_window():
-    window = tk.Tk()
-    window.withdraw()
-
-
 def show_notification(icon, item):
     ctypes.windll.user32.MessageBoxW(0, "程序已在运行！", "提示", 0x40)
     icon.stop()
@@ -27,15 +22,15 @@ def notify():
     file_name = '.notif'
     if not os.path.exists(file_name):
         with open(file_name, 'w') as file:
-            file.write(" ")
+            file.write("0")
     last = os.path.getmtime(file_name)
     while 1:
         time.sleep(0.5)
         if last != os.path.getmtime(file_name):
             with open(file_name,'r') as fh:
                 s=fh.readlines()
-            if len(s)==2:
-                notif(s[0].strip('\n'),s[1].strip('\n'),0)
+            if len(s)>=3:
+                notif(s[1].strip('\n'),s[2].strip('\n'),0)
             last = os.path.getmtime(file_name)
 
 def main():

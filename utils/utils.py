@@ -19,11 +19,16 @@ from utils.config import config
 from utils.log import log
 
 
-def notif(title,msg,write=True):
+def notif(title,msg,write=True,cnt=None):
     Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
     if write:
+        if os.path.exists('.notif'):
+            with open('.notif','r') as fh:
+                cnt=fh.readline().strip('\n')
+        if cnt is None:
+            cnt = '0'
         with open('.notif','w') as fh:
-            fh.write(title+'\n'+msg)
+            fh.write(cnt+'\n'+title+'\n'+msg)
 
 # 将游戏窗口设为前台
 def set_forground():
