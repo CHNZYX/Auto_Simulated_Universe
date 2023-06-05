@@ -291,6 +291,7 @@ class SimulatedUniverse(UniverseUtils):
                         if self.now_map_sim>0.7 or time.time()-now_time>2.6 or self._stop:
                             break
                     if self._stop:return 1
+                    self.press('1')
                     log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                     # 地图相似度过低，判定为黑塔空间站或非跑图状态
                     #if self.now_map_sim < 0.3:
