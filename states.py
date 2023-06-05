@@ -474,6 +474,7 @@ class SimulatedUniverse(UniverseUtils):
                     fh.close()
             else:
                 new_cnt = 0
+                os.makedirs('logs',exist_ok=1)
                 with open(file_name, 'w') as file:
                     file.write("0")
                     file.close()

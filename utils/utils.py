@@ -22,6 +22,7 @@ def notif(title,msg,cnt=None):
     if os.path.exists('logs/notif.txt'):
         with open('logs/notif.txt','r') as fh:
             cnt=fh.readline().strip('\n')
+    os.makedirs('logs',exist_ok=1)
     if cnt is None:
         cnt = '0'
     with open('logs/notif.txt','w') as fh:
@@ -437,8 +438,6 @@ class UniverseUtils:
                 ps = 6
             if self.speed == 2 and type != 3:
                 ps += 4
-            if self.speed == 2 and type == 2:
-                ps += 2
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.check("quit", 0.3563, 0.5120):
                 for j in deepcopy(self.target):
@@ -499,6 +498,8 @@ class UniverseUtils:
                 # 轨迹图
                 cv.imwrite("imgs/bigmap.jpg", self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
+                if nds < 24 and self.speed == 2 and type == 2:
+                    self.press('shift')
                 # 1秒内没有离目标点更近：开始尝试绕过障碍
                 if dls[0] <= nds:
                     ts = " da"
