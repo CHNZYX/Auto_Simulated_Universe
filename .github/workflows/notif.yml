@@ -21,10 +21,7 @@ jobs:
       - name: Build
         run: |
           pip install -r requirements.txt
-          pyinstaller --uac-admin -F --i imgs/icon.ico gui.py
-          xcopy imgs dist\imgs /I /E
-          xcopy README.md dist
-          xcopy utils\本地多用户远程登陆.7z dist /I /E
+          pyinstaller --uac-admin -F --i imgs/icon.png notif.py
           ren dist AutoSimulatedUniverse
       - name: Upload artifact
         uses: actions/upload-artifact@v3
