@@ -27,14 +27,25 @@ def get_center(img, i, j):
 def get_target(pth):
     img = cv.imread(pth)
     res = set()
+    f_set = [
+        lambda p: p[2] < 85 and p[1] < 85 and p[0] > 180,  # 路径点 蓝
+        lambda p: p[2] > 180 and p[1] < 70 and p[0] < 70,  # 怪 红
+        lambda p: p[2] < 90 and p[1] > 150 and p[0] < 90,  # 交互点 绿
+        lambda p: p[2] > 180 and p[1] > 180 and p[0] < 70,  # 终点 黄
+    ]
+    p_cnt = [0,0,0,0]
     for i in range(img.shape[0]):
         for j in range(img.shape[1]):
-            # 终点 黄
-            if img[i, j, 2] > 180 and img[i, j, 1] > 180 and img[i, j, 0] < 70:
-                res.add((get_center(img, i, j), 3))
-                img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
-    if len(res) == 0:
-        print("No end point:", pth)
+            for k in range(4):
+                if f_set[k](img[i, j]):
+                    p = get_center(img, i, j)
+                    res.add((p, k))
+                    img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
+                    p_cnt[k]+=1
+    if p_cnt[3]==0:
+        print(pth,'no end point')
+    if p_cnt[1]!=0 and p_cnt[2]!=0:
+        print(pth,'wrong interactive point')
 
 
 # 删除地图数据中没用的文件
