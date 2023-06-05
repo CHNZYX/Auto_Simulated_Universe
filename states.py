@@ -295,6 +295,8 @@ class SimulatedUniverse(UniverseUtils):
                             or self._stop
                         ):
                             break
+                    if self.now_map_sim<0.42 and self.debug==2:
+                        self._stop=1
                     if self._stop:return 1
                     self.press('1')
                     log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
