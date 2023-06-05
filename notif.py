@@ -34,7 +34,7 @@ def exit_program(icon, item):
         with open(file_name, 'r') as file:
             cnt=file.readline().strip('\n')
     with open(file_name, 'w') as file:
-        file.write("0\n喵\nQwQ")
+        file.write(f"{cnt}\n喵\nQwQ")
     win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
 
 def notify():
