@@ -3,8 +3,7 @@ import ctypes
 import time
 from PIL import Image
 from pystray import Icon, MenuItem as item
-import win32gui, win32con, win32api
-from gui.common import list_handles
+import win32con, win32api
 import threading
 from winotify import Notification
 
