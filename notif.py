@@ -3,8 +3,8 @@ import ctypes
 import time
 from PIL import Image
 from pystray import Icon, MenuItem as item
-import win32gui
-from gui.common import mynd
+import win32gui, win32con, win32api
+from gui.common import list_handles
 import threading
 from utils.utils import notif
 
@@ -23,6 +23,7 @@ def notify():
     if not os.path.exists(file_name):
         with open(file_name, 'w') as file:
             file.write("0")
+        win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
     last = os.path.getmtime(file_name)
     while 1:
         time.sleep(0.5)
@@ -48,6 +49,7 @@ def main():
     )
     icon.menu = menu
 
+    mynd = list_handles(f=lambda n:"notif" in n[-9:])[0]
     try:
         win32gui.ShowWindow(mynd, 0)
     except:
