@@ -414,6 +414,10 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("drop", 0.9406, 0.9491):
             self.click((0.4714, 0.5500))
             self.click((0.1339, 0.1028))
+        elif self.check("drop_bless", 0.9417, 0.9481, threshold=0.95):
+            self.click((0.4714, 0.5500))
+            time.sleep(0.5)
+            self.click((0.1203, 0.1093))
         else:
             log.info("匹配不到任何图标")
             return 0
