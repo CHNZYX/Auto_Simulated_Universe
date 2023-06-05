@@ -511,7 +511,7 @@ class UniverseUtils:
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
-                        if self._stop == 0:
+                        if self._stop == 0 and self.speed == 2:
                             self.press("shift")
                     else:
                         pyautogui.keyUp("w")
@@ -531,7 +531,6 @@ class UniverseUtils:
                         t = 2
                     else:
                         pyautogui.keyUp("w")
-                        pyautogui.keyUp("shift")
                         break
                 ds = nds
                 dls.append(ds)
@@ -762,7 +761,7 @@ class UniverseUtils:
             except:
                 pass
         # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
-        if ((ans in ['65576'] and sim<0.42)) and self.debug == 2:
+        if ((ans in ['65576','42250'] and sim<0.42)) and self.debug == 2:
             time.sleep(1000000)
         return ans, sim
 
