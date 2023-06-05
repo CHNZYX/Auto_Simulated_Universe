@@ -27,6 +27,12 @@ def exit_program(icon, item):
     icon.stop()
     os._exit(0)
 
+def exit_program(icon, item):
+    file_name = '.notif'
+    with open(file_name, 'w') as file:
+        file.write("0\n喵\nQwQ")
+    win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
+
 def notify():
     file_name = '.notif'
     if not os.path.exists(file_name):
@@ -54,6 +60,7 @@ def main():
     image = Image.open("imgs/icon.png")
     icon = Icon("椰羊自动化", image, "椰羊自动化")
     menu = (
+        item('冒泡', maopao),
         item('退出', exit_program),
     )
     icon.menu = menu
