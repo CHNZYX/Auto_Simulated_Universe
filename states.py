@@ -336,7 +336,7 @@ class SimulatedUniverse(UniverseUtils):
             # 长时间未交互/战斗，暂离或重开
             if (
                 (time.time() - self.lst_changed >= 35 - 7 * self.debug)
-                #or (self.debug == 2 and self.floor == 12)
+                or (self.debug == 2 and self.floor == 12)
             ) and self.find == 1:
                 self.press("esc")
                 time.sleep(2)
@@ -346,16 +346,27 @@ class SimulatedUniverse(UniverseUtils):
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                         )
-                    time.sleep(1 + 1000000 * (self.floor != 12))
+                        notif(f"地图{self.now_map}出现问题","DEBUG")
+                        self._stop = 1
+                    else:
+                        notif("中途结算","DEBUG")
+                    time.sleep(1)
                     self.floor = 0
                     self.click((0.2708, 0.1324))
                 elif random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
+                    notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
+                    map_log.error(
+                        f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离"
+                    )
                 else:
                     if self.debug == 0:
-                        notif("中途结算",f"当前层数:{self.floor+1}")
+                        notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
                         self.floor = 0
                         self.click((0.2708, 0.1324))
+                        map_log.error(
+                            f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
+                        )
                     else:
                         self.click((0.2927, 0.2602))
                 self.re_align += 1
