@@ -767,8 +767,8 @@ class UniverseUtils:
             except:
                 pass
         # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
-        if sim<0.42 and self.debug == 2:
-            time.sleep(1000000)
+        #if sim<0.42 and self.debug == 2:
+        #    time.sleep(1000000)
         return ans, sim
 
     def get_dis(self, x, y):
