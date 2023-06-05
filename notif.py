@@ -27,7 +27,7 @@ def exit_program(icon, item):
     icon.stop()
     os._exit(0)
 
-def exit_program(icon, item):
+def maopao(icon, item):
     file_name = '.notif'
     cnt='0'
     if os.path.exists(file_name):

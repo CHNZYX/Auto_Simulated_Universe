@@ -9,4 +9,3 @@ pillow
 keyboard
 requests
 winotify
-pystray
