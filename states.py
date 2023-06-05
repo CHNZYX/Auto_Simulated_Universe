@@ -336,7 +336,7 @@ class SimulatedUniverse(UniverseUtils):
             # 长时间未交互/战斗，暂离或重开
             if (
                 (time.time() - self.lst_changed >= 35 - 7 * self.debug)
-                or (self.debug == 2 and self.floor == 12)
+                #or (self.debug == 2 and self.floor == 12)
             ) and self.find == 1:
                 self.press("esc")
                 time.sleep(2)
@@ -503,7 +503,7 @@ class SimulatedUniverse(UniverseUtils):
                         p = (int(p[0]), int(p[1]))
                         self.del_pt(img, p, p, f_set[k])
                         if k == 3:
-                            self.last = (i, j)
+                            self.last = p
         cv.imwrite("imgs/tmp1.jpg", img)
         if self.speed:
             dis = 1000000
@@ -516,6 +516,9 @@ class SimulatedUniverse(UniverseUtils):
                 if i[1] == 1 and pt != i:
                     res.remove(i)
                     res.add((i[0], 0))
+        if self.floor == 11:
+            res = set()
+            res.add((self.last,3))
         if len(res) == 1:
             pyautogui.click()
         return res
