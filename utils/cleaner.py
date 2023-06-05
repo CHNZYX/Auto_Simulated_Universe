@@ -5,6 +5,7 @@ import random
 import sys
 import os
 
+
 def get_center(img, i, j):
     rx, ry, rt = 0, 0, 0
     for x in range(-7, 7):
@@ -22,6 +23,7 @@ def get_center(img, i, j):
                     ry += y
     return (i + rx / rt, j + ry / rt)
 
+
 def get_target(pth):
     img = cv.imread(pth)
     res = set()
@@ -31,8 +33,9 @@ def get_target(pth):
             if img[i, j, 2] > 180 and img[i, j, 1] > 180 and img[i, j, 0] < 70:
                 res.add((get_center(img, i, j), 3))
                 img[max(i - 7, 0) : i + 7, max(j - 7, 0) : j + 7] = [0, 0, 0]
-    if len(res)==0:
-        print('No end point:',pth)
+    if len(res) == 0:
+        print("No end point:", pth)
+
 
 # 删除地图数据中没用的文件
 for file in os.listdir("imgs/maps"):
@@ -40,7 +43,7 @@ for file in os.listdir("imgs/maps"):
     if os.path.exists(pth):
         get_target(pth)
         image = cv.imread(pth)
-        #print(image.shape)
+        # print(image.shape)
         for map in os.listdir("imgs/maps/" + file):
             if map == "bwmap.jpg":
                 os.remove("imgs/maps/" + file + "/" + map)
