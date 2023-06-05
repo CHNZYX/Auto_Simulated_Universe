@@ -26,6 +26,7 @@ def maopao(icon=None, item=None):
         with open(file_name, 'r') as file:
             cnt=file.readline().strip('\n')
             file.close()
+    os.makedirs('logs',exist_ok=1)
     with open(file_name, 'w') as file:
         file.write(f"{cnt}\n喵\n计数:{cnt}")
         file.close()
