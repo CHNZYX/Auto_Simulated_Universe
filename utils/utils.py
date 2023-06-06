@@ -19,14 +19,26 @@ from utils.log import log
 
 
 def notif(title,msg,cnt=None):
+    if cnt is not None:
+        tm=str(time.time())
+    else:
+        tm=None
     if os.path.exists('logs/notif.txt'):
         with open('logs/notif.txt','r') as fh:
-            cnt=fh.readline().strip('\n')
+            s=fh.readlines()
+            cnt=s[0].strip('\n')
+            try:
+                if tm is None:
+                    tm=s[3].strip('\n')
+            except:
+                pass
     os.makedirs('logs',exist_ok=1)
     if cnt is None:
         cnt = '0'
+    if tm is None:
+        tm=str(time.time())
     with open('logs/notif.txt','w') as fh:
-        fh.write(cnt+'\n'+title+'\n'+msg)
+        fh.write(cnt+'\n'+title+'\n'+msg+'\n'+tm)
 
 # 将游戏窗口设为前台
 def set_forground():
@@ -296,13 +308,19 @@ class UniverseUtils:
         # b_map：当前像素点是否是灰块。只允许灰块附近（2像素）的像素被识别为白线
         b_map = np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600
         bb_map = deepcopy(b_map)
+        blk_map = deepcopy(bw_map)
+        blk_map[np.sum((local_screen - black) ** 2, axis=-1) <= 800 + self.find * 800]=255
         b_map[2:] |= bb_map[:-2] | bb_map[1:-1]
         b_map[:-2] |= bb_map[2:] | bb_map[1:-1]
         b_map[:, 2:] |= bb_map[:, :-2] | bb_map[:, 1:-1]
         b_map[:, :-2] |= bb_map[:, 2:] | bb_map[:, 1:-1]
+        kernel = np.zeros((9,9),np.uint8)              #设置kenenel大小
+        kernel += 1
+        dilate = cv.dilate(blk_map,kernel,iterations=1) # 膨胀还原图形
         # 黄色：包括小地图中的交互点、传送点
         bw_map[
-            np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 800
+            (np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 800)
+            & (dilate>200)
         ] = 200
         bw_map[
             (np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)
@@ -436,7 +454,7 @@ class UniverseUtils:
                 ps = 6
             else:
                 ps = 6
-            if self.speed == 2 and type != 3:
+            if self.speed == 2 and type == 0:
                 ps += 4
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.check("quit", 0.3563, 0.5120):
@@ -459,6 +477,7 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
+            sft = 1
             if self.speed == 2 and type != 3:
                 self.press("shift")
             for i in range(3000):
@@ -498,8 +517,9 @@ class UniverseUtils:
                 # 轨迹图
                 cv.imwrite("imgs/bigmap.jpg", self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
-                if nds < 24 and self.speed == 2 and type == 2:
+                if nds < 24 and self.speed == 2 and type == 2 and sft:
                     self.press('shift')
+                    sft = 0
                 # 1秒内没有离目标点更近：开始尝试绕过障碍
                 if dls[0] <= nds:
                     ts = " da"
@@ -573,8 +593,6 @@ class UniverseUtils:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
                 key = key_list[random.randint(0, len(key_list) - 1)]
-                if type == 2 and self.speed == 2:
-                    time.sleep(1.5)
                 for i in range(-1, len(key)):
                     if self._stop:
                         return

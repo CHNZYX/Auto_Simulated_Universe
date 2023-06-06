@@ -219,7 +219,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("f", 0.3901, 0.5093):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
-            time.sleep(0.45)
+            time.sleep(0.55)
             self.get_screen()
             if self.check("f", 0.3901, 0.5093):
                 # 黑塔
@@ -299,12 +299,12 @@ class SimulatedUniverse(UniverseUtils):
                             or self._stop
                         ):
                             break
+                    log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                     if self.now_map_sim<0.42 and self.debug==2:
                         notif('相似度过低','DEBUG')
                         self._stop=1
                     if self._stop:return 1
                     self.press('1')
-                    log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                     # 地图相似度过低，判定为黑塔空间站或非跑图状态
                     # if self.now_map_sim < 0.3:
                     #    self.init_map()
@@ -480,10 +480,15 @@ class SimulatedUniverse(UniverseUtils):
     def update_count(self,read=True):
         file_name = 'logs/notif.txt'
         if read:
+            time_cnt = os.path.getmtime(file_name)
             if os.path.exists(file_name):
                 with open(file_name,'r') as fh:
-                    new_cnt = int(fh.readline().strip('\n'))
-                    fh.close()
+                    s=fh.readlines()
+                    new_cnt = int(s[0].strip('\n'))
+                    try:
+                        time_cnt = float(s[3].strip('\n'))
+                    except:
+                        pass
             else:
                 new_cnt = 0
                 os.makedirs('logs',exist_ok=1)
@@ -491,7 +496,6 @@ class SimulatedUniverse(UniverseUtils):
                     file.write("0")
                     file.close()
                 #win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
-            time_cnt = os.path.getmtime(file_name)
         else:
             new_cnt = self.count + 1
             time_cnt = self.count_tm
