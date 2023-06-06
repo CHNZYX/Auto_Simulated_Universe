@@ -22,14 +22,20 @@ def exit_program(icon, item):
 def maopao(icon=None, item=None):
     file_name = 'logs/notif.txt'
     cnt='0'
+    tm=None
     if os.path.exists(file_name):
         with open(file_name, 'r') as file:
-            cnt=file.readline().strip('\n')
-            file.close()
+            s=file.readlines()
+            cnt=s[0].strip('\n')
+            try:
+                tm=s[3].strip('\n')
+            except:
+                pass
+    if tm is None:
+        tm = str(time.time())
     os.makedirs('logs',exist_ok=1)
     with open(file_name, 'w') as file:
-        file.write(f"{cnt}\n喵\n计数:{cnt}")
-        file.close()
+        file.write(f"{cnt}\n喵\n计数:{cnt}\n{tm}")
 
 def notify():
     file_name = 'logs/notif.txt'
