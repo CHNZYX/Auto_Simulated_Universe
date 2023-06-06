@@ -518,6 +518,7 @@ class SimulatedUniverse(UniverseUtils):
             or A[1] < 0
             or A[0] >= img.shape[0]
             or A[1] >= img.shape[1]
+            or self.get_dis(A, S) > 10
         ):
             return
         else:
