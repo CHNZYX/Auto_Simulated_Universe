@@ -39,6 +39,10 @@ class Config:
                     self.difficult = str(int(f.readline().strip()))
                     self.fate = f.readline().strip()
                     self.map_sha = f.readline().strip()
+                    self.show_map_mode = int(f.readline().strip())
+                    self.debug_mode = int(f.readline().strip())
+                    self.speed_mode = int(f.readline().strip())
+                    self.force_update = int(f.readline().strip())
                 except:
                     pass
         else:
