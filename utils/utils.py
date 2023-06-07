@@ -459,7 +459,7 @@ class UniverseUtils:
             if self.speed == 2 and type == 0:
                 ps += 4
             # 如果当前就在交互点上：直接返回
-            if self.goodf() and not self.check("quit", 0.3563, 0.5120):
+            if self.goodf() and not self.check("quit", 0.3552,0.4343):
                 for j in deepcopy(self.target):
                     if j[1] == type:
                         self.last = j[0]
