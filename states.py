@@ -83,7 +83,7 @@ class SimulatedUniverse(UniverseUtils):
             os.mkdir(self.map_file)
 
     def route(self):
-        self.threshold = 0.98
+        self.threshold = 0.97
         self.battle = 0
         self.quit = 0
         self.init_map()
@@ -116,11 +116,11 @@ class SimulatedUniverse(UniverseUtils):
                     self.threshold -= 0.015
                 else:
                     self.click((0.5062, 0.1454))
-                    self.threshold = 0.98
+                    self.threshold = 0.97
                 time.sleep(1)
             # 匹配到图片 res=1时等待一段时间
             else:
-                self.threshold = 0.98
+                self.threshold = 0.97
                 if res == 1:
                     time.sleep(0.7)
         log.info("停止运行")
