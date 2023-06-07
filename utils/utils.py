@@ -171,7 +171,8 @@ class UniverseUtils:
             if result["max_val"] > threshold:
                 points = self.calculated(result, target.shape)
                 self.get_point(*points)
-                log.info("target shape: %s" % target.shape)
+                exit()
+                # log.info("target shape: %s" % target.shape)
                 # self.click(points)
                 return
             if flag == False:
@@ -387,11 +388,11 @@ class UniverseUtils:
 
     def goodf(self):
         is_killed = (
-            self.check("bonus", 0.3578, 0.5083)
-            or self.check("rescure", 0.3578, 0.5083)
-            or self.check("download", 0.3578, 0.5083)
+            self.check("bonus", 0.3578,0.4333)
+            or self.check("rescure", 0.3578,0.4333)
+            or self.check("download", 0.3578,0.4333)
         )
-        return self.check("f", 0.3901, 0.5093) and not is_killed
+        return self.check("f", 0.3891,0.4315) and not is_killed
 
     def get_tar(self):
         # 寻找最近的目标点

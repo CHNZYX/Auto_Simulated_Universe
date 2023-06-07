@@ -108,7 +108,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            # self.click_target('imgs/c.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/quit.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -227,14 +227,14 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1)
             return 1
         # F交互界面
-        elif self.check("f", 0.3901, 0.5093):
+        elif self.check("f", 0.3891,0.4315):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
             time.sleep(0.55)
             self.get_screen()
-            if self.check("f", 0.3901, 0.5093):
+            if self.check("f", 0.3891,0.4315):
                 # 黑塔
-                if self.check("quit", 0.3563, 0.5120):
+                if self.check("quit", 0.3552,0.4343):
                     # 与黑塔交互后30秒内禁止再次交互（防止死循环）
                     if time.time() - self.quit > 30:
                         self.quit = time.time()
@@ -242,30 +242,30 @@ class SimulatedUniverse(UniverseUtils):
                         self.battle = 0
                 else:
                     if self.debug:
-                        self.check("tele", 0.3719, 0.5083)
+                        self.check("tele", 0.3708,0.4306)
                         print(self.tm, end=" ")
-                        self.check("exit", 0.3719, 0.5083)
+                        self.check("exit", 0.3708,0.4306)
                         print(self.tm)
                     # tele：区域-xx  exit：离开模拟宇宙
                     if self.check(
-                        "tele", 0.3719, 0.5083, threshold=0.965
-                    ) or self.check("exit", 0.3719, 0.5083, threshold=0.965):
+                        "tele", 0.3708,0.4306, threshold=0.965
+                    ) or self.check("exit", 0.3708,0.4306, threshold=0.965):
                         # self.get_map()
                         self.init_map()
                         self.floor += 1
                         map_log.info(
                             f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                         )
-                        if self.check("exit", 0.3719, 0.5083, threshold=0.965):
+                        if self.check("exit", 0.3708,0.4306, threshold=0.965):
                             self.end_of_uni()
                     elif self.re_align == 1:
                         align_angle(10, 1)
                         self.multi = config.multi
                         self.re_align += 1
                     is_killed = (
-                        self.check("bonus", 0.3578, 0.5083)
-                        or self.check("rescure", 0.3578, 0.5083)
-                        or self.check("download", 0.3578, 0.5083)
+                        self.check("bonus", 0.3578,0.4333)
+                        or self.check("rescure", 0.3578,0.4333)
+                        or self.check("download", 0.3578,0.4333)
                     )
                     if is_killed == 0:
                         self.press("f")
@@ -392,7 +392,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("init", 0.9276, 0.6731):
             self.click((0.3448, 0.4926))
             self.init_map()
-        elif self.check("begin", 0.3339, 0.7741):
+        elif self.check("begin", 0.3328,0.8148):
             self.click((0.9375, 0.8565 - 0.1 * (self.diffi - 1)))
             self.click((0.1083, 0.1009))
         elif self.check("start", 0.6594, 0.8389):
