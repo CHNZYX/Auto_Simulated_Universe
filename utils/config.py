@@ -12,10 +12,10 @@ class Config:
         self.fate = "巡猎"
         self.map_sha = ""
         self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
-        self.show_map_mode = False
+        self.show_map_mode = 0
         self.debug_mode = 0
         self.speed_mode = 0
-        self.force_update = False
+        self.force_update = 0
         self.read()
 
     @property
