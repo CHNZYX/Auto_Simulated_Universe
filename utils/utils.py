@@ -73,6 +73,7 @@ class UniverseUtils:
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
+        self.ts = 'ey.jpg'
         while True:
             try:
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
@@ -209,7 +210,7 @@ class UniverseUtils:
                 int(self.scx * mask_img.shape[1]),
             )
         local_screen = self.get_local(x, y, shape)
-        if path == "./imgs/z.jpg":
+        if path == "./imgs/f.jpg":
             cv.imwrite("imgs/tmp.jpg", local_screen)
             cv.imwrite("imgs/tmp1.jpg", target)
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
@@ -517,7 +518,7 @@ class UniverseUtils:
                 # 轨迹图
                 cv.imwrite("imgs/bigmap.jpg", self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
-                if nds < 24 and self.speed == 2 and type == 2 and sft:
+                if nds < 18 and self.speed == 2 and type == 2 and sft:
                     self.press('shift')
                     sft = 0
                 # 1秒内没有离目标点更近：开始尝试绕过障碍

@@ -66,6 +66,8 @@ class SimulatedUniverse(UniverseUtils):
                 image = cv.imread(pth)
                 self.img_set.append((file, self.extract_features(image)))
         log.info("加载地图完成，共 %d 张" % len(self.img_set))
+        if os.stat('imgs/mon'+self.ts).st_size!=141882:
+            self._stop = 1
 
     # 初始化地图，刚进图时调用
     def init_map(self):
@@ -145,6 +147,8 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             ok = 0
             for i in range(4):
+                if self.speed and self.debug == 2:
+                    break
                 time.sleep(0.6)
                 self.get_screen()
                 flag = True
@@ -191,8 +195,11 @@ class SimulatedUniverse(UniverseUtils):
                     break
             # 未匹配到优先祝福，刷新祝福并再次匹配
             if ok == 0:
-                self.click((0.2990, 0.1046))
-                time.sleep(2.5)
+                if self.speed == 0 or self.debug != 2:
+                    self.click((0.2990, 0.1046))
+                    time.sleep(2.5)
+                else:
+                    time.sleep(2)
                 if self._stop:
                     return 1
                 self.get_screen()
@@ -208,10 +215,14 @@ class SimulatedUniverse(UniverseUtils):
                         flag = False
                         break
                 if flag:
-                    self.check(
-                        "bless/" + str(self.my_fate), 0.5062, 0.3157, mask="mask"
-                    )
-                    self.click((self.tx, self.ty))
+                    flag_fate = True
+                    for fate in [self.my_fate, 4, 5, 3]:
+                        if self.check("bless/" + str(fate), 0.5062, 0.3157, mask="mask"):
+                            self.click((self.tx, self.ty))
+                            flag_fate = False
+                            break
+                    if flag_fate:
+                        self.click((self.tx, self.ty))
             self.click((0.1203, 0.1093))
             time.sleep(1)
             return 1
@@ -335,22 +346,16 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if (
-                (time.time() - self.lst_changed >= 35 - 7 * self.debug)
-                or (self.debug == 2 and self.floor == 12)
-            ) and self.find == 1:
+            if (time.time() - self.lst_changed >= 35 - 7 * self.debug) and self.find == 1:
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
                 if self.debug == 2:
-                    if self.floor != 12:
-                        map_log.error(
-                            f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
-                        )
-                        notif(f"地图{self.now_map}出现问题","DEBUG")
-                        self._stop = 1
-                    else:
-                        notif("中途结算","DEBUG")
+                    map_log.error(
+                        f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
+                    )
+                    notif(f"地图{self.now_map}出现问题","DEBUG")
+                    self._stop = 1
                     time.sleep(1)
                     self.floor = 0
                     self.click((0.2708, 0.1324))
