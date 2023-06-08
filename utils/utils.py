@@ -266,18 +266,20 @@ class UniverseUtils:
             dx=self.get_end_point()
             off = 0
             if dx is None:
-                for k in range(5):
+                for k in range(7):
                     if self.ang_neg:
-                        self.mouse_move(25)
-                        off-=25
+                        self.mouse_move(35)
+                        off-=35
                     else:
-                        self.mouse_move(-25)
-                        off+=25
+                        self.mouse_move(-35)
+                        off+=35
                     time.sleep(0.4)
                     dx=self.get_end_point()
                     if dx is not None:
                         break
                 self.mouse_move(off)
+                self.press('a',1.4)
+                self.press('d',0.7)
                 if dx is None:
                     return 0
         if not self.stop_move:
