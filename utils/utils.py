@@ -25,10 +25,10 @@ def notif(title,msg,cnt=None):
     else:
         tm=None
     if os.path.exists('logs/notif.txt'):
-        with open('logs/notif.txt','r') as fh:
+        with open('logs/notif.txt','r', encoding="utf-8") as fh:
             s=fh.readlines()
-            cnt=s[0].strip('\n')
             try:
+                cnt=s[0].strip('\n')
                 if tm is None:
                     tm=s[3].strip('\n')
             except:
@@ -38,7 +38,7 @@ def notif(title,msg,cnt=None):
         cnt = '0'
     if tm is None:
         tm=str(time.time())
-    with open('logs/notif.txt','w') as fh:
+    with open('logs/notif.txt','w', encoding="utf-8") as fh:
         fh.write(cnt+'\n'+title+'\n'+msg+'\n'+tm)
 
 # 将游戏窗口设为前台
@@ -265,25 +265,29 @@ class UniverseUtils:
             if i:
                 return 0
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -200)
-            time.sleep(0.4)
+            time.sleep(0.5)
             dx=self.get_end_point()
             off = 0
             if dx is None:
-                for k in range(7):
+                for k in range(8):
                     if self.ang_neg:
-                        self.mouse_move(35)
-                        off-=35
+                        self.mouse_move(45)
+                        off-=45
                     else:
-                        self.mouse_move(-35)
-                        off+=35
-                    time.sleep(0.4)
+                        self.mouse_move(-45)
+                        off+=45
+                    time.sleep(0.5)
                     dx=self.get_end_point()
                     if dx is not None:
                         break
-                self.mouse_move(off)
-                self.press('a',1.4)
-                self.press('d',0.7)
+                while off>180:
+                    off-=360
+                while off<-180:
+                    off+=360
                 if dx is None:
+                    self.mouse_move(off)
+                    self.press('a',1.4)
+                    self.press('d',0.7)
                     return 0
         if not self.stop_move:
             if i==0:
@@ -622,6 +626,7 @@ class UniverseUtils:
                 self.stop_move=1
                 pyautogui.keyUp("w")
                 self.mini_state+=2
+                pyautogui.click()
                 break
         self.stop_move=1
         if need_confirm:
@@ -633,7 +638,7 @@ class UniverseUtils:
                 self.get_screen()
                 if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30):
                     self.mini_state+=2
-                    break
+                    return
                 else:
                     self.press(i, 0.25)
 

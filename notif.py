@@ -24,7 +24,7 @@ def maopao(icon=None, item=None):
     cnt='0'
     tm=None
     if os.path.exists(file_name):
-        with open(file_name, 'r') as file:
+        with open(file_name, 'r', encoding="utf-8") as file:
             s=file.readlines()
             cnt=s[0].strip('\n')
             try:
@@ -34,19 +34,19 @@ def maopao(icon=None, item=None):
     if tm is None:
         tm = str(time.time())
     os.makedirs('logs',exist_ok=1)
-    with open(file_name, 'w') as file:
+    with open(file_name, 'w', encoding="utf-8") as file:
         file.write(f"{cnt}\n喵\n计数:{cnt}\n{tm}")
 
 def notify():
     file_name = 'logs/notif.txt'
     if not os.path.exists(file_name):
-        with open(file_name, 'w') as file:
+        with open(file_name, 'w', encoding="utf-8") as file:
             file.write("0")
     last = os.path.getmtime(file_name)
     while 1:
         time.sleep(0.5)
         if last != os.path.getmtime(file_name):
-            with open(file_name,'r') as fh:
+            with open(file_name,'r', encoding="utf-8") as fh:
                 s=fh.readlines()
             if len(s)>=3:
                 notif(s[1].strip('\n'),s[2].strip('\n'))

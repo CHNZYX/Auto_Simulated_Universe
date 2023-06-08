@@ -343,7 +343,8 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 35 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>2):
+            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>2):
+                time.sleep(1.5)
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
@@ -497,7 +498,7 @@ class SimulatedUniverse(UniverseUtils):
             new_cnt = 0
             if os.path.exists(file_name):
                 time_cnt = os.path.getmtime(file_name)
-                with open(file_name,'r') as fh:
+                with open(file_name,'r', encoding="utf-8") as fh:
                     s=fh.readlines()
                     try:
                         new_cnt = int(s[0].strip('\n'))
@@ -506,7 +507,7 @@ class SimulatedUniverse(UniverseUtils):
                         pass
             else:
                 os.makedirs('logs',exist_ok=1)
-                with open(file_name, 'w') as file:
+                with open(file_name, 'w', encoding="utf-8") as file:
                     file.write("0")
                     file.close()
                 time_cnt = os.path.getmtime(file_name)
