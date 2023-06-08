@@ -449,21 +449,22 @@ class UniverseUtils:
                 ang = i
         return ang
 
-    def get_level(self, loc_scr):
-        #self.click(0.8760, 0.7750)
-        #self.get_screen()
-        #local_screen = self.get_local(0.0703, 0.8796, (100, 50))
-        loc_tp = deepcopy(loc_scr)
-        mx_acc = 0
-        num = 0
+    def get_level(self):
+        while not self.check("run", 0.9844, 0.7889, threshold=0.93):
+            time.sleep(0.1)
+            self.get_screen()
+        time.sleep(1)
+        self.press('m',0.2)
+        time.sleep(2.5)
+        self.get_screen()
         for i in range(13):
-            img = cv.imread(self.format_path("floor/ff" + str(i + 1)))
-            result = cv.matchTemplate(loc_tp, img, cv.TM_CCORR_NORMED)
-            min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            if max_val > mx_acc:
-                mx_acc = max_val
-                num = i
-        return i
+            if self.check("floor/ff" + str(i + 1),0.0635,0.8917):
+                self.floor=i
+                log.info(f"当前层数：{i}")
+                self.floor_init=1
+                break
+        self.press('m',0.2)
+        time.sleep(1)
 
     def goodf(self):
         is_killed = (

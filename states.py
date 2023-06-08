@@ -89,6 +89,7 @@ class SimulatedUniverse(UniverseUtils):
         self.threshold = 0.97
         self.battle = 0
         self.quit = 0
+        self.floor_init = 0
         self.init_map()
         while True:
             if self._stop:
@@ -111,7 +112,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            #self.click_target('imgs/mask_z.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -274,6 +275,8 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         # 跑图状态
         if self.check("run", 0.9844, 0.7889, threshold=0.93):
+            if self.floor_init==0:
+                self.get_level()
             self.lst_changed = bk_lst_changed
             self.battle = 0
             # 刚进图，初始化一些数据
@@ -374,7 +377,6 @@ class SimulatedUniverse(UniverseUtils):
                         self.click((0.2927, 0.2602))
                 self.re_align += 1
             # 寻路
-            print(self.mini_state)
             if self.mini_state:
                 self.get_direc_only_minimap()
             else:
@@ -393,8 +395,13 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.3448, 0.4926))
             self.init_map()
         elif self.check("begin", 0.3328,0.8148):
-            self.click((0.9375, 0.8565 - 0.1 * (self.diffi - 1)))
+            con=self.check("conti",0.1099,0.0972)
+            if not con:
+                self.click((0.9375, 0.8565 - 0.1 * (self.diffi - 1)))
             self.click((0.1083, 0.1009))
+            if con:
+                self.get_level()
+            self.floor_init=1
         elif self.check("start", 0.6594, 0.8389):
             if self.check("team4",0.5797,0.2389):
                 dx = 0.9266 - 0.8552
