@@ -108,7 +108,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            #self.click_target('imgs/mask_end.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/mask_z.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -298,43 +298,45 @@ class SimulatedUniverse(UniverseUtils):
                 # 寻路模式，匹配最接近的地图
                 if self.find:
                     now_time = time.time()
-                    self.now_map_sim = 0
-                    while True:
-                        self.exist_minimap()
-                        now_map, now_map_sim = self.match_scr(self.loc_scr)
-                        if self.now_map_sim < now_map_sim:
-                            self.now_map, self.now_map_sim = now_map, now_map_sim
-                        if (
-                            self.now_map_sim > 0.7
-                            or time.time() - now_time > 2.6
-                            or self._stop
-                        ):
-                            break
-                    log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                    if self.now_map_sim<0.42 and self.debug==2:
-                        notif('相似度过低','DEBUG')
-                        self._stop=1
+                    self.now_map_sim = -1
+                    self.now_map = -1
+                    if self.floor in []:#[0,5]:
+                        self.mini_state = 0
+                        while True:
+                            self.exist_minimap()
+                            now_map, now_map_sim = self.match_scr(self.loc_scr)
+                            if self.now_map_sim < now_map_sim:
+                                self.now_map, self.now_map_sim = now_map, now_map_sim
+                            if (
+                                self.now_map_sim > 0.7
+                                or time.time() - now_time > 2.6
+                                or self._stop
+                            ):
+                                break
+                        log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
+                        if self.now_map_sim<0.42 and self.debug==2:
+                            notif('相似度过低','DEBUG')
+                            self._stop=1
+                        self.now_pth = "imgs/maps/" + self.now_map + "/"
+                        files = self.find_latest_modified_file(self.now_pth)
+                        print("地图文件：", files)
+                        self.big_map = cv.imread(files, cv.IMREAD_GRAYSCALE)
+                        self.debug_map = deepcopy(self.big_map)
+                        xy = files.split("/")[-1].split("_")[1:3]
+                        self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
+                        self.target = self.get_target(self.now_pth + "target.jpg")
+                        log.info("target %s" % self.target)
+                    else:
+                        self.mini_state=1
+                        self.ang_off=0
                     if self._stop:return 1
                     self.press('1')
-                    # 地图相似度过低，判定为黑塔空间站或非跑图状态
-                    # if self.now_map_sim < 0.3:
-                    #    self.init_map()
-                    #    return 0
-                    self.now_pth = "imgs/maps/" + self.now_map + "/"
-                    files = self.find_latest_modified_file(self.now_pth)
-                    print("地图文件：", files)
-                    self.big_map = cv.imread(files, cv.IMREAD_GRAYSCALE)
-                    self.debug_map = deepcopy(self.big_map)
-                    xy = files.split("/")[-1].split("_")[1:3]
-                    self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
-                    self.target = self.get_target(self.now_pth + "target.jpg")
-                    log.info("target %s" % self.target)
                 # 录制模式，保存初始小地图
                 else:
                     time.sleep(3)
                     self.exist_minimap()
                     cv.imwrite(self.map_file + "init.jpg", self.loc_scr)
-            if time.time() - self.lst_tm > 5:
+            if time.time() - self.lst_tm > 5 and self.mini_state == 0:
                 if self.find == 0:
                     self.press("s", 0.5)
                     if self._stop == 0:
@@ -377,11 +379,10 @@ class SimulatedUniverse(UniverseUtils):
                         self.click((0.2927, 0.2602))
                 self.re_align += 1
             # 寻路
+            if self.mini_state:
+                self.get_direc_only_minimap()
             else:
-                if (not (self.floor == 0 or self.floor == 5)) :
-                    self.get_direc_only_minimap(0.87)
-                else:
-                    self.get_direc()
+                self.get_direc()
             return 2
         # 超过15秒没有刷新战斗状态时间，而且也没有处于非战斗状态：出现月卡界面
         elif self.battle + 15 > time.time():
