@@ -169,6 +169,7 @@ class UniverseUtils:
         while True:
             result = self.scan_screenshot(target)
             if result["max_val"] > threshold:
+                print(result["max_val"])
                 points = self.calculated(result, target.shape)
                 self.get_point(*points)
                 exit()
@@ -223,6 +224,54 @@ class UniverseUtils:
         if max_val > threshold and path != "./imgs/run.jpg" and path != "./imgs/auto_2.jpg":
             log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
         return max_val > threshold
+
+    def get_end_point(self,mask=0):
+        self.get_screen()
+        local_screen = self.get_local(0.4979,0.6296, (715, 1399))
+        black = np.array([0, 0, 0])
+        white = np.array([255, 255, 255])
+        bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
+        b_map = deepcopy(bw_map)
+        b_map[np.sum((local_screen - black) ** 2, axis=-1) <= 1600]=255
+        w_map = deepcopy(bw_map)
+        w_map[np.sum((local_screen - white) ** 2, axis=-1) <= 1600]=255
+        kernel = np.zeros((7,7),np.uint8)              #设置kenenel大小
+        kernel += 1
+        b_map = cv.dilate(b_map,kernel,iterations=1)   # 膨胀还原图形
+        bw_map[(b_map>200) & (w_map>200)]=255
+        cen = 660
+        if mask:
+            bw_map[:,:cen-200//mask]=0
+            bw_map[:,cen+200//mask:]=0
+        region = cv.imread('imgs/region.jpg',cv.IMREAD_GRAYSCALE)
+        result = cv.matchTemplate(bw_map, region, cv.TM_CCORR_NORMED)
+        min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+        cv.imwrite('tmp.jpg',bw_map)
+        print(max_val)
+        if max_val<0.6:
+            return None
+        else:
+            dx=max_loc[0]-cen
+            if dx>0:
+                return dx**0.7
+            else:
+                return -((-dx)**0.7)
+        
+    def move_to_end(self):
+        dx=self.get_end_point()
+        if dx is None:
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 200)
+            dx=self.get_end_point()
+            if dx is None:
+                return 0
+        for i in range(3):
+            self.mouse_move(dx/2)
+            if i!=2:
+                time.sleep(0.4)
+                dx=self.get_end_point(i+1)
+                if dx is None:
+                    break
+        return 1
 
     # 计算旋转变换矩阵
     def handle_rotate_val(self, x, y, rotate):
@@ -308,17 +357,16 @@ class UniverseUtils:
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
         # 灰块、白线：小地图中的可移动区域、可移动区域的边缘
         # b_map：当前像素点是否是灰块。只允许灰块附近（2像素）的像素被识别为白线
-        b_map = np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600
-        bb_map = deepcopy(b_map)
+        b_map = deepcopy(bw_map)
+        b_map[np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600]=255
         blk_map = deepcopy(bw_map)
         blk_map[np.sum((local_screen - black) ** 2, axis=-1) <= 800 + self.find * 800]=255
-        b_map[2:] |= bb_map[:-2] | bb_map[1:-1]
-        b_map[:-2] |= bb_map[2:] | bb_map[1:-1]
-        b_map[:, 2:] |= bb_map[:, :-2] | bb_map[:, 1:-1]
-        b_map[:, :-2] |= bb_map[:, 2:] | bb_map[:, 1:-1]
         kernel = np.zeros((9,9),np.uint8)              #设置kenenel大小
         kernel += 1
         dilate = cv.dilate(blk_map,kernel,iterations=1) # 膨胀还原图形
+        kernel = np.zeros((5,5),np.uint8)              #设置kenenel大小
+        kernel += 1
+        b_map = cv.dilate(b_map,kernel,iterations=1)
         # 黄色：包括小地图中的交互点、传送点
         bw_map[
             (np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 800)
@@ -326,7 +374,7 @@ class UniverseUtils:
         ] = 200
         bw_map[
             (np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)
-            & b_map
+            & (b_map>200)
         ] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
@@ -388,7 +436,7 @@ class UniverseUtils:
 
     def goodf(self):
         is_killed = (
-            self.check("bonus", 0.3578,0.4333)
+            self.check("bonus", 0.3531,0.4250)
             or self.check("rescure", 0.3578,0.4333)
             or self.check("download", 0.3578,0.4333)
         )

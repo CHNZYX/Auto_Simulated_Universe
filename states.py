@@ -108,7 +108,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            #self.click_target('imgs/quit.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/mask_end.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -135,9 +135,9 @@ class SimulatedUniverse(UniverseUtils):
         bk_lst_changed = self.lst_changed
         self.lst_changed = time.time()
         # 战斗界面
-        if self.check("auto_2", 0.3760, 0.0370):
+        if self.check("auto_2", 0.3755,0.0333):
             # 需要打开自动战斗
-            if self.check("c", 0.9453, 0.1296, threshold=0.99):
+            if self.check("c", 0.9464,0.1287, threshold=0.985):
                 self.click((0.0891, 0.9676))
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             self.battle = time.time()
@@ -146,7 +146,7 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("choose_bless", 0.9266, 0.9491):
             self.battle = 0
             ok = 0
-            for i in range(4):
+            for i in range(3):
                 if self.speed and self.debug == 2:
                     break
                 time.sleep(0.6)
@@ -263,7 +263,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.multi = config.multi
                         self.re_align += 1
                     is_killed = (
-                        self.check("bonus", 0.3578,0.4333)
+                        self.check("bonus", 0.3531,0.4250)
                         or self.check("rescure", 0.3578,0.4333)
                         or self.check("download", 0.3578,0.4333)
                     )
@@ -396,11 +396,12 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.9375, 0.8565 - 0.1 * (self.diffi - 1)))
             self.click((0.1083, 0.1009))
         elif self.check("start", 0.6594, 0.8389):
-            dx = 0.9266 - 0.8552
-            dy = 0.8194 - 0.6741
-            for i in self.order:
-                self.click((0.9266 - dx * ((i - 1) % 3), 0.8194 - dy * ((i - 1) // 3)))
-                time.sleep(0.3)
+            if self.check("team4",0.5797,0.2389):
+                dx = 0.9266 - 0.8552
+                dy = 0.8194 - 0.6741
+                for i in self.order:
+                    self.click((0.9266 - dx * ((i - 1) % 3), 0.8194 - dy * ((i - 1) // 3)))
+                    time.sleep(0.3)
             self.click((0.1635, 0.1056))
         elif self.check("fate_2", 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
