@@ -457,7 +457,7 @@ class UniverseUtils:
         self.press('m',0.2)
         time.sleep(2.5)
         self.get_screen()
-        for i in range(13):
+        for i in range(12,0,-1):
             if self.check("floor/ff" + str(i + 1),0.0635,0.8917):
                 self.floor=i
                 log.info(f"当前层数：{i}")
