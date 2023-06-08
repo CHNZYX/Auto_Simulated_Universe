@@ -227,8 +227,7 @@ class UniverseUtils:
         return max_val > threshold
 
     def get_end_point(self,mask=0):
-        if mask==0:
-            self.get_screen()
+        self.get_screen()
         local_screen = self.get_local(0.4979,0.6296, (715, 1399))
         black = np.array([0, 0, 0])
         white = np.array([255, 255, 255])
@@ -243,8 +242,8 @@ class UniverseUtils:
         bw_map[(b_map>200) & (w_map>200)]=255
         cen = 660
         if mask:
-            bw_map[:,:cen-200//mask]=0
-            bw_map[:,cen+200//mask:]=0
+            bw_map[:,:cen-250//mask]=0
+            bw_map[:,cen+250//mask:]=0
         region = cv.imread('imgs/region.jpg',cv.IMREAD_GRAYSCALE)
         result = cv.matchTemplate(bw_map, region, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
@@ -266,16 +265,27 @@ class UniverseUtils:
             time.sleep(0.4)
             dx=self.get_end_point()
             if dx is None:
-                for k in range(6):
-                    self.mouse_move(55)
-                    time.sleep(0.7)
+                for k in range(5):
+                    if self.ang_neg:
+                        self.mouse_move(25)
+                    else:
+                        self.mouse_move(-25)
+                    time.sleep(0.4)
                     dx=self.get_end_point()
                     if dx is not None:
                         break
                 if dx is None:
                     return 0
         if not self.stop_move:
-            self.mouse_move(dx/2)
+            if i==0:
+                self.mouse_move(dx/2)
+            else:
+                self.mouse_move(dx/3)
+        if i==0:
+            time.sleep(0.5)
+            dx=self.get_end_point(1)
+            if dx is not None:
+                self.mouse_move(dx/2.5)
         return 1
 
     # 计算旋转变换矩阵
@@ -307,12 +317,12 @@ class UniverseUtils:
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
-        self.screen_raw = pyautogui.screenshot()
-        self.screen_raw = np.array(self.screen_raw)
-        self.screen_raw = self.screen_raw[self.y0 : self.y1, self.x0 : self.x1, :]
+        screen_raw = pyautogui.screenshot()
+        screen_raw = np.array(screen_raw)
+        screen_raw = screen_raw[self.y0 : self.y1, self.x0 : self.x1, :]
         if self.full:
-            self.screen_raw[:-11, :-11] = self.screen_raw[11:, 11:]
-        self.screen = cv.cvtColor(self.screen_raw, cv.COLOR_BGR2RGB)
+            screen_raw[:-11, :-11] = screen_raw[11:, 11:]
+        self.screen = cv.cvtColor(screen_raw, cv.COLOR_BGR2RGB)
         # cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
 
@@ -464,6 +474,7 @@ class UniverseUtils:
         return loc, type
 
     def move_to_interac(self, i=0):
+        self.get_screen()
         threshold=0.84
         shape = (int(self.scx * 190), int(self.scx * 190))
         curloc = (118, 125)
@@ -481,7 +492,7 @@ class UniverseUtils:
             log.info(
                 f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
             )
-        else:
+        else:#226 64 66
             minicon = cv.imread(self.format_path("mini"+str(i+2)))
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
@@ -492,6 +503,13 @@ class UniverseUtils:
                 log.info(
                     f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
                 )
+        if max_val <= threshold:
+            red = [60,60,226]
+            rd = np.where(np.sum((local_screen-red)**2,axis=-1)<=1600)
+            if rd[0].shape[0]>0:
+                nearest = (rd[0][0],rd[1][0])
+                target = (nearest, 3)
+
         if (target[1] >= 1):
             local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
             self.ang = 360 - self.get_now_direc(local_screen) - 90
@@ -528,10 +546,11 @@ class UniverseUtils:
             if self.mini_state<=2:
                 self.ang_off+=self.move_to_interac()
             else:
-                me=min(me+self.move_to_end(me),2)
+                me=min(me+self.move_to_end(me),1)
 
     def get_direc_only_minimap(self):
         if self.ang_off:
+            self.ang_neg=self.ang_off<0
             self.mouse_move(-self.ang_off*1.2)
             time.sleep(0.7)
         self.ang_off=0
@@ -542,7 +561,8 @@ class UniverseUtils:
         while not self.ready:
             time.sleep(0.1)
         pyautogui.keyDown("w")
-        time.sleep(0.7)
+        if self.mini_state==1:
+            time.sleep(0.7)
         need_confirm=0
         init_time = time.time()
         while True:
@@ -562,7 +582,7 @@ class UniverseUtils:
                 break
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
-                time.sleep(1.7)
+                time.sleep(1.9)
                 while self.check("z",0.5906,0.9537,mask="mask_z"):
                     pyautogui.click()
                     self.press("w",0.5)
