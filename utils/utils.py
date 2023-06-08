@@ -558,16 +558,17 @@ class UniverseUtils:
         
     def move_thread(self):
         if self.mini_state>2:
-            self.move_to_end()
+            me=self.move_to_end()
         else:
             self.ang_off+=self.move_to_interac(2)
         self.ready=1
         now_time=time.time()
+        me*=0.5
         while not self.stop_move and time.time()-now_time<3:
             if self.mini_state<=2:
                 self.ang_off+=self.move_to_interac()
             else:
-                self.move_to_end(1)
+                me=max(self.move_to_end(me),me)
 
     def get_direc_only_minimap(self):
         if self.ang_off:
@@ -603,7 +604,7 @@ class UniverseUtils:
                 break
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
-                time.sleep(1.9)
+                time.sleep(2.1)
                 while self.check("z",0.5906,0.9537,mask="mask_z"):
                     pyautogui.click()
                     self.press("w",0.5)
