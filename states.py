@@ -350,6 +350,7 @@ class SimulatedUniverse(UniverseUtils):
                 if self.floor==12:
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
+                    log.info(f"通关！当前层数:{self.floor+1}")
                 elif self.debug == 2:
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
