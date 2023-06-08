@@ -264,16 +264,20 @@ class UniverseUtils:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -200)
             time.sleep(0.4)
             dx=self.get_end_point()
+            off = 0
             if dx is None:
                 for k in range(5):
                     if self.ang_neg:
                         self.mouse_move(25)
+                        off-=25
                     else:
                         self.mouse_move(-25)
+                        off+=25
                     time.sleep(0.4)
                     dx=self.get_end_point()
                     if dx is not None:
                         break
+                self.mouse_move(off)
                 if dx is None:
                     return 0
         if not self.stop_move:
@@ -554,7 +558,7 @@ class UniverseUtils:
         
     def move_thread(self):
         if self.mini_state>2:
-            me=self.move_to_end()
+            self.move_to_end()
         else:
             self.ang_off+=self.move_to_interac(2)
         self.ready=1
@@ -563,7 +567,7 @@ class UniverseUtils:
             if self.mini_state<=2:
                 self.ang_off+=self.move_to_interac()
             else:
-                me=min(me+self.move_to_end(me),1)
+                self.move_to_end(1)
 
     def get_direc_only_minimap(self):
         if self.ang_off:
