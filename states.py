@@ -493,22 +493,22 @@ class SimulatedUniverse(UniverseUtils):
     def update_count(self,read=True):
         file_name = 'logs/notif.txt'
         if read:
-            time_cnt = os.path.getmtime(file_name)
+            new_cnt = 0
             if os.path.exists(file_name):
+                time_cnt = os.path.getmtime(file_name)
                 with open(file_name,'r') as fh:
                     s=fh.readlines()
-                    new_cnt = int(s[0].strip('\n'))
                     try:
+                        new_cnt = int(s[0].strip('\n'))
                         time_cnt = float(s[3].strip('\n'))
                     except:
                         pass
             else:
-                new_cnt = 0
                 os.makedirs('logs',exist_ok=1)
                 with open(file_name, 'w') as file:
                     file.write("0")
                     file.close()
-                #win32api.SetFileAttributes(file_name, win32con.FILE_ATTRIBUTE_HIDDEN)
+                time_cnt = os.path.getmtime(file_name)
         else:
             new_cnt = self.count + 1
             time_cnt = self.count_tm
