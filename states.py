@@ -78,6 +78,9 @@ class SimulatedUniverse(UniverseUtils):
         self.his_loc = (30, 30)
         self.offset = (30, 30)
         self.now_loc = (4096, 4096)
+        self.mini_state=1
+        self.ang_off=0
+        self.ang_neg=0
         self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
@@ -230,7 +233,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("f", 0.3891,0.4315):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
-            time.sleep(0.55)
+            time.sleep(0.65)
             self.get_screen()
             if self.check("f", 0.3891,0.4315):
                 # 黑塔
@@ -241,23 +244,15 @@ class SimulatedUniverse(UniverseUtils):
                         self.press("f")
                         self.battle = 0
                 else:
-                    if self.debug:
-                        self.check("tele", 0.3708,0.4306)
-                        print(self.tm, end=" ")
-                        self.check("exit", 0.3708,0.4306)
-                        print(self.tm)
                     # tele：区域-xx  exit：离开模拟宇宙
                     if self.check(
                         "tele", 0.3708,0.4306, threshold=0.965
-                    ) or self.check("exit", 0.3708,0.4306, threshold=0.965):
-                        # self.get_map()
+                    ):
                         self.init_map()
                         self.floor += 1
                         map_log.info(
                             f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                         )
-                        if self.check("exit", 0.3708,0.4306, threshold=0.965):
-                            self.end_of_uni()
                     elif self.re_align == 1:
                         align_angle(10, 1)
                         self.multi = config.multi
@@ -300,7 +295,7 @@ class SimulatedUniverse(UniverseUtils):
                     now_time = time.time()
                     self.now_map_sim = -1
                     self.now_map = -1
-                    if self.floor in []:#[0,5]:
+                    if self.floor in [0,5]:
                         self.mini_state = 0
                         while True:
                             self.exist_minimap()
@@ -326,9 +321,6 @@ class SimulatedUniverse(UniverseUtils):
                         self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
                         self.target = self.get_target(self.now_pth + "target.jpg")
                         log.info("target %s" % self.target)
-                    else:
-                        self.mini_state=1
-                        self.ang_off=0
                     if self._stop:return 1
                     self.press('1')
                 # 录制模式，保存初始小地图
@@ -348,11 +340,14 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if (time.time() - self.lst_changed >= 35 - 7 * self.debug) and self.find == 1:
+            if ((time.time() - self.lst_changed >= 35 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>2):
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
-                if self.debug == 2:
+                if self.floor==12:
+                    self.end_of_uni()
+                    self.click((0.2708, 0.1324))
+                elif self.debug == 2:
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                     )
@@ -379,6 +374,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.click((0.2927, 0.2602))
                 self.re_align += 1
             # 寻路
+            print(self.mini_state)
             if self.mini_state:
                 self.get_direc_only_minimap()
             else:
