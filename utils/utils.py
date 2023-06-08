@@ -13,6 +13,7 @@ import math
 import random
 import win32gui, win32com.client, pythoncom
 import os
+import threading
 
 from utils.config import config
 from utils.log import log
@@ -226,7 +227,8 @@ class UniverseUtils:
         return max_val > threshold
 
     def get_end_point(self,mask=0):
-        self.get_screen()
+        if mask==0:
+            self.get_screen()
         local_screen = self.get_local(0.4979,0.6296, (715, 1399))
         black = np.array([0, 0, 0])
         white = np.array([255, 255, 255])
@@ -246,8 +248,6 @@ class UniverseUtils:
         region = cv.imread('imgs/region.jpg',cv.IMREAD_GRAYSCALE)
         result = cv.matchTemplate(bw_map, region, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        cv.imwrite('tmp.jpg',bw_map)
-        print(max_val)
         if max_val<0.6:
             return None
         else:
@@ -257,20 +257,25 @@ class UniverseUtils:
             else:
                 return -((-dx)**0.7)
         
-    def move_to_end(self):
-        dx=self.get_end_point()
+    def move_to_end(self,i=0):
+        dx=self.get_end_point(i)
         if dx is None:
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 200)
+            if i:
+                return 0
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -200)
+            time.sleep(0.4)
             dx=self.get_end_point()
             if dx is None:
-                return 0
-        for i in range(3):
-            self.mouse_move(dx/2)
-            if i!=2:
-                time.sleep(0.4)
-                dx=self.get_end_point(i+1)
+                for k in range(6):
+                    self.mouse_move(55)
+                    time.sleep(0.7)
+                    dx=self.get_end_point()
+                    if dx is not None:
+                        break
                 if dx is None:
-                    break
+                    return 0
+        if not self.stop_move:
+            self.mouse_move(dx/2)
         return 1
 
     # 计算旋转变换矩阵
@@ -302,12 +307,12 @@ class UniverseUtils:
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
-        self.screen = pyautogui.screenshot()
-        self.screen = np.array(self.screen)
-        self.screen = self.screen[self.y0 : self.y1, self.x0 : self.x1, :]
+        self.screen_raw = pyautogui.screenshot()
+        self.screen_raw = np.array(self.screen_raw)
+        self.screen_raw = self.screen_raw[self.y0 : self.y1, self.x0 : self.x1, :]
         if self.full:
-            self.screen[:-11, :-11] = self.screen[11:, 11:]
-        self.screen = cv.cvtColor(self.screen, cv.COLOR_BGR2RGB)
+            self.screen_raw[:-11, :-11] = self.screen_raw[11:, 11:]
+        self.screen = cv.cvtColor(self.screen_raw, cv.COLOR_BGR2RGB)
         # cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
 
@@ -458,175 +463,130 @@ class UniverseUtils:
             type = 3
         return loc, type
 
-    def get_direc_only_minimap(self, threshold):
+    def move_to_interac(self, i=0):
+        threshold=0.84
         shape = (int(self.scx * 190), int(self.scx * 190))
         curloc = (118, 125)
         blue = np.array([234, 191, 4])
-        self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
         target = ((-1, -1), 0)
         nearest = (-1, -1)
-        dist = 10 ** 9 
-        for i in range(shape[0]):
-            for j in range(shape[1]):
-                if (local_screen[i][j][0] < 100 and local_screen[i][j][1] < 100 and local_screen[i][j][2] > 200): 
-                    if (nearest[0] < 0 or (curloc[0] - i) ** 2 + (curloc[1] - j) ** 2 < dist):
-                        nearest = (i, j)
-                        dist = (curloc[0] - i) ** 2 + (curloc[1] - j) ** 2
-        if (nearest[0] >= 0):
-            target = (nearest, 1)
+        minicon = cv.imread(self.format_path("mini"+str(i+1)))
+        sp = minicon.shape
+        result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
+        min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+        if (max_val > threshold):
+            nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
+            target = (nearest, 2)
             log.info(
-                f"最近怪点{nearest[0]},{nearest[1]}，距离{dist}"
+                f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
             )
         else:
-            minicon = cv.imread(self.format_path("mini3"))
+            minicon = cv.imread(self.format_path("mini"+str(i+2)))
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
             if (max_val > threshold):
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-                target = (nearest, 2)
-                dist = (curloc[0] - nearest[0]) ** 2 + (curloc[1] - nearest[1]) ** 2
+                target = (nearest, 3)
                 log.info(
-                    f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}，距离{dist}"
+                    f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
                 )
+        if (target[1] >= 1):
+            local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
+            self.ang = 360 - self.get_now_direc(local_screen) - 90
+            ang = (
+                math.atan2(target[0][0] - curloc[0], target[0][1] - curloc[1])
+                / math.pi
+                * 180
+            )
+            sub = ang - self.ang
+            while sub < -180:
+                sub += 360
+            while sub > 180:
+                sub -= 360
+            if self.stop_move:
+                sub=0
+            if i==0:
+                if self.ang_off==0:
+                    sub*=1.2
+                else:
+                    sub=0
+            self.mouse_move(sub)
+            return sub
+        else:
+            return 0
+        
+    def move_thread(self):
+        if self.mini_state>2:
+            me=self.move_to_end()
+        else:
+            self.ang_off+=self.move_to_interac(2)
+        self.ready=1
+        now_time=time.time()
+        while not self.stop_move and time.time()-now_time<3:
+            if self.mini_state<=2:
+                self.ang_off+=self.move_to_interac()
             else:
-                minicon = cv.imread(self.format_path("mini4"))
-                sp = minicon.shape
-                result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
-                min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-                if (max_val > threshold):
-                    nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-                    target = (nearest, 3)
-                    dist = (curloc[0] - nearest[0]) ** 2 + (curloc[1] - nearest[1]) ** 2
-                    log.info(
-                        f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}，距离{dist}"
-                    )
-        tp = target[1]
-        lasttar = target
-        lastdist = 10 ** 9
-        moving = False
-        if (tp == 0): 
-            if not moving:
-                pyautogui.keyDown("w")
-                ft = time.time()
-                moving = True
-            
+                me=min(me+self.move_to_end(me),2)
+
+    def get_direc_only_minimap(self):
+        if self.ang_off:
+            self.mouse_move(-self.ang_off*1.2)
+            time.sleep(0.7)
+        self.ang_off=0
+        self.stop_move=0
+        self.ready=0
+        self.get_screen()
+        threading.Thread(target=self.move_thread).start()
+        while not self.ready:
+            time.sleep(0.1)
+        pyautogui.keyDown("w")
+        time.sleep(0.7)
+        need_confirm=0
+        init_time = time.time()
         while True:
             self.get_screen()
             if self._stop == 1:
                 pyautogui.keyUp("w")
+                self.stop_move=1
                 break
-            if self.goodf() and not self.check("quit", 0.3552,0.4343): 
+            if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30): 
                 pyautogui.keyUp("w")
+                self.stop_move=1
+                need_confirm = 1
                 break
             if self.check("auto_2", 0.3760, 0.0370): 
-                pyautogui.keyUp("w")
+                self.stop_move=1
+                self.mini_state+=2
                 break
-            
-            if (lastdist < 5000 and dist > lastdist) or dist < 500:
-                if lasttar[1] ==  1:
+            if self.check("z",0.5906,0.9537,mask="mask_z"):
+                self.stop_move=1
+                time.sleep(1.7)
+                while self.check("z",0.5906,0.9537,mask="mask_z"):
                     pyautogui.click()
-                elif lasttar[1] == 2 or lasttar[1] == 3:
-                    if moving:
-                        pyautogui.keyUp("w")
-                        ft = time.time() + 3600
-                        moving = False
-                    key_list = ["sasddwwwaw", "sdsaawwwdw"]
-                    key = key_list[random.randint(0, len(key_list) - 1)]
-                    for i in range(-1, len(key)):
-                        if self._stop:
-                            return
-                        time.sleep(0.4)
-                        self.get_screen()
-                        if self.goodf():
-                            break
-                        else:
-                            if i == -1:
-                                if self._stop == 0:
-                                    pyautogui.click()
-                                time.sleep(1.6)
-                            else:
-                                self.press(key[i], 0.25)
-                    
+                    self.press("w",0.5)
+                    self.get_screen()
+                self.mini_state+=2
+                break
+            if time.time()-init_time>2.5:
+                self.stop_move=1
+                pyautogui.keyUp("w")
+                self.mini_state+=2
+                break
+        self.stop_move=1
+        if need_confirm:
+            time.sleep(0.5)
+            for i in "sasddwwaa":
+                if self._stop:
+                    return
+                time.sleep(0.4)
+                self.get_screen()
+                if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30):
+                    self.mini_state+=2
+                    break
                 else:
-                    pass
-            else:
-                if (target[1] >= 1):
-                    local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
-                    self.ang = 360 - self.get_now_direc(local_screen) - 90
-                    #log.info(
-                    #    f"当前角度{self.ang}"
-                    #)
-                    ang = (
-                        math.atan2(target[0][0] - curloc[0], target[0][1] - curloc[1])
-                        / math.pi
-                        * 180
-                    )
-                    #log.info(
-                    #    f"目标角度{ang}"
-                    #)
-                    sub = ang - self.ang
-                    while sub < -180:
-                        sub += 360
-                    while sub > 180:
-                        sub -= 360
-                    self.mouse_move(sub)
-                    if not moving:
-                        pyautogui.keyDown("w")
-                        ft = time.time()
-                        moving = True
-                    lastdist = dist
-                    lasttar = target
-                else:
-                    pass
-            
-            if (time.time() - ft > 0.5):
-                local_screen = self.get_local(0.9333, 0.8657, shape)
-                target = ((-1, -1), 0)
-                nearest = (-1, -1)
-                dist = 10 ** 9 
-                if (tp == 1): 
-                    for i in range(shape[0]):
-                        for j in range(shape[1]):
-                            if (local_screen[i][j][0] < 100 and local_screen[i][j][1] < 100 and local_screen[i][j][2] > 200): 
-                                if (nearest[0] < 0 or (curloc[0] - i) ** 2 + (curloc[1] - j) ** 2 < dist):
-                                    nearest = (i, j)
-                                    dist = (curloc[0] - i) ** 2 + (curloc[1] - j) ** 2
-                    if (nearest[0] >= 0):
-                        target = (nearest, 1)
-                        log.info(
-                            f"最近怪点{nearest[0]},{nearest[1]}，距离{dist}"
-                        )
-                elif (tp == 2):
-                    minicon = cv.imread(self.format_path("mini1"))
-                    sp = minicon.shape
-                    result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
-                    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-                    
-                    if (max_val > threshold):
-                        nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-                        target = (nearest, 2)
-                        dist = (curloc[0] - nearest[0]) ** 2 + (curloc[1] - nearest[1]) ** 2
-                    
-                    #log.info(
-                    #    f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}，距离{dist}"
-                    #)
-                elif (tp == 3):
-                    minicon = cv.imread(self.format_path("mini2"))
-                    sp = minicon.shape
-                    result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
-                    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-                    
-                    if (max_val > threshold):
-                        nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-                        target = (nearest, 3)
-                        dist = (curloc[0] - nearest[0]) ** 2 + (curloc[1] - nearest[1]) ** 2
-                    
-                    #log.info(
-                    #    f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}，距离{dist}"
-                    #)
-                        
+                    self.press(i, 0.25)
 
     # 寻路函数
     def get_direc(self):
