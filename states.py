@@ -378,7 +378,10 @@ class SimulatedUniverse(UniverseUtils):
                 self.re_align += 1
             # 寻路
             else:
-                self.get_direc()
+                if (not (self.floor == 0 or self.floor == 5)) :
+                    self.get_direc_only_minimap(0.87)
+                else:
+                    self.get_direc()
             return 2
         # 超过15秒没有刷新战斗状态时间，而且也没有处于非战斗状态：出现月卡界面
         elif self.battle + 15 > time.time():
