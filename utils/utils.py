@@ -242,8 +242,11 @@ class UniverseUtils:
         bw_map[(b_map>200) & (w_map>200)]=255
         cen = 660
         if mask:
-            bw_map[:,:cen-250//mask]=0
-            bw_map[:,cen+250//mask:]=0
+            try:
+                bw_map[:,:cen-250//mask]=0
+                bw_map[:,cen+250//mask:]=0
+            except:
+                pass
         region = cv.imread('imgs/region.jpg',cv.IMREAD_GRAYSCALE)
         result = cv.matchTemplate(bw_map, region, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
@@ -559,13 +562,15 @@ class UniverseUtils:
             return 0
         
     def move_thread(self):
+        me=0
         if self.mini_state>2:
             me=self.move_to_end()
         else:
             self.ang_off+=self.move_to_interac(2)
         self.ready=1
         now_time=time.time()
-        me*=0.5
+        if me==0:
+            me=0.5
         while not self.stop_move and time.time()-now_time<3:
             if self.mini_state<=2:
                 self.ang_off+=self.move_to_interac()
