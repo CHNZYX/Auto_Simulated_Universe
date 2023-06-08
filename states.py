@@ -112,7 +112,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            #self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/yes.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -361,8 +361,10 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(1)
                     self.floor = 0
                     self.click((0.2708, 0.1324))
+                    time.sleep(1)
                 elif random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
+                    time.sleep(1)
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离"
@@ -372,12 +374,15 @@ class SimulatedUniverse(UniverseUtils):
                         notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
                         self.floor = 0
                         self.click((0.2708, 0.1324))
+                        time.sleep(1)
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                         )
                     else:
                         self.click((0.2927, 0.2602))
+                        time.sleep(1)
                 self.re_align += 1
+                return 1
             # 寻路
             if self.mini_state:
                 self.get_direc_only_minimap()
@@ -387,8 +392,8 @@ class SimulatedUniverse(UniverseUtils):
         # 超过15秒没有刷新战斗状态时间，而且也没有处于非战斗状态：出现月卡界面
         elif self.battle + 15 > time.time():
             return 1
-        if self.check("yes", 0.3969, 0.3898):
-            self.click((0.3969, 0.3898))
+        if self.check("yes", 0.3922, 0.3806):
+            self.click((0.3922, 0.3806))
         elif self.check("close", 0.5016, 0.1259, mask="mask_close") or self.check(
             "close_1", 0.5016, 0.1259, mask="mask_close"
         ):
