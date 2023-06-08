@@ -460,7 +460,7 @@ class UniverseUtils:
         for i in range(12,0,-1):
             if self.check("floor/ff" + str(i + 1),0.0635,0.8917):
                 self.floor=i
-                log.info(f"当前层数：{i}")
+                log.info(f"当前层数：{i+1}")
                 self.floor_init=1
                 break
         self.press('m',0.2)
@@ -522,7 +522,7 @@ class UniverseUtils:
                 )
         if max_val <= threshold:
             red = [60,60,226]
-            rd = np.where(np.sum((local_screen-red)**2,axis=-1)<=1600)
+            rd = np.where(np.sum((local_screen-red)**2,axis=-1)<=512)
             if rd[0].shape[0]>0:
                 nearest = (rd[0][0],rd[1][0])
                 target = (nearest, 3)
