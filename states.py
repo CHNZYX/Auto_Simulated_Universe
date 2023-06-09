@@ -343,7 +343,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>2):
+            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and (self.mini_state>2 or self.debug==2)):
                 time.sleep(1.5)
                 self.press("esc")
                 time.sleep(2)
@@ -361,27 +361,28 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(1)
                     self.floor = 0
                     self.click((0.2708, 0.1324))
-                    time.sleep(1)
                 elif random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
-                    time.sleep(1)
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离"
                     )
+                    self.re_align += 1
                 else:
                     if self.debug == 0:
                         notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
                         self.floor = 0
                         self.click((0.2708, 0.1324))
-                        time.sleep(1)
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                         )
                     else:
                         self.click((0.2927, 0.2602))
-                        time.sleep(1)
-                self.re_align += 1
+                        self.re_align += 1
+                        map_log.error(
+                            f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离 DEBUG"
+                        )
+                self.lst_changed = time.time()
                 return 1
             # 寻路
             if self.mini_state:

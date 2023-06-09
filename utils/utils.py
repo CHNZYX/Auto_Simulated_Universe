@@ -243,8 +243,8 @@ class UniverseUtils:
         cen = 660
         if mask:
             try:
-                bw_map[:,:cen-250//mask]=0
-                bw_map[:,cen+250//mask:]=0
+                bw_map[:,:cen-350//mask]=0
+                bw_map[:,cen+350//mask:]=0
             except:
                 pass
         region = cv.imread('imgs/region.jpg',cv.IMREAD_GRAYSCALE)
@@ -269,14 +269,14 @@ class UniverseUtils:
             dx=self.get_end_point()
             off = 0
             if dx is None:
-                for k in range(8):
+                for k in [60,-30,-60,-30,-80,-80]:
                     if self.ang_neg:
-                        self.mouse_move(45)
-                        off-=45
+                        self.mouse_move(k)
+                        off-=k
                     else:
-                        self.mouse_move(-45)
-                        off+=45
-                    time.sleep(0.5)
+                        self.mouse_move(-k)
+                        off+=k
+                    time.sleep(0.55)
                     dx=self.get_end_point()
                     if dx is not None:
                         break
@@ -286,8 +286,6 @@ class UniverseUtils:
                     off+=360
                 if dx is None:
                     self.mouse_move(off)
-                    self.press('a',1.4)
-                    self.press('d',0.7)
                     return 0
         if not self.stop_move:
             if i==0:
@@ -625,8 +623,10 @@ class UniverseUtils:
             if time.time()-init_time>2.5:
                 self.stop_move=1
                 pyautogui.keyUp("w")
-                self.mini_state+=2
                 pyautogui.click()
+                self.press('a',1.2)
+                self.press('d',0.6)
+                self.mini_state+=2
                 break
         self.stop_move=1
         if need_confirm:
