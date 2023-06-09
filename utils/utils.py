@@ -59,6 +59,7 @@ class UniverseUtils:
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self._stop = 0
+        self.stop_move=0
         self.opt = 0
         self.multi = config.multi
         self.diffi = config.diffi
@@ -265,18 +266,18 @@ class UniverseUtils:
             if i:
                 return 0
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -200)
-            time.sleep(0.5)
+            time.sleep(0.3)
             dx=self.get_end_point()
             off = 0
             if dx is None:
-                for k in [60,-30,-60,-30,-80,-80]:
+                for k in [60,-30,-60,-30,-40,-40,-40,-40,-40]:
                     if self.ang_neg:
                         self.mouse_move(k)
                         off-=k
                     else:
                         self.mouse_move(-k)
                         off+=k
-                    time.sleep(0.55)
+                    time.sleep(0.3)
                     dx=self.get_end_point()
                     if dx is not None:
                         break
@@ -287,16 +288,15 @@ class UniverseUtils:
                 if dx is None:
                     self.mouse_move(off)
                     return 0
-        if not self.stop_move:
-            if i==0:
-                self.mouse_move(dx/2)
-            else:
-                self.mouse_move(dx/3)
         if i==0:
-            time.sleep(0.5)
+            self.mouse_move(dx/2)
+        else:
+            self.mouse_move(dx/5)
+        if i==0:
+            time.sleep(0.3)
             dx=self.get_end_point(1)
             if dx is not None:
-                self.mouse_move(dx/2.5)
+                self.mouse_move(dx/3.5)
         return 1
 
     # 计算旋转变换矩阵
@@ -558,6 +558,8 @@ class UniverseUtils:
                     sub*=1.2
                 else:
                     sub=0
+            if abs(sub)>50 and target[1]==3:
+                sub=0
             self.mouse_move(sub)
             return sub
         else:
@@ -651,11 +653,13 @@ class UniverseUtils:
         yellow = np.array([145, 192, 220])
         black = np.array([0, 0, 0])
         shape = (int(self.scx * 190), int(self.scx * 190))
-        local_screen = self.get_local(0.9333, 0.8657, shape)
-        local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
         bw_map = self.get_bw_map(gs=0)
         self.loc_off = 0
         self.get_loc(bw_map, 40 - self.find * 15)
+        self.press("w", 0.2)
+        self.get_screen()
+        local_screen = self.get_local(0.9333, 0.8657, shape)
+        local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
         # 录图模式，将小地图覆盖到录制的大地图中
         if self.find == 0:
             self.write_map(bw_map)
@@ -696,6 +700,7 @@ class UniverseUtils:
                     if j[1] == type:
                         self.last = j[0]
                         self.target.remove(j)
+                        log.info('removed:'+str(j))
                 return
             if self._stop == 0:
                 pyautogui.keyDown("w")
@@ -763,13 +768,15 @@ class UniverseUtils:
                         self.press(ts[t], 0.4)
                         if self._stop == 0:
                             pyautogui.keyDown("w")
+                        time.sleep(0.1)
                         bw_map = self.get_bw_map()
+                        self.get_loc(bw_map, rg=28, fbw=1)
+                        self.get_screen()
                         local_screen = self.get_local(0.9333, 0.8657, shape)
                         local_screen[
                             np.sum(np.abs(local_screen - blue), axis=-1) <= 150
                         ] = blue
                         self.ang = 360 - self.get_now_direc(local_screen) - 90
-                        self.get_loc(bw_map, rg=28, fbw=1)
                         self.real_loc = (
                             self.real_loc[0] + self.his_loc[0] + self.offset[0],
                             self.real_loc[1] + self.his_loc[1] + self.offset[1],
@@ -791,6 +798,7 @@ class UniverseUtils:
                         dls = [100000]
                         dtm = [time.time()]
                         self.target.remove((loc, type))
+                        log.info('removed:'+str((loc, type)))
                         self.lst_changed = time.time()
                         loc, type = self.get_tar()
                         ds = self.get_dis(self.real_loc, loc)
@@ -804,16 +812,17 @@ class UniverseUtils:
                 while dtm[0] < time.time() - 1.5:
                     dtm = dtm[1:]
                     dls = dls[1:]
-            log.info("进入新地图或者进入战斗")
+            log.info(f"进入新地图或者进入战斗 {nds}")
             if type == 0:
                 self.lst_tm = time.time()
             if type == 1:
                 if self._stop == 0:
                     pyautogui.click()
-                time.sleep(1)
+                time.sleep(0.6)
+                self.press('s')
                 if self._stop == 0:
                     pyautogui.click()
-                time.sleep(1)
+                time.sleep(0.6)
                 if len(self.target) <= 2:
                     self.press("s")
                     pyautogui.click()
@@ -821,7 +830,7 @@ class UniverseUtils:
                     self.press("s", 0.5)
                     pyautogui.click()
                     time.sleep(0.6)
-                    self.press("w")
+                    self.press("w",1)
                     pyautogui.click()
             if type == 2 or type == 3:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
@@ -837,6 +846,7 @@ class UniverseUtils:
                             if j[1] == type:
                                 self.last = j[0]
                                 self.target.remove(j)
+                                log.info('removed:'+str(j))
                                 self.lst_changed = time.time()
                         break
                     else:
@@ -852,27 +862,33 @@ class UniverseUtils:
                     if self.tries == 3:
                         try:
                             self.target.remove((loc, type))
+                            log.info('removed:'+str((loc, type)))
                             self.lst_changed = time.time()
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 10 + (self.speed == 2) * 4:
+            elif nds <= 12 + (self.speed == 2) * 2:
                 try:
                     self.target.remove((loc, type))
+                    log.info('removed:'+str((loc, type)))
                     self.lst_changed = time.time()
                 except:
                     pass
             elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0:
                 try:
                     self.target.remove((loc, type))
-                    if type != 0 and ds > 15:
+                    log.info('removed:'+str((loc, type)))
+                    if nds > 12:
                         self.target.add((loc, 0))
+                        log.info('added:'+str((loc, 0)))
                     self.lst_changed = time.time()
                 except:
                     pass
 
     # 视角转动x度
-    def mouse_move(self, x):
+    def mouse_move(self, x, init=1):
+        if init and abs(x)>=5:
+            log.info(f"视角旋转{x}度")
         if x > 30:
             y = 30
         elif x < -30:
@@ -880,11 +896,11 @@ class UniverseUtils:
         else:
             y = x
         dx = int(9800 * y * 1295 / self.real_width / 180 * self.multi)
-        if self._stop == 0:
+        if self._stop == 0 and self.stop_move==0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
         time.sleep(0.05)
         if x != y:
-            self.mouse_move(x - y)
+            self.mouse_move(x - y,0)
 
     # 在大地图中覆盖小地图
     def write_map(self, bw_map):
@@ -904,7 +920,7 @@ class UniverseUtils:
 
     # 移动后根据旧坐标获得新坐标（匹配）
     # rg：匹配的范围（以旧坐标为中心） fbw：是否进行缩放
-    # fbw：（人物静止/移动时小地图会有个缩放的过程，fbw=1表示当前人物是静止状态，因此缩放到移动状态与大地图匹配）ps：大地图是移动状态录制的
+    # fbw：（人物静止/移动时小地图会有个缩放的过程，fbw=0表示当前人物是静止状态，因此缩放到移动状态与大地图匹配）ps：大地图是移动状态录制的
     def get_loc(self, bw_map, rg=8, fbw=0):
         rg += self.loc_off // 3
         rge = 88 + rg
@@ -954,6 +970,7 @@ class UniverseUtils:
         else:
             self.loc_off = 0
         self.real_loc = (self.now_loc[0], self.now_loc[1])
+        print(self.real_loc)
 
     # 从8192*8192的超大地图中找到有意义的大地图
     def get_map(self):

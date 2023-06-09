@@ -38,9 +38,10 @@ def choose_view(page: Page):
             change_all_button(False)
 
     def angle(_e):
-        if config.angle == "1.0":
+        if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(2)
+            time.sleep(5)
+            page.first=0
             page.dialog.open = False
             page.update()
         show_snack_bar(page, "开始校准，请切换回游戏（¬､¬）", ft.colors.GREEN)
@@ -54,6 +55,12 @@ def choose_view(page: Page):
         if config.angle == "1.0":
             show_snack_bar(page, "没有校准,不准运行（￣^￣）", ft.colors.RED)
             return
+        if config.angle == "1.0" or page.first==1:
+            go_about()
+            time.sleep(5)
+            page.first=0
+            page.dialog.open = False
+            page.update()
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         page.su = run(
             SimulatedUniverse,
@@ -102,9 +109,9 @@ def choose_view(page: Page):
 
     def go_about(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("此程序为免费开源项目"),
+            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！"),
             content=ft.Text(
-                "链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
+                "倒卖可耻，请退款并举报商家！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
             ),
         )
         page.dialog = dlg

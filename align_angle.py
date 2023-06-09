@@ -33,28 +33,30 @@ def main(cnt=10, safe=0):
     init_ang = get_angle(su, safe)
     lst_ang = init_ang
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 3000)
-    ang_list = []
     if safe:
         su.press("w", 0.2)
-    for i in range(cnt):
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
-        su.mouse_move(60)
-        now_ang = get_angle(su, safe)
-        sub = lst_ang - now_ang
-        while sub < 0:
-            sub += 360
-        ang_list.append(sub)
-        lst_ang = now_ang
-    ang_list = np.array(ang_list)
-    # 十次转身的角度
-    print(ang_list)
-    ax = 0
-    ay = 0
-    for i in ang_list:
-        if abs(i - np.median(ang_list)) <= 5:
-            ax += 60
-            ay += i
-    config.angle = str(ax / ay)
+    for i in [1,1,1,3]:
+        ang_list = []
+        for j in range(i):
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
+            su.mouse_move(60)
+            now_ang = get_angle(su, safe)
+            sub = lst_ang - now_ang
+            while sub < 0:
+                sub += 360
+            ang_list.append(sub)
+            lst_ang = now_ang
+        ang_list = np.array(ang_list)
+        # 十/3次转身的角度
+        print(ang_list)
+        ax = 0
+        ay = 0
+        for j in ang_list:
+            if abs(j - np.median(ang_list)) <= 5:
+                ax += 60
+                ay += j
+        su.multi *= ax / ay
+    config.angle = str(su.multi)
     config.save()
     if safe == 0:
         try:
@@ -67,7 +69,7 @@ def main(cnt=10, safe=0):
         for i in range(len(key)):
             time.sleep(0.5)
             su.get_screen()
-            if su.goodf():
+            if su.goodf() and not su.check('quit',0.3552,0.4343):
                 break
             else:
                 su.press(key[i], 0.2)
