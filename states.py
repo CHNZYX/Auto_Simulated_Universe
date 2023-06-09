@@ -249,12 +249,25 @@ class SimulatedUniverse(UniverseUtils):
                     if self.check(
                         "tele", 0.3708,0.4306, threshold=0.965
                     ):
-                        self.init_map()
-                        self.floor += 1
-                        map_log.info(
-                            f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
-                        )
-                    elif self.re_align == 1:
+                        self.press("f")
+                        flag = 0
+                        for _ in range(5):
+                            self.get_screen()
+                            if not self.check(
+                                "tele", 0.3708,0.4306, threshold=0.965
+                            ):
+                                flag = 1
+                                break
+                            time.sleep(0.2)
+                        if flag:
+                            self.init_map()
+                            self.floor += 1
+                            map_log.info(
+                                f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
+                            )
+                        else:
+                            return 0
+                    elif self.re_align == 1 and self.debug == 0:
                         align_angle(10, 1)
                         self.multi = config.multi
                         self.re_align += 1
@@ -300,16 +313,16 @@ class SimulatedUniverse(UniverseUtils):
                     self.now_map = -1
                     if self.floor in [0,5]:
                         self.mini_state = 0
+                        self.stop_move = 0
                         while True:
                             self.exist_minimap()
                             now_map, now_map_sim = self.match_scr(self.loc_scr)
                             if self.now_map_sim < now_map_sim:
                                 self.now_map, self.now_map_sim = now_map, now_map_sim
-                            if (
+                            if ((
                                 self.now_map_sim > 0.7
                                 or time.time() - now_time > 2.6
-                                or self._stop
-                            ):
+                            ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                         if self.now_map_sim<0.42 and self.debug==2:
@@ -329,17 +342,16 @@ class SimulatedUniverse(UniverseUtils):
                 # 录制模式，保存初始小地图
                 else:
                     time.sleep(3)
+                    self.mini_state = 0
                     self.exist_minimap()
                     cv.imwrite(self.map_file + "init.jpg", self.loc_scr)
+            self.get_screen()
             if time.time() - self.lst_tm > 5 and self.mini_state == 0:
                 if self.find == 0:
                     self.press("s", 0.5)
                     if self._stop == 0:
                         pyautogui.keyDown("w")
                     time.sleep(0.5)
-                    self.get_screen()
-                else:
-                    self.press("w", 0.2)
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
@@ -352,15 +364,15 @@ class SimulatedUniverse(UniverseUtils):
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
                     log.info(f"通关！当前层数:{self.floor+1}")
-                elif self.debug == 2:
+                elif self.debug:
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                     )
                     notif(f"地图{self.now_map}出现问题","DEBUG")
                     self._stop = 1
                     time.sleep(1)
-                    self.floor = 0
-                    self.click((0.2708, 0.1324))
+                    #self.floor = 0
+                    #self.click((0.2708, 0.1324))
                 elif random.randint(0, 2) != 3:
                     self.click((0.2927, 0.2602))
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")

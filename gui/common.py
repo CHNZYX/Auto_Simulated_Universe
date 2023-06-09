@@ -8,10 +8,12 @@ from states import SimulatedUniverse
 
 class Page(ft.Page):
     su: Optional[SimulatedUniverse]
+    first: int
 
 
 def init_page(page: Page):
     page.su = None
+    page.first = 1
 
 
 def show_snack_bar(page, text, color, selectable=False):
