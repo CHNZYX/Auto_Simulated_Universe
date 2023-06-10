@@ -480,8 +480,9 @@ class UniverseUtils:
     def goodf(self):
         is_killed = (
             self.check("bonus", 0.3531,0.4250)
-            or self.check("rescure", 0.3578,0.4333)
-            or self.check("download", 0.3578,0.4333)
+            or self.check("rescure", 0.3531,0.4250)
+            or self.check("download", 0.3531,0.4250)
+            or self.check("lock", 0.3531,0.4250)
         )
         return self.check("f", 0.3891,0.4315) and not is_killed
 
@@ -531,6 +532,10 @@ class UniverseUtils:
                 log.info(
                     f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
                 )
+        for i in range(local_screen.shape[0]):
+            for j in range(local_screen.shape[1]):
+                if self.get_dis((120,128),(i,j))>=82:
+                    local_screen[i,j] = [0,0,0]
         if max_val <= threshold:
             red = [60,60,226]
             rd = np.where(np.sum((local_screen-red)**2,axis=-1)<=512)
@@ -696,7 +701,7 @@ class UniverseUtils:
             if self.speed == 2 and type == 0:
                 ps += 3
             # 如果当前就在交互点上：直接返回
-            if self.goodf() and not self.check("quit", 0.3552,0.4343):
+            if self.goodf() and not self.check("herta", 0.3656,0.4222):
                 for j in deepcopy(self.target):
                     if j[1] == type:
                         self.last = j[0]

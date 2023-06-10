@@ -69,7 +69,7 @@ def main(cnt=10, safe=0):
         for i in range(len(key)):
             time.sleep(0.5)
             su.get_screen()
-            if su.goodf() and not su.check('quit',0.3552,0.4343):
+            if su.goodf() and not su.check("herta", 0.3656,0.4222):
                 break
             else:
                 su.press(key[i], 0.2)
