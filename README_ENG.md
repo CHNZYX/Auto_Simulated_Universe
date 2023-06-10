@@ -21,7 +21,7 @@ Please note that according to MiHoYo's [Fair Play Pledge for Honkai Star Rail](h
 
 ### Usage
 
-If your computer does not have Python + NumPy installed or if Python has not been properly added to the environment variables, you will be unable to use this project. Please understand the threshold set by this project. If you are blocked by this threshold, please search for a solution on Baidu by yourself.
+If your computer does not have Python + NumPy installed or if Python has not been properly added to the environment variables, you will be unable to use this project. Please understand the threshold set by this project. If you are blocked by this threshold, please search for a solution on Google by yourself.
 
 Only supports 1920\*1080 (windowed or fullscreen), enable detailed descriptions for blessings, and select Simplified Chinese as the text language. (If the screen resolution is equal to 1920\*1080, open in fullscreen; if it is larger, open in windowed mode).
 
