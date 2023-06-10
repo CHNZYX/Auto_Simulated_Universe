@@ -656,7 +656,7 @@ class UniverseUtils:
         bw_map = self.get_bw_map(gs=0)
         self.loc_off = 0
         self.get_loc(bw_map, 40 - self.find * 15)
-        if self.find==0:
+        if self.find==1:
             self.press("w", 0.2)
         self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
@@ -875,14 +875,10 @@ class UniverseUtils:
                     self.lst_changed = time.time()
                 except:
                     pass
-            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0:
+            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0 and nds <= 15:
                 try:
                     self.target.remove((loc, type))
                     log.info('removed:'+str((loc, type)))
-                    if nds > 12:
-                        self.target.add((loc, 0))
-                        log.info('added:'+str((loc, 0)))
-                    self.lst_changed = time.time()
                 except:
                     pass
 
