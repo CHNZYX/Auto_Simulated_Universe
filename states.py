@@ -112,7 +112,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             self.get_screen()
-            #self.click_target('imgs/yes.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/herta.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -238,9 +238,9 @@ class SimulatedUniverse(UniverseUtils):
             self.get_screen()
             if self.check("f", 0.3891,0.4315):
                 # 黑塔
-                if self.check("quit", 0.3552,0.4343):
+                if self.check("herta", 0.3656,0.4222):
                     # 与黑塔交互后30秒内禁止再次交互（防止死循环）
-                    if time.time() - self.quit > 30:
+                    if time.time() - self.quit > 30 and self.floor:
                         self.quit = time.time()
                         self.press("f")
                         self.battle = 0
@@ -273,8 +273,9 @@ class SimulatedUniverse(UniverseUtils):
                         self.re_align += 1
                     is_killed = (
                         self.check("bonus", 0.3531,0.4250)
-                        or self.check("rescure", 0.3578,0.4333)
-                        or self.check("download", 0.3578,0.4333)
+                        or self.check("rescure", 0.3531,0.4250)
+                        or self.check("download", 0.3531,0.4250)
+                        or self.check("lock", 0.3531,0.4250)
                     )
                     if is_killed == 0:
                         self.press("f")
