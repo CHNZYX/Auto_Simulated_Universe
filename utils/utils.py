@@ -289,14 +289,14 @@ class UniverseUtils:
                     self.mouse_move(off)
                     return 0
         if i==0:
-            self.mouse_move(dx/2)
+            self.mouse_move(dx/3)
         else:
             self.mouse_move(dx/5)
         if i==0:
             time.sleep(0.3)
             dx=self.get_end_point(1)
             if dx is not None:
-                self.mouse_move(dx/3.5)
+                self.mouse_move(dx/4)
         return 1
 
     # 计算旋转变换矩阵
@@ -415,7 +415,6 @@ class UniverseUtils:
                 int(shape[0] * 0.5) - 68 - 2 : int(shape[0] * 0.5) + 108 - 2,
                 int(shape[1] * 0.5) - 48 - 8 : int(shape[1] * 0.5) + 128 - 8,
             ]
-        cv.imwrite("bwmap.jpg", bw_map)
         # 排除半径85以外的像素点
         for i in range(bw_map.shape[0]):
             for j in range(bw_map.shape[1]):
