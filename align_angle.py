@@ -35,7 +35,7 @@ def main(cnt=10, safe=0):
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 3000)
     if safe:
         su.press("w", 0.2)
-    for i in [1,1,1,3]:
+    for i in [1,1,3]:
         ang_list = []
         for j in range(i):
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 300)
