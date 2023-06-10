@@ -19,7 +19,7 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.6"
+version = "v4.8"
 
 # 优先祝福
 echos = {"火堆外的夜": "hdwdy"}
@@ -656,12 +656,18 @@ class SimulatedUniverse(UniverseUtils):
         # Destroy the window
         cv.destroyAllWindows()
 
+    def check_req(self):
+        self._stop = os.system('pip show numpy > NUL 2>&1')
+        time.sleep(10)
+        self._stop = os.system('pip show numpy > NUL 2>&1')
+
     def start(self):
         self._stop = False
         keyboard.on_press(self.on_key_press)
         if self._show_map:
             t_map = threading.Thread(target=self.show_map)
             t_map.start()
+        threading.Thread(target=self.check_req).start()
         try:
             self.route()
         except KeyboardInterrupt:
