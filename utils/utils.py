@@ -155,8 +155,8 @@ class UniverseUtils:
             x, y = self.x1 - int(x * self.xx), self.y1 - int(y * self.yy)
         # 全屏模式会有一个偏移
         if self.full:
-            x += 11
-            y += 11
+            x += 9
+            y += 9
         if self._stop == 0:
             win32api.SetCursorPos((x, y))
             win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
@@ -332,7 +332,7 @@ class UniverseUtils:
         screen_raw = np.array(screen_raw)
         screen_raw = screen_raw[self.y0 : self.y1, self.x0 : self.x1, :]
         if self.full:
-            screen_raw[:-11, :-11] = screen_raw[11:, 11:]
+            screen_raw[:-9, :-9] = screen_raw[9:, 9:]
         self.screen = cv.cvtColor(screen_raw, cv.COLOR_BGR2RGB)
         # cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
@@ -415,6 +415,7 @@ class UniverseUtils:
                 int(shape[0] * 0.5) - 68 - 2 : int(shape[0] * 0.5) + 108 - 2,
                 int(shape[1] * 0.5) - 48 - 8 : int(shape[1] * 0.5) + 128 - 8,
             ]
+        cv.imwrite("bwmap.jpg", bw_map)
         # 排除半径85以外的像素点
         for i in range(bw_map.shape[0]):
             for j in range(bw_map.shape[1]):
@@ -505,7 +506,7 @@ class UniverseUtils:
         self.get_screen()
         threshold=0.84
         shape = (int(self.scx * 190), int(self.scx * 190))
-        curloc = (118, 125)
+        curloc = (118+2, 125+2)
         blue = np.array([234, 191, 4])
         local_screen = self.get_local(0.9333, 0.8657, shape)
         target = ((-1, -1), 0)
@@ -656,7 +657,8 @@ class UniverseUtils:
         bw_map = self.get_bw_map(gs=0)
         self.loc_off = 0
         self.get_loc(bw_map, 40 - self.find * 15)
-        self.press("w", 0.2)
+        if self.find==0:
+            self.press("w", 0.2)
         self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
         local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
@@ -687,13 +689,13 @@ class UniverseUtils:
                 self.mouse_move(sub)
                 self.ang = ang
             if type == 1:
-                ps = 8
+                ps = 10
             elif type == 0:
-                ps = 6
+                ps = 8
             else:
-                ps = 6
+                ps = 8
             if self.speed == 2 and type == 0:
-                ps += 4
+                ps += 3
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.check("quit", 0.3552,0.4343):
                 for j in deepcopy(self.target):
@@ -887,8 +889,6 @@ class UniverseUtils:
 
     # 视角转动x度
     def mouse_move(self, x, init=1):
-        if init and abs(x)>=5:
-            log.info(f"视角旋转{x}度")
         if x > 30:
             y = 30
         elif x < -30:
@@ -970,7 +970,6 @@ class UniverseUtils:
         else:
             self.loc_off = 0
         self.real_loc = (self.now_loc[0], self.now_loc[1])
-        print(self.real_loc)
 
     # 从8192*8192的超大地图中找到有意义的大地图
     def get_map(self):
