@@ -321,13 +321,21 @@ class SimulatedUniverse(UniverseUtils):
                                 self.now_map, self.now_map_sim = now_map, now_map_sim
                             if ((
                                 self.now_map_sim > 0.7
-                                or time.time() - now_time > 2.6
+                                or time.time() - now_time > 2.2
                             ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                         if self.now_map_sim<0.42 and self.debug==2:
                             notif('相似度过低','DEBUG')
                             self._stop=1
+                        if self.debug == 2:
+                            with open('check'+str(self.floor)+'.txt','r') as fh:
+                                s=fh.readline().strip('\n')
+                            s=eval(s)
+                            if not self.now_map in s:
+                                s.append(self.now_map)
+                            with open('check'+str(self.floor)+'.txt','w') as fh:
+                                fh.write(str(s))
                         self.now_pth = "imgs/maps/" + self.now_map + "/"
                         files = self.find_latest_modified_file(self.now_pth)
                         print("地图文件：", files)
