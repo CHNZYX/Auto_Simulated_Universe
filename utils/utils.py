@@ -644,6 +644,8 @@ class UniverseUtils:
                 time.sleep(0.4)
                 self.get_screen()
                 if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30):
+                    if self.mini_state > 1:
+                        self.tele_time = time.time()
                     self.mini_state+=2
                     return
                 else:
@@ -704,8 +706,9 @@ class UniverseUtils:
             if self.goodf() and not self.check("herta", 0.3656,0.4222):
                 for j in deepcopy(self.target):
                     if j[1] == type:
-                        self.last = j[0]
                         self.target.remove(j)
+                        if j[1] == 3:
+                            self.tele_time = time.time()
                         log.info('removed:'+str(j))
                 return
             if self._stop == 0:
@@ -854,6 +857,8 @@ class UniverseUtils:
                                 self.target.remove(j)
                                 log.info('removed:'+str(j))
                                 self.lst_changed = time.time()
+                                if j[1] == 3:
+                                    self.tele_time = time.time()
                         break
                     else:
                         if i == -1:

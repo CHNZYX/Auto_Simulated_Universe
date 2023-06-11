@@ -53,6 +53,7 @@ class SimulatedUniverse(UniverseUtils):
         self.count = 0
         self.count_tm = time.time()
         self.re_align = 0
+        self.tele_time = 0
         self.update_count()
         notif('开始运行',f'初始计数：{self.count}')
         set_debug(debug > 0)
@@ -246,12 +247,14 @@ class SimulatedUniverse(UniverseUtils):
                         self.battle = 0
                 else:
                     # tele：区域-xx  exit：离开模拟宇宙
-                    if self.check(
-                        "tele", 0.3708,0.4306, threshold=0.965
-                    ):
+                    if time.time()-self.tele_time<7:
+                        log.info(
+                            f"识别到传送点"
+                        )
                         self.press("f")
                         flag = 0
-                        for _ in range(5):
+                        time.sleep(0.65)
+                        for _ in range(2):
                             self.get_screen()
                             if not self.check(
                                 "tele", 0.3708,0.4306, threshold=0.965
@@ -265,6 +268,7 @@ class SimulatedUniverse(UniverseUtils):
                             map_log.info(
                                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                             )
+                            return 1
                         else:
                             return 0
                     elif self.re_align == 1 and self.debug == 0:
@@ -330,12 +334,12 @@ class SimulatedUniverse(UniverseUtils):
                             notif('相似度过低','DEBUG')
                             self._stop=1
                         if self.debug == 2:
-                            with open('check'+str(self.floor)+'.txt','r') as fh:
+                            with open('check'+str(self.floor)+'.txt','r', encoding="utf-8") as fh:
                                 s=fh.readline().strip('\n')
                             s=eval(s)
                             if not self.now_map in s:
                                 s.append(self.now_map)
-                            with open('check'+str(self.floor)+'.txt','w') as fh:
+                            with open('check'+str(self.floor)+'.txt','w', encoding="utf-8") as fh:
                                 fh.write(str(s))
                         self.now_pth = "imgs/maps/" + self.now_map + "/"
                         files = self.find_latest_modified_file(self.now_pth)
