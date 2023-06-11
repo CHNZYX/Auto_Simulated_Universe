@@ -287,16 +287,20 @@ class UniverseUtils:
                     off+=360
                 if dx is None:
                     self.mouse_move(off)
+                    time.sleep(0.3)
                     return 0
         if i==0:
             self.mouse_move(dx/3)
+            time.sleep(0.3)
         else:
             self.mouse_move(dx/5)
+            time.sleep(0.3)
         if i==0:
             time.sleep(0.3)
             dx=self.get_end_point(1)
             if dx is not None:
                 self.mouse_move(dx/4)
+                time.sleep(0.3)
         return 1
 
     # 计算旋转变换矩阵
