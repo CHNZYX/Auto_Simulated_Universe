@@ -335,9 +335,13 @@ class SimulatedUniverse(UniverseUtils):
                             ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                        if (self.now_map_sim<0.42 and self.debug==2) or self.now_map_sim<0.35:
+                        if self.now_map_sim<0.42 and self.debug==2:
                             notif('相似度过低','DEBUG')
                             self._stop=1
+                        elif self.now_map_sim<0.35:
+                            notif('相似度过低','疑似在黑塔办公室')
+                            self.init_map()
+                            return 1
                         if self.debug == 2:
                             with open('check'+str(self.floor)+'.txt','r', encoding="utf-8") as fh:
                                 s=fh.readline().strip('\n')
