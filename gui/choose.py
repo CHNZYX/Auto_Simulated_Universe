@@ -72,9 +72,9 @@ def choose_view(page: Page):
         )
         run(page.su.start)
         txt = " "
-        if time.time()-tm<20:
-            go_dep()
-            txt = "请确认python+numpy已安装并正确配置环境变量"
+        #if time.time()-tm<20:
+        #    go_dep()
+        #    txt = "请确认python+numpy已安装并正确配置环境变量"
         notif('已退出自动化',txt)
 
     def start_new(_e):
