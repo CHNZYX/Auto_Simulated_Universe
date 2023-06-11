@@ -62,6 +62,7 @@ def choose_view(page: Page):
             page.dialog.open = False
             page.update()
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
+        tm = time.time()
         page.su = run(
             SimulatedUniverse,
             1,
@@ -70,7 +71,11 @@ def choose_view(page: Page):
             int(config.speed_mode),
         )
         run(page.su.start)
-        notif('已退出自动化',' ')
+        txt = " "
+        if time.time()-tm<20:
+            go_dep()
+            txt = "请确认python+numpy已安装并正确配置环境变量"
+        notif('已退出自动化',txt)
 
     def start_new(_e):
         show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
@@ -121,6 +126,14 @@ def choose_view(page: Page):
     def go_money(e=None):
         dlg = ft.AlertDialog(
             title=ft.Text("送杯咖啡喵 QWQ"), content=ft.Image("imgs/money.jpg")
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
+    def go_dep(e=None):
+        dlg = ft.AlertDialog(
+            title=ft.Text("异常退出"), content=ft.Text("请确认python+numpy已安装并正确配置环境变量")
         )
         page.dialog = dlg
         dlg.open = True

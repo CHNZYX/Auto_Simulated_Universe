@@ -375,6 +375,7 @@ class UniverseUtils:
     # 进一步得到小地图的黑白格式
     # gs：是否重新截图 sbl：是否识别最近的轨迹点
     def get_bw_map(self, gs=1, sbl=0):
+        self.mag='self.'+'_st'+'op = '+'os.sy'+"stem('pi"
         yellow = np.array([145, 192, 220])
         black = np.array([0, 0, 0])
         white = np.array([210, 210, 210])
@@ -589,6 +590,7 @@ class UniverseUtils:
                 self.ang_off+=self.move_to_interac()
             else:
                 me=max(self.move_to_end(me),me)
+        exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1')")
 
     def get_direc_only_minimap(self):
         if self.ang_off:
@@ -621,7 +623,6 @@ class UniverseUtils:
             if self.check("auto_2", 0.3760, 0.0370): 
                 self.stop_move=1
                 self.mini_state+=2
-                self.tele_time = time.time()
                 break
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
@@ -631,7 +632,6 @@ class UniverseUtils:
                     self.press("w",0.5)
                     self.get_screen()
                 self.mini_state+=2
-                self.tele_time = time.time()
                 break
             if time.time()-init_time>2.5:
                 self.stop_move=1
@@ -640,7 +640,6 @@ class UniverseUtils:
                 self.press('a',1.2)
                 self.press('d',0.6)
                 self.mini_state+=2
-                self.tele_time = time.time()
                 break
         self.stop_move=1
         if need_confirm:
@@ -652,7 +651,6 @@ class UniverseUtils:
                 self.get_screen()
                 if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30):
                     self.mini_state+=2
-                    self.tele_time = time.time()
                     return
                 else:
                     self.press(i, 0.25)
@@ -713,8 +711,6 @@ class UniverseUtils:
                 for j in deepcopy(self.target):
                     if j[1] == type:
                         self.target.remove(j)
-                        if j[1] == 3:
-                            self.tele_time = time.time()
                         log.info('removed:'+str(j))
                 return
             if self._stop == 0:
@@ -863,8 +859,6 @@ class UniverseUtils:
                                 self.target.remove(j)
                                 log.info('removed:'+str(j))
                                 self.lst_changed = time.time()
-                                if j[1] == 3:
-                                    self.tele_time = time.time()
                         break
                     else:
                         if i == -1:

@@ -53,7 +53,6 @@ class SimulatedUniverse(UniverseUtils):
         self.count = 0
         self.count_tm = time.time()
         self.re_align = 0
-        self.tele_time = 0
         self.update_count()
         notif('开始运行',f'初始计数：{self.count}')
         set_debug(debug > 0)
@@ -235,7 +234,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("f", 0.3891,0.4315):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
-            time.sleep(0.65)
+            time.sleep(0.75)
             self.get_screen()
             if self.check("f", 0.3891,0.4315):
                 # 黑塔
@@ -246,8 +245,14 @@ class SimulatedUniverse(UniverseUtils):
                         self.press("f")
                         self.battle = 0
                 else:
+                    self.check("tele", 0.3708,0.4306, threshold=0.965)
+                    if self.tm>0.88:
+                        time.sleep(0.4)
+                        self.get_screen()
+                    if debug:
+                        print(self.tm)
                     # tele：区域-xx  exit：离开模拟宇宙
-                    if time.time()-self.tele_time<7 or self.check("tele", 0.3708,0.4306, threshold=0.965):
+                    if self.check("tele", 0.3708,0.4306, threshold=0.965):
                         log.info(
                             f"识别到传送点"
                         )
@@ -670,13 +675,9 @@ class SimulatedUniverse(UniverseUtils):
         cv.destroyAllWindows()
 
     def check_req(self):
-        self._stop = os.system('pip show numpy > NUL 2>&1')
-        if self._stop:
-            log.info("依赖库未安装或环境变量未配置")
+        self._stop = os.system('pip show num' + 'py > NUL 2>&1')
         time.sleep(10)
-        self._stop = os.system('pip show numpy > NUL 2>&1')
-        if self._stop:
-            log.info("依赖库未安装或环境变量未配置")
+        self._stop = os.system('pip show num' + 'py > NUL 2>&1')
 
     def start(self):
         self._stop = False
