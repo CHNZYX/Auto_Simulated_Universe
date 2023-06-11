@@ -621,6 +621,7 @@ class UniverseUtils:
             if self.check("auto_2", 0.3760, 0.0370): 
                 self.stop_move=1
                 self.mini_state+=2
+                self.tele_time = time.time()
                 break
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
@@ -630,6 +631,7 @@ class UniverseUtils:
                     self.press("w",0.5)
                     self.get_screen()
                 self.mini_state+=2
+                self.tele_time = time.time()
                 break
             if time.time()-init_time>2.5:
                 self.stop_move=1
@@ -638,6 +640,7 @@ class UniverseUtils:
                 self.press('a',1.2)
                 self.press('d',0.6)
                 self.mini_state+=2
+                self.tele_time = time.time()
                 break
         self.stop_move=1
         if need_confirm:
@@ -648,9 +651,8 @@ class UniverseUtils:
                 time.sleep(0.4)
                 self.get_screen()
                 if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30):
-                    if self.mini_state > 1:
-                        self.tele_time = time.time()
                     self.mini_state+=2
+                    self.tele_time = time.time()
                     return
                 else:
                     self.press(i, 0.25)

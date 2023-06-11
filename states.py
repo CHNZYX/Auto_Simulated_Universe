@@ -247,7 +247,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.battle = 0
                 else:
                     # tele：区域-xx  exit：离开模拟宇宙
-                    if time.time()-self.tele_time<7:
+                    if time.time()-self.tele_time<7 or self.check("tele", 0.3708,0.4306, threshold=0.965):
                         log.info(
                             f"识别到传送点"
                         )
