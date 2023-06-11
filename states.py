@@ -335,7 +335,7 @@ class SimulatedUniverse(UniverseUtils):
                             ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                        if self.now_map_sim<0.42 and self.debug==2:
+                        if (self.now_map_sim<0.42 and self.debug==2) or self.now_map_sim<0.35:
                             notif('相似度过低','DEBUG')
                             self._stop=1
                         if self.debug == 2:
