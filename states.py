@@ -671,8 +671,12 @@ class SimulatedUniverse(UniverseUtils):
 
     def check_req(self):
         self._stop = os.system('pip show numpy > NUL 2>&1')
+        if self._stop:
+            log.info("依赖库未安装或环境变量未配置")
         time.sleep(10)
         self._stop = os.system('pip show numpy > NUL 2>&1')
+        if self._stop:
+            log.info("依赖库未安装或环境变量未配置")
 
     def start(self):
         self._stop = False
