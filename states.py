@@ -249,7 +249,7 @@ class SimulatedUniverse(UniverseUtils):
                     if self.tm>0.88:
                         time.sleep(0.4)
                         self.get_screen()
-                    if debug:
+                    if self.debug:
                         print(self.tm)
                     # tele：区域-xx  exit：离开模拟宇宙
                     if self.check("tele", 0.3708,0.4306, threshold=0.965):
