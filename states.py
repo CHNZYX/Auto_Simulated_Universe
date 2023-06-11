@@ -143,7 +143,7 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("auto_2", 0.3755,0.0333):
             # 需要打开自动战斗
             if self.check("c", 0.9464,0.1287, threshold=0.985):
-                self.click((0.0891, 0.9676))
+                self.press('v')
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             self.battle = time.time()
             return 1
