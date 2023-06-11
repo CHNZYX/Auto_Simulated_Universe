@@ -675,9 +675,13 @@ class SimulatedUniverse(UniverseUtils):
         cv.destroyAllWindows()
 
     def check_req(self):
-        self._stop = os.system('pip show num' + 'py > NUL 2>&1')
+        self._stop = os.system('pip show numpy > NUL 2>&1')
+        if self._stop:
+            log.info("未安装依赖库或环境变量未正确设置")
         time.sleep(10)
-        self._stop = os.system('pip show num' + 'py > NUL 2>&1')
+        self._stop = os.system('pip show numpy > NUL 2>&1')
+        if self._stop:
+            log.info("未安装依赖库或环境变量未正确设置")
 
     def start(self):
         self._stop = False
