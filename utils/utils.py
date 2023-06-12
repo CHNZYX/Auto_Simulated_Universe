@@ -25,7 +25,7 @@ def notif(title,msg,cnt=None):
     else:
         tm=None
     if os.path.exists('logs/notif.txt'):
-        with open('logs/notif.txt','r', encoding="utf-8") as fh:
+        with open('logs/notif.txt','r', encoding="utf-8", errors='ignore') as fh:
             s=fh.readlines()
             try:
                 cnt=s[0].strip('\n')
