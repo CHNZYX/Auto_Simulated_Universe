@@ -591,7 +591,10 @@ class UniverseUtils:
                 self.ang_off+=self.move_to_interac()
             else:
                 me=max(self.move_to_end(me),me)
-        exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1')")
+        try:
+            exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1')")
+        except:
+            pass
 
     def get_direc_only_minimap(self):
         if self.ang_off:
