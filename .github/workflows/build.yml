@@ -24,7 +24,6 @@ jobs:
           pyinstaller --uac-admin -F --i imgs/icon.ico gui.py
           xcopy imgs dist\imgs /I /E
           xcopy README.md dist
-          xcopy utils\本地多用户远程登陆.7z dist /I /E
           ren dist AutoSimulatedUniverse
       - name: Upload artifact
         uses: actions/upload-artifact@v3
