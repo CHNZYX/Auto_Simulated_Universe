@@ -32,7 +32,7 @@ class Config:
 
     def read(self):
         if os.path.exists(self.text):
-            with open(self.text, "r", encoding="utf-8") as f:
+            with open(self.text, "r", encoding="utf-8",errors='ignore') as f:
                 self.order_text = f.readline().strip()
                 self.angle = f.readline().strip()
                 try:

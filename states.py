@@ -52,6 +52,7 @@ class SimulatedUniverse(UniverseUtils):
         self.floor = 0
         self.count = 0
         self.count_tm = time.time()
+        self.floor_tm = time.time()
         self.re_align = 0
         self.update_count()
         notif('开始运行',f'初始计数：{self.count}')
@@ -257,24 +258,17 @@ class SimulatedUniverse(UniverseUtils):
                             f"识别到传送点"
                         )
                         self.press("f")
-                        flag = 0
-                        time.sleep(0.65)
-                        for _ in range(2):
-                            self.get_screen()
-                            if not self.check(
-                                "tele", 0.3708,0.4306, threshold=0.965
-                            ):
-                                flag = 1
-                                break
-                            time.sleep(0.2)
-                        if flag:
+                        if time.time()-self.floor_tm>4:
+                            self.floor_tm = time.time()
                             self.init_map()
                             self.floor += 1
+                            self.floor_tm = time.time()
                             map_log.info(
                                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                             )
                             return 1
                         else:
+                            self.floor_tm = time.time()
                             return 0
                     elif self.re_align == 1 and self.debug == 0:
                         align_angle(10, 1)
@@ -343,13 +337,16 @@ class SimulatedUniverse(UniverseUtils):
                             self.init_map()
                             return 1
                         if self.debug == 2:
-                            with open('check'+str(self.floor)+'.txt','r', encoding="utf-8") as fh:
-                                s=fh.readline().strip('\n')
-                            s=eval(s)
-                            if not self.now_map in s:
-                                s.append(self.now_map)
-                            with open('check'+str(self.floor)+'.txt','w', encoding="utf-8") as fh:
-                                fh.write(str(s))
+                            try:
+                                with open('check'+str(self.floor)+'.txt','r', encoding="utf-8",errors='ignore') as fh:
+                                    s=fh.readline().strip('\n')
+                                s=eval(s)
+                                if not self.now_map in s:
+                                    s.append(self.now_map)
+                                with open('check'+str(self.floor)+'.txt','w', encoding="utf-8") as fh:
+                                    fh.write(str(s))
+                            except:
+                                pass
                         self.now_pth = "imgs/maps/" + self.now_map + "/"
                         files = self.find_latest_modified_file(self.now_pth)
                         print("地图文件：", files)
@@ -538,7 +535,7 @@ class SimulatedUniverse(UniverseUtils):
             new_cnt = 0
             if os.path.exists(file_name):
                 time_cnt = os.path.getmtime(file_name)
-                with open(file_name,'r', encoding="utf-8") as fh:
+                with open(file_name,'r', encoding="utf-8",errors='ignore') as fh:
                     s=fh.readlines()
                     try:
                         new_cnt = int(s[0].strip('\n'))
@@ -560,7 +557,7 @@ class SimulatedUniverse(UniverseUtils):
         target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0)
         monday_ts = target_datetime.timestamp()
         if dt.timestamp()>=monday_ts and time_cnt<monday_ts:
-            self.count=not read
+            self.count=int(not read)
         else:
             self.count=new_cnt
         self.count_tm = time.time()
