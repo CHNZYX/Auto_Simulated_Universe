@@ -25,10 +25,11 @@ def notif(title,msg,cnt=None):
     else:
         tm=None
     if os.path.exists('logs/notif.txt'):
-        with open('logs/notif.txt','r', encoding="utf-8") as fh:
+        with open('logs/notif.txt','r', encoding="utf-8",errors='ignore') as fh:
             s=fh.readlines()
             try:
-                cnt=s[0].strip('\n')
+                if cnt is None:
+                    cnt=s[0].strip('\n')
                 if tm is None:
                     tm=s[3].strip('\n')
             except:
@@ -636,7 +637,6 @@ class UniverseUtils:
             if time.time()-init_time>2.5:
                 self.stop_move=1
                 pyautogui.keyUp("w")
-                pyautogui.click()
                 self.press('a',1.2)
                 self.press('d',0.6)
                 self.mini_state+=2
