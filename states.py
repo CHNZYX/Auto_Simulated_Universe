@@ -538,7 +538,7 @@ class SimulatedUniverse(UniverseUtils):
             new_cnt = 0
             if os.path.exists(file_name):
                 time_cnt = os.path.getmtime(file_name)
-                with open(file_name,'r', encoding="utf-8") as fh:
+                with open(file_name,'r', encoding="utf-8", errors='ignore') as fh:
                     s=fh.readlines()
                     try:
                         new_cnt = int(s[0].strip('\n'))
@@ -547,7 +547,7 @@ class SimulatedUniverse(UniverseUtils):
                         pass
             else:
                 os.makedirs('logs',exist_ok=1)
-                with open(file_name, 'w', encoding="utf-8") as file:
+                with open(file_name, 'w', encoding="utf-8", errors='ignore') as file:
                     file.write("0")
                     file.close()
                 time_cnt = os.path.getmtime(file_name)
