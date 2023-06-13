@@ -640,11 +640,16 @@ class UniverseUtils:
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
                 time.sleep(2.1)
+                iters = 0
                 while self.check("z",0.5906,0.9537,mask="mask_z"):
+                    iters+=1
+                    if iters>10:
+                        break
                     pyautogui.click()
                     self.press("w",0.5)
                     self.get_screen()
-                self.mini_state+=2
+                if iters<=10:
+                    self.mini_state+=2
                 break
             if time.time()-init_time>2.6:
                 self.stop_move=1

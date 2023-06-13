@@ -460,7 +460,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("fate_2", 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
         elif self.check("fate", 0.9458, 0.9481):
-            self.click((0.8547 - self.my_fate * (0.8547 - 0.7375), 0.4963))
+            self.click((0.8547 - self.my_fate * (0.8547 - 0.7375) - 0.007, 0.4963))
         elif self.check("fate_3", 0.9422, 0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
