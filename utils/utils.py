@@ -41,6 +41,7 @@ def notif(title,msg,cnt=None):
         tm=str(time.time())
     with open('logs/notif.txt','w', encoding="utf-8") as fh:
         fh.write(cnt+'\n'+title+'\n'+msg+'\n'+tm)
+    return int(cnt)
 
 # 将游戏窗口设为前台
 def set_forground():
