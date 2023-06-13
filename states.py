@@ -19,7 +19,7 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.8"
+version = "v4.86"
 
 # 优先祝福
 echos = {"火堆外的夜": "hdwdy"}
@@ -39,6 +39,7 @@ events = len(os.listdir("imgs/events"))
 class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug, show_map, speed, update=0):
         super().__init__()
+        log.info("当前版本："+version)
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
@@ -257,18 +258,25 @@ class SimulatedUniverse(UniverseUtils):
                         log.info(
                             f"识别到传送点"
                         )
-                        self.press("f")
-                        if time.time()-self.floor_tm>4:
-                            self.floor_tm = time.time()
+                        flag=0
+                        for i in range(3):
+                            time.sleep(0.2+(i!=0))
+                            self.get_screen()
+                            if self.check("tele", 0.3708,0.4306, threshold=0.965):
+                                self.press("f")
+                            elif i==0:
+                                return 0
+                            else:
+                                flag=1
+                                break
+                        if flag:
                             self.init_map()
                             self.floor += 1
-                            self.floor_tm = time.time()
                             map_log.info(
                                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                             )
                             return 1
                         else:
-                            self.floor_tm = time.time()
                             return 0
                     elif self.re_align == 1 and self.debug == 0:
                         align_angle(10, 1)
@@ -597,7 +605,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.del_pt(img, p, p, f_set[k])
                         if k == 3:
                             self.last = p
-        cv.imwrite("imgs/tmp1.jpg", img)
+        #cv.imwrite("imgs/tmp1.jpg", img)
         if self.speed:
             dis = 1000000
             pt = None

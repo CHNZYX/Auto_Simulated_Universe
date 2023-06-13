@@ -215,7 +215,7 @@ class UniverseUtils:
                 int(self.scx * mask_img.shape[1]),
             )
         local_screen = self.get_local(x, y, shape)
-        if path == "./imgs/f.jpg":
+        if path == "":#"./imgs/f.jpg":
             cv.imwrite("imgs/tmp.jpg", local_screen)
             cv.imwrite("imgs/tmp1.jpg", target)
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
@@ -333,8 +333,16 @@ class UniverseUtils:
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
-        screen_raw = pyautogui.screenshot()
-        screen_raw = np.array(screen_raw)
+        i=0
+        while True:
+            screen_raw = pyautogui.screenshot()
+            screen_raw = np.array(screen_raw)
+            if screen_raw.shape[0]>10:
+                break
+            else:
+                i=min(i+1,20)
+                log.info("截图失败")
+                time.sleep(0.2*i)
         screen_raw = screen_raw[self.y0 : self.y1, self.x0 : self.x1, :]
         if self.full:
             screen_raw[:-9, :-9] = screen_raw[9:, 9:]
@@ -431,7 +439,7 @@ class UniverseUtils:
         # 这里的偏移量存疑，但是不加就是会出问题
         if sbl:
             ii, jj = 30, 30
-            cv.imwrite("imgs/sbl.jpg", bw_map)
+            #cv.imwrite("imgs/sbl.jpg", bw_map)
             for i in range(-20, 21):
                 for j in range(-20, 21):
                     if (
@@ -600,7 +608,8 @@ class UniverseUtils:
         if self.ang_off:
             self.ang_neg=self.ang_off<0
             self.mouse_move(-self.ang_off*1.2)
-            time.sleep(0.7)
+            time.sleep(0.3)
+            self.press('w',0.3)
         self.ang_off=0
         self.stop_move=0
         self.ready=0
@@ -637,7 +646,7 @@ class UniverseUtils:
                     self.get_screen()
                 self.mini_state+=2
                 break
-            if time.time()-init_time>2.5:
+            if time.time()-init_time>2.6:
                 self.stop_move=1
                 pyautogui.keyUp("w")
                 self.press('a',1.2)
@@ -881,14 +890,14 @@ class UniverseUtils:
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 12 + (self.speed == 2) * 2:
+            elif nds <= 14 + (self.speed == 2) * 2:
                 try:
                     self.target.remove((loc, type))
                     log.info('removed:'+str((loc, type)))
                     self.lst_changed = time.time()
                 except:
                     pass
-            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0 and nds <= 15:
+            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0 and nds <= 16:
                 try:
                     self.target.remove((loc, type))
                     log.info('removed:'+str((loc, type)))
