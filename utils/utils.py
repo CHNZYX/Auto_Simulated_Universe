@@ -661,17 +661,17 @@ class UniverseUtils:
                 break
         self.stop_move=1
         if need_confirm:
-            time.sleep(0.5)
+            time.sleep(0.3)
             for i in "sasddwwaa":
                 if self._stop:
                     return
-                time.sleep(0.4)
                 self.get_screen()
                 if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
                     self.mini_state+=2
                     return
                 else:
                     self.press(i, 0.25)
+                    time.sleep(0.4)
 
     # 寻路函数
     def get_direc(self):

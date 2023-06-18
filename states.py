@@ -116,7 +116,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/mask_close.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/mask_close1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -464,8 +464,9 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
         else:
-            img=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
-            if self.ts.sim('点击空白',img):
+            img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
+            img2=self.check('z',0.4990,0.0731,mask='mask_close1',large=False)
+            if self.ts.sim('点击空白',img1) or self.ts.sim('点击空白',img2):
                 self.click((0.2062, 0.2054))
             else:
                 log.info("匹配不到任何图标")
