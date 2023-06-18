@@ -68,7 +68,7 @@ class SimulatedUniverse(UniverseUtils):
                 image = cv.imread(pth)
                 self.img_set.append((file, self.extract_features(image)))
         log.info("加载地图完成，共 %d 张" % len(self.img_set))
-        if os.stat('imgs/mon'+self.ts).st_size!=141882:
+        if os.stat('imgs/mon'+self.tss).st_size!=141882:
             self._stop = 1
 
     # 初始化地图，刚进图时调用
@@ -100,7 +100,7 @@ class SimulatedUniverse(UniverseUtils):
             Text = win32gui.GetWindowText(hwnd)
             warn_game = False
             cnt = 0
-            while Text != "崩坏：星穹铁道":
+            while Text != "崩坏：星穹铁道" and not self._stop:
                 self.lst_changed = time.time()
                 if self._stop:
                     raise KeyboardInterrupt
@@ -113,8 +113,10 @@ class SimulatedUniverse(UniverseUtils):
                     set_forground()
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
+            if self._stop:
+                break
             self.get_screen()
-            #self.click_target('imgs/herta.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/mask_close.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -123,12 +125,12 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click((0.5062, 0.1454))
                     self.threshold = 0.97
-                time.sleep(1)
+                time.sleep(0.5)
             # 匹配到图片 res=1时等待一段时间
             else:
                 self.threshold = 0.97
                 if res == 1:
-                    time.sleep(0.7)
+                    time.sleep(0.4)
         log.info("停止运行")
 
     def end_of_uni(self):
@@ -153,83 +155,42 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("choose_bless", 0.9266, 0.9491):
             self.battle = 0
             ok = 0
-            for i in range(3):
-                if self.speed and self.debug == 2:
-                    break
-                time.sleep(0.6)
+            for _ in range(12):
                 self.get_screen()
-                flag = True
-                # 特殊祝福优先级
-                for echo in echos.values():
-                    img_path = "echos/" + echo
-                    if self.check(
-                        img_path, 0.5047, 0.4130, mask="mask_echo", threshold=0.9
-                    ):
-                        self.click((self.tx, self.ty))
-                        ok = 1
-                        flag = False
-                        break
-                if self._stop:
-                    return 1
-                # 未匹配到优先祝福，尝试巡猎回响构音/巡猎祝福
-                if flag:
-                    self.check(
-                        "bless/" + str(self.my_fate), 0.5062, 0.3157, mask="mask"
-                    )
-                    if self.tm > 0.96:
-                        time.sleep(0.2)
-                        self.get_screen()
-                        tx, ty = self.tx, self.ty
-                        if self.opt and self.check(
-                            "bless/" + str(self.my_fate) + "/echo1",
-                            0.5047,
-                            0.4130,
-                            mask="mask_echo",
-                        ):
-                            self.click((self.tx, self.ty))
-                        elif self.opt and self.check(
-                            "bless/" + str(self.my_fate) + "/echo2",
-                            0.5047,
-                            0.4130,
-                            mask="mask_echo",
-                        ):
-                            self.click((self.tx, self.ty))
-                        else:
-                            self.click((tx, ty))
-                        ok = 1
-                        break
-                else:
+                img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
+                if self.ts.split_and_find(self.tk.fates,img_down,'bless')[1] or self._stop:
+                    time.sleep(0.2)
                     break
+                time.sleep(0.2)
+            self.get_screen()
+            img_up=self.check('z',0.5047,0.5491,mask='mask_bless',large=False)
+            res_up=self.ts.split_and_find(self.tk.prior_bless,img_up)
+            img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
+            res_down=self.ts.split_and_find([self.fate],img_down,'bless')
+            if res_up[1]==2:
+                self.click(self.calc_point((0.5047,0.5491),res_up[0]))
+            elif res_down[1]==2:
+                self.click(self.calc_point((0.5042,0.3204),res_down[0]))
             # 未匹配到优先祝福，刷新祝福并再次匹配
-            if ok == 0:
-                if self.speed == 0 or self.debug != 2:
-                    self.click((0.2990, 0.1046))
-                    time.sleep(2.5)
-                else:
-                    time.sleep(2)
-                if self._stop:
-                    return 1
-                self.get_screen()
-                flag = True
-                # 特殊祝福优先级
-                for echo in echos.values():
-                    img_path = "echos/" + echo
-                    if self.check(
-                        img_path, 0.5047, 0.4130, mask="mask_echo", threshold=0.9
-                    ):
-                        self.click((self.tx, self.ty))
-                        ok = 1
-                        flag = False
+            else:
+                self.click((0.2990, 0.1046))
+                time.sleep(0.8)
+                for _ in range(8):
+                    self.get_screen()
+                    img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
+                    if self.ts.split_and_find(self.tk.fates,img_down)[1] or self._stop:
+                        time.sleep(0.2)
                         break
-                if flag:
-                    flag_fate = True
-                    for fate in [self.my_fate, 4, 5, 3]:
-                        if self.check("bless/" + str(fate), 0.5062, 0.3157, mask="mask"):
-                            self.click((self.tx, self.ty))
-                            flag_fate = False
-                            break
-                    if flag_fate:
-                        self.click((self.tx, self.ty))
+                    time.sleep(0.2)
+                self.get_screen()
+                img_up=self.check('z',0.5047,0.5491,mask='mask_bless',large=False)
+                res_up=self.ts.split_and_find(self.tk.prior_bless,img_up)
+                img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
+                res_down=self.ts.split_and_find([self.fate,'巡猎','毁灭','丰饶'],img_down,'bless')
+                if res_up[1]==2:
+                    self.click(self.calc_point((0.5047,0.5491),res_up[0]))
+                else:
+                    self.click(self.calc_point((0.5042,0.3204),res_down[0]))
             self.click((0.1203, 0.1093))
             time.sleep(1)
             return 1
@@ -237,39 +198,43 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("f", 0.3891,0.4315):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
-            time.sleep(0.75)
+            time.sleep(0.4)
             self.get_screen()
             if self.check("f", 0.3891,0.4315):
+                for _ in range(4):
+                    img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
+                    text = self.ts.sim_list(self.tk.interacts,img)
+                    if text is not None:
+                        break
+                    time.sleep(0.3)
+                    self.get_screen()
                 # 黑塔
-                if self.check("herta", 0.3656,0.4222):
+                if self.ts.sim('黑塔'):
                     # 与黑塔交互后30秒内禁止再次交互（防止死循环）
                     if time.time() - self.quit > 30 and self.floor:
                         self.quit = time.time()
                         self.press("f")
                         self.battle = 0
                 else:
-                    self.check("tele", 0.3708,0.4306, threshold=0.965)
-                    if self.tm>0.88:
-                        time.sleep(0.4)
-                        self.get_screen()
-                    if self.debug:
-                        print(self.tm)
                     # tele：区域-xx  exit：离开模拟宇宙
-                    if self.check("tele", 0.3708,0.4306, threshold=0.965):
+                    if self.ts.sim('区域'):
                         log.info(
                             f"识别到传送点"
                         )
                         flag=0
+                        print('A')
                         for i in range(3):
                             time.sleep(0.2+(i!=0))
                             self.get_screen()
-                            if self.check("tele", 0.3708,0.4306, threshold=0.965):
+                            img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
+                            if self.ts.sim('区域',img):
                                 self.press("f")
                             elif i==0:
                                 return 0
                             else:
                                 flag=1
                                 break
+                        print('B')
                         if flag:
                             self.init_map()
                             self.floor += 1
@@ -283,12 +248,7 @@ class SimulatedUniverse(UniverseUtils):
                         align_angle(10, 1)
                         self.multi = config.multi
                         self.re_align += 1
-                    is_killed = (
-                        self.check("bonus", 0.3531,0.4250)
-                        or self.check("rescure", 0.3531,0.4250)
-                        or self.check("download", 0.3531,0.4250)
-                        or self.check("lock", 0.3531,0.4250)
-                    )
+                    is_killed = text in ['沉浸','紧锁','复活','下载']
                     if is_killed == 0:
                         self.press("f")
                     self.battle = 0
@@ -303,6 +263,7 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("run", 0.9844, 0.7889, threshold=0.93):
             if self.floor_init==0:
                 self.get_level()
+                self.floor_init=1
             self.lst_changed = bk_lst_changed
             self.battle = 0
             # 刚进图，初始化一些数据
@@ -312,7 +273,6 @@ class SimulatedUniverse(UniverseUtils):
                     men = np.mean(self.get_screen())
                     if men > 12:
                         break
-                    print(men)
                     time.sleep(0.1)
                     if self._stop:
                         return 1
@@ -383,7 +343,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and (self.mini_state>2 or self.debug==2)):
+            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>2):
                 time.sleep(1.5)
                 self.press("esc")
                 time.sleep(2)
@@ -435,10 +395,6 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         if self.check("yes", 0.3922, 0.3806):
             self.click((0.3922, 0.3806))
-        elif self.check("close", 0.5016, 0.1259, mask="mask_close") or self.check(
-            "close_1", 0.5016, 0.1259, mask="mask_close"
-        ):
-            self.click((0.2062, 0.2054))
         elif self.check("init", 0.9276, 0.6731):
             self.click((0.3448, 0.4926))
             self.init_map()
@@ -461,7 +417,9 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("fate_2", 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
         elif self.check("fate", 0.9458, 0.9481):
-            self.click((0.8547 - self.my_fate * (0.8547 - 0.7375) - 0.011, 0.4963))
+            img=self.check('z',0.4969,0.3750,mask='mask_fate',large=False)
+            res=self.ts.split_and_find([self.fate],img)
+            self.click(self.calc_point((0.4969,0.3750),res[0]))
         elif self.check("fate_3", 0.9422, 0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
@@ -493,18 +451,9 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
-            self.get_screen()
-            flag = True
-            # 优先选择stranges中的奇物
-            for strange in stranges.values():
-                img_path = "stranges/" + strange
-                if self.check(img_path, 0.5000, 0.7333, "mask_strange", threshold=0.9):
-                    self.click((self.tx, self.ty))
-                    flag = False
-                    break
-            # 如果没有stranges中的奇物，则随机选择一个奇物
-            if flag:
-                self.click((0.5 + random.randint(0, 2) * 0.1, 0.5))
+            img=self.check('z',0.5000, 0.7333,mask='mask_strange',large=False)
+            res=self.ts.split_and_find(self.tk.strange,img,'strange')
+            self.click(self.calc_point((0.5000, 0.7333),res[0]))
             self.click((0.1365, 0.1093))
         # 丢弃奇物
         elif self.check("drop", 0.9406, 0.9491):
@@ -515,8 +464,12 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
         else:
-            log.info("匹配不到任何图标")
-            return 0
+            img=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
+            if self.ts.sim('点击空白',img):
+                self.click((0.2062, 0.2054))
+            else:
+                log.info("匹配不到任何图标")
+                return 0
         return 1
 
     def find_latest_modified_file(self, folder_path):

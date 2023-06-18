@@ -17,6 +17,7 @@ import threading
 
 from utils.config import config
 from utils.log import log
+import utils.ocr as ocr
 
 
 def notif(title,msg,cnt=None):
@@ -67,6 +68,8 @@ class UniverseUtils:
         self.diffi = config.diffi
         self.fate = config.fate
         self.my_fate = 4
+        self.ts = ocr.My_TS()
+        self.tk = ocr.text_keys(self.my_fate)
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
@@ -77,7 +80,7 @@ class UniverseUtils:
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
-        self.ts = 'ey.jpg'
+        self.tss = 'ey.jpg'
         while True:
             try:
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
@@ -87,8 +90,8 @@ class UniverseUtils:
                 self.yy = self.y1 - self.y0
                 self.x0, self.y0, self.x1, self.y1 = win32gui.GetWindowRect(hwnd)
                 self.full = self.x0 == 0 and self.y0 == 0
-                self.x0 = max(0, self.x1 - self.xx)
-                self.y0 = max(0, self.y1 - self.yy)
+                self.x0 = max(0, self.x1 - self.xx) + 9*self.full
+                self.y0 = max(0, self.y1 - self.yy) + 9*self.full
                 self.scx = self.xx / self.bx
                 self.scy = self.yy / self.by
                 dc = win32gui.GetWindowDC(hwnd)
@@ -126,6 +129,9 @@ class UniverseUtils:
         y = self.y1 - y
         log.debug("获取到点：{:.4f},{:.4f}".format(x / self.xx, y / self.yy))
 
+    def calc_point(self, point, offset):
+        return (point[0]-offset[0]/self.xx,point[1]-offset[1]/self.yy)
+
     # 由click_target调用，返回图片匹配结果
     def scan_screenshot(self, prepared):
         temp = pyautogui.screenshot()
@@ -161,11 +167,8 @@ class UniverseUtils:
             y += 9
         if self._stop == 0:
             win32api.SetCursorPos((x, y))
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x, y, 0, 0)
+            pyautogui.click()
         time.sleep(0.3)
-        if self._stop == 0:
-            win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x, y, 0, 0)
-        time.sleep(0.5)
 
     # 点击与模板匹配的点，flag=True表示必须匹配，不匹配就会一直寻找直到出现匹配
     def click_target(self, target_path, threshold, flag=True):
@@ -184,8 +187,8 @@ class UniverseUtils:
                 return
 
     # 在截图中裁剪需要匹配的部分
-    def get_local(self, x, y, size):
-        sx, sy = size[0] + 60, size[1] + 60
+    def get_local(self, x, y, size, large=True):
+        sx, sy = size[0] + 60*large, size[1] + 60*large
         bx, by = self.xx - int(x * self.xx), self.yy - int(y * self.yy)
         return self.screen[
             max(0, by - sx // 2) : min(self.yy, by + sx // 2),
@@ -198,7 +201,7 @@ class UniverseUtils:
 
     # 判断截图中匹配中心点附近是否存在匹配模板
     # path：匹配模板的路径，x,y：匹配中心点，mask：如果存在，则以mask大小为基准裁剪截图，threshold：匹配阈值
-    def check(self, path, x, y, mask=None, threshold=None):
+    def check(self, path, x, y, mask=None, threshold=None, large=True):
         if threshold is None:
             threshold = self.threshold
         path = self.format_path(path)
@@ -215,8 +218,10 @@ class UniverseUtils:
                 int(self.scx * mask_img.shape[0]),
                 int(self.scx * mask_img.shape[1]),
             )
-        local_screen = self.get_local(x, y, shape)
-        if path == "":#"./imgs/f.jpg":
+        local_screen = self.get_local(x, y, shape, large)
+        if large==False:
+            return local_screen
+        if path == "./imgs/f.jpg#":
             cv.imwrite("imgs/tmp.jpg", local_screen)
             cv.imwrite("imgs/tmp1.jpg", target)
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
@@ -336,17 +341,14 @@ class UniverseUtils:
     def get_screen(self):
         i=0
         while True:
-            screen_raw = pyautogui.screenshot()
+            screen_raw = pyautogui.screenshot(region=[self.x0,self.y0,self.xx,self.yy])
             screen_raw = np.array(screen_raw)
-            if screen_raw.shape[0]>10:
+            if screen_raw.shape[0]>3:
                 break
             else:
                 i=min(i+1,20)
                 log.info("截图失败")
                 time.sleep(0.2*i)
-        screen_raw = screen_raw[self.y0 : self.y1, self.x0 : self.x1, :]
-        if self.full:
-            screen_raw[:-9, :-9] = screen_raw[9:, 9:]
         self.screen = cv.cvtColor(screen_raw, cv.COLOR_BGR2RGB)
         # cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
@@ -493,13 +495,10 @@ class UniverseUtils:
         time.sleep(1)
 
     def goodf(self):
-        is_killed = (
-            self.check("bonus", 0.3531,0.4250)
-            or self.check("rescure", 0.3531,0.4250)
-            or self.check("download", 0.3531,0.4250)
-            or self.check("lock", 0.3531,0.4250)
-        )
-        return self.check("f", 0.3891,0.4315) and not is_killed
+        img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
+        text = self.ts.sim_list(self.tk.interacts,img)
+        is_killed = text in ['沉浸','紧锁','复活','下载']
+        return text is not None and not is_killed
 
     def get_tar(self):
         # 寻找最近的目标点
@@ -625,11 +624,12 @@ class UniverseUtils:
         init_time = time.time()
         while True:
             self.get_screen()
+            self.goodf()
             if self._stop == 1:
                 pyautogui.keyUp("w")
                 self.stop_move=1
                 break
-            if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30): 
+            if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30): 
                 pyautogui.keyUp("w")
                 self.stop_move=1
                 need_confirm = 1
@@ -642,7 +642,7 @@ class UniverseUtils:
                 self.stop_move=1
                 time.sleep(2.1)
                 iters = 0
-                while self.check("z",0.5906,0.9537,mask="mask_z"):
+                while self.check("z",0.5906,0.9537,mask="mask_z") and not self._stop:
                     iters+=1
                     if iters>10:
                         break
@@ -667,7 +667,7 @@ class UniverseUtils:
                     return
                 time.sleep(0.4)
                 self.get_screen()
-                if self.goodf() and not (self.check("quit", 0.3552,0.4343) and time.time() - self.quit < 30):
+                if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
                     self.mini_state+=2
                     return
                 else:
