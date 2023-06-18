@@ -725,7 +725,7 @@ class UniverseUtils:
             if self.speed == 2 and type == 0:
                 ps += 3
             # 如果当前就在交互点上：直接返回
-            if self.goodf() and not self.check("herta", 0.3656,0.4222):
+            if self.goodf() and not self.ts.sim("黑塔"):
                 for j in deepcopy(self.target):
                     if j[1] == type:
                         self.target.remove(j)
@@ -759,7 +759,6 @@ class UniverseUtils:
                     fx = 0.4 / (ctm - ltm) * (self.real_loc[0] - sloc[0])
                     fy = 0.4 / (ctm - ltm) * (self.real_loc[1] - sloc[1])
                     self.offset = (int(fx), int(fy))
-                    # print(self.offset,self.his_loc)
                 if i > 4 or bl == 0:
                     self.real_loc = (
                         self.real_loc[0] + self.his_loc[0] + self.offset[0],

@@ -19,7 +19,7 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.86"
+version = "v4.9"
 
 # 优先祝福
 echos = {"火堆外的夜": "hdwdy"}
