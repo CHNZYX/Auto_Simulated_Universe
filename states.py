@@ -222,7 +222,6 @@ class SimulatedUniverse(UniverseUtils):
                             f"识别到传送点"
                         )
                         flag=0
-                        print('A')
                         for i in range(3):
                             time.sleep(0.2+(i!=0))
                             self.get_screen()
@@ -234,7 +233,6 @@ class SimulatedUniverse(UniverseUtils):
                             else:
                                 flag=1
                                 break
-                        print('B')
                         if flag:
                             self.init_map()
                             self.floor += 1
