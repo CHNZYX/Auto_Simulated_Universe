@@ -8,3 +8,4 @@ pyuac
 pillow
 keyboard
 requests
+ppocr-onnx
