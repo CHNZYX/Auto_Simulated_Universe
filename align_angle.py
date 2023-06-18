@@ -34,6 +34,7 @@ def main(cnt=10, safe=0):
     lst_ang = init_ang
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 3000)
     if safe:
+        return
         su.press("w", 0.2)
     for i in [1,1,3]:
         ang_list = []
