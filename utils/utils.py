@@ -655,8 +655,9 @@ class UniverseUtils:
             if time.time()-init_time>2.6:
                 self.stop_move=1
                 pyautogui.keyUp("w")
-                self.press('a',1.2)
-                self.press('d',0.6)
+                pyautogui.click()
+                self.press('a',0.9)
+                self.press('d',0.45)
                 self.mini_state+=2
                 break
         self.stop_move=1
