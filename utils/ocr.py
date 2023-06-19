@@ -18,8 +18,13 @@ class My_TS:
         for i in range(len(self.text)):
             if self.text[i]==text[f[i][0]]:
                 f[i+1][0]=f[i][0]+1
-            if self.text[i]==text[f[i][1]]:
-                f[i+1][1]=f[i][1]+1
+            try:
+                if self.text[i]==text[f[i][1]]:
+                    f[i+1][1]=f[i][1]+1
+            except:
+                print(text,self.text)
+                if self.text[i]==text[f[i][1]]:
+                    f[i+1][1]=f[i][1]+1
             f[i+1][0]=max(f[i][0],f[i+1][0])
             f[i+1][1]=max(f[i][1],f[i+1][1],f[i][0]+1)
         return f[-1][1]>=len(text)-2
