@@ -8,21 +8,26 @@ class My_TS:
     def __init__(self,lang='ch'):
         self.lang=lang
         self.ts = TextSystem(use_angle_cls=False)
+        self.text=''
 
     def sim(self,text,img=None):
         if img is not None:
             self.input(img)
+        if len(self.text)<len(text)-1:
+            return False
         text+='  '
         f = [[0,0] for _ in range(len(self.text)+1)]
         f[0][1]=1
         for i in range(len(self.text)):
-            if self.text[i]==text[f[i][0]]:
-                f[i+1][0]=f[i][0]+1
             try:
+                if self.text[i]==text[f[i][0]]:
+                    f[i+1][0]=f[i][0]+1
                 if self.text[i]==text[f[i][1]]:
                     f[i+1][1]=f[i][1]+1
             except:
                 print(text,self.text)
+                if self.text[i]==text[f[i][0]]:
+                    f[i+1][0]=f[i][0]+1
                 if self.text[i]==text[f[i][1]]:
                     f[i+1][1]=f[i][1]+1
             f[i+1][0]=max(f[i][0],f[i+1][0])
@@ -97,7 +102,7 @@ class text_keys:
         self.strange = ['福灵胶','博士之袍','降维骰子','信仰债券','时空棱镜','朋克洛德','香涎干酪']
         self.blesses = [[] for _ in range(7)]
         self.blesses[0] = ['零维强化','均晶转变','宏观偏析','超静定场','谐振传递','四棱锥体','聚塑','哨戒','亚共晶体','切变结构','弥合','迸裂晶格']
-        self.blesses[1] = ['体验的富翁','全面记忆','第二次初恋','浮黎','纯真','缄默','难言的羞耻','怅然若失','麻木不仁','不寒而栗','特立独行','头晕目眩','多愁善感','沦浃肌髓']
+        self.blesses[1] = ['体验的富翁','全面记忆','第二次初恋','浮黎','缄默','纯真','难言的羞耻','怅然若失','麻木不仁','不寒而栗','特立独行','头晕目眩','多愁善感','沦浃肌髓']
         self.blesses[2] = ['苦难与阳光','怀疑的四重根','局外人','为何一切尚未消失','感官追奉者的葬礼','被装在套子里的人','旷野的呼告','存在的黄昏','火堆外的夜','知觉迷墙','虚妄贡品','日出之前','无根据颂歌','自欺咖啡馆','他人即地狱','开端与终结']
         self.blesses[3] = ['诸行无常','诸法无我','一法界心','施诸愿印','延彼遐龄','厌离邪秽苦','天人不动众','宝光烛日月','明澈琉璃身','法雨','胜军','灭罪累生善']
         self.blesses[4] = ['柘弓危矢','射不主皮','帝星君临','白矢决射御','云镝逐步离','彤弓素矰','背孤击虚']

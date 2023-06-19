@@ -518,7 +518,7 @@ class UniverseUtils:
 
     def move_to_interac(self, i=0):
         self.get_screen()
-        threshold=0.84
+        threshold=0.88
         shape = (int(self.scx * 190), int(self.scx * 190))
         curloc = (118+2, 125+2)
         blue = np.array([234, 191, 4])
@@ -624,13 +624,13 @@ class UniverseUtils:
         init_time = time.time()
         while True:
             self.get_screen()
-            self.goodf()
             if self._stop == 1:
                 pyautogui.keyUp("w")
                 self.stop_move=1
                 break
             if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30): 
                 pyautogui.keyUp("w")
+                print(self.ts.text)
                 self.stop_move=1
                 need_confirm = 1
                 break
@@ -662,6 +662,7 @@ class UniverseUtils:
                 break
         self.stop_move=1
         if need_confirm:
+            pyautogui.click()
             time.sleep(0.3)
             for i in "sasddwwaa":
                 if self._stop:
