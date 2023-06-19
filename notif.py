@@ -24,7 +24,7 @@ def maopao(icon=None, item=None):
     cnt='0'
     tm=None
     if os.path.exists(file_name):
-        with open(file_name, 'r', encoding="utf-8") as file:
+        with open(file_name, 'r', encoding="utf-8",errors='ignore') as file:
             s=file.readlines()
             cnt=s[0].strip('\n')
             try:
@@ -46,7 +46,7 @@ def notify():
     while 1:
         time.sleep(0.5)
         if last != os.path.getmtime(file_name):
-            with open(file_name,'r', encoding="utf-8") as fh:
+            with open(file_name,'r', encoding="utf-8",errors='ignore') as fh:
                 s=fh.readlines()
             if len(s)>=3:
                 notif(s[1].strip('\n'),s[2].strip('\n'))
