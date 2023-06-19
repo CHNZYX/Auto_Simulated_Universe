@@ -27,6 +27,8 @@ def get_angle(su, safe):
 # 不同电脑鼠标移动速度、放缩比、分辨率等不同，因此需要校准
 # 基本逻辑：每次转60度，然后计算实际转了几度，计算出误差比
 def main(cnt=10, safe=0):
+    if safe:
+        return
     log.info("开始校准")
     su = UniverseUtils()
     su.multi = 1
@@ -34,7 +36,6 @@ def main(cnt=10, safe=0):
     lst_ang = init_ang
     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 3000)
     if safe:
-        return
         su.press("w", 0.2)
     for i in [1,1,3]:
         ang_list = []

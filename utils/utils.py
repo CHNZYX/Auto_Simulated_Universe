@@ -656,8 +656,8 @@ class UniverseUtils:
                 self.stop_move=1
                 pyautogui.keyUp("w")
                 pyautogui.click()
-                self.press('a',0.9)
-                self.press('d',0.45)
+                self.press('a',1.2)
+                self.press('d',0.4)
                 self.mini_state+=2
                 break
         self.stop_move=1
