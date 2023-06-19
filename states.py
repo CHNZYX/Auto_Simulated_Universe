@@ -140,7 +140,8 @@ class SimulatedUniverse(UniverseUtils):
                 self.press('v')
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             self.battle = time.time()
-            self.press(str(random.randint(1,4)))
+            if random.randint(0,4)==0:
+                self.press(str(random.randint(1,4)))
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
         if self.check("choose_bless", 0.9266, 0.9491):
