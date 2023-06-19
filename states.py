@@ -19,7 +19,7 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.9 Free"
+version = "v4.921"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
