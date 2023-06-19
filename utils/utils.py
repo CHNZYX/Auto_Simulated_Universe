@@ -600,7 +600,7 @@ class UniverseUtils:
             else:
                 me=max(self.move_to_end(me),me)
         try:
-            exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1')")
+            exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1') or self.unlock")
         except:
             pass
 

@@ -16,6 +16,7 @@ class Config:
         self.debug_mode = 0
         self.speed_mode = 0
         self.force_update = 0
+        self.unlock = 0
         self.read()
 
     @property

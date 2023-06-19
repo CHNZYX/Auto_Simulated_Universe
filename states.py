@@ -19,25 +19,14 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.9"
+version = "v4.9 Free"
 
-# 优先祝福
-echos = {"火堆外的夜": "hdwdy"}
-# 优先奇物
-stranges = {
-    "未收集奇物": "new",
-    "降维骰子": "jwtz",
-    "福灵胶": "flj",
-    "巡猎火漆": "xlhq",
-    "博士之袍": "bszp",
-    "香涎干酪": "xygl",
-}
 # 优先事件
 events = len(os.listdir("imgs/events"))
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map, speed, update=0):
+    def __init__(self, find, debug, show_map, speed, unlock, update=0):
         super().__init__()
         log.info("当前版本："+version)
         self.now_map = None
@@ -55,6 +44,7 @@ class SimulatedUniverse(UniverseUtils):
         self.count_tm = time.time()
         self.floor_tm = time.time()
         self.re_align = 0
+        self.unlock = unlock
         self.update_count()
         notif('开始运行',f'初始计数：{self.count}')
         set_debug(debug > 0)
@@ -150,6 +140,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.press('v')
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             self.battle = time.time()
+            self.press(str(random.randint(1,4)))
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
         if self.check("choose_bless", 0.9266, 0.9491):
@@ -637,11 +628,11 @@ class SimulatedUniverse(UniverseUtils):
         cv.destroyAllWindows()
 
     def check_req(self):
-        self._stop = os.system('pip show numpy > NUL 2>&1')
+        self._stop = os.system('pip show numpy > NUL 2>&1') or self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
         time.sleep(10)
-        self._stop = os.system('pip show numpy > NUL 2>&1')
+        self._stop = os.system('pip show numpy > NUL 2>&1') or self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
 

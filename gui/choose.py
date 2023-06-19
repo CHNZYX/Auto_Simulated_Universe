@@ -57,7 +57,7 @@ def choose_view(page: Page):
             return
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(5)
+            time.sleep(3)
             page.first=0
             page.dialog.open = False
             page.update()
@@ -69,6 +69,7 @@ def choose_view(page: Page):
             int(config.debug_mode),
             int(config.show_map_mode),
             int(config.speed_mode),
+            int(config.unlock),
         )
         run(page.su.start)
         txt = " "
@@ -139,6 +140,15 @@ def choose_view(page: Page):
         dlg.open = True
         page.update()
 
+    def unlock(e=None):
+        go_money()
+        time.sleep(3)
+        page.dialog.open = False
+        page.update()
+        show_snack_bar(page, "稍后解锁限制，赞助页面在右下角按钮~o( =∩ω∩= )m", ft.colors.GREEN)
+        time.sleep(7)
+        config.unlock = 1
+        show_snack_bar(page, "已临时解锁限制o(*￣▽￣*)ブ", ft.colors.GREEN)
     # View
     page.views.append(
         ft.View(
@@ -204,6 +214,12 @@ def choose_view(page: Page):
                             tooltip="更新地图",
                             icon_size=30,
                             on_click=update_maps,
+                        ),
+                        ft.IconButton(
+                            icon=ft.icons.LOCK_OPEN,
+                            tooltip="临时解锁",
+                            icon_size=30,
+                            on_click=unlock,
                         ),
                         ft.IconButton(
                             icon=ft.icons.THUMB_UP,
