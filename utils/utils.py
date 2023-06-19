@@ -69,11 +69,11 @@ class UniverseUtils:
         self.fate = config.fate
         self.my_fate = 4
         self.ts = ocr.My_TS()
-        self.tk = ocr.text_keys(self.my_fate)
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
                 self.my_fate = i
+        self.tk = ocr.text_keys(self.my_fate)
         # 是否对命途回响构音做出优化，目前支持存护和巡猎
         if self.my_fate in [0, 4]:
             self.opt = 1
