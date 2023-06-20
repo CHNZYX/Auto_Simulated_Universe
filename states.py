@@ -19,7 +19,7 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.921"
+version = "v4.95"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
@@ -106,7 +106,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/mask_close1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/mask_enhance.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -256,6 +256,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             # 刚进图，初始化一些数据
             if self.big_map_c == 0:
+                pyautogui.keyUp('w')
                 # 黑屏检测
                 while 1:
                     men = np.mean(self.get_screen())
@@ -282,7 +283,7 @@ class SimulatedUniverse(UniverseUtils):
                                 self.now_map, self.now_map_sim = now_map, now_map_sim
                             if ((
                                 self.now_map_sim > 0.7
-                                or time.time() - now_time > 2.2
+                                or time.time() - now_time > 2.5
                             ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
@@ -331,7 +332,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>2):
+            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>4):
                 time.sleep(1.5)
                 self.press("esc")
                 time.sleep(2)
@@ -349,7 +350,7 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(1)
                     #self.floor = 0
                     #self.click((0.2708, 0.1324))
-                elif random.randint(0, 2) != 3:
+                elif random.randint(0, 2) != 2:
                     self.click((0.2927, 0.2602))
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(
@@ -560,11 +561,6 @@ class SimulatedUniverse(UniverseUtils):
                 if i[1] == 1 and pt != i:
                     res.remove(i)
                     res.add((i[0], 0))
-        if self.floor == 11:
-            res = set()
-            res.add((self.last,3))
-        if len(res) == 1:
-            pyautogui.click()
         return res
 
     def get_center(self, img, i, j):

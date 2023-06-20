@@ -61,6 +61,7 @@ class UniverseUtils:
     def __init__(self):
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
+        self.check_bonus = 1
         self._stop = 0
         self.stop_move=0
         self.opt = 0
@@ -221,12 +222,11 @@ class UniverseUtils:
         local_screen = self.get_local(x, y, shape, large)
         if large==False:
             return local_screen
-        if path == "./imgs/f.jpg#":
-            cv.imwrite("imgs/tmp.jpg", local_screen)
-            cv.imwrite("imgs/tmp1.jpg", target)
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        # print(max_loc,target.shape,max_val,local_screen.shape)
+        if path == "./imgs/bonus_c.jpg#":
+            cv.imwrite("tmp.jpg", local_screen)
+            print(max_val)
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
         self.tm = max_val
@@ -495,6 +495,8 @@ class UniverseUtils:
         time.sleep(1)
 
     def goodf(self):
+        if not self.check("f", 0.3891,0.4315):
+            return False
         img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
         text = self.ts.sim_list(self.tk.interacts,img)
         is_killed = text in ['沉浸','紧锁','复活','下载']
@@ -540,7 +542,7 @@ class UniverseUtils:
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            if (max_val > threshold):
+            if (max_val > 0.92):
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
                 target = (nearest, 3)
                 log.info(
@@ -556,7 +558,6 @@ class UniverseUtils:
             if rd[0].shape[0]>0:
                 nearest = (rd[0][0],rd[1][0])
                 target = (nearest, 3)
-
         if (target[1] >= 1):
             local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
             self.ang = 360 - self.get_now_direc(local_screen) - 90
@@ -577,7 +578,7 @@ class UniverseUtils:
                     sub*=1.2
                 else:
                     sub=0
-            if abs(sub)>50 and target[1]==3:
+            if (abs(sub)>50 and target[1]==3) or self.floor in [3,7,12]:
                 sub=0
             self.mouse_move(sub)
             return sub
@@ -610,6 +611,40 @@ class UniverseUtils:
             self.mouse_move(-self.ang_off*1.2)
             time.sleep(0.3)
             self.press('w',0.3)
+        if self.mini_state==3 and self.floor==12 and not self.check_bonus:
+            self.mini_state+=2
+            return
+        if self.mini_state==3 and self.floor in [3,7,12] and self.check_bonus:
+            self.press('d',0.4)
+            pyautogui.keyDown('w')
+            nt = time.time()
+            while time.time()-nt<1:
+                self.get_screen()
+                if self.ts.sim("沉浸",self.check('z',0.3182,0.4333,mask="mask_f",large=False)):
+                    self.press('f')
+                    pyautogui.keyUp('w')
+                    break
+            pyautogui.keyUp('w')
+            self.press('f')
+            time.sleep(1)
+            for _ in range(2):
+                self.get_screen()
+                if self.check('bonus_c',0.2385,0.6685):
+                    if self.check('bonus',0.4401,0.3269,threshold=0.985):
+                        self.click((0.4453,0.3250))
+                        time.sleep(0.5)
+                        self.click((0.5062, 0.1454))
+                        time.sleep(0.5)
+                    else:
+                        self.check_bonus=0
+            pyautogui.keyUp('w')
+            self.get_screen()
+            if self.check('bonus_c',0.2385,0.6685):
+                self.click((0.2385,0.6685))
+            self.mini_state+=2
+            if self.floor==12:
+                return
+            self.press('s',0.4)
         self.ang_off=0
         self.stop_move=0
         self.ready=0
@@ -630,11 +665,12 @@ class UniverseUtils:
                 break
             if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30): 
                 pyautogui.keyUp("w")
-                print(self.ts.text)
+                log.info('need_confirm '+self.ts.text)
                 self.stop_move=1
                 need_confirm = 1
                 break
             if self.check("auto_2", 0.3760, 0.0370): 
+                pyautogui.keyUp("w")
                 self.stop_move=1
                 self.mini_state+=2
                 break
@@ -661,8 +697,8 @@ class UniverseUtils:
                 self.mini_state+=2
                 break
         self.stop_move=1
+        pyautogui.keyUp("w")
         if need_confirm:
-            pyautogui.click()
             time.sleep(0.3)
             for i in "sasddwwaa":
                 if self._stop:
@@ -674,6 +710,7 @@ class UniverseUtils:
                 else:
                     self.press(i, 0.25)
                     time.sleep(0.4)
+            pyautogui.click()
 
     # 寻路函数
     def get_direc(self):
@@ -729,7 +766,7 @@ class UniverseUtils:
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.ts.sim("黑塔"):
                 for j in deepcopy(self.target):
-                    if j[1] == type:
+                    if j[1] == 2:
                         self.target.remove(j)
                         log.info('removed:'+str(j))
                 return
