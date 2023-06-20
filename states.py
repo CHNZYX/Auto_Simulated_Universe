@@ -114,6 +114,8 @@ class SimulatedUniverse(UniverseUtils):
                     self.threshold -= 0.015
                 else:
                     self.click((0.5062, 0.1454))
+                    time.sleep(0.2)
+                    self.click((0.2062, 0.2054))
                     self.threshold = 0.97
                 time.sleep(0.5)
             # 匹配到图片 res=1时等待一段时间
