@@ -44,7 +44,7 @@ def notify():
             file.write("0")
     last = os.path.getmtime(file_name)
     while 1:
-        time.sleep(2.5)
+        time.sleep(0.5)
         if last != os.path.getmtime(file_name):
             with open(file_name,'r', encoding="utf-8",errors='ignore') as fh:
                 s=fh.readlines()

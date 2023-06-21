@@ -23,7 +23,10 @@ def main(page: Page):
         top_view = page.views[-1]
         page.go(top_view.route)
 
-    init_page(page)
+    init_page(page)    
+    page.theme = ft.Theme(
+        color_scheme_seed=ft.colors.PURPLE,
+    )
     page.title = "AutoSimulatedUniverse"
     page.vertical_alignment = "center"
     page.horizontal_alignment = "center"
@@ -31,8 +34,8 @@ def main(page: Page):
     page.on_view_pop = view_pop
     page.window_min_width = 800
     page.window_width = 800
-    page.window_height = 600
-    page.window_min_height = 600
+    page.window_height = 650
+    page.window_min_height = 650
     page.go(page.route)
 
 
