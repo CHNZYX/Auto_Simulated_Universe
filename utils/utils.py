@@ -615,6 +615,7 @@ class UniverseUtils:
             pyautogui.click()
             time.sleep(0.6)
             self.press('w',0.3)
+            time.sleep(0.8)
         if self.mini_state==3 and self.floor==12 and not self.check_bonus:
             self.mini_state+=2
             return
