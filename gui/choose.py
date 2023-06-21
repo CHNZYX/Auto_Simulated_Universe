@@ -63,6 +63,7 @@ def choose_view(page: Page):
             page.update()
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         tm = time.time()
+        print(page.bonus)
         page.su = run(
             SimulatedUniverse,
             1,
@@ -70,6 +71,7 @@ def choose_view(page: Page):
             int(config.show_map_mode),
             int(config.speed_mode),
             int(config.unlock),
+            int(page.bonus),
         )
         run(page.su.start)
         txt = " "
@@ -149,6 +151,10 @@ def choose_view(page: Page):
         time.sleep(7)
         config.unlock = 1
         show_snack_bar(page, "已临时解锁限制o(*￣▽￣*)ブ", ft.colors.GREEN)
+
+    def bonus_changed(e):
+        page.bonus = not page.bonus
+
     # View
     page.views.append(
         ft.View(
@@ -207,6 +213,7 @@ def choose_view(page: Page):
                     alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
                 ),
+                ft.Row([ft.Container(width=340),ft.Switch(label="沉浸奖励", on_change=bonus_changed),]),
                 ft.Row(
                     [
                         ft.IconButton(

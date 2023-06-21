@@ -19,14 +19,14 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.95"
+version = "v4.96"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map, speed, unlock, update=0):
+    def __init__(self, find, debug, show_map, speed, unlock, bonus=False, update=0):
         super().__init__()
         log.info("当前版本："+version)
         self.now_map = None
@@ -45,8 +45,13 @@ class SimulatedUniverse(UniverseUtils):
         self.floor_tm = time.time()
         self.re_align = 0
         self.unlock = unlock
+        self.check_bonus = bonus
+        ex_notif=""
+        if bonus:
+            ex_notif=" 自动领取沉浸奖励"
+            log.info(ex_notif)
         self.update_count()
-        notif('开始运行',f'初始计数：{self.count}')
+        notif('开始运行'+ex_notif,f'初始计数：{self.count}')
         set_debug(debug > 0)
         if update and find:
             update_map()
@@ -113,9 +118,10 @@ class SimulatedUniverse(UniverseUtils):
                 if self.threshold > 0.95:
                     self.threshold -= 0.015
                 else:
-                    self.click((0.5062, 0.1454))
-                    time.sleep(0.2)
-                    self.click((0.2062, 0.2054))
+                    if random.randint(0,1)==0:
+                        self.click((0.5062, 0.1454))
+                    else:
+                        self.click((0.2062, 0.2054))
                     self.threshold = 0.97
                 time.sleep(0.5)
             # 匹配到图片 res=1时等待一段时间

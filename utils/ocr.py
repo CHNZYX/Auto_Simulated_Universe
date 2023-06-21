@@ -33,7 +33,10 @@ class My_TS:
         return f[-1][1]>=len(text)-2
     
     def input(self,img):
-        self.text=self.ts.ocr_single_line(img)[0].lower()
+        try:
+            self.text=self.ts.ocr_single_line(img)[0].lower()
+        except:
+            self.text=''
 
     def sim_list(self,text_list,img=None):
         if img is not None:
