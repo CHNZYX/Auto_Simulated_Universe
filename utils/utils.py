@@ -21,6 +21,7 @@ import utils.ocr as ocr
 
 
 def notif(title,msg,cnt=None):
+    log.info('通知：'+msg+'  '+title)
     if cnt is not None:
         tm=str(time.time())
     else:
@@ -542,7 +543,7 @@ class UniverseUtils:
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            if (max_val > 0.92):
+            if (max_val > threshold):
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
                 target = (nearest, 3)
                 log.info(
@@ -601,7 +602,7 @@ class UniverseUtils:
             else:
                 me=max(self.move_to_end(me),me)
         try:
-            exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1') or self.unlock")
+            exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1') and not self.unlock")
         except:
             pass
 

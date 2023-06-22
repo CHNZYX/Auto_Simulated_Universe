@@ -19,14 +19,14 @@ from utils.config import config
 import datetime
 
 # 版本号
-version = "v4.96"
+version = "v4.97"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map, speed, unlock, bonus=False, update=0):
+    def __init__(self, find, debug, show_map, speed, unlock=False, bonus=False, update=0):
         super().__init__()
         log.info("当前版本："+version)
         self.now_map = None
@@ -46,6 +46,7 @@ class SimulatedUniverse(UniverseUtils):
         self.re_align = 0
         self.unlock = unlock
         self.check_bonus = bonus
+        self.kl=0
         ex_notif=""
         if bonus:
             ex_notif=" 自动领取沉浸奖励"
@@ -118,8 +119,8 @@ class SimulatedUniverse(UniverseUtils):
                 if self.threshold > 0.95:
                     self.threshold -= 0.015
                 else:
-                    if random.randint(0,1)==0:
-                        self.click((0.5062, 0.1454))
+                    if random.randint(0,9)!=0:
+                        self.click((0.5000, 0.1454))
                     else:
                         self.click((0.2062, 0.2054))
                     self.threshold = 0.97
@@ -307,8 +308,11 @@ class SimulatedUniverse(UniverseUtils):
                                 with open('check'+str(self.floor)+'.txt','r', encoding="utf-8",errors='ignore') as fh:
                                     s=fh.readline().strip('\n')
                                 s=eval(s)
+                                self.kl=0
                                 if not self.now_map in s:
                                     s.append(self.now_map)
+                                else:
+                                    self.kl=0
                                 with open('check'+str(self.floor)+'.txt','w', encoding="utf-8") as fh:
                                     fh.write(str(s))
                             except:
@@ -340,12 +344,12 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>4):
+            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>4) or self.kl:
                 time.sleep(1.5)
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
-                if self.floor==12:
+                if self.floor==12 or self.kl:
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
                     log.info(f"通关！当前层数:{self.floor+1}")
@@ -631,11 +635,11 @@ class SimulatedUniverse(UniverseUtils):
         cv.destroyAllWindows()
 
     def check_req(self):
-        self._stop = os.system('pip show numpy > NUL 2>&1') or self.unlock
+        self._stop = os.system('pip show numpy > NUL 2>&1') and not self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
         time.sleep(10)
-        self._stop = os.system('pip show numpy > NUL 2>&1') or self.unlock
+        self._stop = os.system('pip show numpy > NUL 2>&1') and not self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
 
@@ -656,7 +660,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, speed, update)
+    su = SimulatedUniverse(find, debug, show_map, speed, update=update)
     try:
         su.start()
     except Exception:
