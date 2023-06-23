@@ -18,8 +18,10 @@ from align_angle import main as align_angle
 from utils.config import config
 import datetime
 
+pyautogui.FAILSAFE=False
+
 # 版本号
-version = "v4.97"
+version = "v4.97 stable"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
@@ -220,27 +222,19 @@ class SimulatedUniverse(UniverseUtils):
                         log.info(
                             f"识别到传送点"
                         )
-                        flag=0
-                        for i in range(3):
-                            time.sleep(0.2+(i!=0))
-                            self.get_screen()
-                            img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
-                            if self.ts.sim('区域',img):
-                                self.press("f")
-                            elif i==0:
-                                return 0
-                            else:
-                                flag=1
-                                break
-                        if flag:
+                        self.press("f")
+                        time.sleep(1)
+                        self.get_screen()
+                        img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
+                        if self.ts.sim('区域',img):
+                            return 0
+                        else:
                             self.init_map()
                             self.floor += 1
                             map_log.info(
                                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                             )
                             return 1
-                        else:
-                            return 0
                     elif self.re_align == 1 and self.debug == 0:
                         align_angle(10, 1)
                         self.multi = config.multi

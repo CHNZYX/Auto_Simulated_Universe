@@ -19,6 +19,8 @@ from utils.config import config
 from utils.log import log
 import utils.ocr as ocr
 
+pyautogui.FAILSAFE=False
+
 
 def notif(title,msg,cnt=None):
     log.info('通知：'+msg+'  '+title)
