@@ -9,3 +9,4 @@ pillow
 keyboard
 requests
 ppocr-onnx
+pyscreeze==0.1.28
