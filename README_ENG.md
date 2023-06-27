@@ -5,7 +5,7 @@ Star Rail - Automated Simulated Universe
 
 It has a breakpoint recovery function, so you can switch to do other things and come back to continue automation.
 
-Currently, only Simulated Universe 4 (incomplete data) and 6 are supported, and the map data has been mostly recorded.
+Currently, only World 4 (incomplete data) and World 6 are supported, and the map data has been mostly recorded.
 
 ----------------------------------------------------------------------------------------------
 
