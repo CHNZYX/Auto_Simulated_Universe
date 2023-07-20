@@ -205,6 +205,9 @@ class SimulatedUniverse(UniverseUtils):
                 for _ in range(4):
                     img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
                     text = self.ts.sim_list(self.tk.interacts,img)
+                    if not text:
+                        img = self.check('z',0.3302,0.4503,mask="mask_f",large=False)
+                        text = self.ts.sim_list(self.tk.interacts,img)
                     if text is not None:
                         break
                     time.sleep(0.3)
