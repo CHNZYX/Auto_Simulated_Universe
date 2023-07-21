@@ -502,6 +502,10 @@ class UniverseUtils:
             return False
         img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
         text = self.ts.sim_list(self.tk.interacts,img)
+        if text is None:
+            # 使用新坐标重新尝试
+            img = self.check('z',0.3302,0.4503,mask="mask_f",large=False)
+            text = self.ts.sim_list(self.tk.interacts,img)
         is_killed = text in ['沉浸','紧锁','复活','下载']
         return text is not None and not is_killed
 
@@ -628,7 +632,8 @@ class UniverseUtils:
             nt = time.time()
             while time.time()-nt<1:
                 self.get_screen()
-                if self.ts.sim("沉浸",self.check('z',0.3182,0.4333,mask="mask_f",large=False)):
+                if self.ts.sim("沉浸",self.check('z',0.3182,0.4333,mask="mask_f",large=False)) or \
+                    self.ts.sim("沉浸",self.check('z',0.3302,0.4503,mask="mask_f",large=False)):
                     self.press('f')
                     pyautogui.keyUp('w')
                     break
