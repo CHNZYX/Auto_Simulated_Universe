@@ -498,7 +498,7 @@ class UniverseUtils:
         time.sleep(1)
 
     def goodf(self):
-        if not self.check("f", 0.3891,0.4315):
+        if not self.check("f", 0.4240,0.4407):
             return False
         img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
         text = self.ts.sim_list(self.tk.interacts,img)
