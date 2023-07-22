@@ -75,6 +75,7 @@ class My_TS:
         rcx,rcy,find=-1,-1,0
         res=''
         text_res=''
+        ff=0
         for c,contour in enumerate(contours):
             x, y, w, h = cv.boundingRect(contour)
             if h==binary_image.shape[0] or w<55:
@@ -83,16 +84,19 @@ class My_TS:
             cx = x + w // 2
             cy = y + h // 2
             self.input(roi)
+            res+='|'+self.text
             if self.sim('回归不等式') and len(contours)>1:
+                ff=1
                 continue
             #cv.imwrite('tmp'+str(c)+'.jpg',roi)
-            res+='|'+self.text
             for i,text in enumerate(key_list):
                 if (self.sim(text) and prior>i) or rcx==-1:
                     rcx,rcy,find=cx,cy,1+(self.sim(text) and prior>i)
+                    text_res=text
                     if find==2:
                         prior=i
-                        text_res=text
+        if ff and find==1:
+            find=3
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
 

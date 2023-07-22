@@ -171,7 +171,7 @@ class SimulatedUniverse(UniverseUtils):
             res_down=self.ts.split_and_find([self.fate],img_down,'bless')
             if res_up[1]==2:
                 self.click(self.calc_point((0.5047,0.5491),res_up[0]))
-            elif res_down[1]==2:
+            elif res_down[1]==2 and (res_up[1]!=3 or self.fate!='毁灭'):
                 self.click(self.calc_point((0.5042,0.3204),res_down[0]))
             # 未匹配到优先祝福，刷新祝福并再次匹配
             else:
@@ -189,7 +189,7 @@ class SimulatedUniverse(UniverseUtils):
                 res_up=self.ts.split_and_find(self.tk.prior_bless,img_up)
                 img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
                 res_down=self.ts.split_and_find([self.fate,'巡猎','毁灭','丰饶'],img_down,'bless')
-                if res_up[1]==2:
+                if res_up[1]>=2:
                     self.click(self.calc_point((0.5047,0.5491),res_up[0]))
                 else:
                     self.click(self.calc_point((0.5042,0.3204),res_down[0]))
