@@ -299,8 +299,8 @@ class SimulatedUniverse(UniverseUtils):
                             self._stop=1
                         elif self.now_map_sim<0.35:
                             notif('相似度过低','疑似在黑塔办公室')
-                            self.init_map()
-                            return 1
+                            #self.init_map()
+                            #return 1
                         if self.debug == 2:
                             try:
                                 with open('check'+str(self.floor)+'.txt','r', encoding="utf-8",errors='ignore') as fh:
