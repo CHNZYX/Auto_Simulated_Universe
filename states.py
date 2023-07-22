@@ -21,7 +21,7 @@ import datetime
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.03 dev"
+version = "v5.04 dev"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
@@ -114,8 +114,8 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            self.get_screen()
-            #self.click_target('imgs/f.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            self.get_screen() #0.9734,0.3009   0.3750,0.9398   0.1562,0.2250
+            #self.click_target('imgs/setting2.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -353,12 +353,11 @@ class SimulatedUniverse(UniverseUtils):
                     log.info(f"通关！当前层数:{self.floor+1}")
                 elif self.debug==2:
                     map_log.error(
-                        f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
+                        f"地图{self.now_map}出现问题,退出程序"
                     )
-                    notif(f"地图{self.now_map}出现问题","DEBUG")
+                    notif(f"地图{self.now_map}出现问题,退出程序","DEBUG")
                     self._stop = 1
                 elif self.fail_count<=1:
-                    self.click((0.2927, 0.2602))
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离"
@@ -375,7 +374,6 @@ class SimulatedUniverse(UniverseUtils):
                         )
                         self.fail_count=0
                     else:
-                        self.click((0.2927, 0.2602))
                         self.re_align += 1
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离 DEBUG"
@@ -462,6 +460,12 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.4714, 0.5500))
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
+        elif self.check("setting",0.9734,0.3009):
+            self.click((0.9734,0.3009))
+        elif self.check("setting1",0.3750,0.9398):
+            self.click((0.3750,0.9398))
+        elif self.check("setting2",0.1562,0.2250):
+            self.click((0.1562,0.2250))
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
             img2=self.check('z',0.4990,0.0731,mask='mask_close1',large=False)
