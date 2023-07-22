@@ -49,6 +49,7 @@ class SimulatedUniverse(UniverseUtils):
         self.unlock = unlock
         self.check_bonus = bonus
         self.kl=0
+        self.fail_count=0
         ex_notif=""
         if bonus:
             ex_notif=" 自动领取沉浸奖励"
@@ -114,7 +115,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/mask_enhance.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/f.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -196,12 +197,12 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1)
             return 1
         # F交互界面
-        elif self.check("f", 0.3891,0.4315):
+        elif self.check("f", 0.4240,0.4407):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
             time.sleep(0.4)
             self.get_screen()
-            if self.check("f", 0.3891,0.4315):
+            if self.check("f", 0.4240,0.4407):
                 for _ in range(4):
                     img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
                     text = self.ts.sim_list(self.tk.interacts,img)
@@ -359,13 +360,14 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(1)
                     #self.floor = 0
                     #self.click((0.2708, 0.1324))
-                elif random.randint(0, 2) != 2:
+                elif self.fail_count<=1:
                     self.click((0.2927, 0.2602))
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(
                         f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离"
                     )
                     self.re_align += 1
+                    self.fail_count+=1
                 else:
                     if self.debug == 0:
                         notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
@@ -374,6 +376,7 @@ class SimulatedUniverse(UniverseUtils):
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                         )
+                        self.fail_count=0
                     else:
                         self.click((0.2927, 0.2602))
                         self.re_align += 1
@@ -405,6 +408,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.get_level()
             self.floor_init=1
         elif self.check("start", 0.6594, 0.8389):
+            self.fail_count=0
             if self.check("team4",0.5797,0.2389):
                 dx = 0.9266 - 0.8552
                 dy = 0.8194 - 0.6741
