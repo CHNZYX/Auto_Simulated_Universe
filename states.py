@@ -357,9 +357,6 @@ class SimulatedUniverse(UniverseUtils):
                     )
                     notif(f"地图{self.now_map}出现问题","DEBUG")
                     self._stop = 1
-                    time.sleep(1)
-                    #self.floor = 0
-                    #self.click((0.2708, 0.1324))
                 elif self.fail_count<=1:
                     self.click((0.2927, 0.2602))
                     notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
