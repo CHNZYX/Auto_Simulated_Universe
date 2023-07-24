@@ -461,11 +461,11 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.4714, 0.5500))
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
-        elif self.check("setting",0.9734,0.3009):
+        elif self.check("setting",0.9734,0.3009, threshold=0.98):
             self.click((0.9734,0.3009))
-        elif self.check("setting1",0.3750,0.9398):
+            time.sleep(1.5)
             self.click((0.3750,0.9398))
-        elif self.check("setting2",0.1562,0.2250):
+            time.sleep(1.5)
             self.click((0.1562,0.2250))
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
@@ -677,7 +677,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, speed, update=update)
+    su = SimulatedUniverse(find, debug, show_map, speed, bonus, update=update)
     try:
         su.start()
     except Exception:
@@ -692,6 +692,7 @@ if __name__ == "__main__":
     show_map = 0
     update = 0
     speed = 0
+    bonus = 0
     for i in sys.argv[1:]:
         exec(i.split("-")[-1])
     main()
