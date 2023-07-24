@@ -63,7 +63,6 @@ def choose_view(page: Page):
             page.update()
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         tm = time.time()
-        print(page.bonus)
         page.su = run(
             SimulatedUniverse,
             1,
@@ -71,7 +70,7 @@ def choose_view(page: Page):
             int(config.show_map_mode),
             int(config.speed_mode),
             int(config.unlock),
-            int(page.bonus),
+            int(config.bonus),
         )
         run(page.su.start)
         txt = " "
@@ -155,7 +154,7 @@ def choose_view(page: Page):
         show_snack_bar(page, "已临时解锁限制o(*￣▽￣*)ブ", ft.colors.GREEN)
 
     def bonus_changed(e):
-        page.bonus = not page.bonus
+        config.bonus = not config.bonus
 
     # View
     page.views.append(
