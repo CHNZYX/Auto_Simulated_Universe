@@ -525,17 +525,23 @@ class SimulatedUniverse(UniverseUtils):
         Europe: GMT+1
         TW, HK, MO: GMT+8
         '''
-        tz_dict = {
-            'Default': None,
-            'America': ZoneInfo('US/Central'),
-            'Asia':ZoneInfo('Asia/Shanghai'),
-            'Europe':ZoneInfo('Europe/London'),
-        }
+        tz_info = None
+        try:
+            tz_dict = {
+                'Default': None,
+                'America': ZoneInfo('US/Central'),
+                'Asia':ZoneInfo('Asia/Shanghai'),
+                'Europe':ZoneInfo('Europe/London'),
+            }
+            tz_info = tz_dict[config.timezone]
+        except:
+            pass
+
         # convert to server time
-        dt.astimezone(tz_dict[config.timezone])
+        dt.astimezone(tz_info)
         current_weekday = dt.weekday()
         monday = dt + datetime.timedelta(days=-current_weekday)
-        target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_dict[config.timezone])
+        target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_info)
         monday_ts = target_datetime.timestamp()
         if dt.timestamp()>=monday_ts and time_cnt<monday_ts:
             self.count=int(not read)
