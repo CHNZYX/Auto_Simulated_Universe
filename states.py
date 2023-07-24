@@ -21,7 +21,7 @@ import datetime
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.05 dev"
+version = "v5.08"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
