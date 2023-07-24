@@ -92,6 +92,7 @@ class SimulatedUniverse(UniverseUtils):
         self.quit = 0
         self.floor_init = 0
         self.init_map()
+        fail_cnt=0
         while True:
             if self._stop:
                 break
@@ -120,16 +121,20 @@ class SimulatedUniverse(UniverseUtils):
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if self.threshold > 0.95:
+                    fail_cnt=0
                     self.threshold -= 0.015
                 else:
-                    if random.randint(0,9)!=0:
+                    if fail_cnt<=1:
                         self.click((0.5000, 0.1454))
+                        fail_cnt+=1
                     else:
                         self.click((0.2062, 0.2054))
+                        fail_cnt=0
                     self.threshold = 0.97
                 time.sleep(0.5)
             # 匹配到图片 res=1时等待一段时间
             else:
+                fail_cnt=0
                 self.threshold = 0.97
                 if res == 1:
                     time.sleep(0.4)
@@ -662,7 +667,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, speed, bonus, update=update)
+    su = SimulatedUniverse(find, debug, show_map, speed, bonus=bonus, update=update)
     try:
         su.start()
     except Exception:
