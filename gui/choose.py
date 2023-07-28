@@ -118,9 +118,9 @@ def choose_view(page: Page):
 
     def go_about(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！"),
+            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！如果你喜欢为免费的程序付钱，如果你支持作者用爱发电、倒狗赚所谓的服务费安装费我也没办法"),
             content=ft.Text(
-                "倒卖可耻，请退款并举报商家！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
+                "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
             ),
         )
         page.dialog = dlg
