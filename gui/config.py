@@ -34,6 +34,9 @@ def config_view(page: Page):
     def fate_changed(e: ControlEvent):
         config.fate = e.data
 
+    def timezone_changed(e: ControlEvent):
+        config.timezone = e.data
+
     def textbox_changed(e):
         config.order_text = e.control.value
 
@@ -141,6 +144,19 @@ def config_view(page: Page):
                                             ],
                                             value=config.fate,
                                             on_change=fate_changed,
+                                        ),
+                                        ft.Dropdown(
+                                            width=150,
+                                            label="时区",
+                                            hint_text="影响计数刷新时间",
+                                            options=[
+                                                ft.dropdown.Option("Default"),
+                                                ft.dropdown.Option("Asia"),
+                                                ft.dropdown.Option("America"),
+                                                ft.dropdown.Option("Europe"),
+                                            ],
+                                            value=config.timezone,
+                                            on_change=timezone_changed,
                                         ),
                                     ]
                                 ),
