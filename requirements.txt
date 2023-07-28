@@ -10,3 +10,4 @@ keyboard
 requests
 ppocr-onnx
 pyscreeze==0.1.28
+tzdata
