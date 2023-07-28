@@ -17,7 +17,7 @@ import os
 from align_angle import main as align_angle
 from utils.config import config
 import datetime
-from zoneinfo import ZoneInfo
+import pytz
 
 pyautogui.FAILSAFE=False
 
@@ -534,9 +534,9 @@ class SimulatedUniverse(UniverseUtils):
         try:
             tz_dict = {
                 'Default': None,
-                'America': ZoneInfo('US/Central'),
-                'Asia':ZoneInfo('Asia/Shanghai'),
-                'Europe':ZoneInfo('Europe/London'),
+                'America': pytz.timezone('US/Central'),
+                'Asia':pytz.timezone('Asia/Shanghai'),
+                'Europe':pytz.timezone('Europe/London'),
             }
             tz_info = tz_dict[config.timezone]
         except:
