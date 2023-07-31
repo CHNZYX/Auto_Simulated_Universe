@@ -543,7 +543,7 @@ class SimulatedUniverse(UniverseUtils):
             pass
 
         # convert to server time
-        dt.astimezone(tz_info)
+        dt = dt.astimezone(tz_info)
         current_weekday = dt.weekday()
         monday = dt + datetime.timedelta(days=-current_weekday)
         target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_info)
