@@ -532,7 +532,7 @@ class SimulatedUniverse(UniverseUtils):
             'Europe':ZoneInfo('Europe/London'),
         }
         # convert to server time
-        dt.astimezone(tz_dict[config.timezone])
+        dt = dt.astimezone(tz_dict[config.timezone])
         current_weekday = dt.weekday()
         monday = dt + datetime.timedelta(days=-current_weekday)
         target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_dict[config.timezone])
