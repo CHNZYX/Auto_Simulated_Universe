@@ -17,12 +17,12 @@ import os
 from align_angle import main as align_angle
 from utils.config import config
 import datetime
-from zoneinfo import ZoneInfo
+import pytz
 
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.05 dev"
+version = "v5.10 stable"
 
 # 优先事件
 events = len(os.listdir("imgs/events"))
@@ -93,6 +93,7 @@ class SimulatedUniverse(UniverseUtils):
         self.quit = 0
         self.floor_init = 0
         self.init_map()
+        fail_cnt=0
         while True:
             if self._stop:
                 break
@@ -121,16 +122,20 @@ class SimulatedUniverse(UniverseUtils):
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if self.threshold > 0.95:
+                    fail_cnt=0
                     self.threshold -= 0.015
                 else:
-                    if random.randint(0,9)!=0:
+                    if fail_cnt<=1:
                         self.click((0.5000, 0.1454))
+                        fail_cnt+=1
                     else:
                         self.click((0.2062, 0.2054))
+                        fail_cnt=0
                     self.threshold = 0.97
                 time.sleep(0.5)
             # 匹配到图片 res=1时等待一段时间
             else:
+                fail_cnt=0
                 self.threshold = 0.97
                 if res == 1:
                     time.sleep(0.4)
@@ -295,7 +300,7 @@ class SimulatedUniverse(UniverseUtils):
                             ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                        if self.now_map_sim<0.42 and self.debug==2:
+                        if self.now_map_sim<0.38 and self.debug==2:
                             notif('相似度过低','DEBUG')
                             self._stop=1
                         elif self.now_map_sim<0.35:
@@ -461,11 +466,11 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.4714, 0.5500))
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
-        elif self.check("setting",0.9734,0.3009):
+        elif self.check("setting",0.9734,0.3009, threshold=0.98):
             self.click((0.9734,0.3009))
-        elif self.check("setting1",0.3750,0.9398):
+            time.sleep(1.5)
             self.click((0.3750,0.9398))
-        elif self.check("setting2",0.1562,0.2250):
+            time.sleep(1.5)
             self.click((0.1562,0.2250))
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
@@ -525,17 +530,23 @@ class SimulatedUniverse(UniverseUtils):
         Europe: GMT+1
         TW, HK, MO: GMT+8
         '''
-        tz_dict = {
-            'Default': None,
-            'America': ZoneInfo('US/Central'),
-            'Asia':ZoneInfo('Asia/Shanghai'),
-            'Europe':ZoneInfo('Europe/London'),
-        }
+        tz_info = None
+        try:
+            tz_dict = {
+                'Default': None,
+                'America': pytz.timezone('US/Central'),
+                'Asia':pytz.timezone('Asia/Shanghai'),
+                'Europe':pytz.timezone('Europe/London'),
+            }
+            tz_info = tz_dict[config.timezone]
+        except:
+            pass
+
         # convert to server time
-        dt = dt.astimezone(tz_dict[config.timezone])
+        dt.astimezone(tz_info)
         current_weekday = dt.weekday()
         monday = dt + datetime.timedelta(days=-current_weekday)
-        target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_dict[config.timezone])
+        target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_info)
         monday_ts = target_datetime.timestamp()
         if dt.timestamp()>=monday_ts and time_cnt<monday_ts:
             self.count=int(not read)
@@ -677,7 +688,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, speed, update=update)
+    su = SimulatedUniverse(find, debug, show_map, speed, bonus=bonus, update=update)
     try:
         su.start()
     except Exception:
@@ -692,6 +703,7 @@ if __name__ == "__main__":
     show_map = 0
     update = 0
     speed = 0
+    bonus = 0
     for i in sys.argv[1:]:
         exec(i.split("-")[-1])
     main()
