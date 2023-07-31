@@ -40,7 +40,7 @@ def choose_view(page: Page):
     def angle(_e):
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(5)
+            time.sleep(10)
             page.first=0
             page.dialog.open = False
             page.update()
@@ -63,7 +63,6 @@ def choose_view(page: Page):
             page.update()
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
         tm = time.time()
-        print(page.bonus)
         page.su = run(
             SimulatedUniverse,
             1,
@@ -71,7 +70,7 @@ def choose_view(page: Page):
             int(config.show_map_mode),
             int(config.speed_mode),
             int(config.unlock),
-            int(page.bonus),
+            int(config.bonus),
         )
         run(page.su.start)
         txt = " "
@@ -119,9 +118,9 @@ def choose_view(page: Page):
 
     def go_about(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！"),
+            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！如果你喜欢为免费的程序付钱，如果你支持作者用爱发电、倒狗赚所谓的服务费安装费我也没办法"),
             content=ft.Text(
-                "倒卖可耻，请退款并举报商家！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
+                "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
             ),
         )
         page.dialog = dlg
@@ -155,7 +154,7 @@ def choose_view(page: Page):
         show_snack_bar(page, "已临时解锁限制o(*￣▽￣*)ブ", ft.colors.GREEN)
 
     def bonus_changed(e):
-        page.bonus = not page.bonus
+        config.bonus = not config.bonus
 
     # View
     page.views.append(

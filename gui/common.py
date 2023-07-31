@@ -15,7 +15,6 @@ class Page(ft.Page):
 def init_page(page: Page):
     page.su = None
     page.first = 1
-    page.bonus = False
 
 
 def show_snack_bar(page, text, color, selectable=False):
