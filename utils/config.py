@@ -41,7 +41,7 @@ class Config:
                 try:
                     self.order_text = " ".join(str(x) for x in config['order_text'])
                     self.angle = str(config['angle'])
-                    self.difficulty = config['difficulty']
+                    self.difficult = config['difficulty']
                     self.fate = config['fate']
                     self.map_sha = config['map_sha']
                     self.show_map_mode = config['show_map_mode']
