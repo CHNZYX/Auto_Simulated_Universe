@@ -1,6 +1,6 @@
 import os
-from typing import List
-
+import yaml
+from typing import List, Dict, Union
 
 class Config:
     def __init__(self):
@@ -37,17 +37,18 @@ class Config:
     def read(self):
         if os.path.exists(self.text):
             with open(self.text, "r", encoding="utf-8",errors='ignore') as f:
-                self.order_text = f.readline().strip()
-                self.angle = f.readline().strip()
+                config: Dict[str,Union[int,float,str,List[int]]] = yaml.safe_load(f)['config']
                 try:
-                    self.difficult = str(int(f.readline().strip()))
-                    self.fate = f.readline().strip()
-                    self.map_sha = f.readline().strip()
-                    self.show_map_mode = int(f.readline().strip())
-                    self.debug_mode = int(f.readline().strip())
-                    self.speed_mode = int(f.readline().strip())
-                    self.force_update = int(f.readline().strip())
-                    self.timezone = f.readline().strip()
+                    self.order_text = " ".join(str(x) for x in config['order_text'])
+                    self.angle = str(config['angle'])
+                    self.difficulty = config['difficulty']
+                    self.fate = config['fate']
+                    self.map_sha = config['map_sha']
+                    self.show_map_mode = config['show_map_mode']
+                    self.debug_mode = config['debug_mode']
+                    self.speed_mode = config['speed_mode']
+                    self.force_update = config['force_update']
+                    self.timezone = config['timezone']
                 except:
                     pass
         else:
@@ -55,9 +56,20 @@ class Config:
 
     def save(self):
         with open(self.text, "w", encoding="utf-8") as f:
-            f.write(
-                f"{self.order_text}\n{self.angle}\n{self.diffi}\n{self.fate}\n{self.map_sha}\n{self.show_map_mode}\n{self.debug_mode}\n{self.speed_mode}\n{self.force_update}\n{self.timezone}"
-            )
+            yaml.safe_dump({
+                "config":{
+                    "order_text": list(map(lambda x:int(x),self.order_text.split(' '))),
+                    "angle": float(self.angle),
+                    "difficulty": self.diffi,
+                    "fate": self.fate,
+                    "map_sha": self.map_sha,
+                    "show_map_mode": self.show_map_mode,
+                    "debug_mode": self.debug_mode,
+                    "speed_mode": self.speed_mode,
+                    "force_update": self.force_update,
+                    "timezone": self.timezone
+                    }
+            }, f, allow_unicode=True, sort_keys=False)
 
 
 config = Config()
