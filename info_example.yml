@@ -1,0 +1,11 @@
+config:
+  order_text: [3, 5, 2, 7]
+  angle: 0.716653229418615
+  difficulty: 4
+  fate: 巡猎
+  map_sha: '139c15986c451404ed1903dccccb006f03a463d1'
+  show_map_mode: 0
+  debug_mode: 0
+  speed_mode: 0
+  force_update: 0
+  timezone: Default

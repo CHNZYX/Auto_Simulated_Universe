@@ -32,16 +32,18 @@ This software is open source, free of charge and for learning and exchange purpo
 
 默认世界：比如说如果你当前模拟宇宙默认世界4，但是想自动化世界6，那么请先进入一次世界6来改变默认世界
 
-如果没怎么接触过python，建议直接在release中下载gui版本，并直接阅读GUI使用方法
+如果没怎么接触过python，建议直接在[release](https://github.com/CHNZYX/Auto_Simulated_Universe/releases/latest)中下载gui版本，并直接阅读GUI使用方法
 
 **第一次运行**
 
-双击install_requirements.bat安装依赖库
+双击`install_requirements.bat`安装依赖库
 
-进入游戏，将人物传送到黑塔的办公室，然后双击 **align.bat** ，切回游戏界面，等待视角转换/原地转圈结束
+进入游戏，将人物传送到黑塔的办公室，然后双击 `align.bat` ，切回游戏界面，等待视角转换/原地转圈结束
 
-如果**align.bat**闪退，可以尝试管理员运行<pre><code>python align_angle.py
-</code></pre>
+如果`align.bat`闪退，可以尝试管理员运行
+```plaintext
+python align_angle.py
+```
 
 如果改变了鼠标dpi或游戏分辨率/屏幕分辨率/窗口缩放倍率，需要重新校准！
 
@@ -49,14 +51,25 @@ This software is open source, free of charge and for learning and exchange purpo
 
 人物靠近模拟宇宙（出现f键交互条）
 
-双击run.bat 或者 管理员权限运行 <pre><code>python states.py --find=1
-</code></pre>
+双击`run.bat` 或者 管理员权限运行 
+```plaintext
+python states.py --find=1
+```
 
-info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己的配队，1表示第一个角色。最好在一号位选远程角色（艾丝妲、三月七）方便开怪。第二行是校准数据，不要改第二行！
-
-第三行是宇宙的难度，如果你要打难度1就改成1保存。第四行是命途选择，默认巡猎，可以直接修改为其它命途，对巡猎做了专门优化，因此除非万不得已不要改命途。
-
-第五行是地图数据的版本，不建议更改。
+`info.yml`内容如下
+```yaml
+config:
+  order_text: [1, 2, 3, 4] //模拟宇宙开局选的角色，建议改成自己的配队，1表示第一个角色。最好在一号位选远程角色（艾丝妲、三月七）方便开怪。
+  angle: 1.0  //校准数据请勿更改
+  difficulty: 4 //宇宙的难度，如果你要打难度1就改成1保存
+  fate: 巡猎 //命途选择，默认巡猎，可以直接修改为其它命途，对巡猎做了专门优化，因此除非万不得已不要改命途。
+  map_sha: '' //地图数据的版本，不建议更改
+  show_map_mode: 0
+  debug_mode: 0
+  speed_mode: 0
+  force_update: 0
+  timezone: Default
+```
 
 默认是哪个宇宙就会进哪个！如果你默认不是第6世界，记得先手动切到第6世界！
 
@@ -64,7 +77,7 @@ info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己
 
 **更新文件**
 
-双击update.bat
+双击`update.bat`
 
 
 ### GUI使用方法
@@ -79,7 +92,7 @@ info.txt中第一行保存了模拟宇宙开局选的角色，建议改成自己
 
 ![配队编号](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
 
-比如说这张图中，你想选择娜塔莎，景元，希儿，彦卿，那么请在配队中输入：6 4 3 2
+比如说这张图中，你想选择娜塔莎，景元，希儿，彦卿，那么请在配队中输入：`6 4 3 2`
 
 **运行自动化**
 
@@ -111,11 +124,11 @@ F8/‘停止’按钮停止运行。
 
 ### 通知插件使用方法（notif.exe）
 
-如果你没有用本地多用户，那么直接双击notif.exe即可开启windows通知，每刷完一次都会通知哦
+如果你没有用本地多用户，那么直接双击`notif.exe`即可开启windows通知，每刷完一次都会通知哦
 
 如果你用了本地多用户，那么请在子用户运行gui，在主用户运行notif，这样就能在主用户收到通知了
 
-计数会在每周自动重置，如果想手动改变计数，请打开logs/notif.txt，修改第一行的信息
+计数会在每周自动重置，如果想手动改变计数，请打开`logs/notif.txt`，修改第一行的信息
 
 通知插件会在右下角显示托盘图标
 
@@ -133,21 +146,21 @@ F8/‘停止’按钮停止运行。
 
 支持录制地图，具体方法为
 
-运行 python states.py --debug=2 --find=1 （GUI版本：设置调试模式为-，然后点击运行）
+运行 `python states.py --debug=2 --find=1` （GUI版本：设置调试模式为-，然后点击运行）
 
 如果遇到新图会角色停住，这时候结束自动化并且游戏中暂离模拟宇宙
 
-然后运行 python states.py --debug=2 --find=0 （GUI版本：设置调试模式为-，然后点击录制）
+然后运行 `python states.py --debug=2 --find=0` （GUI版本：设置调试模式为-，然后点击录制）
 
 运行后会自动进入地图，期间请不要移动鼠标也不要动键盘
 
 几秒后角色会后退，然后前进。在角色前进时，你可以移动鼠标改变视角，也可以按键盘wasd。
 
-在地图中绕一圈，感觉差不多就F8/ctrl+c结束进程能得到地图数据了。保存在imgs/maps/my_xxxxx目录下（可以按修改时间排序）
+在地图中绕一圈，感觉差不多就`F8/ctrl+c`结束进程能得到地图数据了。保存在`imgs/maps/my_xxxxx`目录下（可以按修改时间排序）
 
 有怪的图最好用希儿战技，被锁定会影响小地图识别。
 
-imgs/maps/my_xxxxx目录下会存在target.jpg，你可以用windows自带的画图打开它，然后在上面标记点（可以参考其它地图文件中的target.jpg）
+`imgs/maps/my_xxxxx`目录下会存在`target.jpg`，你可以用windows自带的画图打开它，然后在上面标记点（可以参考其它地图文件中的`target.jpg`）
 
 靛蓝色：路径点 黄色：终点 绿色：交互点（问号点） 红色：怪点
 
