@@ -122,7 +122,6 @@ class SimulatedUniverse(UniverseUtils):
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if self.threshold > 0.95:
-                    fail_cnt=0
                     self.threshold -= 0.015
                 else:
                     if fail_cnt<=1:
