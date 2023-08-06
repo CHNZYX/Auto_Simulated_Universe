@@ -40,7 +40,7 @@ def choose_view(page: Page):
     def angle(_e):
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(5)
+            time.sleep(10)
             page.first=0
             page.dialog.open = False
             page.update()
