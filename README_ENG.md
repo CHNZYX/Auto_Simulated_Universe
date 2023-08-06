@@ -5,7 +5,7 @@ Star Rail - Automated Simulated Universe
 
 It has a breakpoint recovery function, so you can switch to do other things and come back to continue automation.
 
-Currently, only World 4 (incomplete data) and World 6 are supported, and the map data has been mostly recorded.
+All Worlds in Version 1.2 are supported
 
 ----------------------------------------------------------------------------------------------
 
@@ -52,11 +52,20 @@ Double-click `run.bat` or run with administrator privileges:
 ```plaintext
 python states.py --find=1
 ```
-The first line in `info.txt` stores the character chosen for the simulation universe. It is recommended to customize your own team composition by assigning numbers to the characters, where 1 represents the first character. It is preferable to select a ranged character (such as Asta or March 7th) for the first position to facilitate initial encounters. The second line contains calibration data and should not be modified.
-
-The third line indicates the difficulty level of the universe. If you want to play on difficulty level 1, change the value to 1 and save the file. The fourth line represents the path selection, with "巡猎" (The hunt) set as the default. You can directly modify it to another path, but keep in mind that the hunt path has been specifically optimized, so it is recommended not to change it unless necessary.
-
-The fifth line represents the version of the map data and should not be altered.
+`info.yml` is as follows.
+```yaml
+config:
+  order_text: [1, 2, 3, 4] // the character chosen for the simulation universe. It is recommended to customize your own team composition by assigning numbers to the characters, where 1 represents the first character. It is preferable to select a ranged character (such as Asta or March 7th) for the first position to facilitate initial encounters.
+  angle: 1.0 // Calibration data, please do not modify.
+  difficulty: 4 // Difficulty level of the universe. Change to '1' if you want to play on difficulty level 1 and then save.
+  fate: 巡猎 // the path selection, with "巡猎" (The hunt) set as the default. You can directly modify it to another path, but keep in mind that the hunt path has been specifically optimized, so it is recommended not to change it unless necessary.
+  map_sha: '' // Version of map data, it is not recommended to modify.
+  show_map_mode: 0
+  debug_mode: 0
+  speed_mode: 0
+  force_update: 0
+  timezone: Default
+```
 
 By default, the program will enter the universe corresponding to the default settings. If the default universe is not the 6th world, remember to manually switch to the 6th world first!
 
