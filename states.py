@@ -143,7 +143,7 @@ class SimulatedUniverse(UniverseUtils):
     def end_of_uni(self):
         self.update_count(0)
         if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug!=2:
-            self._stop=0
+            self._stop=1
         self.floor = 0
 
     def normal(self):
