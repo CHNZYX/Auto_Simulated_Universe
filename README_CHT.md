@@ -61,6 +61,7 @@ config:
   difficulty: 4 //宇宙的難度，如果你要打難度1就改成1保存
   fate: 巡猎 //命途選擇，默認巡獵，可以直接修改為其它命途，對巡獵做了專門優化，因此除非萬不得已不要改命途。
   map_sha: '' //地图数据的版本，不建议更改
+  auto_stop_game: 0 //是否在完成34次後自動退出遊戲
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0

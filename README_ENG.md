@@ -60,6 +60,7 @@ config:
   difficulty: 4 // Difficulty level of the universe. Change to '1' if you want to play on difficulty level 1 and then save.
   fate: 巡猎 // the path selection, with "巡猎" (The hunt) set as the default. You can directly modify it to another path, but keep in mind that the hunt path has been specifically optimized, so it is recommended not to change it unless necessary.
   map_sha: '' // Version of map data, it is not recommended to modify.
+  auto_stop_game: 0 // Auto-quit game after completing 34 rounds
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0

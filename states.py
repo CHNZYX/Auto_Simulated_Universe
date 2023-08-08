@@ -12,7 +12,7 @@ from copy import deepcopy
 from utils.log import log, set_debug
 from utils.map_log import map_log
 from utils.update_map import update_map
-from utils.utils import UniverseUtils, set_forground, notif
+from utils.utils import UniverseUtils, set_forground, notif, terminate_process
 import os
 from align_angle import main as align_angle
 from utils.config import config
@@ -37,6 +37,7 @@ class SimulatedUniverse(UniverseUtils):
         self.real_loc = [0, 0]
         self.debug_map = np.zeros((8192, 8192), dtype=np.uint8)
         self._stop = False
+        self._stop_game = False
         self.img_set = []
         self.find = find
         self.debug = debug
@@ -138,12 +139,15 @@ class SimulatedUniverse(UniverseUtils):
                 self.threshold = 0.97
                 if res == 1:
                     time.sleep(0.4)
+            if self._stop_game and self.auto_stop_game:
+                terminate_process(hwnd)
         log.info("停止运行")
 
     def end_of_uni(self):
         self.update_count(0)
         if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug!=2:
             self._stop=1
+            self._stop_game=1
         self.floor = 0
 
     def normal(self):

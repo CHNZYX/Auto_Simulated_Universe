@@ -12,6 +12,7 @@ class Config:
         self.fate = "巡猎"
         self.map_sha = ""
         self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
+        self.auto_stop_game = 0
         self.show_map_mode = 0
         self.debug_mode = 0
         self.speed_mode = 0
@@ -44,6 +45,7 @@ class Config:
                     self.difficult = config['difficulty']
                     self.fate = config['fate']
                     self.map_sha = config['map_sha']
+                    self.auto_stop_game = config['auto_stop_game']
                     self.show_map_mode = config['show_map_mode']
                     self.debug_mode = config['debug_mode']
                     self.speed_mode = config['speed_mode']
@@ -63,6 +65,7 @@ class Config:
                     "difficulty": self.diffi,
                     "fate": self.fate,
                     "map_sha": self.map_sha,
+                    "auto_stop_game": self.auto_stop_game,
                     "show_map_mode": self.show_map_mode,
                     "debug_mode": self.debug_mode,
                     "speed_mode": self.speed_mode,

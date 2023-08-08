@@ -8,6 +8,7 @@ import win32api
 import win32gui
 import win32print
 import win32con
+import win32process
 from copy import deepcopy
 import math
 import random
@@ -59,6 +60,16 @@ def set_forground():
     except:
         pass
 
+def terminate_process(hwnd):
+    # 获取窗口关联的进程 ID
+    _, process_id = win32process.GetWindowThreadProcessId(hwnd)
+
+    # 打开进程句柄
+    h_process = win32api.OpenProcess(win32con.PROCESS_TERMINATE, False, process_id)
+
+    # 终止进程
+    win32process.TerminateProcess(h_process, -1)
+    win32api.CloseHandle(h_process)
 
 class UniverseUtils:
     def __init__(self):
@@ -68,6 +79,7 @@ class UniverseUtils:
         self._stop = 0
         self.stop_move=0
         self.opt = 0
+        self.auto_stop_game = config.auto_stop_game
         self.multi = config.multi
         self.diffi = config.diffi
         self.fate = config.fate

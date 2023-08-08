@@ -4,6 +4,7 @@ config:
   difficulty: 4
   fate: 巡猎
   map_sha: '139c15986c451404ed1903dccccb006f03a463d1'
+  auto_stop_game: 0
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0

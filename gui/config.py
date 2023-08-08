@@ -28,6 +28,9 @@ def config_view(page: Page):
     def force_update_checkbox_changed(_e):
         config.force_update = (config.force_update + 1) % 2
 
+    def auto_stop_game_checkbox_changed(_e):
+        config.auto_stop_game = (config.auto_stop_game + 1) % 2
+
     def difficult_changed(e: ControlEvent):
         config.difficult = e.data
 
@@ -110,6 +113,11 @@ def config_view(page: Page):
                                             label="强制更新",
                                             value=get_info_mode(config.force_update),
                                             on_change=force_update_checkbox_changed,
+                                        ),
+                                        ft.Checkbox(
+                                            label="自动退出",
+                                            value=get_info_mode(config.auto_stop_game),
+                                            on_change=auto_stop_game_checkbox_changed,
                                         ),
                                     ]
                                 ),
