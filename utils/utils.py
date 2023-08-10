@@ -72,6 +72,7 @@ class UniverseUtils:
         self.diffi = config.diffi
         self.fate = config.fate
         self.my_fate = 4
+        self.fail_count = 0
         self.ts = ocr.My_TS()
         # 用户选择的命途
         for i in range(len(config.fates)):
@@ -484,6 +485,7 @@ class UniverseUtils:
         while not self.check("run", 0.9844, 0.7889, threshold=0.93):
             time.sleep(0.1)
             self.get_screen()
+        time.sleep(max(0,(self.fail_count-1)*10))
         time.sleep(1)
         self.press('m',0.2)
         time.sleep(2.5)
