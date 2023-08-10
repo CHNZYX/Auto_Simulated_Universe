@@ -5,7 +5,6 @@ venv/
 build/
 dist/
 *.spec
-info.txt
 imgs/bigmap.jpg
 imgs/bwmap.jpg
 imgs/maxloc.jpg
