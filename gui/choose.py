@@ -214,7 +214,7 @@ def choose_view(page: Page):
                     alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
                 ),
-                ft.Row([ft.Container(width=340),ft.Switch(label="沉浸奖励", on_change=bonus_changed),]),
+                ft.Row([ft.Container(width=340),ft.Switch(label="沉浸奖励", on_change=bonus_changed, value=config.bonus),]),
                 ft.Row(
                     [
                         ft.IconButton(

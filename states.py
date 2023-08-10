@@ -142,7 +142,7 @@ class SimulatedUniverse(UniverseUtils):
 
     def end_of_uni(self):
         self.update_count(0)
-        if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug!=2:
+        if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug==0:
             self._stop=1
         self.floor = 0
 
@@ -156,6 +156,11 @@ class SimulatedUniverse(UniverseUtils):
             if self.check("c", 0.9464,0.1287, threshold=0.985):
                 self.press('v')
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
+            if self.fate=='丰饶':
+                if random.randint(0,5)==3:
+                    self.press('3')
+                if random.randint(0,6)==3:
+                    self.press('r')
             self.battle = time.time()
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
@@ -352,6 +357,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
+                self.floor_init=0
                 if self.floor==12 or self.kl:
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
@@ -467,9 +473,9 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.1203, 0.1093))
         elif self.check("setting",0.9734,0.3009, threshold=0.98):
             self.click((0.9734,0.3009))
-            time.sleep(1.5)
+            time.sleep(2)
             self.click((0.3750,0.9398))
-            time.sleep(1.5)
+            time.sleep(2)
             self.click((0.1562,0.2250))
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
