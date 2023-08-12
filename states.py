@@ -445,12 +445,13 @@ class SimulatedUniverse(UniverseUtils):
             # 事件选择界面
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                 tx, ty = self.tx, self.ty
-                self.click_text(["购买1个1星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神","购买一个"])
+                self.click_text(["购买1个1星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神","购买1个星祝福"])
                 time.sleep(0.3)
                 if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):
                     self.click((self.tx,self.ty))
                 else:
                     self.click((tx, ty))
+                    time.sleep(0.3)
                     self.click((0.1167, ty - 0.4685 + 0.3546))
                 time.sleep(1)
             else:
@@ -476,6 +477,7 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(2)
             self.click((0.1562,0.2250))
         elif self.check("enhance", 0.9208,0.9380):
+            time.sleep(1.5)
             for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:
                 if self.check("enhance_fail", 0.1068,0.0907):
                     self.press('esc')
