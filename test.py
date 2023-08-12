@@ -1,6 +1,4 @@
-import os
-import threading
-import time
-threading.Thread(target=os.system,kwargs={'command':'notif.exe'}).start()
-time.sleep(2)
-threading.Thread(target=os.system,kwargs={'command':'python notif.py'}).start()
+import yaml
+with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
+    config = yaml.safe_load(f)['prior']
+print(config)

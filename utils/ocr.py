@@ -130,11 +130,10 @@ class text_keys:
             with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
                 config = yaml.safe_load(f)['prior']
             for i,j in enumerate(config):
-                if i:
-                    self.blesses[i-1] = config[j]
+                if i>1:
+                    self.blesses[i-2] = config[j]
                 else:
                     self.strange = config[j]
-            print(self.blesses[0])
         except:
             pass
         self.prior_bless += self.blesses[fate]

@@ -445,7 +445,13 @@ class SimulatedUniverse(UniverseUtils):
             # 事件选择界面
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                 tx, ty = self.tx, self.ty
-                self.click_text(["购买1个1星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神","购买1个星祝福"])
+                try:
+                    import yaml
+                    with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
+                        event_prior = yaml.safe_load(f)['prior']['事件']
+                except:
+                    event_prior = ["购买1个星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神"]
+                self.click_text(event_prior)
                 time.sleep(0.3)
                 self.get_screen()
                 if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):

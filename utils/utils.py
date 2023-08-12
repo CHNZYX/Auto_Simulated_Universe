@@ -700,6 +700,17 @@ class UniverseUtils:
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
                 time.sleep(2.1)
+                if self.mini_state==1 and self.floor==12:
+                    for i in range(4):
+                        self.press(str(i+1))
+                        time.sleep(0.4)
+                        self.press('e')
+                        time.sleep(0.6)
+                        self.get_screen()
+                        if not self.check("z",0.5906,0.9537,mask="mask_z"):
+                            break
+                        if self._stop:
+                            break
                 iters = 0
                 while self.check("z",0.5906,0.9537,mask="mask_z") and not self._stop:
                     iters+=1
