@@ -99,6 +99,13 @@ class My_TS:
             find=3
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
+    
+    def find_text(self, img, text):
+        for res in self.ts.detect_and_ocr(img):
+            self.text = res.ocr_text
+            for txt in text:
+                if self.sim(txt):
+                    return res.box
 
 class text_keys:
     def __init__(self,fate=4):
@@ -125,6 +132,7 @@ class text_keys:
                     self.blesses[i-1] = config[j]
                 else:
                     self.strange = config[j]
+            print(self.blesses[0])
         except:
             pass
         self.prior_bless += self.blesses[fate]
