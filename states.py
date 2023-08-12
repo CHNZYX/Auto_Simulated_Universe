@@ -31,6 +31,8 @@ events = len(os.listdir("imgs/events"))
 class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug, show_map, speed, unlock=False, bonus=False, update=0):
         super().__init__()
+        # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
+        # t2 = threading.Thread(target=os.system,kwargs={'command':'python notif.py > NUL 2>&1'})
         log.info("当前版本："+version)
         self.now_map = None
         self.now_map_sim = None
