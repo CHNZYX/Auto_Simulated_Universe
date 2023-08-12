@@ -106,6 +106,7 @@ class My_TS:
             self.text = res.ocr_text
             for txt in text:
                 if self.sim(txt):
+                    print("识别到",txt)
                     return res.box
 
 class text_keys:
