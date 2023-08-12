@@ -57,7 +57,7 @@ def choose_view(page: Page):
             return
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(7)
+            time.sleep(10)
             page.first=0
             page.dialog.open = False
             page.update()
@@ -109,6 +109,8 @@ def choose_view(page: Page):
             pass
 
     def update_maps(_e):
+        show_snack_bar(page, "更新地图功能已经弃用（´・н・‘）", ft.colors.RED)
+        return
         show_snack_bar(page, "开始更新地图（´・н・‘）", ft.colors.GREEN)
         msg, col = update_map(config.force_update)
         show_snack_bar(page, msg, col)
