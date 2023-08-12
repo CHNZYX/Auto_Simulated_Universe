@@ -55,6 +55,8 @@ class Config:
             self.save()
 
     def save(self):
+        with open(self.text, "r", encoding="utf-8",errors='ignore') as f:
+            prior = yaml.safe_load(f)['prior']
         with open(self.text, "w", encoding="utf-8") as f:
             yaml.safe_dump({
                 "config":{
@@ -68,7 +70,8 @@ class Config:
                     "speed_mode": self.speed_mode,
                     "force_update": self.force_update,
                     "timezone": self.timezone
-                    }
+                    },
+                "prior": prior
             }, f, allow_unicode=True, sort_keys=False)
 
 
