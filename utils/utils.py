@@ -141,7 +141,7 @@ class UniverseUtils:
         img = self.get_screen()
         pt = self.ts.find_text(img,text)
         if pt is not None:
-            self.click(((pt[0][0]+pt[1][0])//2,(pt[0][1]+pt[2][1])//2))
+            self.click((1-(pt[0][0]+pt[1][0])/2/self.xx,1-(pt[0][1]+pt[2][1])/2/self.yy))
 
     # 由click_target调用，返回图片匹配结果
     def scan_screenshot(self, prepared):
