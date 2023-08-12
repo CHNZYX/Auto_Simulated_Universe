@@ -9,6 +9,7 @@ class My_TS:
     def __init__(self,lang='ch'):
         self.lang=lang
         self.ts = TextSystem(use_angle_cls=False)
+        self.ts.text_recognizer.postprocess_op.character.append(' ')
         self.text=''
 
     def sim(self,text,img=None):
