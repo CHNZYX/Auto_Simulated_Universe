@@ -447,6 +447,7 @@ class SimulatedUniverse(UniverseUtils):
                 tx, ty = self.tx, self.ty
                 self.click_text(["购买1个1星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神","购买1个星祝福"])
                 time.sleep(0.3)
+                self.get_screen()
                 if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):
                     self.click((self.tx,self.ty))
                 else:
