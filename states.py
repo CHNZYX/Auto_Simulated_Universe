@@ -116,8 +116,8 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            self.get_screen() #0.9734,0.3009   0.3750,0.9398   0.1562,0.2250
-            #self.click_target('imgs/setting2.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            self.get_screen() #
+            #self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -442,19 +442,14 @@ class SimulatedUniverse(UniverseUtils):
             # 事件选择界面
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                 tx, ty = self.tx, self.ty
-                for i in range(events):
-                    if self.check(
-                        "events/" + str(i),
-                        0.1828,
-                        0.5000,
-                        mask="mask_event",
-                        threshold=0.965,
-                    ):
-                        tx, ty = self.tx, self.ty
-                        break
-                self.click((tx, ty))
-                self.click((0.1167, ty - 0.4685 + 0.3546))
-                time.sleep(1.5)
+                self.click_text(["购买1个1星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神","购买一个"])
+                time.sleep(0.3)
+                if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):
+                    self.click((self.tx,self.ty))
+                else:
+                    self.click((tx, ty))
+                    self.click((0.1167, ty - 0.4685 + 0.3546))
+                time.sleep(1)
             else:
                 self.click((0.9479, 0.9565))
         # 选取奇物
@@ -477,6 +472,20 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.3750,0.9398))
             time.sleep(2)
             self.click((0.1562,0.2250))
+        elif self.check("enhance", 0.9208,0.9380):
+            for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:
+                if self.check("enhance_fail", 0.1068,0.0907):
+                    self.press('esc')
+                    return 1
+                if i is not None:
+                    self.click(i)
+                    time.sleep(0.3)
+                self.click((0.1089,0.0926))
+                while not self.check("enhance", 0.9208,0.9380):
+                    self.click((0.2062, 0.2054))
+                    time.sleep(0.3)
+                    self.get_screen()
+            self.press('esc')
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
             img2=self.check('z',0.4990,0.0731,mask='mask_close1',large=False)
