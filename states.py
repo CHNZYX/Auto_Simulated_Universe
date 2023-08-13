@@ -356,7 +356,7 @@ class SimulatedUniverse(UniverseUtils):
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
             if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>4) or self.kl:
-                time.sleep(1.5)
+                time.sleep(2.5)
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
