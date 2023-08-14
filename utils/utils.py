@@ -132,7 +132,7 @@ class UniverseUtils:
         # 得到一个点的浮点表示
         x = self.x1 - x
         y = self.y1 - y
-        log.debug("获取到点：{:.4f},{:.4f}".format(x / self.xx, y / self.yy))
+        print("获取到点：{:.4f},{:.4f}".format(x / self.xx, y / self.yy))
 
     def calc_point(self, point, offset):
         return (point[0]-offset[0]/self.xx,point[1]-offset[1]/self.yy)
@@ -179,6 +179,23 @@ class UniverseUtils:
         if self._stop == 0:
             win32api.SetCursorPos((x, y))
             pyautogui.click()
+        time.sleep(0.3)
+        
+    # 拖动
+    def drag(self, pt1, pt2):
+        x1, y1 = pt1
+        x1, y1 = self.x1 - int(x1 * self.xx), self.y1 - int(y1 * self.yy)
+        x2, y2 = pt2
+        x2, y2 = self.x1 - int(x2 * self.xx), self.y1 - int(y2 * self.yy)
+        # 全屏模式会有一个偏移
+        if self.full:
+            x1 += 9
+            y1 += 9
+            x2 += 9
+            y2 += 9
+        win32api.SetCursorPos((x1,y1))
+        time.sleep(0.2)
+        pyautogui.drag(x2-x1,y2-y1,0.4)
         time.sleep(0.3)
 
     # 点击与模板匹配的点，flag=True表示必须匹配，不匹配就会一直寻找直到出现匹配
