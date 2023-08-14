@@ -31,11 +31,11 @@ If you are not familiar with Python, it is recommended to directly download the 
 
 **First-time Setup**
 
-Double-click `install_requirements.bat` to install the required libraries.
+Double-click `envs.ps1` to install the required libraries.
 
-Enter the game and teleport the character to Herta's office. Then double-click `align.bat`, switch back to the game interface, and wait for the camera angle transition or spinning to finish.
+Enter the game and teleport the character to Herta's office. Then double-click `align.ps1`, switch back to the game interface, and wait for the camera angle transition or spinning to finish.
 
-If `align.bat` crashes, you can try running the following command as an administrator:
+If `align.ps1` crashes, you can try running the following command as an administrator:
 
 ```plaintext
 python align_angle.py
@@ -47,7 +47,7 @@ If you have changed the mouse DPI or the game resolution/screen resolution/windo
 
 Character close to the Simulated Universe (F key interaction prompt appears).
 
-Double-click `run.bat` or run with administrator privileges:
+Double-click `run.ps1` or run with administrator privileges:
 
 ```plaintext
 python states.py --find=1
@@ -71,7 +71,7 @@ By default, the program will enter the universe corresponding to the default set
 
 **Update Files**
 
-Double-click on `update.bat`.
+Double-click on `update.ps1`.
 
 ### GUI Usage
 

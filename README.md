@@ -36,11 +36,11 @@ This software is open source, free of charge and for learning and exchange purpo
 
 **第一次运行**
 
-双击`install_requirements.bat`安装依赖库
+双击`envs.ps1`安装依赖库
 
-进入游戏，将人物传送到黑塔的办公室，然后双击 `align.bat` ，切回游戏界面，等待视角转换/原地转圈结束
+进入游戏，将人物传送到黑塔的办公室，然后双击 `align.ps1` ，切回游戏界面，等待视角转换/原地转圈结束
 
-如果`align.bat`闪退，可以尝试管理员运行
+如果`align.ps1`闪退，可以尝试管理员运行
 ```plaintext
 python align_angle.py
 ```
@@ -51,7 +51,7 @@ python align_angle.py
 
 人物靠近模拟宇宙（出现f键交互条）
 
-双击`run.bat` 或者 管理员权限运行 
+双击`run.ps1` 或者 管理员权限运行 
 ```plaintext
 python states.py --find=1
 ```
@@ -77,7 +77,7 @@ config:
 
 **更新文件**
 
-双击`update.bat`
+双击`update.ps1`
 
 
 ### GUI使用方法
