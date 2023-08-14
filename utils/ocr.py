@@ -104,6 +104,7 @@ class My_TS:
     def find_text(self, img, text):
         for res in self.ts.detect_and_ocr(img):
             self.text = res.ocr_text
+            print(res)
             for txt in text:
                 if self.sim(txt):
                     print("识别到",txt)
