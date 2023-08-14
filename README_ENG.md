@@ -31,9 +31,9 @@ If you are not familiar with Python, it is recommended to directly download the 
 
 **First-time Setup**
 
-Double-click `envs.ps1` to install the required libraries.
+Right-click `envs.ps1`, click `Run with PowerShell` to install the required libraries.
 
-Enter the game and teleport the character to Herta's office. Then double-click `align.ps1`, switch back to the game interface, and wait for the camera angle transition or spinning to finish.
+Enter the game and teleport the character to Herta's office. Then right-click `align.ps1`, click `Run with PowerShell`, switch back to the game interface, and wait for the camera angle transition or spinning to finish.
 
 If `align.ps1` crashes, you can try running the following command as an administrator:
 
@@ -47,7 +47,7 @@ If you have changed the mouse DPI or the game resolution/screen resolution/windo
 
 Character close to the Simulated Universe (F key interaction prompt appears).
 
-Double-click `run.ps1` or run with administrator privileges:
+Right-click `run.ps1`, click `Run with PowerShell` or run with administrator privileges:
 
 ```plaintext
 python states.py --find=1
@@ -71,7 +71,7 @@ By default, the program will enter the universe corresponding to the default set
 
 **Update Files**
 
-Double-click on `update.ps1`.
+Right-click on `update.ps1`, click `Run with PowerShell`.
 
 ### GUI Usage
 
@@ -117,7 +117,7 @@ Recommended minimum graphics settings:
 
 ### Notification Plugin Usage (notif.exe)
 
-If you are not using local multiple users, simply double-click on `notif.exe` to enable Windows notifications. You will receive notifications after each completion.
+If you are not using local multiple users, simply right-click on `notif.exe`, click `Run with PowerShell` to enable Windows notifications. You will receive notifications after each completion.
 
 If you are using local multiple users, run the GUI in
 

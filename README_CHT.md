@@ -34,9 +34,9 @@ This software is open source, free of charge and for learning and exchange purpo
 
 **第一次運行**
 
-雙擊`envs.ps1`安裝依賴庫
+右键`envs.ps1`，选择“使用PowerShell运行”安裝依賴庫
 
-進入遊戲，將人物傳送到黑塔的辦公室，然後雙擊 `align.ps1` ，切回遊戲界面，等待視角轉換/原地轉圈結束
+進入遊戲，將人物傳送到黑塔的辦公室，然後右键 `align.ps1` ，选择“使用PowerShell运行”，切回遊戲界面，等待視角轉換/原地轉圈結束
 
 如果`align.ps1`閃退，可以嘗試管理員運行
 ```plaintext
@@ -49,7 +49,7 @@ python align_angle.py
 
 人物靠近模擬宇宙（出現f鍵交互條）
 
-雙擊run.ps1 或者 管理員權限運行
+右键`run.ps1` ，选择“使用PowerShell运行”或者 管理員權限運行
 ```plaintext
 python states.py --find=1
 ```
@@ -73,7 +73,7 @@ config:
 
 **更新文件**
 
-雙擊`update.ps1`
+右键`update.ps1`，选择“使用PowerShell运行”
 
 
 ### GUI使用方法
@@ -120,7 +120,7 @@ F8/『停止』按鈕停止運行。
 
 ### 通知插件使用方法（notif.exe）
 
-如果你沒有用本地多用戶，那麽直接雙擊`notif.exe`即可開啟windows通知，每刷完一次都會通知哦
+如果你沒有用本地多用戶，那麽直接右键`notif.exe`，选择“使用PowerShell运行”即可開啟windows通知，每刷完一次都會通知哦
 
 如果你用了本地多用戶，那麽請在子用戶運行gui，在主用戶運行notif，這樣就能在主用戶收到通知了
 
