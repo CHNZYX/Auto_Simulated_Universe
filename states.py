@@ -22,15 +22,14 @@ import pytz
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.10 stable"
-
-# 优先事件
-events = len(os.listdir("imgs/events"))
+version = "v5.20 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
     def __init__(self, find, debug, show_map, speed, unlock=False, bonus=False, update=0):
         super().__init__()
+        # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
+        # t2 = threading.Thread(target=os.system,kwargs={'command':'python notif.py > NUL 2>&1'})
         log.info("当前版本："+version)
         self.now_map = None
         self.now_map_sim = None
@@ -49,6 +48,7 @@ class SimulatedUniverse(UniverseUtils):
         self.floor_tm = time.time()
         self.re_align = 0
         self.unlock = unlock
+        self.unlock = False
         self.check_bonus = bonus
         self.kl=0
         self.fail_count=0
@@ -117,8 +117,8 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            self.get_screen() #0.9734,0.3009   0.3750,0.9398   0.1562,0.2250
-            #self.click_target('imgs/setting2.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            self.get_screen() #
+            #self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -145,7 +145,7 @@ class SimulatedUniverse(UniverseUtils):
 
     def end_of_uni(self):
         self.update_count(0)
-        if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug!=2:
+        if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug==0:
             self._stop=1
             self._stop_game=1
         self.floor = 0
@@ -160,6 +160,11 @@ class SimulatedUniverse(UniverseUtils):
             if self.check("c", 0.9464,0.1287, threshold=0.985):
                 self.press('v')
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
+            if self.fate=='丰饶':
+                if random.randint(0,5)==3:
+                    self.press('3')
+                if random.randint(0,6)==3:
+                    self.press('r')
             self.battle = time.time()
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
@@ -352,10 +357,11 @@ class SimulatedUniverse(UniverseUtils):
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
             if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>4) or self.kl:
-                time.sleep(1.5)
+                time.sleep(2.5)
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
+                self.floor_init=0
                 if self.floor==12 or self.kl:
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
@@ -440,19 +446,22 @@ class SimulatedUniverse(UniverseUtils):
             # 事件选择界面
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                 tx, ty = self.tx, self.ty
-                for i in range(events):
-                    if self.check(
-                        "events/" + str(i),
-                        0.1828,
-                        0.5000,
-                        mask="mask_event",
-                        threshold=0.965,
-                    ):
-                        tx, ty = self.tx, self.ty
-                        break
-                self.click((tx, ty))
-                self.click((0.1167, ty - 0.4685 + 0.3546))
-                time.sleep(1.5)
+                try:
+                    import yaml
+                    with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
+                        event_prior = yaml.safe_load(f)['prior']['事件']
+                except:
+                    event_prior = ["购买1个星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神"]
+                self.click_text(event_prior)
+                time.sleep(0.3)
+                self.get_screen()
+                if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):
+                    self.click((self.tx,self.ty))
+                else:
+                    self.click((tx, ty))
+                    time.sleep(0.3)
+                    self.click((0.1167, ty - 0.4685 + 0.3546))
+                time.sleep(1)
             else:
                 self.click((0.9479, 0.9565))
         # 选取奇物
@@ -471,10 +480,25 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.1203, 0.1093))
         elif self.check("setting",0.9734,0.3009, threshold=0.98):
             self.click((0.9734,0.3009))
-            time.sleep(1.5)
+            time.sleep(2)
             self.click((0.3750,0.9398))
-            time.sleep(1.5)
+            time.sleep(2)
             self.click((0.1562,0.2250))
+        elif self.check("enhance", 0.9208,0.9380):
+            time.sleep(1.5)
+            for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:
+                if self.check("enhance_fail", 0.1068,0.0907):
+                    self.press('esc')
+                    return 1
+                if i is not None:
+                    self.click(i)
+                    time.sleep(0.3)
+                self.click((0.1089,0.0926))
+                while not self.check("enhance", 0.9208,0.9380):
+                    self.click((0.2062, 0.2054))
+                    time.sleep(0.3)
+                    self.get_screen()
+            self.press('esc')
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
             img2=self.check('z',0.4990,0.0731,mask='mask_close1',large=False)

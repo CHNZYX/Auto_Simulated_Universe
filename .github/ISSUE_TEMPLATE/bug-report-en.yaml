@@ -1,0 +1,76 @@
+name: Report bugs
+description: Report Auto Simulated Universe's bug
+title: '[Bug]: '
+labels: [ "bug" ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for your willingness to fill out an error return!
+        ## Below are some notes, please be sure to read them to make it easier for us to deal with them!
+
+        ### ❗ | Make sure that no ISSUE with the same problem has been raised.
+        ### 🌎 | Please fill in the environmental information accurately.
+        ### 🌎 | If you don't know how to phrase a question effectively and accurately, we recommend that you read The Wisdom of Asking Questions first!
+
+        ---
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Please make sure you have read the notes above and check the confirmation box below.
+      options:
+        - label: "I've tested this using an environment that is clean and free of other non-essential plugins and the problem persists."
+          required: true
+        - label: "I have looked in [Issue Tracker](https://github.com/CHNZYX/Auto_Simulated_Universe/issues) for the issue I want to raise and did not find an ISSUE for the same issue."
+          required: true
+        - label: I am aware and agree that if this Issue is about something other than the program itself, my Issue may be automatically closed or/and locked unconditionally.
+          required: true
+        - label: I am aware and agree that if I do not follow the instructions provided in the template, my Issue may be deleted unconditionally.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Environmental information
+
+  - type: input
+    id: env-Auto-Simulated-Universe-ver
+    attributes:
+      label: Auto Simulated Universe version （or Commit Id）
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        What do we need to do to make the bug appear?
+        Simple and clear reproduction steps can help us pinpoint the problem more quickly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What is the desired outcome?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What are the actual results?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logging
+    attributes:
+      label: logs
+
+  - type: textarea
+    id: extra-desc
+    attributes:
+      label: Supplementary note (optional)

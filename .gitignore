@@ -1,12 +1,10 @@
 __pycache__/
 venv/
 .idea/
-.github/
 .vscode/
 build/
 dist/
 *.spec
-info.txt
 imgs/bigmap.jpg
 imgs/bwmap.jpg
 imgs/maxloc.jpg

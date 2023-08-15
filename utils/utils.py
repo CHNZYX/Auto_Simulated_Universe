@@ -84,6 +84,7 @@ class UniverseUtils:
         self.diffi = config.diffi
         self.fate = config.fate
         self.my_fate = 4
+        self.fail_count = 0
         self.ts = ocr.My_TS()
         # 用户选择的命途
         for i in range(len(config.fates)):
@@ -143,10 +144,16 @@ class UniverseUtils:
         # 得到一个点的浮点表示
         x = self.x1 - x
         y = self.y1 - y
-        log.debug("获取到点：{:.4f},{:.4f}".format(x / self.xx, y / self.yy))
+        print("获取到点：{:.4f},{:.4f}".format(x / self.xx, y / self.yy))
 
     def calc_point(self, point, offset):
         return (point[0]-offset[0]/self.xx,point[1]-offset[1]/self.yy)
+    
+    def click_text(self, text):
+        img = self.get_screen()
+        pt = self.ts.find_text(img,text)
+        if pt is not None:
+            self.click((1-(pt[0][0]+pt[1][0])/2/self.xx,1-(pt[0][1]+pt[2][1])/2/self.yy))
 
     # 由click_target调用，返回图片匹配结果
     def scan_screenshot(self, prepared):
@@ -184,6 +191,23 @@ class UniverseUtils:
         if self._stop == 0:
             win32api.SetCursorPos((x, y))
             pyautogui.click()
+        time.sleep(0.3)
+        
+    # 拖动
+    def drag(self, pt1, pt2):
+        x1, y1 = pt1
+        x1, y1 = self.x1 - int(x1 * self.xx), self.y1 - int(y1 * self.yy)
+        x2, y2 = pt2
+        x2, y2 = self.x1 - int(x2 * self.xx), self.y1 - int(y2 * self.yy)
+        # 全屏模式会有一个偏移
+        if self.full:
+            x1 += 9
+            y1 += 9
+            x2 += 9
+            y2 += 9
+        win32api.SetCursorPos((x1,y1))
+        time.sleep(0.2)
+        pyautogui.drag(x2-x1,y2-y1,0.4)
         time.sleep(0.3)
 
     # 点击与模板匹配的点，flag=True表示必须匹配，不匹配就会一直寻找直到出现匹配
@@ -496,6 +520,7 @@ class UniverseUtils:
         while not self.check("run", 0.9844, 0.7889, threshold=0.93):
             time.sleep(0.1)
             self.get_screen()
+        time.sleep(max(0,(self.fail_count-1)*10))
         time.sleep(1)
         self.press('m',0.2)
         time.sleep(2.5)
@@ -633,6 +658,8 @@ class UniverseUtils:
         if self.mini_state==1 and self.floor==11:
             pyautogui.click()
             time.sleep(0.6)
+            pyautogui.click()
+            time.sleep(0.6)
             self.press('w',0.3)
             time.sleep(0.8)
         if self.mini_state==3 and self.floor==12 and not self.check_bonus:
@@ -702,6 +729,17 @@ class UniverseUtils:
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
                 time.sleep(2.1)
+                if self.mini_state==1 and self.floor==12:
+                    for i in range(4):
+                        self.press(str(i+1))
+                        time.sleep(0.4)
+                        self.press('e')
+                        time.sleep(0.6)
+                        self.get_screen()
+                        if not self.check("z",0.5906,0.9537,mask="mask_z"):
+                            break
+                        if self._stop:
+                            break
                 iters = 0
                 while self.check("z",0.5906,0.9537,mask="mask_z") and not self._stop:
                     iters+=1
@@ -717,8 +755,8 @@ class UniverseUtils:
                 self.stop_move=1
                 pyautogui.keyUp("w")
                 pyautogui.click()
-                self.press('a',1.2)
-                self.press('d',0.4)
+                self.press('a',1.4)
+                self.press('d',0.3)
                 self.mini_state+=2
                 break
         self.stop_move=1

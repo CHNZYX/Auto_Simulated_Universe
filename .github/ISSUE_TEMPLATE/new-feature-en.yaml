@@ -1,0 +1,40 @@
+name: New feature
+description: Proposing new features
+title: '[Feat]: '
+labels: [ "enhancement" ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for your willingness to suggest Auto Simulated Universe!
+        ## Below are some notes, please be sure to read them to make it easier for us to deal with them!
+
+        ### ❗ | Make sure no Feature with the same problem has been proposed or implemented.
+        ### 📝 | Make sure that there is no existing PR and code that has an implementation/similarity of the Feature. 
+        ### 📝 | If you don't know how to phrase this effectively and precisely, we suggest you first read The Wisdom of Asking Questions
+
+        ---
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Please make sure you have read the notes above and check the confirmation box below.
+      options:
+        - label: "I'm sure this is a feature that has never been proposed or implemented."
+          required: true
+        - label: "I have looked in [Issue Tracker](https://github.com/CHNZYX/Auto_Simulated_Universe/issues) and [Pull Request](https://github.com/CHNZYX/Auto_Simulated_Universe/pulls) for the feature I'm proposing, and did not find an ISSUE or PR for the same feature."
+          required: true
+        - label: I am aware and agree that this is for suggesting new features only. If this Issue is about another off-topic issue, my Issue may be automatically closed or/and locked unconditionally.
+          required: true
+        - label: I am aware and agree that if I do not follow the instructions provided in the template, my Issue may be deleted unconditionally.
+          required: true
+
+  - type: textarea
+    id: feature-to-add
+    attributes:
+      label: Functional content to be added
+      description: |
+        Please be specific about the functionality you would like to add, including the simulations implemented (if any)
+        Is there a similar feature already implemented? If so please affirmatively suggest what is different from the feature/what part of the feature you would like to improve/add.
+    validations:
+      required: true

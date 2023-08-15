@@ -13,3 +13,6 @@ pyscreeze==0.1.28
 tzdata
 tzlocal
 pytz
+pyyaml
+winotify
+pystray

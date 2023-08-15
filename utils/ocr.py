@@ -9,6 +9,7 @@ class My_TS:
     def __init__(self,lang='ch'):
         self.lang=lang
         self.ts = TextSystem(use_angle_cls=False)
+        self.ts.text_recognizer.postprocess_op.character.append(' ')
         self.text=''
 
     def sim(self,text,img=None):
@@ -99,6 +100,15 @@ class My_TS:
             find=3
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
+    
+    def find_text(self, img, text):
+        for res in self.ts.detect_and_ocr(img):
+            self.text = res.ocr_text
+            print(res)
+            for txt in text:
+                if self.sim(txt):
+                    print("识别到",txt)
+                    return res.box
 
 class text_keys:
     def __init__(self,fate=4):
@@ -106,8 +116,9 @@ class text_keys:
         self.interacts = ['黑塔','区域','事件','退出','沉浸','紧锁','复活','下载','模拟']
         self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
         self.prior_bless = ['火堆外的夜']
-        self.strange = ['福灵胶','博士之袍','降维骰子','信仰债券','时空棱镜','朋克洛德','香涎干酪']
+        self.strange = []
         self.blesses = [[] for _ in range(7)]
+        self.strange = ['福灵胶','博士之袍','降维骰子','信仰债券','时空棱镜','朋克洛德','香涎干酪']
         self.blesses[0] = ['零维强化','均晶转变','共晶反应','宏观偏析','超静定场','谐振传递','四棱锥体','聚塑','哨戒','亚共晶体','切变结构','弥合','迸裂晶格']
         self.blesses[1] = ['体验的富翁','全面记忆','第二次初恋','浮黎','缄默','纯真','难言的羞耻','怅然若失','麻木不仁','不寒而栗','特立独行','头晕目眩','多愁善感','沦浃肌髓']
         self.blesses[2] = ['苦难与阳光','怀疑的四重根','局外人','为何一切尚未消失','感官追奉者的葬礼','被装在套子里的人','旷野的呼告','存在的黄昏','火堆外的夜','知觉迷墙','虚妄贡品','日出之前','无根据颂歌','自欺咖啡馆','他人即地狱','开端与终结']
@@ -115,5 +126,16 @@ class text_keys:
         self.blesses[4] = ['柘弓危矢','射不主皮','帝星君临','白矢决射御','云镝逐步离','彤弓素矰','背孤击虚']
         self.blesses[5] = ['激变变星','极端氦闪','事件视界','寰宇热寂特征数','反物质非逆方程','戒律性闪变','危害性余光','毁灭性吸积','原生黑洞','轨道红移','预兆性景深','递增性末日','灾难性共振','破坏性耀发','偏振受体','永坍缩体','不稳定带','哨戒卫星','回光效应']
         self.blesses[6] = ['末日狂欢','开盖有奖','茫茫白夜','众生安眠','阴风阵阵','被涂污的信天翁','十二猴子与怒汉','操行满分','基本有害','灰暗的火','第二十一条军规','流吧你的眼泪']
+        try:
+            import yaml
+            with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
+                config = yaml.safe_load(f)['prior']
+            for i,j in enumerate(config):
+                if i>1:
+                    self.blesses[i-2] = config[j]
+                else:
+                    self.strange = config[j]
+        except:
+            pass
         self.prior_bless += self.blesses[fate]
         self.strange = [self.fates[self.fate]+'火漆'] + self.strange

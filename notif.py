@@ -10,9 +10,6 @@ from winotify import Notification
 def notif(title,msg):
     Notification(app_id="椰羊自动化",title=title,msg=msg,icon=os.getcwd() + "\\imgs\\icon.png").show()
 
-def show_notification(icon, item):
-    ctypes.windll.user32.MessageBoxW(0, "程序已在运行！", "提示", 0x40)
-    icon.stop()
 
 
 def exit_program(icon, item):
@@ -56,7 +53,7 @@ def main():
     # 检测程序是否已经在运行
     mutex = ctypes.windll.kernel32.CreateMutexW(None, False, "YEYANG_MyProgramMutex")
     if ctypes.windll.kernel32.GetLastError() == 183:
-        show_notification(None, None)
+        ctypes.windll.user32.MessageBoxW(0, "程序已在运行！", "提示", 0x40)
         return
 
     # 创建系统托盘图标

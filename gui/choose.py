@@ -57,7 +57,7 @@ def choose_view(page: Page):
             return
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(3)
+            time.sleep(10)
             page.first=0
             page.dialog.open = False
             page.update()
@@ -74,9 +74,9 @@ def choose_view(page: Page):
         )
         run(page.su.start)
         txt = " "
-        #if time.time()-tm<20:
-        #    go_dep()
-        #    txt = "请确认python+numpy已安装并正确配置环境变量"
+        if time.time()-tm<20:
+            go_dep()
+            txt = "请确认python+numpy已安装并正确配置环境变量"
         notif('已退出自动化',txt)
 
     def start_new(_e):
@@ -109,6 +109,8 @@ def choose_view(page: Page):
             pass
 
     def update_maps(_e):
+        show_snack_bar(page, "更新地图功能已经弃用（´・н・‘）", ft.colors.RED)
+        return
         show_snack_bar(page, "开始更新地图（´・н・‘）", ft.colors.GREEN)
         msg, col = update_map(config.force_update)
         show_snack_bar(page, msg, col)
@@ -120,7 +122,7 @@ def choose_view(page: Page):
         dlg = ft.AlertDialog(
             title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！如果你喜欢为免费的程序付钱，如果你支持作者用爱发电、倒狗赚所谓的服务费安装费我也没办法"),
             content=ft.Text(
-                "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526"
+                "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526\n10秒后自动关闭"
             ),
         )
         page.dialog = dlg
@@ -214,7 +216,7 @@ def choose_view(page: Page):
                     alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
                 ),
-                ft.Row([ft.Container(width=340),ft.Switch(label="沉浸奖励", on_change=bonus_changed),]),
+                ft.Row([ft.Container(width=340),ft.Switch(label="沉浸奖励", on_change=bonus_changed, value=config.bonus),]),
                 ft.Row(
                     [
                         ft.IconButton(
