@@ -22,10 +22,7 @@ import pytz
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.10 stable"
-
-# 优先事件
-events = len(os.listdir("imgs/events"))
+version = "v5.20 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
