@@ -25,7 +25,6 @@ my_map
 .notif
 check0.txt
 check5.txt
-*.exe
 *.zip
 ocr/
 info.yml
