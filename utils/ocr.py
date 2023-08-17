@@ -132,7 +132,7 @@ class text_keys:
                 config = yaml.safe_load(f)['prior']
             for i,j in enumerate(config):
                 if i>1:
-                    self.blesses[i-2] = config[j]
+                    self.blesses[i-1] = config[j]
                 elif i==0:
                     self.strange = config[j]
         except:
