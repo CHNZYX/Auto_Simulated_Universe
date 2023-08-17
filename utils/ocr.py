@@ -133,7 +133,7 @@ class text_keys:
             for i,j in enumerate(config):
                 if i>1:
                     self.blesses[i-2] = config[j]
-                else:
+                elif i==0:
                     self.strange = config[j]
         except:
             pass
