@@ -55,16 +55,18 @@ class Abyss(UniverseUtils):
             self.press('e')
             time.sleep(1)
             self.get_screen()
-            if not self.check("z",0.5906,0.9537,mask="abyss/mask_z"):
+            if not self.check("z",0.5010,0.9426,mask="abyss/mask_z") or self.check("abyss/z",0.5010,0.9426,mask="abyss/mask_z"):
                 break
         time.sleep(1)
         pyautogui.click()
         time.sleep(3.5)
     def route(self):
         self.get_screen()
-        #self.click_target('imgs/abyss/in.jpg',0.9,True)
+        #self.click_target('imgs/abyss/fail.jpg',0.9,True)
         if self.check("run", 0.9844, 0.7889, threshold=0.93):
             self.press('F4')
+        elif self.check("abyss/fail",0.5995,0.1343):
+            self.click((0.5995,0.1343))
         elif self.check("abyss/in",0.9130,0.6074):
             self.press('w',3.5)
             t = self.move_to_interac(1,1)
@@ -79,6 +81,9 @@ class Abyss(UniverseUtils):
                 self.ready()
                 self.wait()
         elif self.check("abyss/team",0.6500,0.4019):
+            if self.check("abyss/begin",0.1062,0.0815):
+                self.click((0.1062,0.0806))
+                return
             if random.randint(0,1):
                 self.team=self.team[::-1]
             for i,j in enumerate([(0.4026,0.3259),(0.4010,0.2343)]):
