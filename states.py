@@ -22,7 +22,7 @@ import pytz
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.20 stable"
+version = "v5.21 stable"
 
 
 class SimulatedUniverse(UniverseUtils):

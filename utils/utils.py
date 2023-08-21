@@ -550,7 +550,7 @@ class UniverseUtils:
             type = 3
         return loc, type
 
-    def move_to_interac(self, i=0):
+    def move_to_interac(self, i=0, abyss=0):
         self.get_screen()
         threshold=0.88
         shape = (int(self.scx * 190), int(self.scx * 190))
@@ -610,7 +610,7 @@ class UniverseUtils:
                     sub*=1.2
                 else:
                     sub=0
-            if (abs(sub)>50 and target[1]==3) or self.floor in [3,7,12]:
+            if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
                 sub=0
             self.mouse_move(sub)
             return sub
@@ -718,6 +718,7 @@ class UniverseUtils:
                 self.stop_move=1
                 time.sleep(2.1)
                 if self.mini_state==1 and self.floor==12:
+                    pyautogui.keyUp("w")
                     for i in range(4):
                         self.press(str(i+1))
                         time.sleep(0.4)
