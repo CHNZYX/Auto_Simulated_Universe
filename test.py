@@ -73,7 +73,7 @@ class Abyss(UniverseUtils):
             self.press('w',1)
             self.ready()
             self.wait()
-            if abs(t)<=30:
+            if abs(t)>30:
                 time.sleep(1)
                 self.press('w')
                 self.move_to_interac(1,1)
