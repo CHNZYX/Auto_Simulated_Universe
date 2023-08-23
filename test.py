@@ -77,7 +77,7 @@ class Abyss(UniverseUtils):
                 time.sleep(1)
                 self.press('w')
                 self.move_to_interac(1,1)
-                self.press('w',1)
+                self.press('w',1.5)
                 self.ready()
                 self.wait()
         elif self.check("abyss/team",0.6500,0.4019):

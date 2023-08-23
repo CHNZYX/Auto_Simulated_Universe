@@ -1008,7 +1008,7 @@ class UniverseUtils:
             y = -30
         else:
             y = x
-        dx = int(9800 * y * 1295 / self.real_width / 180 * self.multi)
+        dx = int(15.873 * y * self.multi)
         if self._stop == 0 and self.stop_move==0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
         time.sleep(0.05)
