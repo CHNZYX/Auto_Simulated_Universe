@@ -40,7 +40,7 @@ def clear(icon=None, item=None):
     tm = time.time()
     if os.path.exists(file_name):
         with open(file_name, 'w', encoding="utf-8",errors='ignore') as file:
-            file.write('0\n清零\n成功\n{tm}')
+            file.write('0\n清零\n计数:0\n{tm}')
             
 def notify():
     file_name = 'logs/notif.txt'
