@@ -40,7 +40,7 @@ def choose_view(page: Page):
     def angle(_e):
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(10)
+            time.sleep(8)
             page.first=0
             page.dialog.open = False
             page.update()
@@ -57,7 +57,7 @@ def choose_view(page: Page):
             return
         if config.angle == "1.0" or page.first==1:
             go_about()
-            time.sleep(10)
+            time.sleep(8)
             page.first=0
             page.dialog.open = False
             page.update()
@@ -77,7 +77,16 @@ def choose_view(page: Page):
         txt = " "
         if time.time()-tm<20:
             go_dep()
-            txt = "请确认python+numpy已安装并正确配置环境变量，并且自动化为最新版本"
+            txt = "请确认python+numpy已安装并正确配置环境变量"
+        try:
+            if page.su.validate == 0:
+                txt = "版本过低，请更新"
+        except:
+            pass
+        try:
+            win32gui.SetForegroundWindow(page.su.my_nd)
+        except:
+            pass
         notif('已退出自动化',txt)
 
     def start_abyss(_e):
