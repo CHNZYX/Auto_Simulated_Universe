@@ -18,7 +18,10 @@ def abyss_view(page: Page):
         pass
     
     def back_choose(_):
-        page.ab._stop = 1
+        try:
+            page.ab._stop = 1
+        except:
+            pass
         page.go("/")
         page.update()
 

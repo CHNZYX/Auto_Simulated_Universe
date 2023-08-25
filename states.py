@@ -42,10 +42,13 @@ class SimulatedUniverse(UniverseUtils):
             try:
                 if float(lowest)>float(ves):
                     log.info("当前版本过低，强制退出")
-                    self._stop = 1
-                    return
+                    self.validation = 0
+                else:
+                    self.validation = 1
             except:
-                pass
+                self.validation = 0
+        else:
+            self.validation = 1
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
@@ -711,6 +714,8 @@ class SimulatedUniverse(UniverseUtils):
 
     def start(self):
         self._stop = False
+        if self.validation == 0:
+            return
         keyboard.on_press(self.on_key_press)
         if self._show_map:
             t_map = threading.Thread(target=self.show_map)
