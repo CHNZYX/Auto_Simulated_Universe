@@ -4,16 +4,19 @@ import flet as ft
 import win32gui
 
 from states import SimulatedUniverse
+from abyss import Abyss
 
 
 class Page(ft.Page):
     su: Optional[SimulatedUniverse]
+    ab: Optional[Abyss]
     first: int
     bonus: bool
 
 
 def init_page(page: Page):
     page.su = None
+    page.ab = None
     page.first = 1
 
 

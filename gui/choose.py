@@ -18,7 +18,7 @@ def choose_view(page: Page):
         cnt = 0
         for i in page.views[0].controls[0].controls:
             if isinstance(i, ft.FilledButton):
-                if cnt <= 2:
+                if cnt <= 1:
                     i.disabled = value
                     cnt += 1
                 else:
@@ -77,22 +77,11 @@ def choose_view(page: Page):
         txt = " "
         if time.time()-tm<20:
             go_dep()
-            txt = "请确认python+numpy已安装并正确配置环境变量"
+            txt = "请确认python+numpy已安装并正确配置环境变量，并且自动化为最新版本"
         notif('已退出自动化',txt)
 
-    def start_new(_e):
-        show_snack_bar(page, "开始录入，请切换回游戏（≖‿≖✧）", ft.colors.GREEN)
-        page.su = run(
-            SimulatedUniverse,
-            0,
-            int(config.debug_mode),
-            int(config.show_map_mode),
-            int(config.speed_mode),
-            int(config.unlock),
-            0,
-            gui=1
-        )
-        run(page.su.start)
+    def start_abyss(_e):
+        page.go("/abyss")
 
     def stops(_e):
         show_snack_bar(page, "停止运行（>∀<）", ft.colors.GREEN)
@@ -122,7 +111,7 @@ def choose_view(page: Page):
 
     def go_about(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！如果你喜欢为免费的程序付钱，如果你支持作者用爱发电、倒狗赚所谓的服务费安装费我也没办法"),
+            title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！"),
             content=ft.Text(
                 "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526\n10秒后自动关闭"
             ),
@@ -190,9 +179,9 @@ def choose_view(page: Page):
                             on_click=start,
                         ),
                         ft.ElevatedButton(
-                            "录入",
-                            icon=ft.icons.ADD,
-                            on_click=start_new,
+                            "深渊",
+                            icon=ft.icons.GAMEPAD,
+                            on_click=start_abyss,
                         ),
                         ft.ElevatedButton(
                             "显隐",

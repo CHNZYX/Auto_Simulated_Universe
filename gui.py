@@ -6,6 +6,7 @@ import win32gui
 
 from gui.choose import choose_view
 from gui.config import config_view
+from gui.abyss import abyss_view
 from gui.common import cleanup, mynd, Page, init_page
 
 
@@ -15,6 +16,8 @@ def main(page: Page):
         choose_view(page)
         if e.route == "/config":
             config_view(page)
+        if e.route == '/abyss':
+            abyss_view(page)
         page.update()
 
     def view_pop():
