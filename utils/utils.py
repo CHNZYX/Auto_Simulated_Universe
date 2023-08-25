@@ -1001,22 +1001,19 @@ class UniverseUtils:
                     pass
 
     # 视角转动x度
-    def mouse_move(self, x):
-        dx = int(15.873 * x * self.multi)
-        i = int(dx / 400)
-        last = dx - i * 400
-
-        # 视角移动的步长
-        step = 400 if dx > 0 else -400
-
-        for _ in range(abs(i)):
-            win32api.mouse_event(1, step, 0)  # 进行视角移动
-            time.sleep(0.04)
-
-        if last != 0:
-            win32api.mouse_event(1, last, 0)  # 进行视角移动
-
-        time.sleep(0.5)
+    def mouse_move(self, x, init=1):
+        if x > 30:
+            y = 30
+        elif x < -30:
+            y = -30
+        else:
+            y = x
+        dx = int(15.873 * y * self.multi)
+        if self._stop == 0 and self.stop_move==0:
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
+        time.sleep(0.05)
+        if x != y:
+            self.mouse_move(x - y,0)
 
     # 在大地图中覆盖小地图
     def write_map(self, bw_map):
