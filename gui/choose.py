@@ -71,6 +71,7 @@ def choose_view(page: Page):
             int(config.speed_mode),
             int(config.unlock),
             int(config.bonus),
+            gui=1
         )
         run(page.su.start)
         txt = " "
@@ -89,6 +90,7 @@ def choose_view(page: Page):
             int(config.speed_mode),
             int(config.unlock),
             0,
+            gui=1
         )
         run(page.su.start)
 

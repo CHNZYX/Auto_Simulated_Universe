@@ -17,6 +17,7 @@ import os
 from align_angle import main as align_angle
 from utils.config import config
 import datetime
+import requests
 import pytz
 
 pyautogui.FAILSAFE=False
@@ -26,11 +27,25 @@ version = "v5.21 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map, speed, unlock=False, bonus=False, update=0):
+    def __init__(self, find, debug, show_map, speed, unlock=False, bonus=False, update=0, gui=0):
         super().__init__()
         # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
         # t2 = threading.Thread(target=os.system,kwargs={'command':'python notif.py > NUL 2>&1'})
         log.info("当前版本："+version)
+        if gui:
+            try:
+                lowest=requests.get("https://chnzyx.github.io/temp/",timeout=8).text
+                log.info("版本下限：v"+lowest)
+            except:
+                log.info("网络异常，强制退出")
+            ves = version[1:].split(' ')[0]
+            try:
+                if float(lowest)>float(ves):
+                    log.info("当前版本过低，强制退出")
+                    self._stop = 1
+                    return
+            except:
+                pass
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
