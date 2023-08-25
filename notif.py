@@ -34,6 +34,14 @@ def maopao(icon=None, item=None):
     with open(file_name, 'w', encoding="utf-8") as file:
         file.write(f"{cnt}\n喵\n计数:{cnt}\n{tm}")
 
+
+def clear(icon=None, item=None):
+    file_name = 'logs/notif.txt'
+    tm = time.time()
+    if os.path.exists(file_name):
+        with open(file_name, 'w', encoding="utf-8",errors='ignore') as file:
+            file.write('0\n清零\n成功\n{tm}')
+            
 def notify():
     file_name = 'logs/notif.txt'
     if not os.path.exists(file_name):
@@ -61,6 +69,7 @@ def main():
     icon = Icon("椰羊自动化", image, "椰羊自动化")
     menu = (
         item('冒泡', maopao),
+        item('清零', clear),
         item('退出', exit_program),
     )
     icon.menu = menu
