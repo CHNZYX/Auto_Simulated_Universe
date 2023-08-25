@@ -52,10 +52,7 @@ def choose_view(page: Page):
             show_snack_bar(page, "校准失败（⊙.⊙）", ft.colors.RED)
 
     def start(_e):
-        if config.angle == "1.0":
-            show_snack_bar(page, "没有校准,不准运行（￣^￣）", ft.colors.RED)
-            return
-        if config.angle == "1.0" or page.first==1:
+        if page.first==1:
             go_about()
             time.sleep(8)
             page.first=0
