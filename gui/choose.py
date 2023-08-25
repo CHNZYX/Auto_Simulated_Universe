@@ -137,6 +137,8 @@ def choose_view(page: Page):
         page.update()
 
     def unlock(e=None):
+        show_snack_bar(page, "解锁限制功能已经弃用o(*￣▽￣*)ブ", ft.colors.RED)
+        return
         go_money()
         time.sleep(3)
         page.dialog.open = False
