@@ -34,7 +34,7 @@ class SimulatedUniverse(UniverseUtils):
         log.info("当前版本："+version)
         if gui:
             try:
-                lowest=requests.get("https://chnzyx.github.io/asu_version_check/",timeout=8).text
+                lowest=requests.get("https://chnzyx.github.io/asu_version_check/",timeout=8).text.strip()
                 log.info("版本下限：v"+lowest)
             except:
                 log.info("网络异常，强制退出")
