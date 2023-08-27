@@ -371,8 +371,14 @@ class UniverseUtils:
     def get_screen(self):
         i=0
         while True:
-            screen_raw = pyautogui.screenshot(region=[self.x0,self.y0,self.xx,self.yy])
-            screen_raw = np.array(screen_raw)
+            try:
+                screen_raw = pyautogui.screenshot(region=[self.x0,self.y0,self.xx,self.yy])
+                screen_raw = np.array(screen_raw)
+            except:
+                log.info("截图失败!")
+                time.sleep(0.1)
+                continue
+            print(screen_raw.shape)
             if screen_raw.shape[0]>3:
                 break
             else:

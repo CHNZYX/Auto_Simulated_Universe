@@ -19,6 +19,7 @@ from utils.config import config
 import datetime
 import requests
 import pytz
+import pyuac
 
 pyautogui.FAILSAFE=False
 
@@ -741,12 +742,15 @@ def main():
 
 
 if __name__ == "__main__":
-    find = 1
-    debug = 0
-    show_map = 0
-    update = 0
-    speed = 0
-    bonus = 0
-    for i in sys.argv[1:]:
-        exec(i.split("-")[-1])
-    main()
+    if not pyuac.isUserAdmin():
+        pyuac.runAsAdmin()
+    else:
+        find = 1
+        debug = 0
+        show_map = 0
+        update = 0
+        speed = 0
+        bonus = 0
+        for i in sys.argv[1:]:
+            exec(i.split("-")[-1])
+        main()
