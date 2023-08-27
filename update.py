@@ -6,6 +6,7 @@ import time
 import threading
 import win32api
 import zipfile
+import os
 
 def get_latest_release_info(repo_url):
     response = requests.get(repo_url)
@@ -38,22 +39,30 @@ def download_file(url, save_path):
     response = requests.get(url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
     size = 0
+    tm = time.time()
+    size_ls = [0]
+    tm_ls = [tm]
+    cnt_ls = [0 for _ in range(5)]
     
     with open(save_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
             size += file.write(data)
+            size_ls.append(size)
+            tm_ls.append(time.time())
             progress_bar["value"]=size/total_size*100
-            operation_label.config(text="下载中... {:.0f}%".format(progress_bar["value"]))
+            if time.time()>tm+1:
+                tm = time.time()
+                cnt_ls.append(len(tm_ls))
+            if cnt_ls[-1] == len(tm_ls):
+                operation_label.config(text="下载中... {:.0f}%\t{:.0f}KB/s".format(progress_bar["value"],(size-size_ls[cnt_ls[-5]])/(time.time()-tm_ls[cnt_ls[-5]])/1024))
             progress_bar.update()
     
     operation_label.config(text="下载完成，解压中...")
     target_process_name = "flet.exe"  # 替换为目标进程名
     kill_process_by_name(target_process_name)
     unzip_and_overwrite('./archive.zip','.')
+    os.remove('./archive.zip')
     operation_label.config(text="更新完成")
-    time.sleep(0.5)
-    root.destroy()
-    exit()
     
 
 def start_download():
@@ -72,19 +81,26 @@ def main_operation():
     try:
         version_remote = info['tag_name'].strip('v').split(' ')[0]
     except:
-        operation_label.config(text="网络异常")
-        return
+        try:
+            info = dict()
+            info['tag_name']= 'v'+requests.get("https://chnzyx.github.io/asu_version_latest/").text.strip()
+            version_remote = info['tag_name'].strip('v').split(' ')[0]
+            operation_label.config(text=f"网络异常，当前可用最高版本：{info['tag_name']}")
+        except:
+            operation_label.config(text=f"网络异常")
+            return
     
     strInfoPath = u'\\StringFileInfo\\000004B0\\FileVersion'
     try:
         version_local = win32api.GetFileVersionInfo('gui.exe', strInfoPath)
     except:
-        operation_label.config(text="本地文件异常")
-        return
-    if version_remote == version_local:
+        version_local = "0.0"
+    if float(version_remote) <= float(version_local):
         operation_label.config(text="当前已是最新版本")
         return
     
+    if version_local == "0.0":
+        version_local = "不存在"
     global popup
     popup = tk.Toplevel(root)
     popup.title("版本信息")

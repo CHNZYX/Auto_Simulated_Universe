@@ -24,7 +24,7 @@ import pyuac
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.22 stable"
+version = "v5.23 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -35,10 +35,15 @@ class SimulatedUniverse(UniverseUtils):
         log.info("当前版本："+version)
         if gui:
             try:
-                lowest=requests.get("https://chnzyx.github.io/asu_version_check/",timeout=8).text.strip()
+                lowest=requests.get("https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest").json()["name"].split('lowest')[1].strip().strip('v')
                 log.info("版本下限：v"+lowest)
             except:
-                log.info("网络异常，强制退出")
+                log.info("网络异常，尝试备用网址")
+                try:
+                    lowest=requests.get("https://chnzyx.github.io/asu_version_check/",timeout=8).text.strip()
+                    log.info("版本下限：v"+lowest)
+                except:
+                    log.info("网络异常，强制退出")
             ves = version[1:].split(' ')[0]
             try:
                 if float(lowest)>float(ves):
@@ -66,7 +71,6 @@ class SimulatedUniverse(UniverseUtils):
         self.floor_tm = time.time()
         self.re_align = 0
         self.unlock = unlock
-        self.unlock = False
         self.check_bonus = bonus
         self.kl=0
         self.fail_count=0
