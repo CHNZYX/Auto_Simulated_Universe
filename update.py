@@ -1,0 +1,115 @@
+import psutil
+import requests
+import tkinter as tk
+from tkinter import ttk
+import time
+import threading
+import win32api
+import zipfile
+
+def get_latest_release_info(repo_url):
+    response = requests.get(repo_url)
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        return None
+
+def kill_process_by_name(process_name):
+    for process in psutil.process_iter(attrs=['pid', 'name']):
+        if process.info['name'] == process_name:
+            try:
+                # Terminate the process
+                psutil.Process(process.info['pid']).terminate()
+                print(f"Killed process {process_name} with PID {process.info['pid']}")
+            except psutil.NoSuchProcess:
+                pass
+
+def unzip_and_overwrite(zip_path, extract_path):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        for file_info in zip_ref.infolist():
+            try:
+                print(file_info)
+                zip_ref.extract(file_info, extract_path)
+            except Exception as e:
+                pass
+
+def download_file(url, save_path):
+    response = requests.get(url, stream=True)
+    total_size = int(response.headers.get('content-length', 0))
+    size = 0
+    
+    with open(save_path, 'wb') as file:
+        for data in response.iter_content(chunk_size=1024):
+            size += file.write(data)
+            progress_bar["value"]=size/total_size*100
+            operation_label.config(text="下载中... {:.0f}%".format(progress_bar["value"]))
+            progress_bar.update()
+    
+    operation_label.config(text="下载完成，解压中...")
+    target_process_name = "flet.exe"  # 替换为目标进程名
+    kill_process_by_name(target_process_name)
+    unzip_and_overwrite('./archive.zip','.')
+    operation_label.config(text="更新完成")
+    time.sleep(0.5)
+    root.destroy()
+    exit()
+    
+
+def start_download():
+    popup.destroy()
+    operation_label.config(text="下载中...")
+    download_url = f"https://ghproxy.com/https://github.com/CHNZYX/Auto_Simulated_Universe/releases/download/{info['tag_name']}/Auto_Simulated_Universe_{info['tag_name']}.zip"
+    save_path = "./archive.zip"
+    t = threading.Thread(target=download_file, args=(download_url, save_path))
+    t.start()
+
+def main_operation():
+    global info
+    operation_label.config(text="获取版本信息...")
+    repo_url = "https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest"
+    info = get_latest_release_info(repo_url)
+    try:
+        version_remote = info['tag_name'].strip('v').split(' ')[0]
+    except:
+        operation_label.config(text="网络异常")
+        return
+    
+    strInfoPath = u'\\StringFileInfo\\000004B0\\FileVersion'
+    try:
+        version_local = win32api.GetFileVersionInfo('gui.exe', strInfoPath)
+    except:
+        operation_label.config(text="本地文件异常")
+        return
+    if version_remote == version_local:
+        operation_label.config(text="当前已是最新版本")
+        return
+    
+    global popup
+    popup = tk.Toplevel(root)
+    popup.title("版本信息")
+    version_label = tk.Label(popup, text=f"当前版本： {version_local} 最新版本： {version_remote}")
+    version_label.pack(padx=20, pady=5)
+    show_popup_button = tk.Button(popup, text="更新", command=start_download)
+    show_popup_button.pack(padx=20, pady=5)
+    
+    
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Update")
+    
+    # 创建操作标签
+    operation_label = tk.Label(root, text="Starting...")
+    operation_label.pack(pady=10)
+
+    # 创建进度条
+    progress_bar = ttk.Progressbar(root, orient="horizontal", length=300, mode="determinate")
+    progress_bar.pack(pady=10)
+
+    # 执行操作
+    t = threading.Thread(target=main_operation)
+    t.start()
+
+    # 运行主循环
+    root.mainloop()

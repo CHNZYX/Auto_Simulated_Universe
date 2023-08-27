@@ -107,7 +107,7 @@ class UniverseUtils:
                 scale_x = dpi_x / 96
                 scale_y = dpi_y / 96
                 self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
-
+                log.info("DPI: "+str(self.scale))
                 # 计算出真实分辨率
                 self.real_width = int(self.xx * scale_x)
                 # x01y01:窗口左上右下坐标
