@@ -117,6 +117,7 @@ class SimulatedUniverse(UniverseUtils):
         self.floor_init = 0
         self.init_map()
         fail_cnt=0
+        begin=1
         while True:
             if self._stop:
                 break
@@ -139,8 +140,13 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            self.get_screen() #
-            #self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            self.get_screen()
+            if begin and not self.check("f", 0.4240,0.4407) and not self.check("abyss/1",0.8568,0.6769):
+                begin = 0
+                self.press("F4")
+                time.sleep(1)
+                self.get_screen()
+            # self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -518,6 +524,10 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press('esc')
+        elif self.check("abyss/2",0.4297,0.8213):
+            self.click((0.2313,0.5324))
+        elif self.check("abyss/1",0.8568,0.6769):
+            self.click((0.6260,0.8167))
         else:
             img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
             img2=self.check('z',0.4990,0.0731,mask='mask_close1',large=False)
