@@ -2,7 +2,7 @@
 
 
 # Auto_Simulated_Universe
-Star Dome Railway - Automated Simulation of the Universe
+Star Dome Railway - Auto Simulation of the Universe
 
 This project incorporates a pause-resume feature. You can switch to other tasks and return later to continue the automation process.
 
@@ -46,10 +46,10 @@ python states.py
 The content of `info.yml` is as follows:
 ```yaml
 config:
-  order_text: [1, 2, 3, 4] # Character selection order at the start of the simulation. Change this according to your team composition. 1 represents the first character. It's advisable to put ranged characters (like Rita, Seele) in position 1 for better monster clearing.
+  order_text: [1, 2, 3, 4] # Character selection order at the start of the simulation. Change this according to your team composition. 1 represents the first character. It's advisable to put ranged characters (like Asta or March 7th) in position 1 for better monster clearing.
   angle: 1.0  # Calibration data, do not modify.
   difficulty: 4 # Universe difficulty, change to 1 if you want to play on difficulty 1.
-  fate: Exploration # Fate selection, default is Exploration, you can directly modify it to other fates.
+  fate: 巡猎 # Fate selection, default is 巡猎, you can directly modify it to other fates.
   map_sha: '' # Map data version, not recommended to change.
   show_map_mode: 0
   debug_mode: 0
@@ -68,7 +68,7 @@ Important!!! Once you start running/calibrating, do not move the game window! If
 
 If you're experiencing issues like excessive/inadequate camera rotation leading to getting lost, it might be due to calibration. You can manually calibrate as follows:
 
-Enter the game and teleport your character to the office in the Black Tower. Then, double-click `align.bat` and wait for the camera to rotate/character to spin in place.
+Enter the game and teleport your character to Herta's office. Then, double-click `align.bat` and wait for the camera to rotate/character to spin in place.
 
 If `align.bat` crashes, you can try using the command line:
 ```plaintext
@@ -87,7 +87,7 @@ Double-click `update.bat`.
 
 In the settings, select your desired difficulty and fate. Please pre-select your default team composition in the game.
 
-It's advisable to put a ranged character (like Rita, Seele) in the first position for better monster clearing.
+It's advisable to put a ranged character (like Asta or March 7th) in the first position for better monster clearing.
 
 **Running Automation**
 
@@ -121,7 +121,7 @@ Recommended minimal graphics settings:
 
 If you're experiencing issues like excessive/inadequate camera rotation leading to getting lost, it might be due to calibration. You can manually calibrate as follows:
 
-Enter the game and teleport your character to the office in the Black Tower. Then, click the "Calibrate" button, and wait for the camera to rotate/character to spin in place.
+Enter the game and teleport your character to Herta's office. Then, click the "Calibrate" button, and wait for the camera to rotate/character to spin in place.
 
 Changing your mouse DPI might affect calibration values, in which case, you'll need to recalibrate.
 
@@ -141,7 +141,7 @@ Each team's composition is represented by four numbers.
 
 ![Team Composition Numbers](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
 
-For instance, in the image above, if you want to choose Natasha, Jingyuan, Xier, and Yanqing, input: `6 4 3 2`.
+For instance, in the image above, if you want to choose Natasha, Jing Yuan, Seele, and Yan Qing, input: `6 4 3 2`.
 
 ### Notification Plugin Instructions (notif.exe)
 
@@ -181,7 +181,7 @@ After a few seconds, the character will move backward and then forward. During t
 
 Move around the map, and when you feel it's sufficient, press F8 or Ctrl+C to terminate the process. This will capture the map data. It will be saved in the `imgs/maps/my_xxxxx` directory (sorted by modification time).
 
-For maps with monsters, it's advisable to use Xier's ultimate ability. Being locked onto a target can affect the mini-map recognition.
+For maps with monsters, it's advisable to use Seele's ultimate ability. Being locked onto a target can affect the mini-map recognition.
 
 A `target.jpg` file will be present in the `imgs/maps/my_xxxxx` directory. You can use the built-in Paint application on Windows to open it and mark points (you can refer to the `target.jpg` file in other map folders).
 
