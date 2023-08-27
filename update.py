@@ -33,8 +33,7 @@ def unzip_and_overwrite(zip_path, extract_path):
                 print(file_info)
                 zip_ref.extract(file_info, extract_path)
             except Exception as e:
-                os.remove('./archive.zip')
-                return
+                pass
 
 def download_file(url, save_path):
     response = requests.get(url, stream=True)
