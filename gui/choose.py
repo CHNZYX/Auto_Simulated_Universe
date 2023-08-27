@@ -66,9 +66,8 @@ def choose_view(page: Page):
             int(config.debug_mode),
             int(config.show_map_mode),
             int(config.speed_mode),
-            int(config.unlock),
+            1,
             int(config.bonus),
-            unlock=1,
             gui=1
         )
         run(page.su.start)

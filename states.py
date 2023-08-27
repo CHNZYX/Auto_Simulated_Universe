@@ -23,7 +23,7 @@ import pytz
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.22 stable"
+version = "v5.23 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -65,7 +65,6 @@ class SimulatedUniverse(UniverseUtils):
         self.floor_tm = time.time()
         self.re_align = 0
         self.unlock = unlock
-        self.unlock = False
         self.check_bonus = bonus
         self.kl=0
         self.fail_count=0
