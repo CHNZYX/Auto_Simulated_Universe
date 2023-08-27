@@ -40,8 +40,6 @@ This software is open source, free of charge and for learning and exchange purpo
 
 **运行自动化**
 
-人物靠近模拟宇宙（出现f键交互条）
-
 双击`run.bat` 或者 命令行运行 
 ```plaintext
 python states.py
@@ -95,8 +93,6 @@ python align_angle.py
 最好在一号位选远程角色（艾丝妲、三月七等）方便开怪。
 
 **运行自动化**
-
-人物靠近模拟宇宙（出现f键交互条）
 
 点击运行
 
