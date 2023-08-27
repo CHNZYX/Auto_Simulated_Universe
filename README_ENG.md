@@ -1,172 +1,192 @@
 [简体中文](README.md) | [繁体中文](README_CHT.md) | [English](README_ENG.md)
 
+
 # Auto_Simulated_Universe
-Star Rail - Automated Simulated Universe
+Star Rail - Auto Simulated Universe
 
-It has a breakpoint recovery function, so you can switch to do other things and come back to continue automation.
+This project incorporates a pause-resume feature. You can switch to other tasks and return later to continue the automation process.
 
-All Worlds in Version 1.2 are supported
+Currently supports automation of all worlds within the simulated universe.
 
 ----------------------------------------------------------------------------------------------
 
 ## Disclaimer
-This software is an external tool designed to automate gameplay in the game Honkai Star Rail. It is designed to interact with the game only through existing user interfaces and complies with relevant laws and regulations. The purpose of this software package is to provide simplification and user interaction with the game through functionality, and it is not intended to disrupt game balance or provide any unfair advantages. This software package does not modify any game files or game code in any way.
+This software is an external tool intended to automate gameplay in the game "Honkai Star Rail." It is designed to interact with the game solely through existing user interfaces and in compliance with relevant laws and regulations. This software package aims to provide simplification and user interaction with the game's features and does not intend to disrupt game balance or provide any unfair advantages. The package will not modify any game files or game code in any way.
 
-This software is open source, free of charge, and for learning and exchange purposes only. The developer team has the final right to interpret this project. All problems arising from the use of this software are not related to this project and the developer team. If you encounter a merchant using this software to practice on your behalf and charging for it, it may be the cost of equipment and time, etc. The problems and consequences arising from this software have nothing to do with it.
+This software is open-source and free of charge, intended for educational and collaborative purposes only. The development team holds the final interpretation rights for this project. Any issues arising from the use of this software are unrelated to this project and the development team. If you come across merchants using this software for power-leveling and charging for it, the costs might involve equipment and time, and any issues or consequences arising from this software are unrelated to it.
 
-Please note that according to MiHoYo's [Fair Play Pledge for Honkai Star Rail](https://sr.mihoyo.com/news/111246?nav=news&type=notice):
+Please note that according to MiHoYo's [Fair Play Declaration for Honkai Star Rail](https://hsr.hoyoverse.com/en-us/news/111244):
 
-    "The use of third-party tools such as plugins, accelerators, scripts, or other tools that disrupt game fairness is strictly prohibited."
-    "Upon discovery, miHoYo (hereinafter referred to as "we") will take measures including deduction of illegal gains, freezing of game accounts, and permanent bans, depending on the seriousness and frequency of the violations."
+    "The use of plug-ins, accelerators, scripts, or other third-party tools that disrupt the fairness of the game is strictly prohibited."
+    "Once discovered, miHoYo (hereinafter referred to as 'we') will take measures such as deducting illegal gains, freezing game accounts, and permanently banning game accounts based on the severity and frequency of violations."
 
 ### Usage
 
-If your computer does not have Python + NumPy installed or if Python has not been properly added to the environment variables, you will be unable to use this project. Please understand the threshold set by this project. If you are blocked by this threshold, please search for a solution on Google by yourself.
+Only supports 1920x1080 resolution (windowed or fullscreen), and text language selection is simplified Chinese.
 
-Only supports 1920\*1080 (windowed or fullscreen), enable detailed descriptions for blessings, and select Simplified Chinese as the text language. (If the screen resolution is equal to 1920\*1080, open in fullscreen; if it is larger, open in windowed mode).
+Default World: For instance, if your current default world in the simulated universe is World 4 but you want to automate World 6, please enter World 6 once to change the default world.
 
-Default world: For example, if your current Simulated Universe is set to default to World 4, but you want to automate World 6, please enter World 6 once to change the default world.
-
-If you are not familiar with Python, it is recommended to directly download the GUI version from the release and read the GUI usage instructions directly.
+If you're not familiar with Python, it's recommended to directly download the GUI version from the [release](https://github.com/CHNZYX/Auto_Simulated_Universe/releases/latest) and follow the GUI usage instructions.
 
 **First-time Setup**
 
 Double-click `install_requirements.bat` to install the required libraries.
 
-Enter the game and teleport the character to Herta's office. Then double-click `align.bat`, switch back to the game interface, and wait for the camera angle transition or spinning to finish.
-
-If `align.bat` crashes, you can try running the following command as an administrator:
-
-```plaintext
-python align_angle.py
-```
-
-If you have changed the mouse DPI or the game resolution/screen resolution/window scaling ratio, you need to recalibrate!
+Rename `info_example.yml` to `info.yml`.
 
 **Running Automation**
 
-Character close to the Simulated Universe (F key interaction prompt appears).
-
-Double-click `run.bat` or run with administrator privileges:
-
+Double-click `run.bat` or run in the command line:
 ```plaintext
-python states.py --find=1
+python states.py
 ```
-`info.yml` is as follows.
+
+The content of `info.yml` is as follows:
 ```yaml
 config:
-  order_text: [1, 2, 3, 4] // the character chosen for the simulation universe. It is recommended to customize your own team composition by assigning numbers to the characters, where 1 represents the first character. It is preferable to select a ranged character (such as Asta or March 7th) for the first position to facilitate initial encounters.
-  angle: 1.0 // Calibration data, please do not modify.
-  difficulty: 4 // Difficulty level of the universe. Change to '1' if you want to play on difficulty level 1 and then save.
-  fate: 巡猎 // the path selection, with "巡猎" (The hunt) set as the default. You can directly modify it to another path, but keep in mind that the hunt path has been specifically optimized, so it is recommended not to change it unless necessary.
-  map_sha: '' // Version of map data, it is not recommended to modify.
+  order_text: [1, 2, 3, 4] # Character selection order at the start of the simulation. Change this according to your team composition. 1 represents the first character. It's advisable to put ranged characters (like Asta or March 7th) in position 1 for better monster clearing.
+  angle: 1.0  # Calibration data, do not modify.
+  difficulty: 4 # Universe difficulty, change to 1 if you want to play on difficulty 1.
+  fate: 巡猎 # Fate selection, default is 巡猎, you can directly modify it to other fates.
+  map_sha: '' # Map data version, not recommended to change.
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0
   force_update: 0
   timezone: Default
+prior:
+  # Priority information, adjust as needed.
 ```
 
-By default, the program will enter the universe corresponding to the default settings. If the default universe is not the 6th world, remember to manually switch to the 6th world first!
+The simulation will enter the world that corresponds to the default setting. If your default world is not World 6, remember to manually switch to World 6 first!
 
-**Update Files**
+Important!!! Once you start running/calibrating, do not move the game window! If you need to move it, please stop the automation first!
 
-Double-click on `update.bat`.
+**Calibration**
 
-### GUI Usage
+If you're experiencing issues like excessive/inadequate camera rotation leading to getting lost, it might be due to calibration. You can manually calibrate as follows:
+
+Enter the game and teleport your character to Herta's office. Then, double-click `align.bat` and wait for the camera to rotate/character to spin in place.
+
+If `align.bat` crashes, you can try using the command line:
+```plaintext
+python align_angle.py
+```
+
+Changing your mouse DPI might affect calibration values, in which case, you'll need to recalibrate.
+
+**Updating Files**
+
+Double-click `update.bat`.
+
+### GUI Usage Instructions
 
 **First-time Setup**
 
-Enter the game and teleport your character to Herta's office. Then click on "Calibration" and wait for the camera angle to switch or for the character to finish spinning in place. A calibration success message will pop up.
+In the settings, select your desired difficulty and fate. Please pre-select your default team composition in the game.
 
-If you change your mouse DPI or the game resolution/screen resolution/window scaling factor, you need to recalibrate!
+It's advisable to put a ranged character (like Asta or March 7th) in the first position for better monster clearing.
 
-In the settings, choose the desired difficulty and path. For team composition, use four numbers separated by three spaces, where 1 represents the first character (see the figure below for the numbering scheme). It is recommended to select a ranged character (Aisita or San Yue Qi) for the first position to facilitate initial encounters.
+**Running Automation**
 
-![Team Numbering](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
+Click the "运行" button.
 
-For example, if you want to select Natasha, Jing Yuan, Seele, and Yan Qing, input the following numbers for the team composition: 6 4 3 2
-
-**Running the Automation**
-
-Move your character close to the simulated universe (when the "F" key interaction prompt appears).
-
-Click on "Run."
-
-Note: After starting the automation or calibration process, do not move the game window. If you need to move it, please stop the automation first.
+Important!!! Once you start running/calibrating, do not move the game window! If you need to move it, please stop the automation first!
 
 **TIPS:**
 
-Press F8 or the "Stop" button to stop the automation.
+Press F8 or the "停止" button to halt the process.
 
-The visibility setting controls whether the command-line window is displayed or hidden. By default, it is hidden.
+"显隐" checkbox toggles the visibility of the command-line window. It's hidden by default.
 
-Debug mode: Check (√) means that the program will not exit after getting lost, while "—" means that in addition to (√), the program will pause if it encounters a map with low similarity.
+调试模式: If you don't want the simulation to exit after getting lost, enable 调试模式.
 
-If you do not want the program to exit after getting lost, change the debug mode to (√).
+If you want the simulation to continue after completing 34 rounds, enable 调试模式.
 
-Speedrun mode: Check (√) means that only the last enemy on each floor will be fought, while "—" means that in addition to (√), the program will enable sprinting.
+速通模式: Checkmark indicates only the last enemy on each floor will be attacked. Hyphen indicates that Speed Mode is combined with this option.
 
-The "Update Map" button is located in the lower-left corner (it only updates the map, not the core program).
-
-Refer to the following instructions for recording maps.
-
-Recommended minimum graphics settings:
+Recommended minimal graphics settings:
 
 ![Graphics Settings](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/image_quality.jpg)
 
-### Notification Plugin Usage (notif.exe)
+**Calibration**
 
-If you are not using local multiple users, simply double-click on `notif.exe` to enable Windows notifications. You will receive notifications after each completion.
+If you're experiencing issues like excessive/inadequate camera rotation leading to getting lost, it might be due to calibration. You can manually calibrate as follows:
 
-If you are using local multiple users, run the GUI in
+Enter the game and teleport your character to Herta's office. Then, click the "Calibrate" button, and wait for the camera to rotate/character to spin in place.
 
- the child user account and run `notif.exe` in the main user account. This way, the notifications will be received in the main user account.
+Changing your mouse DPI might affect calibration values, in which case, you'll need to recalibrate.
 
-The counter will be automatically reset every week. If you want to manually change the counter, open `logs/notif.txt` and modify the information on the first line.
+### Update
 
-The notification plugin will display a tray icon in the lower-right corner.
+Double-click `update.exe`.
+
+### Automatic Abyss
+
+Automatic Abyss allows you to use a fixed team to automatically clear the Oblivion Domains, saving time on manual clearing of the initial levels.
+
+To run the script version, use `python abyss.py`. For the GUI version, click the "Abyss" button on the main interface.
+
+For the script version's first run, modify the `info_example.yml` file in the "abyss" folder to `info.yml`, and edit `info.yml` with your two-team composition. In the GUI version, you can input your team composition in the Abyss interface.
+
+Each team's composition is represented by four numbers.
+
+![Team Composition Numbers](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
+
+For instance, in the image above, if you want to choose Natasha, Jing Yuan, Seele, and Yan Qing, input: `6 4 3 2`.
+
+### Notification Plugin Instructions (notif.exe)
+
+If you're not using a local multi-user setup, simply double-click
+
+ `notif.exe` to enable Windows notifications. You'll receive notifications after each completion.
+
+If you're using a local multi-user setup, run the GUI version in the sub-user account and `notif.exe` in the main user account. This way, notifications will be sent to the main user.
+
+The counter resets automatically weekly. If you wish to manually modify the count, open `logs/notif.txt` and edit the first line.
+
+The notification plugin displays a tray icon in the bottom-right corner.
 
 ----------------------------------------------------------------------------------------------
 
 ### Logic Overview
 
-The logic for selecting blessings is fixed to "巡猎" (the hunt). Events are generally skipped, and the final floor's blessings are not strengthened. The curio are randomly chosen.
+Blessing selection logic is based on OCR and custom priority settings.
 
-The pathfinding module is based on the mini-map.
+Pathfinding module uses a mini-map.
 
 The mini-map only recognizes white edge lines and yellow interaction points.
 
 ----------------------------------------------------------------------------------------------
 
-Support for recording maps is available. The specific method is as follows:
+Support for recording maps is available:
 
-Run `python states.py --debug=2 --find=1` (GUI version: set debug mode to "-", then click "Run").
+Run `python states.py --debug=2 --find=1`.
 
-If a new map is encountered and the character stops, end the automation and leave the simulated universe in the game.
+If a new map is encountered and your character stops, end the automation and put the game in pause mode in the Simulated Universe.
 
-Then run `python states.py --debug=2 --find=0` (GUI version: set debug mode to "-", then click "Record").
+Then, run `python states.py --debug=2 --find=0`.
 
-The program will automatically enter the map. During this process, do not move the mouse or press any keys.
+The script will automatically enter the map. During this process, do not move the mouse or press any keys.
 
-After a few seconds, the character will retreat and then move forward. While the character is moving forward, you can move the mouse to change the camera angle or use the WASD keys.
+After a few seconds, the character will move backward and then forward. During the forward movement, you can move the mouse to change the camera angle or use WASD on the keyboard.
 
-Circle around the map until you feel it is sufficient. Then press F8 or Ctrl+C to end the process and obtain the map data. The data will be saved in the directory `imgs/maps/my_xxxxx` (sorted by modification time).
+Move around the map, and when you feel it's sufficient, press F8 or Ctrl+C to terminate the process. This will capture the map data. It will be saved in the `imgs/maps/my_xxxxx` directory (sorted by modification time).
 
-For maps with enemies, it is recommended to use Xi Er's combat skills. Being locked on can affect the recognition of the mini-map.
+For maps with monsters, it's advisable to use Seele's ultimate ability. Being locked onto a target can affect the mini-map recognition.
 
-In the directory `imgs/maps/my_xxxxx`, there will be a file named `target.jpg`. You can use the built-in Paint application in Windows to open it and mark points on the map (you can refer to the `target.jpg` file in other map files).
+A `target.jpg` file will be present in the `imgs/maps/my_xxxxx` directory. You can use the built-in Paint application on Windows to open it and mark points (you can refer to the `target.jpg` file in other map folders).
 
-Indigo: Path points, Yellow: End point, Green: Interaction point (question mark), Red: Enemy point
+Indigo: Path point, Yellow: Destination, Green: Interaction point (question mark), Red: Enemy point
 
-After recording, you can leave the simulated universe and run the automation again to test the map. If the test is successful, you have successfully recorded a new map!
-
-----------------------------------------------------------------------------------------------
-
-Welcome to join us and provide feedback on bugs. QQ Group: 831830526
+After recording, you can exit the game and re-run the automation to test the map. If the test is successful, you've successfully recorded a new map!
 
 ----------------------------------------------------------------------------------------------
 
-If you like this project, you can show your support by buying the author a cup of coffee!
+Feel free to join and provide feedback. QQ Group: 831830526
 
-![Support](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/money.jpg)
+----------------------------------------------------------------------------------------------
+
+If you like this project, you can buy the author a cup of coffee!
+
+![Donate](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/money.jpg)
