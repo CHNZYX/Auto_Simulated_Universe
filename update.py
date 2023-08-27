@@ -6,6 +6,7 @@ import time
 import threading
 import win32api
 import zipfile
+import os
 
 def get_latest_release_info(repo_url):
     response = requests.get(repo_url)
@@ -32,6 +33,7 @@ def unzip_and_overwrite(zip_path, extract_path):
                 print(file_info)
                 zip_ref.extract(file_info, extract_path)
             except Exception as e:
+                os.remove('./archive.zip')
                 pass
 
 def download_file(url, save_path):
@@ -50,6 +52,7 @@ def download_file(url, save_path):
     target_process_name = "flet.exe"  # 替换为目标进程名
     kill_process_by_name(target_process_name)
     unzip_and_overwrite('./archive.zip','.')
+    os.remove('./archive.zip')
     operation_label.config(text="更新完成")
     
 
