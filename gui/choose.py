@@ -68,13 +68,14 @@ def choose_view(page: Page):
             int(config.speed_mode),
             int(config.unlock),
             int(config.bonus),
+            unlock=1,
             gui=1
         )
         run(page.su.start)
         txt = " "
         if time.time()-tm<20:
             go_dep()
-            txt = "请确认python+numpy已安装并正确配置环境变量"
+            #txt = "请确认python+numpy已安装并正确配置环境变量"
         try:
             if page.su.validate == 0:
                 txt = "版本过低，请更新"
@@ -136,7 +137,7 @@ def choose_view(page: Page):
 
     def go_dep(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("异常退出"), content=ft.Text("请确认python+numpy已安装并正确配置环境变量")
+            title=ft.Text("异常退出"), content=ft.Text(" ")#"请确认python+numpy已安装并正确配置环境变量")
         )
         page.dialog = dlg
         dlg.open = True
