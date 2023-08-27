@@ -79,8 +79,7 @@ def main_operation():
     try:
         version_local = win32api.GetFileVersionInfo('gui.exe', strInfoPath)
     except:
-        operation_label.config(text="本地文件异常")
-        return
+        version_local = '不存在'
     if version_remote == version_local:
         operation_label.config(text="当前已是最新版本")
         return
