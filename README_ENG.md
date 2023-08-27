@@ -36,8 +36,6 @@ Rename `info_example.yml` to `info.yml`.
 
 **Running Automation**
 
-Position your character near the Simulated Universe entrance (F-key interaction prompt).
-
 Double-click `run.bat` or run in the command line:
 ```plaintext
 python states.py
@@ -91,27 +89,21 @@ It's advisable to put a ranged character (like Asta or March 7th) in the first p
 
 **Running Automation**
 
-Position your character near the Simulated Universe entrance (F-key interaction prompt).
-
-Click the "Run" button.
+Click the "运行" button.
 
 Important!!! Once you start running/calibrating, do not move the game window! If you need to move it, please stop the automation first!
 
 **TIPS:**
 
-Press F8 or the "Stop" button to halt the process.
+Press F8 or the "停止" button to halt the process.
 
-"Visible" checkbox toggles the visibility of the command-line window. It's hidden by default.
+"显隐" checkbox toggles the visibility of the command-line window. It's hidden by default.
 
-Debug Mode: If you don't want the simulation to exit after getting lost, enable Debug Mode.
+调试模式: If you don't want the simulation to exit after getting lost, enable 调试模式.
 
-If you want the simulation to continue after completing 34 rounds, enable Debug Mode.
+If you want the simulation to continue after completing 34 rounds, enable 调试模式.
 
-Speed Mode: Checkmark indicates only the last enemy on each floor will be attacked. Hyphen indicates that Speed Mode is combined with this option.
-
-The "Update Map" button is located at the bottom left corner (updates the map, not the main program).
-
-Recording Map instructions are provided in the following section.
+速通模式: Checkmark indicates only the last enemy on each floor will be attacked. Hyphen indicates that Speed Mode is combined with this option.
 
 Recommended minimal graphics settings:
 
