@@ -235,7 +235,7 @@ class SimulatedUniverse(UniverseUtils):
                 img_up=self.check('z',0.5047,0.5491,mask='mask_bless',large=False)
                 res_up=self.ts.split_and_find(self.tk.prior_bless,img_up)
                 img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
-                res_down=self.ts.split_and_find([self.fate,'毁灭','巡猎','丰饶'],img_down,'bless')
+                res_down=self.ts.split_and_find([self.fate,'巡猎','毁灭','丰饶'],img_down,'bless')
                 if res_up[1]>=2:
                     self.click(self.calc_point((0.5047,0.5491),res_up[0]))
                 else:
@@ -484,7 +484,7 @@ class SimulatedUniverse(UniverseUtils):
                     with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
                         event_prior = yaml.safe_load(f)['prior']['事件']
                 except:
-                    event_prior = ["购买1个星祝福","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神"]
+                    event_prior = ["购买1个星祝福","购买一个","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神"]
                 self.click_text(event_prior)
                 time.sleep(0.3)
                 self.get_screen()
