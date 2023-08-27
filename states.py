@@ -69,6 +69,8 @@ class SimulatedUniverse(UniverseUtils):
         self.count = 0
         self.count_tm = time.time()
         self.floor_tm = time.time()
+        self.init_tm = time.time()
+        self.my_cnt = 0
         self.re_align = 0
         self.unlock = unlock
         self.check_bonus = bonus
@@ -144,7 +146,6 @@ class SimulatedUniverse(UniverseUtils):
             if begin and not self.check("f", 0.4240,0.4407) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
                 self.press("F4")
-                time.sleep(1)
                 self.get_screen()
             # self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
@@ -171,7 +172,14 @@ class SimulatedUniverse(UniverseUtils):
 
     def end_of_uni(self):
         self.update_count(0)
-        if notif("已完成",f"计数:{self.count}",cnt=str(self.count))>=34 and self.debug==0:
+        self.my_cnt+=1
+        tm = int((time.time()-self.init_tm)/60)
+        remain = 34-self.count
+        if remain>0:
+            remain = int(remain*(time.time()-self.init_tm)/self.my_cnt/60)
+        else:
+            remain = -1
+        if notif("已完成",f"计数:{self.count} 已使用：{tm//60}小时{tm%60}分钟 平均{tm//self.my_cnt}一次 预计剩余{remain//60}小时{remain%60}分钟",cnt=str(self.count))>=34 and self.debug==0:
             self._stop=1
         self.floor = 0
 

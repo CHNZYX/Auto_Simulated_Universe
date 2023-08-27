@@ -136,7 +136,8 @@ class UniverseUtils:
         self.order = config.order
 
     def press(self, c, t=0):
-        log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
+        if c not in '3r':
+            log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
         if self._stop == 0:
             pyautogui.keyDown(c)
         time.sleep(t)
