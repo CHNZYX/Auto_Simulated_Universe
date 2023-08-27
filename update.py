@@ -40,8 +40,10 @@ def download_file(url, save_path):
     response = requests.get(url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
     size = 0
-    size_ls = []
-    tm_ls = []
+    tm = time.time()
+    size_ls = [0]
+    tm_ls = [tm]
+    cnt_ls = [0 for _ in range(5)]
     
     with open(save_path, 'wb') as file:
         for data in response.iter_content(chunk_size=1024):
@@ -49,10 +51,11 @@ def download_file(url, save_path):
             size_ls.append(size)
             tm_ls.append(time.time())
             progress_bar["value"]=size/total_size*100
-            if len(size_ls)>5:
-                operation_label.config(text="下载中... {:.0f}%\t-KB/s".format(progress_bar["value"]))
-            else:
-                operation_label.config(text="下载中... {:.0f}%\t{:.0f}KB/s".format(progress_bar["value"],(size-size_ls[-5])/(time.time()-tm_ls[-5])))
+            if time.time()>tm+1:
+                tm = time.time()
+                cnt_ls.append(len(tm_ls))
+            if cnt_ls[-1] == len(tm_ls):
+                operation_label.config(text="下载中... {:.0f}%\t{:.0f}KB/s".format(progress_bar["value"],(size-size_ls[cnt_ls[-5]])/(time.time()-tm_ls[cnt_ls[-5]])/1024))
             progress_bar.update()
     
     operation_label.config(text="下载完成，解压中...")
