@@ -81,18 +81,26 @@ def main_operation():
     try:
         version_remote = info['tag_name'].strip('v').split(' ')[0]
     except:
-        operation_label.config(text="网络异常")
-        return
+        try:
+            info = dict()
+            info['tag_name']= 'v'+requests.get("https://chnzyx.github.io/asu_version_latest/").text.strip()
+            version_remote = info['tag_name'].strip('v').split(' ')[0]
+            operation_label.config(text=f"网络异常，当前可用最高版本：{info['tag_name']}")
+        except:
+            operation_label.config(text=f"网络异常")
+            return
     
     strInfoPath = u'\\StringFileInfo\\000004B0\\FileVersion'
     try:
         version_local = win32api.GetFileVersionInfo('gui.exe', strInfoPath)
     except:
-        version_local = '不存在'
-    if version_remote == version_local:
+        version_local = "0.0"
+    if float(version_remote) <= float(version_local):
         operation_label.config(text="当前已是最新版本")
         return
     
+    if version_local == "0.0":
+        version_local = "不存在"
     global popup
     popup = tk.Toplevel(root)
     popup.title("版本信息")
