@@ -19,6 +19,7 @@ from utils.config import config
 import datetime
 import pytz
 import yaml
+import pyuac
 
 pyautogui.FAILSAFE=False
 
@@ -136,5 +137,8 @@ class Abyss(UniverseUtils):
 
 
 if __name__ == "__main__":
-    abyss = Abyss()
-    abyss.start_abyss()
+    if not pyuac.isUserAdmin():
+        pyuac.runAsAdmin()
+    else:
+        abyss = Abyss()
+        abyss.start_abyss()

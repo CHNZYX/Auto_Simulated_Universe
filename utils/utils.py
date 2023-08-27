@@ -72,13 +72,16 @@ class UniverseUtils:
         self.multi = config.multi
         self.diffi = config.diffi
         self.fate = config.fate
-        self.my_fate = 4
+        self.my_fate = -1
         self.fail_count = 0
         self.ts = ocr.My_TS()
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
                 self.my_fate = i
+        if self.my_fate == -1:
+            log.info("info有误，自动选择巡猎命途    错误："+self.fate)
+            self.my_fate = 4
         self.tk = ocr.text_keys(self.my_fate)
         # 是否对命途回响构音做出优化，目前支持存护和巡猎
         if self.my_fate in [0, 4]:
@@ -98,6 +101,12 @@ class UniverseUtils:
                 self.full = self.x0 == 0 and self.y0 == 0
                 self.x0 = max(0, self.x1 - self.xx) + 9*self.full
                 self.y0 = max(0, self.y1 - self.yy) + 9*self.full
+                if (self.xx==1920 or self.yy==1080) and self.xx>=1920 and self.yy>=1080:
+                    self.x0 += (self.xx - 1920) // 2
+                    self.y0 += (self.yy - 1080) // 2
+                    self.x1 -= (self.xx - 1920) // 2
+                    self.y1 -= (self.yy - 1080) // 2
+                    self.xx, self.yy = 1920, 1080
                 self.scx = self.xx / self.bx
                 self.scy = self.yy / self.by
                 dc = win32gui.GetWindowDC(hwnd)
@@ -115,6 +124,8 @@ class UniverseUtils:
                 # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
                 if Text == "崩坏：星穹铁道":
                     time.sleep(1)
+                    if self.xx!=1920 or self.yy!=1080:
+                        log.error("分辨率错误")
                     break
                 else:
                     time.sleep(0.3)
@@ -378,7 +389,6 @@ class UniverseUtils:
                 log.info("截图失败!")
                 time.sleep(0.1)
                 continue
-            print(screen_raw.shape)
             if screen_raw.shape[0]>3:
                 break
             else:

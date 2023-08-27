@@ -24,7 +24,7 @@ import pyuac
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.23 stable"
+version = "v5.24 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -32,7 +32,7 @@ class SimulatedUniverse(UniverseUtils):
         super().__init__()
         # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
         # t2 = threading.Thread(target=os.system,kwargs={'command':'python notif.py > NUL 2>&1'})
-        log.info("当前版本："+version)
+        log.info("当前版本："+version+"  当前命途："+self.fate)
         if gui:
             try:
                 lowest=requests.get("https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest").json()["name"].split('lowest')[1].strip().strip('v')

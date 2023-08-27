@@ -5,6 +5,7 @@ import pywintypes
 import win32api
 import win32con
 import win32gui
+import pyuac
 
 from utils.config import config
 from utils.log import log
@@ -80,4 +81,7 @@ def main(cnt=10, safe=0):
 
 
 if __name__ == "__main__":
-    main()
+    if not pyuac.isUserAdmin():
+        pyuac.runAsAdmin()
+    else:
+        main()
