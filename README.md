@@ -110,10 +110,6 @@ F8/‘停止’按钮停止运行。
 
 速通模式：√表示只打每层最后一个怪，—表示在√的基础上开启奔跑
 
-左下角为更新地图按钮（只会更新地图，不会更新本体）
-
-录制地图参见后文
-
 推荐最低画质配置：
 
 ![画质](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/image_quality.jpg)
