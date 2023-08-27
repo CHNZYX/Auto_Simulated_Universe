@@ -2,7 +2,7 @@
 
 
 # Auto_Simulated_Universe
-Star Dome Railway - Auto Simulation of the Universe
+Star Rail - Auto Simulated Universe
 
 This project incorporates a pause-resume feature. You can switch to other tasks and return later to continue the automation process.
 
@@ -11,11 +11,11 @@ Currently supports automation of all worlds within the simulated universe.
 ----------------------------------------------------------------------------------------------
 
 ## Disclaimer
-This software is an external tool intended to automate gameplay in the game "Honkai Impact 3rd: Star Rail." It is designed to interact with the game solely through existing user interfaces and in compliance with relevant laws and regulations. This software package aims to provide simplification and user interaction with the game's features and does not intend to disrupt game balance or provide any unfair advantages. The package will not modify any game files or game code in any way.
+This software is an external tool intended to automate gameplay in the game "Honkai Star Rail." It is designed to interact with the game solely through existing user interfaces and in compliance with relevant laws and regulations. This software package aims to provide simplification and user interaction with the game's features and does not intend to disrupt game balance or provide any unfair advantages. The package will not modify any game files or game code in any way.
 
 This software is open-source and free of charge, intended for educational and collaborative purposes only. The development team holds the final interpretation rights for this project. Any issues arising from the use of this software are unrelated to this project and the development team. If you come across merchants using this software for power-leveling and charging for it, the costs might involve equipment and time, and any issues or consequences arising from this software are unrelated to it.
 
-Please note that according to MiHoYo's [Fair Play Declaration for Honkai Impact 3rd: Star Rail](https://hsr.hoyoverse.com/en-us/news/111244):
+Please note that according to MiHoYo's [Fair Play Declaration for Honkai Star Rail](https://hsr.hoyoverse.com/en-us/news/111244):
 
     "The use of plug-ins, accelerators, scripts, or other third-party tools that disrupt the fairness of the game is strictly prohibited."
     "Once discovered, miHoYo (hereinafter referred to as 'we') will take measures such as deducting illegal gains, freezing game accounts, and permanently banning game accounts based on the severity and frequency of violations."
