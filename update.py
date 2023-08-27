@@ -51,9 +51,6 @@ def download_file(url, save_path):
     kill_process_by_name(target_process_name)
     unzip_and_overwrite('./archive.zip','.')
     operation_label.config(text="更新完成")
-    time.sleep(0.5)
-    root.destroy()
-    exit()
     
 
 def start_download():
