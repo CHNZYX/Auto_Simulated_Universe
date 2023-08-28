@@ -179,7 +179,7 @@ class SimulatedUniverse(UniverseUtils):
             remain = int(remain*(time.time()-self.init_tm)/self.my_cnt/60)
         else:
             remain = 0
-        if notif("已完成",f"计数:{self.count} 已使用：{tm//60}小时{tm%60}分钟\n平均{tm//self.my_cnt}分钟一次\n预计剩余{remain//60}小时{remain%60}分钟",cnt=str(self.count))>=34 and self.debug==0:
+        if notif("已完成",f"计数:{self.count} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",cnt=str(self.count))>=34 and self.debug==0:
             self._stop=1
         self.floor = 0
 
