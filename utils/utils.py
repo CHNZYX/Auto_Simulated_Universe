@@ -116,7 +116,7 @@ class UniverseUtils:
                 scale_x = dpi_x / 96
                 scale_y = dpi_y / 96
                 self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
-                log.info("DPI: "+str(self.scale))
+                log.info("DPI: "+str(self.scale)+" A:"+str(int(self.multi*100)/100))
                 # 计算出真实分辨率
                 self.real_width = int(self.xx * scale_x)
                 # x01y01:窗口左上右下坐标
@@ -266,7 +266,7 @@ class UniverseUtils:
             return local_screen
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        if path == "./imgs/bonus_c.jpg#":
+        if path == "./imgs/floor/ff1.jpg#":
             cv.imwrite("tmp.jpg", local_screen)
             print(max_val)
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
@@ -533,8 +533,8 @@ class UniverseUtils:
         self.press('m',0.2)
         time.sleep(2.5)
         self.get_screen()
-        for i in range(12,0,-1):
-            if self.check("floor/ff" + str(i + 1),0.0635,0.8917):
+        for i in range(12,-1,-1):
+            if self.check("floor/ff" + str(i + 1),0.0589,0.8796):
                 self.floor=i
                 log.info(f"当前层数：{i+1}")
                 self.floor_init=1
@@ -630,8 +630,8 @@ class UniverseUtils:
                     sub*=1.2
                 else:
                     sub=0
-            if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
-                sub=0
+            #if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
+            #    sub=0
             self.mouse_move(sub)
             return sub
         else:
@@ -1021,19 +1021,19 @@ class UniverseUtils:
                     pass
 
     # 视角转动x度
-    def mouse_move(self, x, init=1):
-        if x > 30:
-            y = 30
-        elif x < -30:
-            y = -30
+    def mouse_move(self, x, fine=1):
+        if x > 30//fine:
+            y = 30//fine
+        elif x < -30//fine:
+            y = -30//fine
         else:
             y = x
         dx = int(16.5 * y * self.multi * self.scale)
         if self._stop == 0 and self.stop_move==0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
-        time.sleep(0.05)
+        time.sleep(0.05*fine)
         if x != y:
-            self.mouse_move(x - y,0)
+            self.mouse_move(x - y, fine)
 
     # 在大地图中覆盖小地图
     def write_map(self, bw_map):

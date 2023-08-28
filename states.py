@@ -147,7 +147,7 @@ class SimulatedUniverse(UniverseUtils):
                 begin = 0
                 self.press("F4")
                 self.get_screen()
-            # self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            # self.click_target('imgs/floor/ff1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -287,8 +287,8 @@ class SimulatedUniverse(UniverseUtils):
                             )
                             return 1
                     elif self.re_align == 1 and self.debug == 0:
-                        align_angle(10, 1)
-                        self.multi = config.multi
+                        # align_angle(10, 1)
+                        # self.multi = config.multi
                         self.re_align += 1
                     is_killed = text in ['沉浸','紧锁','复活','下载']
                     if is_killed == 0:
@@ -413,6 +413,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.re_align += 1
                     self.fail_count+=1
                 else:
+                    self.multi = 1
                     if self.debug == 0:
                         notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
                         self.floor = 0
@@ -428,6 +429,8 @@ class SimulatedUniverse(UniverseUtils):
                         )
                 self.lst_changed = time.time()
                 return 1
+            if self.multi == 1:
+                align_angle(0,1,[1],self)
             # 寻路
             if self.mini_state:
                 self.get_direc_only_minimap()
