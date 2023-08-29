@@ -146,6 +146,7 @@ class SimulatedUniverse(UniverseUtils):
             if begin and not self.check("f", 0.4240,0.4407) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
                 self.press("F4")
+                time.sleep(0.6)
                 self.get_screen()
             # self.click_target('imgs/floor/ff1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             res = self.normal()

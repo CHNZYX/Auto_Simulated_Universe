@@ -53,6 +53,7 @@ def main(cnt=10, safe=0, ang=[1,1,3], su=None):
                 ax += 100
                 ay += j
         su.multi *= ax / ay
+    su.multi += 1e-9
     config.angle = str(su.multi)
     config.save()
     if safe == 0:
