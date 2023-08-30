@@ -24,7 +24,7 @@ import pyuac
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.25 stable"
+version = "v5.30 beta"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -143,12 +143,14 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            if begin and not self.check("f", 0.4240,0.4407) and not self.check("abyss/1",0.8568,0.6769):
+            #self.click_target('imgs/auto_2.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            '''
+            if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
                 self.press("F4")
                 time.sleep(0.6)
                 self.get_screen()
-            # self.click_target('imgs/floor/ff1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            '''
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
@@ -189,7 +191,7 @@ class SimulatedUniverse(UniverseUtils):
         bk_lst_changed = self.lst_changed
         self.lst_changed = time.time()
         # 战斗界面
-        if self.check("auto_2", 0.3755,0.0333):
+        if self.check("c", 0.9464,0.1287, threshold=0.985) or self.check("auto_2", 0.0583,0.0769):
             # 需要打开自动战斗
             if self.check("c", 0.9464,0.1287, threshold=0.985):
                 self.press('v')
@@ -245,17 +247,17 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1)
             return 1
         # F交互界面
-        elif self.check("f", 0.4240,0.4407):
+        elif self.check("f", 0.4437,0.4231) or self.check("f",0.4448,0.4231):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
             time.sleep(0.4)
             self.get_screen()
-            if self.check("f", 0.4240,0.4407):
+            if self.check("f", 0.4437,0.4231) or self.check("f",0.4448,0.4231):
                 for _ in range(4):
-                    img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
+                    img = self.check('z',0.3344,0.4241,mask="mask_f",large=False)
                     text = self.ts.sim_list(self.tk.interacts,img)
-                    if not text:
-                        img = self.check('z',0.3302,0.4503,mask="mask_f",large=False)
+                    if text is None:
+                        img = self.check('z',0.3365,0.4231,mask="mask_f",large=False)
                         text = self.ts.sim_list(self.tk.interacts,img)
                     if text is not None:
                         break
@@ -453,6 +455,8 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.1083, 0.1009))
             if con:
                 self.get_level()
+            else:
+                self.floor = 0
             self.floor_init=1
         elif self.check("start", 0.6594, 0.8389):
             self.fail_count=0
@@ -520,7 +524,12 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(2)
             self.click((0.3750,0.9398))
             time.sleep(2)
-            self.click((0.1562,0.2250))
+            self.click((0.3750,0.8398))
+            pyautogui.scroll(-1)
+            time.sleep(0.1)
+            pyautogui.scroll(-1)
+            time.sleep(0.3)
+            self.click((0.1562,0.1250))
         elif self.check("enhance", 0.9208,0.9380):
             time.sleep(1.5)
             for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:
