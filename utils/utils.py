@@ -543,13 +543,13 @@ class UniverseUtils:
         time.sleep(1)
 
     def goodf(self):
-        if not self.check("f", 0.4240,0.4407):
+        if not self.check("f", 0.4437,0.4231) and not self.check("f",0.4448,0.4231):
             return False
-        img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
+        img = self.check('z',0.3344,0.4241,mask="mask_f",large=False)
         text = self.ts.sim_list(self.tk.interacts,img)
         if text is None:
             # 使用新坐标重新尝试
-            img = self.check('z',0.3302,0.4503,mask="mask_f",large=False)
+            img = self.check('z',0.3365,0.4231,mask="mask_f",large=False)
             text = self.ts.sim_list(self.tk.interacts,img)
         is_killed = text in ['沉浸','紧锁','复活','下载']
         return text is not None and not is_killed
@@ -665,7 +665,7 @@ class UniverseUtils:
             self.press('w',0.3)
         if self.mini_state==1 and self.floor==11:
             pyautogui.click()
-            time.sleep(0.6)
+            time.sleep(0.8)
             pyautogui.click()
             time.sleep(0.6)
             self.press('w',0.3)
