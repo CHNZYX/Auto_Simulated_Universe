@@ -507,13 +507,13 @@ class UniverseUtils:
 
     # 计算小地图中蓝色箭头的角度
     def get_now_direc(self, loc_scr):
-        blue = np.array([234, 191, 4])
+        # blue = np.array([234, 191, 4])
         arrow = self.format_path("loc_arrow")
         arrow = cv.imread(arrow)
         loc_tp = deepcopy(loc_scr)
-        loc_tp[np.sum(np.abs(loc_tp - blue), axis=-1) > 0] = [0, 0, 0]
+        # loc_tp[np.sum(np.abs(loc_tp - blue), axis=-1) > 0] = [0, 0, 0]
         mx_acc = 0
-        ang = 0
+        ang = 0 
         for i in range(360):
             rt = self.image_rotate(arrow, i)
             result = cv.matchTemplate(loc_tp, rt, cv.TM_CCORR_NORMED)
