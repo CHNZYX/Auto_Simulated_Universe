@@ -25,6 +25,9 @@ def get_angle(su, safe):
 # 不同电脑鼠标移动速度、放缩比、分辨率等不同，因此需要校准
 # 基本逻辑：每次转60度，然后计算实际转了几度，计算出误差比
 def main(cnt=10, safe=0, ang=[1,1,3], su=None):
+    if float(config.angle)>2 and len(ang)<3 and su is not None:
+        su.multi = config.multi
+        return
     log.info("开始校准")
     if su is None:
         from utils.utils import UniverseUtils
@@ -54,7 +57,12 @@ def main(cnt=10, safe=0, ang=[1,1,3], su=None):
                 ay += j
         su.multi *= ax / ay
     su.multi += 1e-9
-    config.angle = str(su.multi)
+    try:
+        if not abs(su.multi) <= 2:
+            su.multi = 1
+    except:
+        su.multi = 1
+    config.angle = str(su.multi+len(ang)-1)
     config.save()
     if safe == 0:
         try:
