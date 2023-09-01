@@ -91,47 +91,43 @@ class UniverseUtils:
         log.warning("等待游戏窗口")
         self.tss = 'ey.jpg'
         while True:
-            try:
-                hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
-                Text = win32gui.GetWindowText(hwnd)
-                self.x0, self.y0, self.x1, self.y1 = win32gui.GetClientRect(hwnd)
-                self.xx = self.x1 - self.x0
-                self.yy = self.y1 - self.y0
-                self.x0, self.y0, self.x1, self.y1 = win32gui.GetWindowRect(hwnd)
-                self.full = self.x0 == 0 and self.y0 == 0
-                self.x0 = max(0, self.x1 - self.xx) + 9*self.full
-                self.y0 = max(0, self.y1 - self.yy) + 9*self.full
-                if (self.xx==1920 or self.yy==1080) and self.xx>=1920 and self.yy>=1080:
-                    self.x0 += (self.xx - 1920) // 2
-                    self.y0 += (self.yy - 1080) // 2
-                    self.x1 -= (self.xx - 1920) // 2
-                    self.y1 -= (self.yy - 1080) // 2
-                    self.xx, self.yy = 1920, 1080
-                self.scx = self.xx / self.bx
-                self.scy = self.yy / self.by
-                dc = win32gui.GetWindowDC(hwnd)
-                dpi_x = win32print.GetDeviceCaps(dc, win32con.LOGPIXELSX)
-                dpi_y = win32print.GetDeviceCaps(dc, win32con.LOGPIXELSY)
-                win32gui.ReleaseDC(hwnd, dc)
-                scale_x = dpi_x / 96
-                scale_y = dpi_y / 96
-                self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
-                log.info("DPI: "+str(self.scale)+" A:"+str(int(self.multi*100)/100))
-                # 计算出真实分辨率
-                self.real_width = int(self.xx * scale_x)
-                # x01y01:窗口左上右下坐标
-                # xx yy:窗口大小
-                # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
-                if Text == "崩坏：星穹铁道":
-                    time.sleep(1)
-                    if self.xx!=1920 or self.yy!=1080:
-                        log.error("分辨率错误")
-                    break
-                else:
-                    time.sleep(0.3)
-            except KeyboardInterrupt:
-                raise KeyboardInterrupt
-            except:
+            hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
+            Text = win32gui.GetWindowText(hwnd)
+            self.x0, self.y0, self.x1, self.y1 = win32gui.GetClientRect(hwnd)
+            self.xx = self.x1 - self.x0
+            self.yy = self.y1 - self.y0
+            self.x0, self.y0, self.x1, self.y1 = win32gui.GetWindowRect(hwnd)
+            self.full = self.x0 == 0 and self.y0 == 0
+            self.x0 = max(0, self.x1 - self.xx) + 9*self.full
+            self.y0 = max(0, self.y1 - self.yy) + 9*self.full
+            if (self.xx==1920 or self.yy==1080) and self.xx>=1920 and self.yy>=1080:
+                self.x0 += (self.xx - 1920) // 2
+                self.y0 += (self.yy - 1080) // 2
+                self.x1 -= (self.xx - 1920) // 2
+                self.y1 -= (self.yy - 1080) // 2
+                self.xx, self.yy = 1920, 1080
+            self.scx = self.xx / self.bx
+            self.scy = self.yy / self.by
+            dc = win32gui.GetWindowDC(hwnd)
+            dpi_x = win32print.GetDeviceCaps(dc, win32con.LOGPIXELSX)
+            dpi_y = win32print.GetDeviceCaps(dc, win32con.LOGPIXELSY)
+            win32gui.ReleaseDC(hwnd, dc)
+            scale_x = dpi_x / 96
+            scale_y = dpi_y / 96
+            self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
+            log.info("DPI: "+str(self.scale)+" A:"+str(int(self.multi*100)/100))
+            log.info("TEXT: "+str(Text))
+            # 计算出真实分辨率
+            self.real_width = int(self.xx * scale_x)
+            # x01y01:窗口左上右下坐标
+            # xx yy:窗口大小
+            # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
+            if Text == "崩坏：星穹铁道":
+                time.sleep(1)
+                if self.xx!=1920 or self.yy!=1080:
+                    log.error("分辨率错误")
+                break
+            else:
                 time.sleep(0.3)
         self.order = config.order
 
