@@ -77,6 +77,7 @@ class My_TS:
         res=''
         text_res=''
         ff=0
+        counts=0
         for c,contour in enumerate(contours):
             x, y, w, h = cv.boundingRect(contour)
             if h==binary_image.shape[0] or w<55:
@@ -89,6 +90,9 @@ class My_TS:
             if self.sim('回归不等式') and len(contours)>1:
                 ff=1
                 continue
+            if (self.sim('银河大乐透') or self.sim('湮灭烛剪') or self.sim('万识囊')) and counts < 2:
+                counts = counts + 1
+                continue  # 脚本不会击碎可破坏物
             #cv.imwrite('tmp'+str(c)+'.jpg',roi)
             for i,text in enumerate(key_list):
                 if (self.sim(text) and prior>i) or rcx==-1:
