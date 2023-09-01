@@ -93,8 +93,6 @@ class SimulatedUniverse(UniverseUtils):
                 image = cv.imread(pth)
                 self.img_set.append((file, self.extract_features(image)))
         log.info("加载地图完成，共 %d 张" % len(self.img_set))
-        if os.stat('imgs/mon'+self.tss).st_size!=141882:
-            self._stop = 1
 
     # 初始化地图，刚进图时调用
     def init_map(self):
@@ -120,6 +118,7 @@ class SimulatedUniverse(UniverseUtils):
         self.init_map()
         fail_cnt=0
         begin=1
+        self._stop = os.stat('imgs/mon'+self.tss).st_size!=141882
         while True:
             if self._stop:
                 break
@@ -416,7 +415,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.re_align += 1
                     self.fail_count+=1
                 else:
-                    self.multi = 1
+                    self.multi = 1.01
                     if self.debug == 0:
                         notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
                         self.floor = 0
@@ -432,7 +431,7 @@ class SimulatedUniverse(UniverseUtils):
                         )
                 self.lst_changed = time.time()
                 return 1
-            if self.multi == 1:
+            if self.multi == 1.01:
                 align_angle(0,1,[1],self)
             # 寻路
             if self.mini_state:
