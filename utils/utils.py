@@ -786,8 +786,11 @@ class UniverseUtils:
                     return
                 self.get_screen()
                 if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
-                    self.mini_state+=2
-                    return
+                    time.sleep(0.3)
+                    self.get_screen()
+                    if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
+                        self.mini_state+=2
+                        return
                 else:
                     self.press(i, 0.25)
                     time.sleep(0.4)
@@ -852,8 +855,10 @@ class UniverseUtils:
                 return
             if self._stop == 0:
                 pyautogui.keyDown("w")
+            sft = 0
             if self.debug == 1 and type != 3:
                 self.press("shift")
+                sft = 1
                 time.sleep(0.25)
             else:
                 time.sleep(0.5)
@@ -868,9 +873,9 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
-            sft = 1
             if self.speed == 2 and type != 3:
                 self.press("shift")
+                sft = 1
             for i in range(3000):
                 if self._stop == 1:
                     pyautogui.keyUp("w")
@@ -934,8 +939,10 @@ class UniverseUtils:
                         dtm = [time.time()]
                         if self.speed == 2:
                             self.press("shift")
+                            sft = 1
                         if self.debug == 1:
                             self.press("shift")
+                            sft = 1
                     else:
                         pyautogui.keyUp("w")
                         break
@@ -962,7 +969,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5:
+                while dtm[0] < time.time() - 1.5 + sft * 0.4:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info(f"进入新地图或者进入战斗 {nds}")
