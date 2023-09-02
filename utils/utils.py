@@ -910,9 +910,6 @@ class UniverseUtils:
                 if nds < 18 and self.speed == 2 and type == 2 and sft:
                     self.press('shift')
                     sft = 0
-                if nds < 18 and self.debug == 1 and type not in [0,1] and sft:
-                    self.press('shift')
-                    sft = 0
                 # 1秒内没有离目标点更近：开始尝试绕过障碍
                 if dls[0] <= nds:
                     ts = " da"
