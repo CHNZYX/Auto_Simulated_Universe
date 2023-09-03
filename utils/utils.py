@@ -510,7 +510,11 @@ class UniverseUtils:
         # blue = np.array([234, 191, 4])
         arrow = self.format_path("loc_arrow")
         arrow = cv.imread(arrow)
-        loc_tp = deepcopy(loc_scr)
+        hsv = cv.cvtColor(loc_scr, cv.COLOR_BGR2HSV)  # 转HSV
+        lower = np.array([93, 90, 60])  # 90 改成120只剩箭头，但是角色移动过的印记会消失
+        upper = np.array([97, 255, 255])
+        mask = cv.inRange(hsv, lower, upper)  # 创建掩膜
+        loc_tp = cv.bitwise_and(loc_scr, loc_scr, mask=mask)
         # loc_tp[np.sum(np.abs(loc_tp - blue), axis=-1) > 0] = [0, 0, 0]
         mx_acc = 0
         ang = 0 
@@ -543,7 +547,7 @@ class UniverseUtils:
         time.sleep(1)
 
     def goodf(self):
-        if not self.check("f", 0.4437,0.4231) and not self.check("f",0.4448,0.4231):
+        if not self.check("f", 0.4443,0.4417, mask = 'mask_f1'):
             return False
         img = self.check('z',0.3344,0.4241,mask="mask_f",large=False)
         text = self.ts.sim_list(self.tk.interacts,img)
@@ -611,7 +615,6 @@ class UniverseUtils:
                 nearest = (rd[0][0],rd[1][0])
                 target = (nearest, 3)
         if (target[1] >= 1):
-            local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
             self.ang = 360 - self.get_now_direc(local_screen) - 90
             ang = (
                 math.atan2(target[0][0] - curloc[0], target[0][1] - curloc[1])
@@ -714,7 +717,11 @@ class UniverseUtils:
             time.sleep(0.1)
         pyautogui.keyDown("w")
         if self.mini_state==1:
-            time.sleep(0.7)
+            if self.debug==1:
+                self.press('shift')
+                time.sleep(0.35)
+            else:
+                time.sleep(0.7)
         need_confirm=0
         init_time = time.time()
         while True:
@@ -736,7 +743,9 @@ class UniverseUtils:
                 break
             if self.check("z",0.5906,0.9537,mask="mask_z"):
                 self.stop_move=1
-                time.sleep(2.1)
+                time.sleep(0.73)
+                if self.debug!=1:
+                    time.sleep(1.37)
                 if self.mini_state==1 and self.floor==12:
                     pyautogui.keyUp("w")
                     for i in range(4):
@@ -777,8 +786,11 @@ class UniverseUtils:
                     return
                 self.get_screen()
                 if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
-                    self.mini_state+=2
-                    return
+                    time.sleep(0.3)
+                    self.get_screen()
+                    if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
+                        self.mini_state+=2
+                        return
                 else:
                     self.press(i, 0.25)
                     time.sleep(0.4)
@@ -800,7 +812,6 @@ class UniverseUtils:
             self.press("w", 0.2)
         self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
-        local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
         # 录图模式，将小地图覆盖到录制的大地图中
         if self.find == 0:
             self.write_map(bw_map)
@@ -844,7 +855,13 @@ class UniverseUtils:
                 return
             if self._stop == 0:
                 pyautogui.keyDown("w")
-            time.sleep(0.5)
+            sft = 0
+            if self.debug == 1 and type != 3:
+                self.press("shift")
+                sft = 1
+                time.sleep(0.25)
+            else:
+                time.sleep(0.5)
             ltm = time.time()
             bw_map = self.get_bw_map(sbl=bl)
             self.get_loc(bw_map, rg=18)
@@ -856,9 +873,9 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
-            sft = 1
             if self.speed == 2 and type != 3:
                 self.press("shift")
+                sft = 1
             for i in range(3000):
                 if self._stop == 1:
                     pyautogui.keyUp("w")
@@ -912,9 +929,6 @@ class UniverseUtils:
                         self.get_loc(bw_map, rg=28, fbw=1)
                         self.get_screen()
                         local_screen = self.get_local(0.9333, 0.8657, shape)
-                        local_screen[
-                            np.sum(np.abs(local_screen - blue), axis=-1) <= 150
-                        ] = blue
                         self.ang = 360 - self.get_now_direc(local_screen) - 90
                         self.real_loc = (
                             self.real_loc[0] + self.his_loc[0] + self.offset[0],
@@ -923,8 +937,12 @@ class UniverseUtils:
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
-                        if self._stop == 0 and self.speed == 2:
+                        if self.speed == 2:
                             self.press("shift")
+                            sft = 1
+                        if self.debug == 1:
+                            self.press("shift")
+                            sft = 1
                     else:
                         pyautogui.keyUp("w")
                         break
@@ -940,6 +958,9 @@ class UniverseUtils:
                         log.info('removed:'+str((loc, type)))
                         self.lst_changed = time.time()
                         loc, type = self.get_tar()
+                        if self.debug == 1 and type == 3:
+                            self.press("shift")
+                            sft = 0
                         ds = self.get_dis(self.real_loc, loc)
                         t = 2
                     else:
@@ -948,7 +969,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5:
+                while dtm[0] < time.time() - 1.5 + sft * 0.4:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info(f"进入新地图或者进入战斗 {nds}")

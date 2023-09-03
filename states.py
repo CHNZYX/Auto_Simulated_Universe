@@ -24,7 +24,7 @@ import pyuac
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.30 beta"
+version = "v5.32 beta"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -142,7 +142,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/auto_2.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/mask_f1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             '''
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -246,12 +246,12 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1)
             return 1
         # F交互界面
-        elif self.check("f", 0.4437,0.4231) or self.check("f",0.4448,0.4231):
+        elif self.check("f", 0.4443,0.4417, mask = 'mask_f1'):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
             time.sleep(0.4)
             self.get_screen()
-            if self.check("f", 0.4437,0.4231) or self.check("f",0.4448,0.4231):
+            if self.check("f",  0.4443,0.4417, mask = 'mask_f1'):
                 for _ in range(4):
                     img = self.check('z',0.3344,0.4241,mask="mask_f",large=False)
                     text = self.ts.sim_list(self.tk.interacts,img)
@@ -504,6 +504,7 @@ class SimulatedUniverse(UniverseUtils):
                 time.sleep(1)
             else:
                 self.click((0.9479, 0.9565))
+                self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
             img=self.check('z',0.5000, 0.7333,mask='mask_strange',large=False)
@@ -632,12 +633,12 @@ class SimulatedUniverse(UniverseUtils):
 
     def del_pt(self, img, A, S, f):
         if (
-            (img[A] == [0, 0, 0]).all()
-            or (not f(img[A]) and self.get_dis(A, S) > 5)
-            or A[0] < 0
+            A[0] < 0
             or A[1] < 0
             or A[0] >= img.shape[0]
             or A[1] >= img.shape[1]
+            or (img[A] == [0, 0, 0]).all()
+            or (not f(img[A]) and self.get_dis(A, S) > 5)
             or self.get_dis(A, S) > 10
         ):
             return
