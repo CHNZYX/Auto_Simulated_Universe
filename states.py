@@ -24,7 +24,7 @@ import pyuac
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.33 beta"
+version = "v5.33 debug"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -55,6 +55,8 @@ class SimulatedUniverse(UniverseUtils):
                 self.validation = 0
         else:
             self.validation = 1
+        if 'debug' in version and not gui:
+            log.info("欢迎加入模拟宇宙小群，群号：921407322 密码：zyxxyz")
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
