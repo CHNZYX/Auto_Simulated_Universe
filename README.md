@@ -45,6 +45,18 @@ This software is open source, free of charge and for learning and exchange purpo
 python states.py
 ```
 
+详细参数：
+```plaintext
+python states.py --bonus=<bonus> --debug=<debug> --speed=<speed> --find=<find>
+```
+bonus in [0,1]：是否开启沉浸奖励
+
+speed in [0,1,2]：开启速通模式
+
+debug in [0,1,2]：开启调试模式
+
+find in [0,1]：录图
+
 `info.yml`内容如下
 ```yaml
 config:
