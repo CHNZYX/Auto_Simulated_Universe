@@ -885,9 +885,10 @@ class UniverseUtils:
                 pyautogui.keyDown("w")
             sft = 0
             if type != 3:
+                time.sleep(0.15)
                 self.press("shift")
                 sft = 1
-                time.sleep(0.25)
+                time.sleep(0.1)
             else:
                 time.sleep(0.5)
             ltm = time.time()
