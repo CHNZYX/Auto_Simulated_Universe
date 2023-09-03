@@ -821,6 +821,7 @@ class UniverseUtils:
         if self.ts.sim('区域'):
             self.init_map()
             self.floor += 1
+            self.lst_changed = time.time()
             map_log.info(
                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
             )
