@@ -525,11 +525,11 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.3750,0.9398))
             time.sleep(2)
             self.click((0.3750,0.8398))
-            pyautogui.scroll(-1)
-            time.sleep(0.1)
-            pyautogui.scroll(-1)
+            for _ in range(5):
+                pyautogui.scroll(-1)
+                time.sleep(0.1)
             time.sleep(0.3)
-            self.click((0.1562,0.1250))
+            self.click_text(['脱离卡死'])
         elif self.check("enhance", 0.9208,0.9380):
             time.sleep(1.5)
             for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:

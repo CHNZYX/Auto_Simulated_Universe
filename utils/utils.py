@@ -593,6 +593,8 @@ class UniverseUtils:
             log.info(
                 f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
             )
+            if self.floor >= 12:
+                self.floor = 11
         else:#226 64 66
             minicon = cv.imread(self.format_path("mini"+str(i+2)))
             sp = minicon.shape
@@ -604,6 +606,8 @@ class UniverseUtils:
                 log.info(
                     f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
                 )
+                if self.floor >= 12:
+                    self.floor = 11
         for i in range(local_screen.shape[0]):
             for j in range(local_screen.shape[1]):
                 if self.get_dis((120,128),(i,j))>=82:
