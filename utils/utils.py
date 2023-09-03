@@ -802,6 +802,7 @@ class UniverseUtils:
         if need_confirm:
             time.sleep(0.3)
             if self.nof():
+                self.mini_state+=2
                 return
             for i in "sasddwwaa":
                 if self._stop:
