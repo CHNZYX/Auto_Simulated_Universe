@@ -750,6 +750,8 @@ class UniverseUtils:
                 self.press('f')
                 pyautogui.keyUp("w")
                 log.info('need_confirm '+self.ts.text)
+                if self.ts.sim("黑塔"):
+                    self.quit = time.time()
                 self.stop_move=1
                 need_confirm = 1
                 break
@@ -808,6 +810,8 @@ class UniverseUtils:
                 if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
                     self.press('f')
                     time.sleep(0.3)
+                    if self.ts.sim("黑塔"):
+                        self.quit = time.time()
                     if self.nof():
                         return
                 self.press(i, 0.25)
