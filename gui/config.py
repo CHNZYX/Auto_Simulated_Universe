@@ -20,10 +20,10 @@ def config_view(page: Page):
         config.show_map_mode = (config.show_map_mode + 1) % 2
 
     def debug_checkbox_changed(_e):
-        config.debug_mode = (config.debug_mode + 1) % 3
+        config.debug_mode = not config.debug_mode
 
     def speed_checkbox_changed(_e):
-        config.speed_mode = (config.speed_mode + 1) % 3
+        config.speed_mode = not config.speed_mode
 
     def force_update_checkbox_changed(_e):
         config.force_update = (config.force_update + 1) % 2

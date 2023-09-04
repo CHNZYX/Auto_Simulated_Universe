@@ -16,6 +16,7 @@ import os
 import threading
 import ctypes
 
+from utils.map_log import map_log
 from utils.config import config
 from utils.log import log
 import utils.ocr as ocr
@@ -266,7 +267,7 @@ class UniverseUtils:
             return local_screen
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        if path == "./imgs/floor/ff1.jpg#":
+        if path == "./imgs/floor/ff1.jpg#" or 0:
             cv.imwrite("tmp.jpg", local_screen)
             print(max_val)
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
@@ -574,7 +575,7 @@ class UniverseUtils:
             type = 3
         return loc, type
 
-    def move_to_interac(self, i=0, abyss=0):
+    def move_to_interac(self, ii=0, abyss=0):
         self.get_screen()
         threshold=0.88
         shape = (int(self.scx * 190), int(self.scx * 190))
@@ -583,7 +584,7 @@ class UniverseUtils:
         local_screen = self.get_local(0.9333, 0.8657, shape)
         target = ((-1, -1), 0)
         nearest = (-1, -1)
-        minicon = cv.imread(self.format_path("mini"+str(i+1)))
+        minicon = cv.imread(self.format_path("mini"+str(ii+1)))
         sp = minicon.shape
         result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
@@ -593,8 +594,10 @@ class UniverseUtils:
             log.info(
                 f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
             )
+            if self.floor >= 12:
+                self.floor = 11
         else:#226 64 66
-            minicon = cv.imread(self.format_path("mini"+str(i+2)))
+            minicon = cv.imread(self.format_path("mini"+str(ii+2)))
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
@@ -604,6 +607,8 @@ class UniverseUtils:
                 log.info(
                     f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
                 )
+                if self.floor >= 12:
+                    self.floor = 11
         for i in range(local_screen.shape[0]):
             for j in range(local_screen.shape[1]):
                 if self.get_dis((120,128),(i,j))>=82:
@@ -626,17 +631,21 @@ class UniverseUtils:
                 sub += 360
             while sub > 180:
                 sub -= 360
-            if self.stop_move:
-                sub=0
-            if i==0:
-                if self.ang_off==0:
+            print(target,sub)
+            if sub == 0:
+                sub = 1e-9
+            if ii==0:
+                if abs(sub)<20:
                     sub*=1.2
                 else:
                     sub=0
             #if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
             #    sub=0
-            self.mouse_move(sub)
-            return sub
+            if not self.stop_move:
+                self.mouse_move(sub)
+                return sub
+            else:
+                return 0
         else:
             return 0
         
@@ -715,13 +724,20 @@ class UniverseUtils:
         threading.Thread(target=self.move_thread).start()
         while not self.ready:
             time.sleep(0.1)
+        if not self.ang_off and self.mini_state == 1:
+            self.stop_move = 1
+            time.sleep(0.5)
+            self.mini_state += 2
+            self.ready = 0
+            self.stop_move = 0
+            self.get_screen()
+            threading.Thread(target=self.move_thread).start()
+            while not self.ready:
+                time.sleep(0.1)
         pyautogui.keyDown("w")
+        wt = 2.35
         if self.mini_state==1:
-            if self.debug==1:
-                self.press('shift')
-                time.sleep(0.35)
-            else:
-                time.sleep(0.7)
+            self.press('shift')
         need_confirm=0
         init_time = time.time()
         while True:
@@ -730,7 +746,8 @@ class UniverseUtils:
                 pyautogui.keyUp("w")
                 self.stop_move=1
                 break
-            if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30): 
+            if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
+                self.press('f')
                 pyautogui.keyUp("w")
                 log.info('need_confirm '+self.ts.text)
                 self.stop_move=1
@@ -741,11 +758,9 @@ class UniverseUtils:
                 self.stop_move=1
                 self.mini_state+=2
                 break
-            if self.check("z",0.5906,0.9537,mask="mask_z"):
+            if self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                 self.stop_move=1
-                time.sleep(0.73)
-                if self.debug!=1:
-                    time.sleep(1.37)
+                time.sleep(1.7)
                 if self.mini_state==1 and self.floor==12:
                     pyautogui.keyUp("w")
                     for i in range(4):
@@ -754,12 +769,12 @@ class UniverseUtils:
                         self.press('e')
                         time.sleep(0.6)
                         self.get_screen()
-                        if not self.check("z",0.5906,0.9537,mask="mask_z"):
+                        if not self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                             break
                         if self._stop:
                             break
                 iters = 0
-                while self.check("z",0.5906,0.9537,mask="mask_z") and not self._stop:
+                while self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95) and not self._stop:
                     iters+=1
                     if iters>10:
                         break
@@ -769,32 +784,47 @@ class UniverseUtils:
                 if iters<=10:
                     self.mini_state+=2
                 break
-            if time.time()-init_time>2.6:
+            if time.time()-init_time>wt:
                 self.stop_move=1
                 pyautogui.keyUp("w")
                 pyautogui.click()
                 self.press('a',1.4)
                 self.press('d',0.3)
-                self.mini_state+=2
+                self.press('w',0.2)
+                time.sleep(3)
+                self.ang_off=0
+                self.mini_state=1
                 break
         self.stop_move=1
         pyautogui.keyUp("w")
         if need_confirm:
             time.sleep(0.3)
+            if self.nof():
+                return
             for i in "sasddwwaa":
                 if self._stop:
                     return
                 self.get_screen()
                 if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
+                    self.press('f')
                     time.sleep(0.3)
-                    self.get_screen()
-                    if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
-                        self.mini_state+=2
+                    if self.nof():
                         return
-                else:
-                    self.press(i, 0.25)
-                    time.sleep(0.4)
+                self.press(i, 0.25)
             pyautogui.click()
+
+    def nof(self):
+        self.get_screen()
+        if self.ts.sim('区域'):
+            self.init_map()
+            self.floor += 1
+            self.lst_changed = time.time()
+            map_log.info(
+                f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
+            )
+        else:
+            self.mini_state += 2
+        return not self.check("run", 0.9844, 0.7889, threshold=0.93) and not self.check("f", 0.4443,0.4417, mask = 'mask_f1')
 
     # 寻路函数
     def get_direc(self):
@@ -841,11 +871,9 @@ class UniverseUtils:
             if type == 1:
                 ps = 10
             elif type == 0:
-                ps = 8
+                ps = 11
             else:
                 ps = 8
-            if self.speed == 2 and type == 0:
-                ps += 3
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.ts.sim("黑塔"):
                 for j in deepcopy(self.target):
@@ -856,10 +884,11 @@ class UniverseUtils:
             if self._stop == 0:
                 pyautogui.keyDown("w")
             sft = 0
-            if self.debug == 1 and type != 3:
+            if type != 3:
+                time.sleep(0.15)
                 self.press("shift")
                 sft = 1
-                time.sleep(0.25)
+                time.sleep(0.1)
             else:
                 time.sleep(0.5)
             ltm = time.time()
@@ -873,9 +902,6 @@ class UniverseUtils:
             sds = ds
             td = 0
             t = 2
-            if self.speed == 2 and type != 3:
-                self.press("shift")
-                sft = 1
             for i in range(3000):
                 if self._stop == 1:
                     pyautogui.keyUp("w")
@@ -912,9 +938,6 @@ class UniverseUtils:
                 # 轨迹图
                 cv.imwrite("imgs/bigmap.jpg", self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
-                if nds < 18 and self.speed == 2 and type == 2 and sft:
-                    self.press('shift')
-                    sft = 0
                 # 1秒内没有离目标点更近：开始尝试绕过障碍
                 if dls[0] <= nds:
                     ts = " da"
@@ -937,12 +960,8 @@ class UniverseUtils:
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
-                        if self.speed == 2:
-                            self.press("shift")
-                            sft = 1
-                        if self.debug == 1:
-                            self.press("shift")
-                            sft = 1
+                        self.press("shift")
+                        sft = 1
                     else:
                         pyautogui.keyUp("w")
                         break
@@ -958,7 +977,7 @@ class UniverseUtils:
                         log.info('removed:'+str((loc, type)))
                         self.lst_changed = time.time()
                         loc, type = self.get_tar()
-                        if self.debug == 1 and type == 3:
+                        if type == 3:
                             self.press("shift")
                             sft = 0
                         ds = self.get_dis(self.real_loc, loc)
@@ -1027,7 +1046,7 @@ class UniverseUtils:
                         except:
                             pass
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 14 + (self.speed == 2) * 2:
+            elif nds <= 16:
                 try:
                     self.target.remove((loc, type))
                     log.info('removed:'+str((loc, type)))

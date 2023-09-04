@@ -24,7 +24,7 @@ import pyuac
 pyautogui.FAILSAFE=False
 
 # 版本号
-version = "v5.32 beta"
+version = "v5.33 debug"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -55,6 +55,8 @@ class SimulatedUniverse(UniverseUtils):
                 self.validation = 0
         else:
             self.validation = 1
+        if 'debug' in version and not gui:
+            log.info("欢迎加入模拟宇宙小群，群号：921407322 密码：zyxxyz")
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
@@ -343,10 +345,7 @@ class SimulatedUniverse(UniverseUtils):
                             ) and self.now_map_sim != -1) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                        if self.now_map_sim<0.38 and self.debug==2:
-                            notif('相似度过低','DEBUG')
-                            self._stop=1
-                        elif self.now_map_sim<0.35:
+                        if self.now_map_sim<0.35:
                             notif('相似度过低','疑似在黑塔办公室')
                             #self.init_map()
                             #return 1
@@ -525,11 +524,11 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.3750,0.9398))
             time.sleep(2)
             self.click((0.3750,0.8398))
-            pyautogui.scroll(-1)
-            time.sleep(0.1)
-            pyautogui.scroll(-1)
+            for _ in range(5):
+                pyautogui.scroll(-1)
+                time.sleep(0.1)
             time.sleep(0.3)
-            self.click((0.1562,0.1250))
+            self.click_text(['脱离卡死'])
         elif self.check("enhance", 0.9208,0.9380):
             time.sleep(1.5)
             for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:
