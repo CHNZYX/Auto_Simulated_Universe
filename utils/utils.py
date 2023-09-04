@@ -802,7 +802,6 @@ class UniverseUtils:
         if need_confirm:
             time.sleep(0.3)
             if self.nof():
-                self.mini_state+=2
                 return
             for i in "sasddwwaa":
                 if self._stop:
@@ -812,7 +811,6 @@ class UniverseUtils:
                     self.press('f')
                     time.sleep(0.3)
                     if self.nof():
-                        self.mini_state+=2
                         return
                 self.press(i, 0.25)
             pyautogui.click()
@@ -826,6 +824,8 @@ class UniverseUtils:
             map_log.info(
                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
             )
+        else:
+            self.mini_state += 2
         return not self.check("run", 0.9844, 0.7889, threshold=0.93) and not self.check("f", 0.4443,0.4417, mask = 'mask_f1')
 
     # 寻路函数
