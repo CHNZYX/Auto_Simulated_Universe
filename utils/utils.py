@@ -761,8 +761,6 @@ class UniverseUtils:
             if self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                 self.stop_move=1
                 time.sleep(1.7)
-                if self.debug!=1.2:
-                    time.sleep(1)
                 if self.mini_state==1 and self.floor==12:
                     pyautogui.keyUp("w")
                     for i in range(4):
