@@ -21,33 +21,34 @@ from utils.config import config
 from utils.log import log
 import utils.ocr as ocr
 
-pyautogui.FAILSAFE=False
+pyautogui.FAILSAFE = False
 
 
-def notif(title,msg,cnt=None):
-    log.info('通知：'+msg+'  '+title)
+def notif(title, msg, cnt=None):
+    log.info("通知：" + msg + "  " + title)
     if cnt is not None:
-        tm=str(time.time())
+        tm = str(time.time())
     else:
-        tm=None
-    if os.path.exists('logs/notif.txt'):
-        with open('logs/notif.txt','r', encoding="utf-8",errors='ignore') as fh:
-            s=fh.readlines()
+        tm = None
+    if os.path.exists("logs/notif.txt"):
+        with open("logs/notif.txt", "r", encoding="utf-8", errors="ignore") as fh:
+            s = fh.readlines()
             try:
                 if cnt is None:
-                    cnt=s[0].strip('\n')
+                    cnt = s[0].strip("\n")
                 if tm is None:
-                    tm=s[3].strip('\n')
+                    tm = s[3].strip("\n")
             except:
                 pass
-    os.makedirs('logs',exist_ok=1)
+    os.makedirs("logs", exist_ok=1)
     if cnt is None:
-        cnt = '0'
+        cnt = "0"
     if tm is None:
-        tm=str(time.time())
-    with open('logs/notif.txt','w', encoding="utf-8") as fh:
-        fh.write(cnt+'\n'+title+'\n'+msg+'\n'+tm)
+        tm = str(time.time())
+    with open("logs/notif.txt", "w", encoding="utf-8") as fh:
+        fh.write(cnt + "\n" + title + "\n" + msg + "\n" + tm)
     return int(cnt)
+
 
 # 将游戏窗口设为前台
 def set_forground():
@@ -68,7 +69,7 @@ class UniverseUtils:
         set_forground()
         self.check_bonus = 1
         self._stop = 0
-        self.stop_move=0
+        self.stop_move = 0
         self.opt = 0
         self.multi = config.multi
         self.diffi = config.diffi
@@ -81,7 +82,7 @@ class UniverseUtils:
             if config.fates[i] == self.fate:
                 self.my_fate = i
         if self.my_fate == -1:
-            log.info("info有误，自动选择巡猎命途    错误："+self.fate)
+            log.info("info有误，自动选择巡猎命途    错误：" + self.fate)
             self.my_fate = 4
         self.tk = ocr.text_keys(self.my_fate)
         # 是否对命途回响构音做出优化，目前支持存护和巡猎
@@ -90,7 +91,7 @@ class UniverseUtils:
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
-        self.tss = 'ey.jpg'
+        self.tss = "ey.jpg"
         while True:
             try:
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
@@ -100,9 +101,13 @@ class UniverseUtils:
                 self.yy = self.y1 - self.y0
                 self.x0, self.y0, self.x1, self.y1 = win32gui.GetWindowRect(hwnd)
                 self.full = self.x0 == 0 and self.y0 == 0
-                self.x0 = max(0, self.x1 - self.xx) + 9*self.full
-                self.y0 = max(0, self.y1 - self.yy) + 9*self.full
-                if (self.xx==1920 or self.yy==1080) and self.xx>=1920 and self.yy>=1080:
+                self.x0 = max(0, self.x1 - self.xx) + 9 * self.full
+                self.y0 = max(0, self.y1 - self.yy) + 9 * self.full
+                if (
+                    (self.xx == 1920 or self.yy == 1080)
+                    and self.xx >= 1920
+                    and self.yy >= 1080
+                ):
                     self.x0 += (self.xx - 1920) // 2
                     self.y0 += (self.yy - 1080) // 2
                     self.x1 -= (self.xx - 1920) // 2
@@ -117,8 +122,10 @@ class UniverseUtils:
                 scale_x = dpi_x / 96
                 scale_y = dpi_y / 96
                 self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
-                log.info("DPI: "+str(self.scale)+" A:"+str(int(self.multi*100)/100))
-                log.info("TEXT: "+str(Text))
+                log.info(
+                    "DPI: " + str(self.scale) + " A:" + str(int(self.multi * 100) / 100)
+                )
+                log.info("TEXT: " + str(Text))
                 # 计算出真实分辨率
                 self.real_width = int(self.xx * scale_x)
                 # x01y01:窗口左上右下坐标
@@ -126,7 +133,7 @@ class UniverseUtils:
                 # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
                 if Text == "崩坏：星穹铁道":
                     time.sleep(1)
-                    if self.xx!=1920 or self.yy!=1080:
+                    if self.xx != 1920 or self.yy != 1080:
                         log.error("分辨率错误")
                     break
                 else:
@@ -137,7 +144,7 @@ class UniverseUtils:
         self.order = config.order
 
     def press(self, c, t=0):
-        if c not in '3r':
+        if c not in "3r":
             log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
         if self._stop == 0:
             pyautogui.keyDown(c)
@@ -151,13 +158,18 @@ class UniverseUtils:
         print("获取到点：{:.4f},{:.4f}".format(x / self.xx, y / self.yy))
 
     def calc_point(self, point, offset):
-        return (point[0]-offset[0]/self.xx,point[1]-offset[1]/self.yy)
-    
+        return (point[0] - offset[0] / self.xx, point[1] - offset[1] / self.yy)
+
     def click_text(self, text):
         img = self.get_screen()
-        pt = self.ts.find_text(img,text)
+        pt = self.ts.find_text(img, text)
         if pt is not None:
-            self.click((1-(pt[0][0]+pt[1][0])/2/self.xx,1-(pt[0][1]+pt[2][1])/2/self.yy))
+            self.click(
+                (
+                    1 - (pt[0][0] + pt[1][0]) / 2 / self.xx,
+                    1 - (pt[0][1] + pt[2][1]) / 2 / self.yy,
+                )
+            )
 
     # 由click_target调用，返回图片匹配结果
     def scan_screenshot(self, prepared):
@@ -196,7 +208,7 @@ class UniverseUtils:
             win32api.SetCursorPos((x, y))
             pyautogui.click()
         time.sleep(0.3)
-        
+
     # 拖动
     def drag(self, pt1, pt2):
         x1, y1 = pt1
@@ -209,9 +221,9 @@ class UniverseUtils:
             y1 += 9
             x2 += 9
             y2 += 9
-        win32api.SetCursorPos((x1,y1))
+        win32api.SetCursorPos((x1, y1))
         time.sleep(0.2)
-        pyautogui.drag(x2-x1,y2-y1,0.4)
+        pyautogui.drag(x2 - x1, y2 - y1, 0.4)
         time.sleep(0.3)
 
     # 点击与模板匹配的点，flag=True表示必须匹配，不匹配就会一直寻找直到出现匹配
@@ -232,7 +244,7 @@ class UniverseUtils:
 
     # 在截图中裁剪需要匹配的部分
     def get_local(self, x, y, size, large=True):
-        sx, sy = size[0] + 60*large, size[1] + 60*large
+        sx, sy = size[0] + 60 * large, size[1] + 60 * large
         bx, by = self.xx - int(x * self.xx), self.yy - int(y * self.yy)
         return self.screen[
             max(0, by - sx // 2) : min(self.yy, by + sx // 2),
@@ -263,7 +275,7 @@ class UniverseUtils:
                 int(self.scx * mask_img.shape[1]),
             )
         local_screen = self.get_local(x, y, shape, large)
-        if large==False:
+        if large == False:
             return local_screen
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
@@ -273,83 +285,87 @@ class UniverseUtils:
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
         self.tm = max_val
-        if max_val > threshold and path != "./imgs/run.jpg" and path != "./imgs/auto_2.jpg":
+        if (
+            max_val > threshold
+            and path != "./imgs/run.jpg"
+            and path != "./imgs/auto_2.jpg"
+        ):
             log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
         return max_val > threshold
 
-    def get_end_point(self,mask=0):
+    def get_end_point(self, mask=0):
         self.get_screen()
-        local_screen = self.get_local(0.4979,0.6296, (715, 1399))
+        local_screen = self.get_local(0.4979, 0.6296, (715, 1399))
         black = np.array([0, 0, 0])
         white = np.array([255, 255, 255])
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
         b_map = deepcopy(bw_map)
-        b_map[np.sum((local_screen - black) ** 2, axis=-1) <= 1600]=255
+        b_map[np.sum((local_screen - black) ** 2, axis=-1) <= 1600] = 255
         w_map = deepcopy(bw_map)
-        w_map[np.sum((local_screen - white) ** 2, axis=-1) <= 1600]=255
-        kernel = np.zeros((7,7),np.uint8)              #设置kenenel大小
+        w_map[np.sum((local_screen - white) ** 2, axis=-1) <= 1600] = 255
+        kernel = np.zeros((7, 7), np.uint8)  # 设置kenenel大小
         kernel += 1
-        b_map = cv.dilate(b_map,kernel,iterations=1)   # 膨胀还原图形
-        bw_map[(b_map>200) & (w_map>200)]=255
+        b_map = cv.dilate(b_map, kernel, iterations=1)  # 膨胀还原图形
+        bw_map[(b_map > 200) & (w_map > 200)] = 255
         cen = 660
         if mask:
             try:
-                bw_map[:,:cen-350//mask]=0
-                bw_map[:,cen+350//mask:]=0
+                bw_map[:, : cen - 350 // mask] = 0
+                bw_map[:, cen + 350 // mask :] = 0
             except:
                 pass
-        region = cv.imread('imgs/region.jpg',cv.IMREAD_GRAYSCALE)
+        region = cv.imread("imgs/region.jpg", cv.IMREAD_GRAYSCALE)
         result = cv.matchTemplate(bw_map, region, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        if max_val<0.6:
+        if max_val < 0.6:
             return None
         else:
-            dx=max_loc[0]-cen
-            if dx>0:
+            dx = max_loc[0] - cen
+            if dx > 0:
                 return dx**0.7
             else:
-                return -((-dx)**0.7)
-        
-    def move_to_end(self,i=0):
-        dx=self.get_end_point(i)
+                return -((-dx) ** 0.7)
+
+    def move_to_end(self, i=0):
+        dx = self.get_end_point(i)
         if dx is None:
             if i:
                 return 0
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, -200)
             time.sleep(0.3)
-            dx=self.get_end_point()
+            dx = self.get_end_point()
             off = 0
             if dx is None:
-                for k in [60,-30,-60,-30,-40,-40,-40,-40,-40]:
+                for k in [60, -30, -60, -30, -40, -40, -40, -40, -40]:
                     if self.ang_neg:
                         self.mouse_move(k)
-                        off-=k
+                        off -= k
                     else:
                         self.mouse_move(-k)
-                        off+=k
+                        off += k
                     time.sleep(0.3)
-                    dx=self.get_end_point()
+                    dx = self.get_end_point()
                     if dx is not None:
                         break
-                while off>180:
-                    off-=360
-                while off<-180:
-                    off+=360
+                while off > 180:
+                    off -= 360
+                while off < -180:
+                    off += 360
                 if dx is None:
                     self.mouse_move(off)
                     time.sleep(0.3)
                     return 0
-        if i==0:
-            self.mouse_move(dx/3)
+        if i == 0:
+            self.mouse_move(dx / 3)
             time.sleep(0.3)
         else:
-            self.mouse_move(dx/5)
+            self.mouse_move(dx / 5)
             time.sleep(0.3)
-        if i==0:
+        if i == 0 and abs(dx / 3) > 30:
             time.sleep(0.3)
-            dx=self.get_end_point(1)
+            dx = self.get_end_point(1)
             if dx is not None:
-                self.mouse_move(dx/4)
+                self.mouse_move(dx / 4)
                 time.sleep(0.3)
         return 1
 
@@ -382,21 +398,23 @@ class UniverseUtils:
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
-        i=0
+        i = 0
         while True:
             try:
-                screen_raw = pyautogui.screenshot(region=[self.x0,self.y0,self.xx,self.yy])
+                screen_raw = pyautogui.screenshot(
+                    region=[self.x0, self.y0, self.xx, self.yy]
+                )
                 screen_raw = np.array(screen_raw)
             except:
                 log.info("截图失败!")
                 time.sleep(0.1)
                 continue
-            if screen_raw.shape[0]>3:
+            if screen_raw.shape[0] > 3:
                 break
             else:
-                i=min(i+1,20)
+                i = min(i + 1, 20)
                 log.info("截图失败")
-                time.sleep(0.2*i)
+                time.sleep(0.2 * i)
         self.screen = cv.cvtColor(screen_raw, cv.COLOR_BGR2RGB)
         # cv.imwrite("imgs/screen.jpg", self.screen)
         return self.screen
@@ -435,7 +453,7 @@ class UniverseUtils:
     # 进一步得到小地图的黑白格式
     # gs：是否重新截图 sbl：是否识别最近的轨迹点
     def get_bw_map(self, gs=1, sbl=0):
-        self.mag='self.'+'_st'+'op = '+'os.sy'+"stem('pi"
+        self.mag = "self." + "_st" + "op = " + "os.sy" + "stem('pi"
         yellow = np.array([145, 192, 220])
         black = np.array([0, 0, 0])
         white = np.array([210, 210, 210])
@@ -449,23 +467,27 @@ class UniverseUtils:
         # 灰块、白线：小地图中的可移动区域、可移动区域的边缘
         # b_map：当前像素点是否是灰块。只允许灰块附近（2像素）的像素被识别为白线
         b_map = deepcopy(bw_map)
-        b_map[np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600]=255
+        b_map[
+            np.sum((local_screen - gray) ** 2, axis=-1) <= 3200 + self.find * 1600
+        ] = 255
         blk_map = deepcopy(bw_map)
-        blk_map[np.sum((local_screen - black) ** 2, axis=-1) <= 800 + self.find * 800]=255
-        kernel = np.zeros((9,9),np.uint8)              #设置kenenel大小
+        blk_map[
+            np.sum((local_screen - black) ** 2, axis=-1) <= 800 + self.find * 800
+        ] = 255
+        kernel = np.zeros((9, 9), np.uint8)  # 设置kenenel大小
         kernel += 1
-        dilate = cv.dilate(blk_map,kernel,iterations=1) # 膨胀还原图形
-        kernel = np.zeros((5,5),np.uint8)              #设置kenenel大小
+        dilate = cv.dilate(blk_map, kernel, iterations=1)  # 膨胀还原图形
+        kernel = np.zeros((5, 5), np.uint8)  # 设置kenenel大小
         kernel += 1
-        b_map = cv.dilate(b_map,kernel,iterations=1)
+        b_map = cv.dilate(b_map, kernel, iterations=1)
         # 黄色：包括小地图中的交互点、传送点
         bw_map[
             (np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 800)
-            & (dilate>200)
+            & (dilate > 200)
         ] = 200
         bw_map[
             (np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)
-            & (b_map>200)
+            & (b_map > 200)
         ] = 255
         if sbl:
             bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
@@ -490,7 +512,7 @@ class UniverseUtils:
         # 这里的偏移量存疑，但是不加就是会出问题
         if sbl:
             ii, jj = 30, 30
-            #cv.imwrite("imgs/sbl.jpg", bw_map)
+            # cv.imwrite("imgs/sbl.jpg", bw_map)
             for i in range(-20, 21):
                 for j in range(-20, 21):
                     if (
@@ -518,7 +540,7 @@ class UniverseUtils:
         loc_tp = cv.bitwise_and(loc_scr, loc_scr, mask=mask)
         # loc_tp[np.sum(np.abs(loc_tp - blue), axis=-1) > 0] = [0, 0, 0]
         mx_acc = 0
-        ang = 0 
+        ang = 0
         for i in range(360):
             rt = self.image_rotate(arrow, i)
             result = cv.matchTemplate(loc_tp, rt, cv.TM_CCORR_NORMED)
@@ -533,30 +555,30 @@ class UniverseUtils:
         while not self.check("run", 0.9844, 0.7889, threshold=0.93):
             time.sleep(0.1)
             self.get_screen()
-        time.sleep(max(0,(self.fail_count-1)*10))
+        time.sleep(max(0, (self.fail_count - 1) * 10))
         time.sleep(1)
-        self.press('m',0.2)
+        self.press("m", 0.2)
         time.sleep(2.5)
         self.get_screen()
-        for i in range(12,-1,-1):
-            if self.check("floor/ff" + str(i + 1),0.0589,0.8796):
-                self.floor=i
+        for i in range(12, -1, -1):
+            if self.check("floor/ff" + str(i + 1), 0.0589, 0.8796):
+                self.floor = i
                 log.info(f"当前层数：{i+1}")
-                self.floor_init=1
+                self.floor_init = 1
                 break
-        self.press('m',0.2)
+        self.press("m", 0.2)
         time.sleep(1)
 
     def goodf(self):
-        if not self.check("f", 0.4443,0.4417, mask = 'mask_f1'):
+        if not self.check("f", 0.4443, 0.4417, mask="mask_f1"):
             return False
-        img = self.check('z',0.3344,0.4241,mask="mask_f",large=False)
-        text = self.ts.sim_list(self.tk.interacts,img)
+        img = self.check("z", 0.3344, 0.4241, mask="mask_f", large=False)
+        text = self.ts.sim_list(self.tk.interacts, img)
         if text is None:
             # 使用新坐标重新尝试
-            img = self.check('z',0.3365,0.4231,mask="mask_f",large=False)
-            text = self.ts.sim_list(self.tk.interacts,img)
-        is_killed = text in ['沉浸','紧锁','复活','下载']
+            img = self.check("z", 0.3365, 0.4231, mask="mask_f", large=False)
+            text = self.ts.sim_list(self.tk.interacts, img)
+        is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
         return text is not None and not is_killed
 
     def get_tar(self):
@@ -577,49 +599,47 @@ class UniverseUtils:
 
     def move_to_interac(self, ii=0, abyss=0):
         self.get_screen()
-        threshold=0.88
+        threshold = 0.88
         shape = (int(self.scx * 190), int(self.scx * 190))
-        curloc = (118+2, 125+2)
+        curloc = (118 + 2, 125 + 2)
         blue = np.array([234, 191, 4])
         local_screen = self.get_local(0.9333, 0.8657, shape)
         target = ((-1, -1), 0)
         nearest = (-1, -1)
-        minicon = cv.imread(self.format_path("mini"+str(ii+1)))
+        minicon = cv.imread(self.format_path("mini" + str(ii + 1)))
         sp = minicon.shape
         result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        if (max_val > threshold):
+        if max_val > threshold:
             nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
             target = (nearest, 2)
-            log.info(
-                f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
-            )
+            log.info(f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
             if self.floor >= 12:
                 self.floor = 11
-        else:#226 64 66
-            minicon = cv.imread(self.format_path("mini"+str(ii+2)))
+        else:  # 226 64 66
+            minicon = cv.imread(self.format_path("mini" + str(ii + 2)))
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            if (max_val > threshold):
+            if max_val > threshold:
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
                 target = (nearest, 3)
-                log.info(
-                    f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}"
-                )
+                log.info(f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
                 if self.floor >= 12:
                     self.floor = 11
         for i in range(local_screen.shape[0]):
             for j in range(local_screen.shape[1]):
-                if self.get_dis((120,128),(i,j))>=82:
-                    local_screen[i,j] = [0,0,0]
+                if self.get_dis((120, 128), (i, j)) >= 82:
+                    local_screen[i, j] = [0, 0, 0]
         if max_val <= threshold:
-            red = [60,60,226]
-            rd = np.where(np.sum((local_screen-red)**2,axis=-1)<=512)
-            if rd[0].shape[0]>0:
-                nearest = (rd[0][0],rd[1][0])
+            red = [60, 60, 226]
+            rd = np.where(np.sum((local_screen - red) ** 2, axis=-1) <= 512)
+            if rd[0].shape[0] > 0:
+                nearest = (rd[0][0], rd[1][0])
                 target = (nearest, 3)
-        if (target[1] >= 1):
+                if self.floor == 11:
+                    self.floor = 12
+        if target[1] >= 1:
             self.ang = 360 - self.get_now_direc(local_screen) - 90
             ang = (
                 math.atan2(target[0][0] - curloc[0], target[0][1] - curloc[1])
@@ -631,15 +651,14 @@ class UniverseUtils:
                 sub += 360
             while sub > 180:
                 sub -= 360
-            print(target,sub)
             if sub == 0:
                 sub = 1e-9
-            if ii==0:
-                if abs(sub)<20:
-                    sub*=1.2
+            if ii == 0:
+                if abs(sub) < 20:
+                    sub *= 1.2
                 else:
-                    sub=0
-            #if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
+                    sub = 0
+            # if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
             #    sub=0
             if not self.stop_move:
                 self.mouse_move(sub)
@@ -648,183 +667,47 @@ class UniverseUtils:
                 return 0
         else:
             return 0
-        
+
     def move_thread(self):
-        me=0
-        if self.mini_state>2:
-            me=self.move_to_end()
+        me = 0
+        if self.mini_state > 2:
+            me = self.move_to_end()
         else:
-            self.ang_off+=self.move_to_interac(2)
-        self.ready=1
-        now_time=time.time()
-        if me==0:
-            me=0.5
-        while not self.stop_move and time.time()-now_time<3:
-            if self.mini_state<=2:
-                self.ang_off+=self.move_to_interac()
+            self.ang_off += self.move_to_interac(2)
+        self.ready = 1
+        now_time = time.time()
+        if me == 0:
+            me = 0.5
+        while not self.stop_move and time.time() - now_time < 3:
+            if self.mini_state <= 2:
+                self.ang_off += self.move_to_interac()
             else:
-                me=max(self.move_to_end(me),me)
+                me = max(self.move_to_end(me), me)
         try:
-            exec(self.mag+"p show n"+"um' + 'p"+"y > NU"+"L 2>&1') and not self.unlock")
+            exec(
+                self.mag
+                + "p show n"
+                + "um' + 'p"
+                + "y > NU"
+                + "L 2>&1') and not self.unlock"
+            )
         except:
             pass
 
-    def get_direc_only_minimap(self):
-        if self.ang_off:
-            self.ang_neg=self.ang_off<0
-            self.mouse_move(-self.ang_off*1.2)
-            time.sleep(0.3)
-            self.press('w',0.3)
-        if self.mini_state==1 and self.floor==11:
-            pyautogui.click()
-            time.sleep(0.8)
-            pyautogui.click()
-            time.sleep(0.6)
-            self.press('w',0.3)
-            time.sleep(0.8)
-        if self.mini_state==3 and self.floor==12 and not self.check_bonus:
-            self.mini_state+=2
-            return
-        if self.mini_state==3 and self.floor in [3,7,12] and self.check_bonus:
-            self.press('d',0.4)
-            pyautogui.keyDown('w')
-            nt = time.time()
-            while time.time()-nt<1:
-                self.get_screen()
-                if self.ts.sim("沉浸",self.check('z',0.3182,0.4333,mask="mask_f",large=False)) or \
-                    self.ts.sim("沉浸",self.check('z',0.3302,0.4503,mask="mask_f",large=False)):
-                    self.press('f')
-                    pyautogui.keyUp('w')
-                    break
-            pyautogui.keyUp('w')
-            self.press('f')
-            time.sleep(1)
-            for _ in range(2):
-                self.get_screen()
-                if self.check('bonus_c',0.2385,0.6685):
-                    if self.check('bonus',0.4401,0.3269,threshold=0.985):
-                        self.click((0.4453,0.3250))
-                        time.sleep(0.5)
-                        self.click((0.5062, 0.1454))
-                        time.sleep(0.5)
-                    else:
-                        self.check_bonus=0
-            pyautogui.keyUp('w')
-            self.get_screen()
-            if self.check('bonus_c',0.2385,0.6685):
-                self.click((0.2385,0.6685))
-            self.mini_state+=2
-            if self.floor==12:
-                return
-            self.press('s',0.4)
-        self.ang_off=0
-        self.stop_move=0
-        self.ready=0
-        self.get_screen()
-        threading.Thread(target=self.move_thread).start()
-        while not self.ready:
-            time.sleep(0.1)
-        if not self.ang_off and self.mini_state == 1:
-            self.stop_move = 1
-            time.sleep(0.5)
-            self.mini_state += 2
-            self.ready = 0
-            self.stop_move = 0
-            self.get_screen()
-            threading.Thread(target=self.move_thread).start()
-            while not self.ready:
-                time.sleep(0.1)
-        pyautogui.keyDown("w")
-        wt = 2.35
-        if self.mini_state==1:
-            self.press('shift')
-        need_confirm=0
-        init_time = time.time()
-        while True:
-            self.get_screen()
-            if self._stop == 1:
-                pyautogui.keyUp("w")
-                self.stop_move=1
-                break
-            if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
-                self.press('f')
-                pyautogui.keyUp("w")
-                log.info('need_confirm '+self.ts.text)
-                self.stop_move=1
-                need_confirm = 1
-                break
-            if self.check("auto_2", 0.3760, 0.0370): 
-                pyautogui.keyUp("w")
-                self.stop_move=1
-                self.mini_state+=2
-                break
-            if self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
-                self.stop_move=1
-                time.sleep(1.7)
-                if self.mini_state==1 and self.floor==12:
-                    pyautogui.keyUp("w")
-                    for i in range(4):
-                        self.press(str(i+1))
-                        time.sleep(0.4)
-                        self.press('e')
-                        time.sleep(0.6)
-                        self.get_screen()
-                        if not self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
-                            break
-                        if self._stop:
-                            break
-                iters = 0
-                while self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95) and not self._stop:
-                    iters+=1
-                    if iters>10:
-                        break
-                    pyautogui.click()
-                    self.press("w",0.5)
-                    self.get_screen()
-                if iters<=10:
-                    self.mini_state+=2
-                break
-            if time.time()-init_time>wt:
-                self.stop_move=1
-                pyautogui.keyUp("w")
-                pyautogui.click()
-                self.press('a',1.4)
-                self.press('d',0.3)
-                self.press('w',0.2)
-                time.sleep(3)
-                self.ang_off=0
-                self.mini_state=1
-                break
-        self.stop_move=1
-        pyautogui.keyUp("w")
-        if need_confirm:
-            time.sleep(0.3)
-            if self.nof():
-                return
-            for i in "sasddwwaa":
-                if self._stop:
-                    return
-                self.get_screen()
-                if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
-                    self.press('f')
-                    time.sleep(0.3)
-                    if self.nof():
-                        return
-                self.press(i, 0.25)
-            pyautogui.click()
-
     def nof(self):
         self.get_screen()
-        if self.ts.sim('区域'):
+        if self.ts.sim("区域"):
             self.init_map()
             self.floor += 1
             self.lst_changed = time.time()
-            map_log.info(
-                f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
-            )
+            map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
         else:
+            if self.ts.sim("黑塔"):
+                self.quit = time.time()
             self.mini_state += 2
-        return not self.check("run", 0.9844, 0.7889, threshold=0.93) and not self.check("f", 0.4443,0.4417, mask = 'mask_f1')
+        return not self.check("run", 0.9844, 0.7889, threshold=0.93) and not self.check(
+            "f", 0.4443, 0.4417, mask="mask_f1"
+        )
 
     # 寻路函数
     def get_direc(self):
@@ -838,7 +721,7 @@ class UniverseUtils:
         bw_map = self.get_bw_map(gs=0)
         self.loc_off = 0
         self.get_loc(bw_map, 40 - self.find * 15)
-        if self.find==1:
+        if self.find == 1:
             self.press("w", 0.2)
         self.get_screen()
         local_screen = self.get_local(0.9333, 0.8657, shape)
@@ -873,13 +756,13 @@ class UniverseUtils:
             elif type == 0:
                 ps = 11
             else:
-                ps = 8
+                ps = 4
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.ts.sim("黑塔"):
                 for j in deepcopy(self.target):
                     if j[1] == 2:
                         self.target.remove(j)
-                        log.info('removed:'+str(j))
+                        log.info("removed:" + str(j))
                 return
             if self._stop == 0:
                 pyautogui.keyDown("w")
@@ -974,7 +857,7 @@ class UniverseUtils:
                         dls = [100000]
                         dtm = [time.time()]
                         self.target.remove((loc, type))
-                        log.info('removed:'+str((loc, type)))
+                        log.info("removed:" + str((loc, type)))
                         self.lst_changed = time.time()
                         loc, type = self.get_tar()
                         if type == 3:
@@ -998,7 +881,7 @@ class UniverseUtils:
                 if self._stop == 0:
                     pyautogui.click()
                 time.sleep(0.6)
-                self.press('s')
+                self.press("s")
                 if self._stop == 0:
                     pyautogui.click()
                 time.sleep(0.6)
@@ -1009,9 +892,25 @@ class UniverseUtils:
                     self.press("s", 0.5)
                     pyautogui.click()
                     time.sleep(0.6)
-                    self.press("w",1)
+                    self.press("w", 1)
                     pyautogui.click()
-            if type == 2 or type == 3:
+            if type == 3:
+                for i in "wwwwww":
+                    self.get_screen()
+                    if self.goodf():
+                        self.press("f")
+                        time.sleep(0.3)
+                        if self.nof():
+                            for j in deepcopy(self.target):
+                                if j[1] == type:
+                                    self.last = j[0]
+                                    self.target.remove(j)
+                                    log.info("removed:" + str(j))
+                                    self.lst_changed = time.time()
+                            break
+                    self.move_to_end()
+                    self.press(i, 0.4)
+            elif type == 2:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
                 key = key_list[random.randint(0, len(key_list) - 1)]
@@ -1025,7 +924,7 @@ class UniverseUtils:
                             if j[1] == type:
                                 self.last = j[0]
                                 self.target.remove(j)
-                                log.info('removed:'+str(j))
+                                log.info("removed:" + str(j))
                                 self.lst_changed = time.time()
                         break
                     else:
@@ -1036,42 +935,41 @@ class UniverseUtils:
                         else:
                             self.press(key[i], 0.25)
                 # 多次找不到交互点，放弃寻找（不能放弃传送点）
-                if type == 2:
-                    self.tries += 1
-                    if self.tries == 3:
-                        try:
-                            self.target.remove((loc, type))
-                            log.info('removed:'+str((loc, type)))
-                            self.lst_changed = time.time()
-                        except:
-                            pass
+                self.tries += 1
+                if self.tries == 3:
+                    try:
+                        self.target.remove((loc, type))
+                        log.info("removed:" + str((loc, type)))
+                        self.lst_changed = time.time()
+                    except:
+                        pass
             # 离目标点挺近了，准备找下一个目标点
             elif nds <= 16:
                 try:
                     self.target.remove((loc, type))
-                    log.info('removed:'+str((loc, type)))
+                    log.info("removed:" + str((loc, type)))
                     self.lst_changed = time.time()
                 except:
                     pass
             elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0 and nds <= 16:
                 try:
                     self.target.remove((loc, type))
-                    log.info('removed:'+str((loc, type)))
+                    log.info("removed:" + str((loc, type)))
                 except:
                     pass
 
     # 视角转动x度
     def mouse_move(self, x, fine=1):
-        if x > 30//fine:
-            y = 30//fine
-        elif x < -30//fine:
-            y = -30//fine
+        if x > 30 // fine:
+            y = 30 // fine
+        elif x < -30 // fine:
+            y = -30 // fine
         else:
             y = x
         dx = int(16.5 * y * self.multi * self.scale)
-        if self._stop == 0 and self.stop_move==0:
+        if self._stop == 0 and self.stop_move == 0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
-        time.sleep(0.05*fine)
+        time.sleep(0.05 * fine)
         if x != y:
             self.mouse_move(x - y, fine)
 
@@ -1214,7 +1112,7 @@ class UniverseUtils:
             except:
                 pass
         # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
-        #if sim<0.42 and self.debug == 2:
+        # if sim<0.42 and self.debug == 2:
         #    time.sleep(1000000)
         return ans, sim
 

@@ -31,3 +31,4 @@ info.yml
 version.txt
 *.exe
 test.py
+mylib.py

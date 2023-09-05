@@ -20,33 +20,46 @@ import datetime
 import requests
 import pytz
 import pyuac
+from mylib import get_direc_only_minimap, ban
 
-pyautogui.FAILSAFE=False
+pyautogui.FAILSAFE = False
 
 # 版本号
-version = "v5.33 debug"
+version = "v5.33 beta"
 
 
 class SimulatedUniverse(UniverseUtils):
-    def __init__(self, find, debug, show_map, speed, unlock=False, bonus=False, update=0, gui=0):
+    def __init__(
+        self, find, debug, show_map, speed, unlock=False, bonus=False, update=0, gui=0
+    ):
         super().__init__()
         # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
         # t2 = threading.Thread(target=os.system,kwargs={'command':'python notif.py > NUL 2>&1'})
-        log.info("当前版本："+version+"  当前命途："+self.fate)
+        log.info("当前版本：" + version + "  当前命途：" + self.fate)
         if gui:
             try:
-                lowest=requests.get("https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest").json()["name"].split('lowest')[1].strip().strip('v')
-                log.info("版本下限：v"+lowest)
+                lowest = (
+                    requests.get(
+                        "https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest"
+                    )
+                    .json()["name"]
+                    .split("lowest")[1]
+                    .strip()
+                    .strip("v")
+                )
+                log.info("版本下限：v" + lowest)
             except:
                 log.info("网络异常，尝试备用网址")
                 try:
-                    lowest=requests.get("https://chnzyx.github.io/asu_version_check/").text.strip()
-                    log.info("版本下限：v"+lowest)
+                    lowest = requests.get(
+                        "https://chnzyx.github.io/asu_version_check/"
+                    ).text.strip()
+                    log.info("版本下限：v" + lowest)
                 except:
                     log.info("网络异常，强制退出")
-            ves = version[1:].split(' ')[0]
+            ves = version[1:].split(" ")[0]
             try:
-                if float(lowest)>float(ves):
+                if float(lowest) > float(ves):
                     log.info("当前版本过低，强制退出")
                     self.validation = 0
                 else:
@@ -55,7 +68,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.validation = 0
         else:
             self.validation = 1
-        if 'debug' in version and not gui:
+        if "debug" in version and not gui:
             log.info("欢迎加入模拟宇宙小群，群号：921407322 密码：zyxxyz")
         self.now_map = None
         self.now_map_sim = None
@@ -76,14 +89,15 @@ class SimulatedUniverse(UniverseUtils):
         self.re_align = 0
         self.unlock = unlock
         self.check_bonus = bonus
-        self.kl=0
-        self.fail_count=0
-        ex_notif=""
+        self.kl = 0
+        self.gui = gui
+        self.fail_count = 0
+        ex_notif = ""
         if bonus:
-            ex_notif=" 自动领取沉浸奖励"
+            ex_notif = " 自动领取沉浸奖励"
             log.info(ex_notif)
         self.update_count()
-        notif('开始运行'+ex_notif,f'初始计数：{self.count}')
+        notif("开始运行" + ex_notif, f"初始计数：{self.count}")
         set_debug(debug > 0)
         if update and find:
             update_map()
@@ -105,9 +119,9 @@ class SimulatedUniverse(UniverseUtils):
         self.his_loc = (30, 30)
         self.offset = (30, 30)
         self.now_loc = (4096, 4096)
-        self.mini_state=1
-        self.ang_off=0
-        self.ang_neg=0
+        self.mini_state = 1
+        self.ang_off = 0
+        self.ang_neg = 0
         self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
@@ -118,9 +132,9 @@ class SimulatedUniverse(UniverseUtils):
         self.quit = 0
         self.floor_init = 0
         self.init_map()
-        fail_cnt=0
-        begin=1
-        self._stop = os.stat('imgs/mon'+self.tss).st_size!=141882
+        fail_cnt = 0
+        begin = 1
+        self._stop = os.stat("imgs/mon" + self.tss).st_size != 141882
         while True:
             if self._stop:
                 break
@@ -144,31 +158,32 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/mask_f1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
-            '''
+            ban(self)
+            # self.click_target('imgs/mask_f1.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
                 self.press("F4")
                 time.sleep(0.6)
                 self.get_screen()
-            '''
+            """
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if self.threshold > 0.95:
                     self.threshold -= 0.015
                 else:
-                    if fail_cnt<=1:
+                    if fail_cnt <= 1:
                         self.click((0.5000, 0.1454))
-                        fail_cnt+=1
+                        fail_cnt += 1
                     else:
                         self.click((0.2062, 0.2054))
-                        fail_cnt=0
+                        fail_cnt = 0
                     self.threshold = 0.97
                 time.sleep(0.5)
             # 匹配到图片 res=1时等待一段时间
             else:
-                fail_cnt=0
+                fail_cnt = 0
                 self.threshold = 0.97
                 if res == 1:
                     time.sleep(0.4)
@@ -176,15 +191,24 @@ class SimulatedUniverse(UniverseUtils):
 
     def end_of_uni(self):
         self.update_count(0)
-        self.my_cnt+=1
-        tm = int((time.time()-self.init_tm)/60)
-        remain = 34-self.count
-        if remain>0:
-            remain = int(remain*(time.time()-self.init_tm)/self.my_cnt/60)
+        self.my_cnt += 1
+        tm = int((time.time() - self.init_tm) / 60)
+        remain = 34 - self.count
+        if remain > 0:
+            remain = int(remain * (time.time() - self.init_tm) / self.my_cnt / 60)
         else:
             remain = 0
-        if notif("已完成",f"计数:{self.count} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",cnt=str(self.count))>=34 and self.debug==0:
-            self._stop=1
+        if (
+            notif(
+                "已完成",
+                f"计数:{self.count} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",
+                cnt=str(self.count),
+            )
+            >= 34
+            and self.debug == 0
+        ):
+            self._stop = 1
+        ban(self)
         self.floor = 0
 
     def normal(self):
@@ -192,16 +216,18 @@ class SimulatedUniverse(UniverseUtils):
         bk_lst_changed = self.lst_changed
         self.lst_changed = time.time()
         # 战斗界面
-        if self.check("c", 0.9464,0.1287, threshold=0.985) or self.check("auto_2", 0.0583,0.0769):
+        if self.check("c", 0.9464, 0.1287, threshold=0.985) or self.check(
+            "auto_2", 0.0583, 0.0769
+        ):
             # 需要打开自动战斗
-            if self.check("c", 0.9464,0.1287, threshold=0.985):
-                self.press('v')
+            if self.check("c", 0.9464, 0.1287, threshold=0.985):
+                self.press("v")
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
-            if self.fate=='丰饶':
-                if random.randint(0,5)==3:
-                    self.press('3')
-                if random.randint(0,6)==3:
-                    self.press('r')
+            if self.fate == "丰饶":
+                if random.randint(0, 5) == 3:
+                    self.press("3")
+                if random.randint(0, 6) == 3:
+                    self.press("r")
             self.battle = time.time()
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
@@ -210,62 +236,70 @@ class SimulatedUniverse(UniverseUtils):
             ok = 0
             for _ in range(12):
                 self.get_screen()
-                img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
-                if self.ts.split_and_find(self.tk.fates,img_down,'bless')[1] or self._stop:
+                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                if (
+                    self.ts.split_and_find(self.tk.fates, img_down, "bless")[1]
+                    or self._stop
+                ):
                     time.sleep(0.2)
                     break
                 time.sleep(0.2)
             self.get_screen()
-            img_up=self.check('z',0.5047,0.5491,mask='mask_bless',large=False)
-            res_up=self.ts.split_and_find(self.tk.prior_bless,img_up)
-            img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
-            res_down=self.ts.split_and_find([self.fate],img_down,'bless')
-            if res_up[1]==2:
-                self.click(self.calc_point((0.5047,0.5491),res_up[0]))
-            elif res_down[1]==2 and (res_up[1]!=3 or self.fate!='毁灭'):
-                self.click(self.calc_point((0.5042,0.3204),res_down[0]))
+            img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
+            res_up = self.ts.split_and_find(self.tk.prior_bless, img_up)
+            img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+            res_down = self.ts.split_and_find([self.fate], img_down, "bless")
+            ban(self)
+            if res_up[1] == 2:
+                self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
+            elif res_down[1] == 2 and (res_up[1] != 3 or self.fate != "毁灭"):
+                self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             # 未匹配到优先祝福，刷新祝福并再次匹配
             else:
                 self.click((0.2990, 0.1046))
                 time.sleep(0.8)
                 for _ in range(8):
                     self.get_screen()
-                    img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
-                    if self.ts.split_and_find(self.tk.fates,img_down)[1] or self._stop:
+                    img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                    if self.ts.split_and_find(self.tk.fates, img_down)[1] or self._stop:
                         time.sleep(0.2)
                         break
                     time.sleep(0.2)
                 self.get_screen()
-                img_up=self.check('z',0.5047,0.5491,mask='mask_bless',large=False)
-                res_up=self.ts.split_and_find(self.tk.prior_bless,img_up)
-                img_down=self.check('z',0.5042,0.3204,mask='mask',large=False)
-                res_down=self.ts.split_and_find([self.fate,'巡猎','毁灭','丰饶'],img_down,'bless')
-                if res_up[1]>=2:
-                    self.click(self.calc_point((0.5047,0.5491),res_up[0]))
+                img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
+                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up)
+                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                res_down = self.ts.split_and_find(
+                    [self.fate, "巡猎", "毁灭", "丰饶"], img_down, "bless"
+                )
+                if res_up[1] >= 2:
+                    self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
                 else:
-                    self.click(self.calc_point((0.5042,0.3204),res_down[0]))
+                    self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
             time.sleep(1)
             return 1
         # F交互界面
-        elif self.check("f", 0.4443,0.4417, mask = 'mask_f1'):
+        elif self.check("f", 0.4443, 0.4417, mask="mask_f1"):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
             time.sleep(0.4)
             self.get_screen()
-            if self.check("f",  0.4443,0.4417, mask = 'mask_f1'):
+            if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
                 for _ in range(4):
-                    img = self.check('z',0.3344,0.4241,mask="mask_f",large=False)
-                    text = self.ts.sim_list(self.tk.interacts,img)
+                    img = self.check("z", 0.3344, 0.4241, mask="mask_f", large=False)
+                    text = self.ts.sim_list(self.tk.interacts, img)
                     if text is None:
-                        img = self.check('z',0.3365,0.4231,mask="mask_f",large=False)
-                        text = self.ts.sim_list(self.tk.interacts,img)
+                        img = self.check(
+                            "z", 0.3365, 0.4231, mask="mask_f", large=False
+                        )
+                        text = self.ts.sim_list(self.tk.interacts, img)
                     if text is not None:
                         break
                     time.sleep(0.3)
                     self.get_screen()
                 # 黑塔
-                if self.ts.sim('黑塔'):
+                if self.ts.sim("黑塔"):
                     # 与黑塔交互后30秒内禁止再次交互（防止死循环）
                     if time.time() - self.quit > 30 and self.floor:
                         self.quit = time.time()
@@ -273,15 +307,15 @@ class SimulatedUniverse(UniverseUtils):
                         self.battle = 0
                 else:
                     # tele：区域-xx  exit：离开模拟宇宙
-                    if self.ts.sim('区域'):
-                        log.info(
-                            f"识别到传送点"
-                        )
+                    if self.ts.sim("区域"):
+                        log.info(f"识别到传送点")
                         self.press("f")
                         time.sleep(1)
                         self.get_screen()
-                        img = self.check('z',0.3182,0.4333,mask="mask_f",large=False)
-                        if self.ts.sim('区域',img):
+                        img = self.check(
+                            "z", 0.3182, 0.4333, mask="mask_f", large=False
+                        )
+                        if self.ts.sim("区域", img):
                             return 0
                         else:
                             self.init_map()
@@ -294,7 +328,7 @@ class SimulatedUniverse(UniverseUtils):
                         # align_angle(10, 1)
                         # self.multi = config.multi
                         self.re_align += 1
-                    is_killed = text in ['沉浸','紧锁','复活','下载']
+                    is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
                     if is_killed == 0:
                         self.press("f")
                     self.battle = 0
@@ -307,14 +341,14 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         # 跑图状态
         if self.check("run", 0.9844, 0.7889, threshold=0.93):
-            if self.floor_init==0:
+            if self.floor_init == 0:
                 self.get_level()
-                self.floor_init=1
+                self.floor_init = 1
             self.lst_changed = bk_lst_changed
             self.battle = 0
             # 刚进图，初始化一些数据
             if self.big_map_c == 0:
-                pyautogui.keyUp('w')
+                pyautogui.keyUp("w")
                 # 黑屏检测
                 while 1:
                     men = np.mean(self.get_screen())
@@ -331,7 +365,7 @@ class SimulatedUniverse(UniverseUtils):
                     now_time = time.time()
                     self.now_map_sim = -1
                     self.now_map = -1
-                    if self.floor in [0,5]:
+                    if self.floor in [0, 5]:
                         self.mini_state = 0
                         self.stop_move = 0
                         while True:
@@ -339,27 +373,36 @@ class SimulatedUniverse(UniverseUtils):
                             now_map, now_map_sim = self.match_scr(self.loc_scr)
                             if self.now_map_sim < now_map_sim:
                                 self.now_map, self.now_map_sim = now_map, now_map_sim
-                            if ((
-                                self.now_map_sim > 0.7
-                                or time.time() - now_time > 2.5
-                            ) and self.now_map_sim != -1) or self._stop:
+                            if (
+                                (self.now_map_sim > 0.7 or time.time() - now_time > 2.5)
+                                and self.now_map_sim != -1
+                            ) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                        if self.now_map_sim<0.35:
-                            notif('相似度过低','疑似在黑塔办公室')
-                            #self.init_map()
-                            #return 1
+                        if self.now_map_sim < 0.35:
+                            notif("相似度过低", "疑似在黑塔办公室")
+                            # self.init_map()
+                            # return 1
                         if self.debug == 2:
                             try:
-                                with open('check'+str(self.floor)+'.txt','r', encoding="utf-8",errors='ignore') as fh:
-                                    s=fh.readline().strip('\n')
-                                s=eval(s)
-                                self.kl=0
+                                with open(
+                                    "check" + str(self.floor) + ".txt",
+                                    "r",
+                                    encoding="utf-8",
+                                    errors="ignore",
+                                ) as fh:
+                                    s = fh.readline().strip("\n")
+                                s = eval(s)
+                                self.kl = 0
                                 if not self.now_map in s:
                                     s.append(self.now_map)
                                 else:
-                                    self.kl=0
-                                with open('check'+str(self.floor)+'.txt','w', encoding="utf-8") as fh:
+                                    self.kl = 0
+                                with open(
+                                    "check" + str(self.floor) + ".txt",
+                                    "w",
+                                    encoding="utf-8",
+                                ) as fh:
                                     fh.write(str(s))
                             except:
                                 pass
@@ -372,8 +415,9 @@ class SimulatedUniverse(UniverseUtils):
                         self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
                         self.target = self.get_target(self.now_pth + "target.jpg")
                         log.info("target %s" % self.target)
-                    if self._stop:return 1
-                    self.press('1')
+                    if self._stop:
+                        return 1
+                    self.press("1")
                 # 录制模式，保存初始小地图
                 else:
                     time.sleep(3)
@@ -390,39 +434,42 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             # 长时间未交互/战斗，暂离或重开
-            if ((time.time() - self.lst_changed >= 45 - 7 * self.debug) and self.find == 1) or (self.floor==12 and self.mini_state>4) or self.kl:
+            if (
+                (
+                    (time.time() - self.lst_changed >= 45 - 7 * self.debug)
+                    and self.find == 1
+                )
+                or (self.floor == 12 and self.mini_state > 4)
+                or self.kl
+            ):
                 time.sleep(2.5)
                 self.press("esc")
                 time.sleep(2)
                 self.init_map()
-                self.floor_init=0
-                if self.floor==12 or self.kl:
+                self.floor_init = 0
+                if self.floor == 12 or self.kl:
                     self.end_of_uni()
                     self.click((0.2708, 0.1324))
                     log.info(f"通关！当前层数:{self.floor+1}")
-                elif self.debug==2:
-                    map_log.error(
-                        f"地图{self.now_map}出现问题,退出程序"
-                    )
-                    notif(f"地图{self.now_map}出现问题,退出程序","DEBUG")
+                elif self.debug == 2:
+                    map_log.error(f"地图{self.now_map}出现问题,退出程序")
+                    notif(f"地图{self.now_map}出现问题,退出程序", "DEBUG")
                     self._stop = 1
-                elif self.fail_count<=1:
-                    notif("暂离",f"地图{self.now_map}，当前层数:{self.floor+1}")
-                    map_log.error(
-                        f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离"
-                    )
+                elif self.fail_count <= 1:
+                    notif("暂离", f"地图{self.now_map}，当前层数:{self.floor+1}")
+                    map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离")
                     self.re_align += 1
-                    self.fail_count+=1
+                    self.fail_count += 1
                 else:
                     self.multi = 1.01
                     if self.debug == 0:
-                        notif("中途结算",f"地图{self.now_map}，当前层数:{self.floor+1}")
+                        notif("中途结算", f"地图{self.now_map}，当前层数:{self.floor+1}")
                         self.floor = 0
                         self.click((0.2708, 0.1324))
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试退出重进"
                         )
-                        self.fail_count=0
+                        self.fail_count = 0
                     else:
                         self.re_align += 1
                         map_log.error(
@@ -431,10 +478,10 @@ class SimulatedUniverse(UniverseUtils):
                 self.lst_changed = time.time()
                 return 1
             if self.multi == 1.01:
-                align_angle(0,1,[1],self)
+                align_angle(0, 1, [1], self)
             # 寻路
             if self.mini_state:
-                self.get_direc_only_minimap()
+                get_direc_only_minimap(self)
             else:
                 self.get_direc()
             return 2
@@ -446,8 +493,8 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("init", 0.9276, 0.6731):
             self.click((0.3448, 0.4926))
             self.init_map()
-        elif self.check("begin", 0.3328,0.8148):
-            con=self.check("conti",0.1099,0.0972)
+        elif self.check("begin", 0.3328, 0.8148):
+            con = self.check("conti", 0.1099, 0.0972)
             if not con:
                 self.click((0.9375, 0.8565 - 0.1 * (self.diffi - 1)))
             self.click((0.1083, 0.1009))
@@ -455,22 +502,24 @@ class SimulatedUniverse(UniverseUtils):
                 self.get_level()
             else:
                 self.floor = 0
-            self.floor_init=1
+            self.floor_init = 1
         elif self.check("start", 0.6594, 0.8389):
-            self.fail_count=0
-            if self.check("team4",0.5797,0.2389):
+            self.fail_count = 0
+            if self.check("team4", 0.5797, 0.2389):
                 dx = 0.9266 - 0.8552
                 dy = 0.8194 - 0.6741
                 for i in self.order:
-                    self.click((0.9266 - dx * ((i - 1) % 3), 0.8194 - dy * ((i - 1) // 3)))
+                    self.click(
+                        (0.9266 - dx * ((i - 1) % 3), 0.8194 - dy * ((i - 1) // 3))
+                    )
                     time.sleep(0.3)
             self.click((0.1635, 0.1056))
         elif self.check("fate_2", 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
         elif self.check("fate", 0.9458, 0.9481):
-            img=self.check('z',0.4969,0.3750,mask='mask_fate',large=False)
-            res=self.ts.split_and_find([self.fate],img)
-            self.click(self.calc_point((0.4969,0.3750),res[0]))
+            img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
+            res = self.ts.split_and_find([self.fate], img)
+            self.click(self.calc_point((0.4969, 0.3750), res[0]))
         elif self.check("fate_3", 0.9422, 0.9472):
             self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
@@ -487,15 +536,27 @@ class SimulatedUniverse(UniverseUtils):
                 tx, ty = self.tx, self.ty
                 try:
                     import yaml
-                    with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
-                        event_prior = yaml.safe_load(f)['prior']['事件']
+
+                    with open("info.yml", "r", encoding="utf-8", errors="ignore") as f:
+                        event_prior = yaml.safe_load(f)["prior"]["事件"]
                 except:
-                    event_prior = ["购买1个星祝福","购买一个","跳上右边的砖块","丢下雕像","和序列扑满玩","信仰星神","克里珀的恩赐","哈克的藏品","动作片","感恩克里珀星神"]
+                    event_prior = [
+                        "购买1个星祝福",
+                        "购买一个",
+                        "跳上右边的砖块",
+                        "丢下雕像",
+                        "和序列扑满玩",
+                        "信仰星神",
+                        "克里珀的恩赐",
+                        "哈克的藏品",
+                        "动作片",
+                        "感恩克里珀星神",
+                    ]
                 self.click_text(event_prior)
                 time.sleep(0.3)
                 self.get_screen()
                 if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):
-                    self.click((self.tx,self.ty))
+                    self.click((self.tx, self.ty))
                 else:
                     self.click((tx, ty))
                     time.sleep(0.3)
@@ -506,9 +567,9 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
-            img=self.check('z',0.5000, 0.7333,mask='mask_strange',large=False)
-            res=self.ts.split_and_find(self.tk.strange,img,'strange')
-            self.click(self.calc_point((0.5000, 0.7333),res[0]))
+            img = self.check("z", 0.5000, 0.7333, mask="mask_strange", large=False)
+            res = self.ts.split_and_find(self.tk.strange, img, "strange")
+            self.click(self.calc_point((0.5000, 0.7333), res[0]))
             self.click((0.1365, 0.1093))
         # 丢弃奇物
         elif self.check("drop", 0.9406, 0.9491):
@@ -518,40 +579,43 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.4714, 0.5500))
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
-        elif self.check("setting",0.9734,0.3009, threshold=0.98):
-            self.click((0.9734,0.3009))
+        elif self.check("setting", 0.9734, 0.3009, threshold=0.98):
+            self.click((0.9734, 0.3009))
             time.sleep(2)
-            self.click((0.3750,0.9398))
+            self.click((0.3750, 0.9398))
             time.sleep(2)
-            self.click((0.3750,0.8398))
+            self.click((0.3750, 0.8398))
             for _ in range(5):
                 pyautogui.scroll(-1)
                 time.sleep(0.1)
             time.sleep(0.3)
-            self.click_text(['脱离卡死'])
-        elif self.check("enhance", 0.9208,0.9380):
+            self.click_text(["脱离卡死"])
+        elif self.check("enhance", 0.9208, 0.9380):
             time.sleep(1.5)
-            for i in [None,(0.7984,0.6824),(0.6859,0.6824)]:
-                if self.check("enhance_fail", 0.1068,0.0907):
-                    self.press('esc')
+            for i in [None, (0.7984, 0.6824), (0.6859, 0.6824)]:
+                self.get_screen()
+                if self.check("enhance_fail", 0.1068, 0.0907):
+                    self.press("esc")
                     return 1
                 if i is not None:
                     self.click(i)
                     time.sleep(0.3)
-                self.click((0.1089,0.0926))
-                while not self.check("enhance", 0.9208,0.9380):
+                self.click((0.1089, 0.0926))
+                time.sleep(0.3)
+                self.get_screen()
+                while not self.check("enhance", 0.9208, 0.9380):
                     self.click((0.2062, 0.2054))
                     time.sleep(0.3)
                     self.get_screen()
-            self.press('esc')
-        elif self.check("abyss/2",0.4297,0.8213):
-            self.click((0.2313,0.5324))
-        elif self.check("abyss/1",0.8568,0.6769):
-            self.click((0.6260,0.8167))
+            self.press("esc")
+        elif self.check("abyss/2", 0.4297, 0.8213):
+            self.click((0.2313, 0.5324))
+        elif self.check("abyss/1", 0.8568, 0.6769):
+            self.click((0.6260, 0.8167))
         else:
-            img1=self.check('z',0.5047,0.1324,mask='mask_close',large=False)
-            img2=self.check('z',0.4990,0.0731,mask='mask_close1',large=False)
-            if self.ts.sim('点击空白',img1) or self.ts.sim('点击空白',img2):
+            img1 = self.check("z", 0.5047, 0.1324, mask="mask_close", large=False)
+            img2 = self.check("z", 0.4990, 0.0731, mask="mask_close1", large=False)
+            if self.ts.sim("点击空白", img1) or self.ts.sim("点击空白", img2):
                 self.click((0.2062, 0.2054))
             else:
                 log.info("匹配不到任何图标")
@@ -577,22 +641,22 @@ class SimulatedUniverse(UniverseUtils):
                 pass
         return file
 
-    def update_count(self,read=True):
-        file_name = 'logs/notif.txt'
+    def update_count(self, read=True):
+        file_name = "logs/notif.txt"
         if read:
             new_cnt = 0
             if os.path.exists(file_name):
                 time_cnt = os.path.getmtime(file_name)
-                with open(file_name,'r', encoding="utf-8",errors='ignore') as fh:
-                    s=fh.readlines()
+                with open(file_name, "r", encoding="utf-8", errors="ignore") as fh:
+                    s = fh.readlines()
                     try:
-                        new_cnt = int(s[0].strip('\n'))
-                        time_cnt = float(s[3].strip('\n'))
+                        new_cnt = int(s[0].strip("\n"))
+                        time_cnt = float(s[3].strip("\n"))
                     except:
                         pass
             else:
-                os.makedirs('logs',exist_ok=1)
-                with open(file_name, 'w', encoding="utf-8") as file:
+                os.makedirs("logs", exist_ok=1)
+                with open(file_name, "w", encoding="utf-8") as file:
                     file.write("0")
                     file.close()
                 time_cnt = os.path.getmtime(file_name)
@@ -600,19 +664,19 @@ class SimulatedUniverse(UniverseUtils):
             new_cnt = self.count + 1
             time_cnt = self.count_tm
         dt = datetime.datetime.now().astimezone()
-        '''
+        """
         America: GMT-5
         Asia: GMT+8
         Europe: GMT+1
         TW, HK, MO: GMT+8
-        '''
+        """
         tz_info = None
         try:
             tz_dict = {
-                'Default': None,
-                'America': pytz.timezone('US/Central'),
-                'Asia':pytz.timezone('Asia/Shanghai'),
-                'Europe':pytz.timezone('Europe/London'),
+                "Default": None,
+                "America": pytz.timezone("US/Central"),
+                "Asia": pytz.timezone("Asia/Shanghai"),
+                "Europe": pytz.timezone("Europe/London"),
             }
             tz_info = tz_dict[config.timezone]
         except:
@@ -622,12 +686,14 @@ class SimulatedUniverse(UniverseUtils):
         dt = dt.astimezone(tz_info)
         current_weekday = dt.weekday()
         monday = dt + datetime.timedelta(days=-current_weekday)
-        target_datetime = datetime.datetime(monday.year, monday.month, monday.day, 4, 0, 0,tzinfo=tz_info)
+        target_datetime = datetime.datetime(
+            monday.year, monday.month, monday.day, 4, 0, 0, tzinfo=tz_info
+        )
         monday_ts = target_datetime.timestamp()
-        if dt.timestamp()>=monday_ts and time_cnt<monday_ts:
-            self.count=int(not read)
+        if dt.timestamp() >= monday_ts and time_cnt < monday_ts:
+            self.count = int(not read)
         else:
-            self.count=new_cnt
+            self.count = new_cnt
         self.count_tm = time.time()
 
     def del_pt(self, img, A, S, f):
@@ -665,7 +731,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.del_pt(img, p, p, f_set[k])
                         if k == 3:
                             self.last = p
-        #cv.imwrite("imgs/tmp1.jpg", img)
+        # cv.imwrite("imgs/tmp1.jpg", img)
         if self.speed:
             dis = 1000000
             pt = None
@@ -739,11 +805,11 @@ class SimulatedUniverse(UniverseUtils):
         cv.destroyAllWindows()
 
     def check_req(self):
-        self._stop = os.system('pip show numpy > NUL 2>&1') and not self.unlock
+        self._stop = os.system("pip show numpy > NUL 2>&1") and not self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
         time.sleep(10)
-        self._stop = os.system('pip show numpy > NUL 2>&1') and not self.unlock
+        self._stop = os.system("pip show numpy > NUL 2>&1") and not self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
 
@@ -786,5 +852,8 @@ if __name__ == "__main__":
         speed = 0
         bonus = 0
         for i in sys.argv[1:]:
-            exec(i.split("-")[-1])
+            st = i.split("-")[-1]
+            if "=" not in st:
+                st = st + "=1"
+            exec(st)
         main()
