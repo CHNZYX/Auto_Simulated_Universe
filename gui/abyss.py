@@ -5,7 +5,7 @@ from gui.common import show_snack_bar, Page
 import yaml
 import traceback
 from abyss import Abyss
-
+import os
 
 def abyss_view(page: Page):
     order = ['1 2 3 4','5 6 7 8']
@@ -15,6 +15,7 @@ def abyss_view(page: Page):
             config = [str(x) for x in config]
             order=[' '.join(config[:4]),' '.join(config[4:])]
     except:
+        os.makedirs('abyss', exist_ok=True)
         pass
     
     def back_choose(_):
@@ -37,6 +38,7 @@ def abyss_view(page: Page):
                     pass
             ls += [0,0,0,0]
             order[i] = ls[:4]
+        os.makedirs('abyss', exist_ok=True)
         with open('abyss/info.yml', "w", encoding="utf-8") as f:
             yaml.safe_dump({
                     "order_text": order[0] + order[1]
