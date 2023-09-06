@@ -16,3 +16,4 @@ pytz
 pyyaml
 winotify
 pystray
+psutil
