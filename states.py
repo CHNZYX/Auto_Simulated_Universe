@@ -20,7 +20,10 @@ import datetime
 import requests
 import pytz
 import pyuac
-from mylib import get_direc_only_minimap, ban
+try:
+    from mylib import get_direc_only_minimap, ban
+except:
+    from utils.mylib import get_direc_only_minimap, ban
 
 pyautogui.FAILSAFE = False
 
