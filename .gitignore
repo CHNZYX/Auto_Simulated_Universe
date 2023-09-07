@@ -29,3 +29,6 @@ check5.txt
 ocr/
 info.yml
 version.txt
+*.exe
+test.py
+mylib.py

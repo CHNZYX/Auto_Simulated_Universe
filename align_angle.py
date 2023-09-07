@@ -15,21 +15,17 @@ def get_angle(su, safe):
     su.press("w")
     time.sleep(0.5)
     su.get_screen()
-    # blue = np.array([234, 191, 4])
     shape = (int(su.scx * 190), int(su.scx * 190))
     local_screen = su.get_local(0.9333, 0.8657, shape)  # 裁剪后得到的小地图
-    hsv = cv2.cvtColor(local_screen, cv2.COLOR_BGR2HSV)  # 转HSV
-    lower = np.array([93, 90, 60])  # 90 改成120只剩箭头，但是角色移动过的印记会消失
-    upper = np.array([97, 255, 255])
-    mask = cv2.inRange(hsv, lower, upper)  # 创建掩膜
-    local_screen = cv2.bitwise_and(local_screen, local_screen, mask=mask)
-    # local_screen[np.sum(np.abs(local_screen - blue), axis=-1) <= 150] = blue
     return su.get_now_direc(local_screen)
 
 
 # 不同电脑鼠标移动速度、放缩比、分辨率等不同，因此需要校准
 # 基本逻辑：每次转60度，然后计算实际转了几度，计算出误差比
-def main(cnt=10, safe=0, ang=[1, 1, 3], su=None):
+def main(cnt=10, safe=0, ang=[1,1,3], su=None):
+    if float(config.angle)>2 and len(ang)<3 and su is not None:
+        su.multi = config.multi
+        return
     log.info("开始校准")
     if su is None:
         from utils.utils import UniverseUtils
@@ -59,7 +55,12 @@ def main(cnt=10, safe=0, ang=[1, 1, 3], su=None):
                 ay += j
         su.multi *= ax / ay
     su.multi += 1e-9
-    config.angle = str(su.multi)
+    try:
+        if not abs(su.multi) <= 2:
+            su.multi = 1
+    except:
+        su.multi = 1
+    config.angle = str(su.multi+len(ang)-1)
     config.save()
     if safe == 0:
         try:

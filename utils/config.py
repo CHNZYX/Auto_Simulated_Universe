@@ -24,8 +24,15 @@ class Config:
 
     @property
     def multi(self) -> float:
-        return float(self.angle)
-
+        x = float(self.angle)
+        if x>5:
+            self.angle = '1.0'
+            return 1.0
+        elif x>2:
+            return x-2
+        else:
+            return x
+        
     @property
     def order(self) -> List[int]:
         return [int(i) for i in self.order_text.strip(" ").split(" ")]

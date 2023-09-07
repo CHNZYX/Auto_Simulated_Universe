@@ -41,6 +41,18 @@ Double-click `run.bat` or run in the command line:
 python states.py
 ```
 
+Detailed parameters:
+```plaintext
+python states.py --bonus=<bonus> --debug=<debug> --speed=<speed> --find=<find>
+```
+bonus in [0,1]: Whether to enable immersion bonus.
+
+speed in [0,1]: Enable speedrun mode.
+
+debug in [0,1,2]: Enable debug mode.
+
+find in [0,1]: 0 for recording, 1 for speedrunning.
+
 The content of `info.yml` is as follows:
 ```yaml
 config:
@@ -59,6 +71,8 @@ prior:
 ```
 
 The simulation will enter the world that corresponds to the default setting. If your default world is not World 6, remember to manually switch to World 6 first!
+
+Prefer using ranged female characters in the first slot whenever possible. Melee females can also be viable, while other body types (e.g., male characters) may result in stability issues.
 
 Important!!! Once you start running/calibrating, do not move the game window! If you need to move it, please stop the automation first!
 
@@ -97,13 +111,15 @@ Important!!! Once you start running/calibrating, do not move the game window! If
 
 Press F8 or the "停止" button to halt the process.
 
+Prefer using ranged female characters in the first slot whenever possible. Melee females can also be viable, while other body types (e.g., male characters) may result in stability issues.
+
 "显隐" checkbox toggles the visibility of the command-line window. It's hidden by default.
 
-调试模式: If you don't want the simulation to exit after getting lost, enable 调试模式.
+调试模式: If you don't want to exit the settlement after getting lost, please enable debug mode.
 
-If you want the simulation to continue after completing 34 rounds, enable 调试模式.
+If you don't want it to automatically stop after completing 34 rounds, also enable debug mode.
 
-速通模式: Checkmark indicates only the last enemy on each floor will be attacked. Hyphen indicates that Speed Mode is combined with this option.
+速通模式: Enabling this means you'll only fight the final enemy on each level.
 
 Recommended minimal graphics settings:
 
