@@ -47,7 +47,7 @@ class My_TS:
                 return t
         return None
         
-    def split_and_find(self,key_list,img,mode=None):
+    def split_and_find(self,key_list,img,mode=None,bless_skip=1):
         white=[255,255,255]
         yellow=[126,162,180]
         binary_image = np.zeros_like(img[:, :, 0])
@@ -86,7 +86,7 @@ class My_TS:
             cy = y + h // 2
             self.input(roi)
             res+='|'+self.text
-            if self.sim('回归不等式') and len(contours)>1:
+            if self.sim('回归不等式') and len(contours)>1 and bless_skip:
                 ff=1
                 continue
             #cv.imwrite('tmp'+str(c)+'.jpg',roi)
@@ -138,4 +138,8 @@ class text_keys:
         except:
             pass
         self.prior_bless += self.blesses[fate]
+        self.skip = 1
+        for s in self.prior_bless:
+            if '回归不等式' in s:
+                self.skip = 0
         self.strange = [self.fates[self.fate]+'火漆'] + self.strange

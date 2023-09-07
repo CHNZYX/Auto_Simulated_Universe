@@ -241,7 +241,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.get_screen()
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 if (
-                    self.ts.split_and_find(self.tk.fates, img_down, "bless")[1]
+                    self.ts.split_and_find(self.tk.fates, img_down, mode="bless")[1]
                     or self._stop
                 ):
                     time.sleep(0.2)
@@ -249,9 +249,9 @@ class SimulatedUniverse(UniverseUtils):
                 time.sleep(0.2)
             self.get_screen()
             img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
-            res_up = self.ts.split_and_find(self.tk.prior_bless, img_up)
+            res_up = self.ts.split_and_find(self.tk.prior_bless, img_up, bless_skip=self.tk.skip)
             img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
-            res_down = self.ts.split_and_find([self.fate], img_down, "bless")
+            res_down = self.ts.split_and_find([self.fate], img_down, mode="bless")
             ban(self)
             if res_up[1] == 2:
                 self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
@@ -270,10 +270,10 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.2)
                 self.get_screen()
                 img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
-                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up)
+                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up,bless_skip=self.tk.skip)
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 res_down = self.ts.split_and_find(
-                    [self.fate, "巡猎", "毁灭", "丰饶"], img_down, "bless"
+                    [self.fate, "巡猎", "毁灭", "丰饶"], img_down, mode="bless"
                 )
                 if res_up[1] >= 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
@@ -571,7 +571,7 @@ class SimulatedUniverse(UniverseUtils):
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
             img = self.check("z", 0.5000, 0.7333, mask="mask_strange", large=False)
-            res = self.ts.split_and_find(self.tk.strange, img, "strange")
+            res = self.ts.split_and_find(self.tk.strange, img, mode="strange")
             self.click(self.calc_point((0.5000, 0.7333), res[0]))
             self.click((0.1365, 0.1093))
         # 丢弃奇物
