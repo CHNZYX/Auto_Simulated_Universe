@@ -27,10 +27,11 @@ pyautogui.FAILSAFE = False
 class Abyss(UniverseUtils):
     def __init__(self):
         super().__init__()
+        self.abspath = os.path.dirname(__file__)  # 获取项目根目录../Auto_Simulated_Universe
         self.threshold = 0.97
         self.floor = 0
         self._stop = 0
-        with open("abyss/info.yml", "r", encoding="utf-8", errors="ignore") as f:
+        with open(os.path.join(self.abspath, "abyss/info.yml"), "r", encoding="utf-8", errors="ignore") as f:
             config = yaml.safe_load(f)["order_text"]
             self.team = [config[:4], config[4:]]
 
