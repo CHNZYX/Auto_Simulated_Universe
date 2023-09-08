@@ -31,7 +31,10 @@ class My_TS:
                 log.info('error_sim|'+text+'|'+self.text+'|')
             f[i+1][0]=max(f[i][0],f[i+1][0])
             f[i+1][1]=max(f[i][1],f[i+1][1],f[i][0]+1)
-        return f[-1][1]>=len(text)-2
+        if text.strip() in ['胜军']:
+            return f[-1][0]>=len(text)-2
+        else:
+            return f[-1][1]>=len(text)-2
     
     def input(self,img):
         try:
@@ -86,9 +89,10 @@ class My_TS:
             cy = y + h // 2
             self.input(roi)
             res+='|'+self.text
-            if self.sim('回归不等式') and len(contours)>1 and bless_skip:
-                ff=1
-                continue
+            if len(contours)>1:
+                if (self.sim('回归不等式') and bless_skip) or self.sim('大乐透'):
+                    ff=1
+                    continue
             #cv.imwrite('tmp'+str(c)+'.jpg',roi)
             for i,text in enumerate(key_list):
                 if (self.sim(text) and prior>i) or rcx==-1:
