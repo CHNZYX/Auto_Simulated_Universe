@@ -273,7 +273,7 @@ class SimulatedUniverse(UniverseUtils):
                 res_up = self.ts.split_and_find(self.tk.prior_bless, img_up,bless_skip=self.tk.skip)
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 res_down = self.ts.split_and_find(
-                    [self.fate, "巡猎", "毁灭", "丰饶"], img_down, mode="bless"
+                    self.tk.secondary, img_down, mode="bless"
                 )
                 if res_up[1] >= 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
