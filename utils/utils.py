@@ -20,8 +20,12 @@ from utils.map_log import map_log
 from utils.config import config
 from utils.log import log
 import utils.ocr as ocr
+try:
+    from mylib import isrun
+except:
+    from utils.mylib import isrun
 
-pyautogui.FAILSAFE = False
+#pyautogui.FAILSAFE = False
 
 
 def notif(title, msg, cnt=None):
@@ -76,6 +80,7 @@ class UniverseUtils:
         self.fate = config.fate
         self.my_fate = -1
         self.fail_count = 0
+        self.first_mini = 1
         self.ts = ocr.My_TS()
         # 用户选择的命途
         for i in range(len(config.fates)):
@@ -552,7 +557,7 @@ class UniverseUtils:
         return ang
 
     def get_level(self):
-        while not self.check("run", 0.9844, 0.7889, threshold=0.93):
+        while not isrun(self):
             time.sleep(0.1)
             self.get_screen()
         time.sleep(max(0, (self.fail_count - 1) * 10))
@@ -672,8 +677,10 @@ class UniverseUtils:
         me = 0
         if self.mini_state > 2:
             me = self.move_to_end()
+            self.is_target+=me
         else:
             self.ang_off += self.move_to_interac(2)
+            self.is_target+=self.ang_off
         self.ready = 1
         now_time = time.time()
         if me == 0:
@@ -696,18 +703,20 @@ class UniverseUtils:
 
     def nof(self):
         self.get_screen()
-        if self.ts.sim("区域"):
-            self.init_map()
-            self.floor += 1
-            self.lst_changed = time.time()
-            map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
-        else:
-            if self.ts.sim("黑塔"):
-                self.quit = time.time()
-            self.mini_state += 2
-        return not self.check("run", 0.9844, 0.7889, threshold=0.93) and not self.check(
+        ava = not isrun(self) and not self.check(
             "f", 0.4443, 0.4417, mask="mask_f1"
         )
+        if ava:
+            if self.ts.sim("区域"):
+                self.init_map()
+                self.floor += 1
+                self.lst_changed = time.time()
+                map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
+            else:
+                if self.ts.sim("黑塔"):
+                    self.quit = time.time()
+                self.mini_state += 2
+        return ava
 
     # 寻路函数
     def get_direc(self):
@@ -851,7 +860,7 @@ class UniverseUtils:
                 if (
                     nds <= ps
                     or self.goodf()
-                    or self.check("run", 0.9844, 0.7889, threshold=0.93) == 0
+                    or isrun(self) == 0
                 ):
                     if nds <= ps and type == 0:
                         dls = [100000]
@@ -901,12 +910,7 @@ class UniverseUtils:
                         self.press("f")
                         time.sleep(0.3)
                         if self.nof():
-                            for j in deepcopy(self.target):
-                                if j[1] == type:
-                                    self.last = j[0]
-                                    self.target.remove(j)
-                                    log.info("removed:" + str(j))
-                                    self.lst_changed = time.time()
+                            time.sleep(1.5)
                             break
                     self.move_to_end()
                     self.press(i, 0.4)
@@ -951,7 +955,7 @@ class UniverseUtils:
                     self.lst_changed = time.time()
                 except:
                     pass
-            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0 and nds <= 16:
+            elif isrun(self) == 0 and nds <= 16:
                 try:
                     self.target.remove((loc, type))
                     log.info("removed:" + str((loc, type)))

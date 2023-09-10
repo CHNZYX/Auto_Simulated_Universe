@@ -20,6 +20,10 @@ import datetime
 import pytz
 import yaml
 import pyuac
+try:
+    from mylib import isrun
+except:
+    from utils.mylib import isrun
 
 pyautogui.FAILSAFE = False
 
@@ -91,7 +95,7 @@ class Abyss(UniverseUtils):
     def route(self):
         self.get_screen()
         # self.click_target('imgs/abyss/fail.jpg',0.9,True)
-        if self.check("run", 0.9844, 0.7889, threshold=0.93):
+        if isrun(self):
             self.press("F4")
         elif self.check("abyss/fail", 0.5995, 0.1343):
             self.click((0.5995, 0.1343))

@@ -21,14 +21,14 @@ import requests
 import pytz
 import pyuac
 try:
-    from mylib import get_direc_only_minimap, ban
+    from mylib import get_direc_only_minimap, ban, isrun
 except:
-    from utils.mylib import get_direc_only_minimap, ban
+    from utils.mylib import get_direc_only_minimap, ban, isrun
 
-pyautogui.FAILSAFE = False
+#pyautogui.FAILSAFE = False
 
 # 版本号
-version = "v5.33 beta"
+version = "v5.34 debug"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -125,6 +125,7 @@ class SimulatedUniverse(UniverseUtils):
         self.mini_state = 1
         self.ang_off = 0
         self.ang_neg = 0
+        self.first_mini = 1
         self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
@@ -343,7 +344,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             return 1
         # 跑图状态
-        if self.check("run", 0.9844, 0.7889, threshold=0.93):
+        if isrun(self):
             if self.floor_init == 0:
                 self.get_level()
                 self.floor_init = 1
