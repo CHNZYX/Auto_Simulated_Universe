@@ -176,6 +176,12 @@ def choose_view(page: Page):
                                 size=20,
                             ),
                         ),
+                        ft.Container(
+                            content=ft.Text(
+                                '开源免费，任何收费行为均为倒卖！',
+                                size=20,
+                            ),
+                        ),
                         ft.ElevatedButton(
                             "校准",
                             icon=ft.icons.ADD_TASK,
