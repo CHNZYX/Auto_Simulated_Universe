@@ -32,3 +32,4 @@ version.txt
 *.exe
 test.py
 mylib.py
+mylib.bat

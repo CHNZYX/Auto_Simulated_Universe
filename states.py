@@ -28,7 +28,7 @@ except:
 #pyautogui.FAILSAFE = False
 
 # 版本号
-version = "v5.34 debug"
+version = "v5.34 beta"
 
 
 class SimulatedUniverse(UniverseUtils):
