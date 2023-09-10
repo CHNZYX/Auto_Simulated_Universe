@@ -25,8 +25,6 @@ try:
 except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
-#pyautogui.FAILSAFE = False
-
 # 版本号
 version = "v5.34 beta"
 
@@ -545,16 +543,22 @@ class SimulatedUniverse(UniverseUtils):
                         event_prior = yaml.safe_load(f)["prior"]["事件"]
                 except:
                     event_prior = [
-                        "购买1个星祝福",
-                        "购买一个",
-                        "跳上右边的砖块",
-                        "丢下雕像",
-                        "和序列扑满玩",
-                        "信仰星神",
-                        "克里珀的恩赐",
-                        "哈克的藏品",
-                        "动作片",
-                        "感恩克里珀星神",
+                        '购买1个星祝福',
+                        '购买一个',
+                        '丢下雕像',
+                        '和序列扑满玩',
+                        '信仰星神',
+                        '克里珀的恩赐',
+                        '哈克的藏品',
+                        '动作片',
+                        '感恩克里珀星神',
+                        '换取1个星祝福',
+                        '星神的记载',
+                        '翻开牌',
+                        '摧毁黑匣',
+                        '购买1个1星祝福',
+                        '购买1个1-星祝福',
+                        '选择里奥'
                     ]
                 self.click_text(event_prior)
                 time.sleep(0.3)

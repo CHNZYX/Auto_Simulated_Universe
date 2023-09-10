@@ -25,8 +25,6 @@ try:
 except:
     from utils.mylib import isrun
 
-pyautogui.FAILSAFE = False
-
 
 class Abyss(UniverseUtils):
     def __init__(self):

@@ -25,8 +25,6 @@ try:
 except:
     from utils.mylib import isrun
 
-#pyautogui.FAILSAFE = False
-
 
 def notif(title, msg, cnt=None):
     log.info("通知：" + msg + "  " + title)
@@ -903,7 +901,16 @@ class UniverseUtils:
                     time.sleep(0.6)
                     self.press("w", 1)
                     pyautogui.click()
-            if type == 3:
+            if isrun(self) == 0:
+                if nds <= 16:
+                    try:
+                        self.target.remove((loc, type))
+                        log.info("removed:" + str((loc, type)))
+                    except:
+                        pass
+                else:
+                    return
+            elif type == 3:
                 for i in "wwwwww":
                     self.get_screen()
                     if self.goodf():
@@ -953,12 +960,6 @@ class UniverseUtils:
                     self.target.remove((loc, type))
                     log.info("removed:" + str((loc, type)))
                     self.lst_changed = time.time()
-                except:
-                    pass
-            elif isrun(self) == 0 and nds <= 16:
-                try:
-                    self.target.remove((loc, type))
-                    log.info("removed:" + str((loc, type)))
                 except:
                     pass
 
