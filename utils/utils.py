@@ -701,9 +701,9 @@ class UniverseUtils:
 
     def nof(self):
         self.get_screen()
-        ava = not isrun(self) and not self.check(
+        ava = not self.check(
             "f", 0.4443, 0.4417, mask="mask_f1"
-        )
+        ) and not isrun(self)
         if ava:
             if self.ts.sim("区域"):
                 self.init_map()
