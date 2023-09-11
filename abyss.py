@@ -30,6 +30,8 @@ class Abyss(UniverseUtils):
     def __init__(self):
         super().__init__()
         self.abspath = os.path.dirname(__file__)  # 获取项目根目录../Auto_Simulated_Universe
+        if getattr(sys, 'frozen', False):
+            self.abspath = '.'
         self.threshold = 0.97
         self.floor = 0
         self._stop = 0

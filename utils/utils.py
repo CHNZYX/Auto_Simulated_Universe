@@ -13,7 +13,7 @@ import math
 import random
 import win32gui, win32com.client, pythoncom
 import os
-import threading
+import sys
 import ctypes
 
 from utils.map_log import map_log
@@ -58,7 +58,10 @@ def set_forground():
     try:
         pythoncom.CoInitialize()
         shell = win32com.client.Dispatch("WScript.Shell")
-        shell.SendKeys(" ")  # Undocks my focus from Python IDLE
+        if getattr(sys, 'frozen', False):
+            shell.SendKeys(" ")  # Undocks my focus from Python IDLE
+        else:
+            shell.SendKeys("")
         game_nd = win32gui.FindWindow("UnityWndClass", "崩坏：星穹铁道")
         win32gui.SetForegroundWindow(game_nd)
     except:

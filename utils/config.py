@@ -1,11 +1,14 @@
 import os
 from typing import List, Dict, Union
 import yaml
+import sys
 
 
 class Config:
     def __init__(self):
         self.abspath = os.path.dirname(os.path.dirname(__file__))  # 获取项目根目录../Auto_Simulated_Universe
+        if getattr(sys, 'frozen', False):
+            self.abspath = '.'
         self.order_text = "1 2 3 4"
         self.angle = "1.0"
         self.difficult = "4"
