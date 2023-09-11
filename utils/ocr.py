@@ -102,16 +102,17 @@ class My_TS:
                         prior=i
         if ff and find==1:
             find=3
+        if find<2:
+            text_res=''
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
     
     def find_text(self, img, text):
         for res in self.ts.detect_and_ocr(img):
             self.text = res.ocr_text
-            print(res)
             for txt in text:
                 if self.sim(txt):
-                    print("识别到",txt)
+                    print("识别到文本：",txt)
                     return res.box
 
 class text_keys:

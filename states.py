@@ -172,6 +172,8 @@ class SimulatedUniverse(UniverseUtils):
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
+                if self.threshold == 0.97 and fail_cnt==0:
+                    log.info("匹配不到任何图标")
                 if self.threshold > 0.95:
                     self.threshold -= 0.015
                 else:
@@ -626,8 +628,7 @@ class SimulatedUniverse(UniverseUtils):
             if self.ts.sim("点击空白", img1) or self.ts.sim("点击空白", img2):
                 self.click((0.2062, 0.2054))
             else:
-                log.info("匹配不到任何图标")
-                return 0
+                 return 0
         return 1
 
     def find_latest_modified_file(self, folder_path):
