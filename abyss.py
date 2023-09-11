@@ -1,29 +1,15 @@
-import threading
-import traceback
-import keyboard
 import pyautogui
 import cv2 as cv
 import numpy as np
 import time
-import win32gui, win32api, win32con
+import win32gui
 import random
 import sys
-from copy import deepcopy
-from utils.log import log, set_debug
-from utils.map_log import map_log
-from utils.update_map import update_map
-from utils.utils import UniverseUtils, set_forground, notif
+from utils.log import log
+from utils.utils import UniverseUtils, set_forground
 import os
-from align_angle import main as align_angle
-from utils.config import config
-import datetime
-import pytz
 import yaml
 import pyuac
-try:
-    from mylib import isrun
-except:
-    from utils.mylib import isrun
 
 
 class Abyss(UniverseUtils):
@@ -96,9 +82,7 @@ class Abyss(UniverseUtils):
     def route(self):
         self.get_screen()
         # self.click_target('imgs/abyss/fail.jpg',0.9,True)
-        if isrun(self):
-            self.press("F4")
-        elif self.check("abyss/fail", 0.5995, 0.1343):
+        if self.check("abyss/fail", 0.5995, 0.1343):
             self.click((0.5995, 0.1343))
         elif self.check("abyss/in", 0.9130, 0.6074):
             self.press("w", 3.5)

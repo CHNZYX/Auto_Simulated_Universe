@@ -3,7 +3,6 @@ import cv2 as cv
 import numpy as np
 import time
 
-import pywintypes
 import win32api
 import win32gui
 import win32print
@@ -922,8 +921,10 @@ class UniverseUtils:
                         if self.nof():
                             time.sleep(1.5)
                             break
-                    self.move_to_end()
-                    self.press(i, 0.4)
+                    self.get_screen()
+                    if isrun(self):
+                        self.move_to_end()
+                        self.press(i, 0.4)
             elif type == 2:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
