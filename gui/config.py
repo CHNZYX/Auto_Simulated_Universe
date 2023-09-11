@@ -1,4 +1,4 @@
-from flet_core import MainAxisAlignment, ControlEvent, CrossAxisAlignment
+from flet_core import MainAxisAlignment, ControlEvent, CrossAxisAlignment, TextStyle
 import flet as ft
 
 from gui.common import show_snack_bar, Page
@@ -97,11 +97,11 @@ def config_view(page: Page):
                             [
                                 ft.Row(
                                     [
-                                        ft.Checkbox(
-                                            label="显示地图",
-                                            value=get_info_mode(config.show_map_mode),
-                                            on_change=show_map_checkbox_changed,
-                                        ),
+                                        # ft.Checkbox(
+                                        #     label="显示地图",
+                                        #     value=get_info_mode(config.show_map_mode),
+                                        #     on_change=show_map_checkbox_changed,
+                                        # ),
                                         ft.Checkbox(
                                             label="调试模式",
                                             value=get_info_mode(config.debug_mode),
@@ -119,6 +119,7 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
+                                ft.Container(height=20),
                                 ft.Row(
                                     [
                                         ft.Dropdown(
@@ -149,6 +150,7 @@ def config_view(page: Page):
                                                 ft.dropdown.Option("欢愉"),
                                                 ft.dropdown.Option("繁育"),
                                             ],
+                                            text_style=TextStyle(color=ft.colors.BLACK,weight=ft.FontWeight.W_600),
                                             value=config.fate,
                                             on_change=fate_changed,
                                         ),
@@ -167,9 +169,15 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
+                                ft.Container(height=350),
                                 ft.ElevatedButton(
-                                    "赞赏",
-                                    icon=ft.icons.THUMB_UP,
+                                    content=ft.Row(
+                                        [
+                                            ft.Icon(ft.icons.THUMB_UP),
+                                            ft.Text("赞赏", weight=ft.FontWeight.W_800, size=16),
+                                        ],
+                                        alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
                                     on_click=go_money,
                                     width=150,
                                     height=50

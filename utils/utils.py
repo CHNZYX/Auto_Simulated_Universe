@@ -901,6 +901,7 @@ class UniverseUtils:
                     time.sleep(0.6)
                     self.press("w", 1)
                     pyautogui.click()
+            self.get_screen()
             if isrun(self) == 0:
                 if nds <= 16:
                     try:
