@@ -80,6 +80,7 @@ class UniverseUtils:
         self.fail_count = 0
         self.first_mini = 1
         self.ts = ocr.My_TS()
+        self.last_info = ''
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
@@ -288,12 +289,10 @@ class UniverseUtils:
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
         self.tm = max_val
-        if (
-            max_val > threshold
-            and path != "./imgs/run.jpg"
-            and path != "./imgs/auto_2.jpg"
-        ):
-            log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
+        if max_val > threshold:
+            if self.last_info != path:
+                log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
+            self.last_info = path
         return max_val > threshold
 
     def get_end_point(self, mask=0):
