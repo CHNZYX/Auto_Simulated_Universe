@@ -266,30 +266,19 @@ def choose_view(page: Page):
                 ),
                 ft.Row(
                     [
-                        ft.Container(width=340),
+                        ft.Container(width=315),
                         ft.Switch(
-                            label="沉浸奖励", on_change=bonus_changed, value=config.bonus
+                            label="沉浸奖励", on_change=bonus_changed, value=config.bonus, label_position='left', scale=1.2
                         ),
                     ]
                 ),
                 ft.Row(
                     [
-                        ft.IconButton(
-                            icon=ft.icons.BROWSER_UPDATED,
-                            tooltip="更新地图",
-                            icon_size=30,
-                            on_click=update_maps,
-                        ),
-                        ft.IconButton(
-                            icon=ft.icons.LOCK_OPEN,
-                            tooltip="临时解锁",
-                            icon_size=30,
-                            on_click=unlock,
-                        ),
+                        ft.Container(),
                         ft.IconButton(
                             icon=ft.icons.THUMB_UP,
                             tooltip="赞赏",
-                            icon_size=30,
+                            icon_size=35,
                             on_click=go_money,
                         ),
                     ],
