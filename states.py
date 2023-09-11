@@ -622,10 +622,6 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
-        elif self.check("abyss/2", 0.4297, 0.8213):
-            self.click((0.2313, 0.5324))
-        elif self.check("abyss/1", 0.8568, 0.6769):
-            self.click((0.6260, 0.8167))
         else:
             img1 = self.check("z", 0.5047, 0.1324, mask="mask_close", large=False)
             img2 = self.check("z", 0.4990, 0.0731, mask="mask_close1", large=False)

@@ -616,7 +616,7 @@ class UniverseUtils:
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
         if max_val > threshold:
             nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-            target = (nearest, 2)
+            target = (nearest, 1)
             log.info(f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
             if self.floor >= 12:
                 self.floor = 11
@@ -627,7 +627,7 @@ class UniverseUtils:
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
             if max_val > threshold:
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-                target = (nearest, 3)
+                target = (nearest, 2)
                 log.info(f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
                 if self.floor >= 12:
                     self.floor = 11
@@ -643,6 +643,8 @@ class UniverseUtils:
                 target = (nearest, 3)
                 if self.floor == 11:
                     self.floor = 12
+        if self.mini_target == 0:
+            self.mini_target = target[1]
         if target[1] >= 1:
             self.ang = 360 - self.get_now_direc(local_screen) - 90
             ang = (
@@ -784,7 +786,7 @@ class UniverseUtils:
                 time.sleep(0.5)
             ltm = time.time()
             bw_map = self.get_bw_map(sbl=bl)
-            self.get_loc(bw_map, rg=18)
+            self.get_loc(bw_map, rg=22)
             sloc = self.real_loc
             # 复杂的定位、寻路过程
             ds = self.get_dis(self.real_loc, loc)
@@ -1001,7 +1003,7 @@ class UniverseUtils:
     # 移动后根据旧坐标获得新坐标（匹配）
     # rg：匹配的范围（以旧坐标为中心） fbw：是否进行缩放
     # fbw：（人物静止/移动时小地图会有个缩放的过程，fbw=0表示当前人物是静止状态，因此缩放到移动状态与大地图匹配）ps：大地图是移动状态录制的
-    def get_loc(self, bw_map, rg=8, fbw=0):
+    def get_loc(self, bw_map, rg=9, fbw=0):
         rg += self.loc_off // 3
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)

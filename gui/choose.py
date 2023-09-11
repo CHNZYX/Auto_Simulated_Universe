@@ -173,7 +173,7 @@ def choose_view(page: Page):
                         ),
                         ft.Container(
                             content=ft.Text(
-                                version,
+                                version+' by CHNZYX',
                                 size=20,
                             ),
                         ),
