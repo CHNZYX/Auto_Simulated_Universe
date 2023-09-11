@@ -94,6 +94,8 @@ class SimulatedUniverse(UniverseUtils):
         self.gui = gui
         self.fail_count = 0
         ex_notif = ""
+        if not debug:
+            pyautogui.FAILSAFE = False
         if bonus:
             ex_notif = " 自动领取沉浸奖励"
             log.info(ex_notif)
@@ -521,6 +523,8 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("fate_2", 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
         elif self.check("fate", 0.9458, 0.9481):
+            time.sleep(1)
+            self.get_screen()
             img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
             res = self.ts.split_and_find([self.fate], img)
             self.click(self.calc_point((0.4969, 0.3750), res[0]))
