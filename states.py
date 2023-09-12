@@ -316,6 +316,8 @@ class SimulatedUniverse(UniverseUtils):
                         self.quit = time.time()
                         self.press(self.hotkey)
                         self.battle = 0
+                    else:
+                        is_killed = 1
                 else:
                     # tele：区域-xx  exit：离开模拟宇宙
                     if self.ts.sim("区域"):
