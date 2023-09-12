@@ -1,7 +1,6 @@
 import pyautogui
 import cv2 as cv
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
 import time
 
 import win32api
