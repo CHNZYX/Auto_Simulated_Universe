@@ -1,7 +1,6 @@
 import pyautogui
 import cv2 as cv
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
 import time
 
 import win32api
@@ -150,15 +149,6 @@ class UniverseUtils:
                 time.sleep(0.3)
                 pass
         self.order = config.order
-
-    def gen_hotkey_img(self,hotkey="e",bg="imgs/f_bg.jpg",output="img/f.jpg"):
-        image = Image.open(bg)
-        font = ImageFont.truetype("base.ttf", 24)
-        d = ImageDraw.Draw(image)
-        position = (2,-3)
-        color = (241, 214, 152)
-        d.text(position, hotkey, font=font, fill=color)
-        image.save(output,quality=100)
 
     def press(self, c, t=0):
         if c not in "3r":
