@@ -14,6 +14,7 @@ import win32gui, win32com.client, pythoncom
 import os
 import sys
 import ctypes
+from PIL import Image, ImageDraw, ImageFont
 
 from utils.map_log import map_log
 from utils.config import config
@@ -69,6 +70,7 @@ def set_forground():
 
 class UniverseUtils:
     def __init__(self):
+        self.hotkey = 'f'
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self.check_bonus = 1
@@ -279,6 +281,8 @@ class UniverseUtils:
             threshold = self.threshold
         path = self.format_path(path)
         target = cv.imread(path)
+        if path == './imgs/f.jpg' and self.hotkey != 'f':
+            target = self.gen_hotkey_img(self.hotkey)
         target = cv.resize(
             target,
             dsize=(int(self.scx * target.shape[1]), int(self.scx * target.shape[0])),
