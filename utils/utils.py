@@ -83,6 +83,7 @@ class UniverseUtils:
         self.first_mini = 1
         self.ts = ocr.My_TS()
         self.last_info = ''
+        self.mini_target = 0
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
