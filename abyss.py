@@ -1,33 +1,23 @@
-import threading
-import traceback
-import keyboard
 import pyautogui
 import cv2 as cv
 import numpy as np
 import time
-import win32gui, win32api, win32con
+import win32gui
 import random
 import sys
-from copy import deepcopy
-from utils.log import log, set_debug
-from utils.map_log import map_log
-from utils.update_map import update_map
-from utils.utils import UniverseUtils, set_forground, notif
+from utils.log import log
+from utils.utils import UniverseUtils, set_forground
 import os
-from align_angle import main as align_angle
-from utils.config import config
-import datetime
-import pytz
 import yaml
 import pyuac
-
-pyautogui.FAILSAFE = False
 
 
 class Abyss(UniverseUtils):
     def __init__(self):
         super().__init__()
         self.abspath = os.path.dirname(__file__)  # 获取项目根目录../Auto_Simulated_Universe
+        if getattr(sys, 'frozen', False):
+            self.abspath = '.'
         self.threshold = 0.97
         self.floor = 0
         self._stop = 0
@@ -92,9 +82,7 @@ class Abyss(UniverseUtils):
     def route(self):
         self.get_screen()
         # self.click_target('imgs/abyss/fail.jpg',0.9,True)
-        if self.check("run", 0.9844, 0.7889, threshold=0.93):
-            self.press("F4")
-        elif self.check("abyss/fail", 0.5995, 0.1343):
+        if self.check("abyss/fail", 0.5995, 0.1343):
             self.click((0.5995, 0.1343))
         elif self.check("abyss/in", 0.9130, 0.6074):
             self.press("w", 3.5)

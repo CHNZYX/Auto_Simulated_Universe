@@ -38,10 +38,10 @@ def choose_view(page: Page):
             change_all_button(False)
 
     def angle(_e):
-        if config.angle == "1.0" or page.first==1:
+        if config.angle == "1.0" or page.first == 1:
             go_about()
             time.sleep(8)
-            page.first=0
+            page.first = 0
             page.dialog.open = False
             page.update()
         show_snack_bar(page, "开始校准，请切换回游戏（¬､¬）", ft.colors.GREEN)
@@ -52,10 +52,10 @@ def choose_view(page: Page):
             show_snack_bar(page, "校准失败（⊙.⊙）", ft.colors.RED)
 
     def start(_e):
-        if page.first==1:
+        if page.first == 1:
             go_about()
             time.sleep(8)
-            page.first=0
+            page.first = 0
             page.dialog.open = False
             page.update()
         show_snack_bar(page, "开始运行，请切换回游戏（＾∀＾●）", ft.colors.GREEN)
@@ -68,13 +68,13 @@ def choose_view(page: Page):
             int(config.speed_mode),
             1,
             int(config.bonus),
-            gui=1
+            gui=1,
         )
         run(page.su.start)
         txt = " "
-        if time.time()-tm<20:
+        if time.time() - tm < 20:
             go_dep()
-            #txt = "请确认python+numpy已安装并正确配置环境变量"
+            # txt = "请确认python+numpy已安装并正确配置环境变量"
         try:
             if page.su.validate == 0:
                 txt = "版本过低，请更新"
@@ -84,7 +84,7 @@ def choose_view(page: Page):
             win32gui.SetForegroundWindow(page.su.my_nd)
         except:
             pass
-        notif('已退出自动化',txt)
+        notif("已退出自动化", txt)
 
     def start_abyss(_e):
         page.go("/abyss")
@@ -136,7 +136,8 @@ def choose_view(page: Page):
 
     def go_dep(e=None):
         dlg = ft.AlertDialog(
-            title=ft.Text("异常退出"), content=ft.Text(" ")#"请确认python+numpy已安装并正确配置环境变量")
+            title=ft.Text("异常退出"),
+            content=ft.Text(" "),  # "请确认python+numpy已安装并正确配置环境变量")
         )
         page.dialog = dlg
         dlg.open = True
@@ -172,68 +173,112 @@ def choose_view(page: Page):
                         ),
                         ft.Container(
                             content=ft.Text(
-                                version,
+                                version+' by CHNZYX',
+                                size=20,
+                            ),
+                        ),
+                        ft.Container(
+                            content=ft.Text(
+                                "开源免费，任何收费行为均为倒卖！",
                                 size=20,
                             ),
                         ),
                         ft.ElevatedButton(
-                            "校准",
-                            icon=ft.icons.ADD_TASK,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.ADD_TASK),
+                                    ft.Text("校准", weight=ft.FontWeight.W_600),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=angle,
+                            width=120,
                         ),
                         ft.ElevatedButton(
-                            "运行",
-                            icon=ft.icons.LOGIN,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.LOGIN),
+                                    ft.Text("运行", weight=ft.FontWeight.W_600),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=start,
+                            width=120,
                         ),
                         ft.ElevatedButton(
-                            "深渊",
-                            icon=ft.icons.GAMEPAD,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.GAMEPAD),
+                                    ft.Text("深渊", weight=ft.FontWeight.W_600),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=start_abyss,
+                            width=120,
                         ),
                         ft.ElevatedButton(
-                            "显隐",
-                            icon=ft.icons.HIDE_SOURCE,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.HIDE_SOURCE),
+                                    ft.Text("显隐", weight=ft.FontWeight.W_800),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=hide,
+                            width=120,
                         ),
                         ft.ElevatedButton(
-                            "停止",
-                            icon=ft.icons.STOP,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.STOP),
+                                    ft.Text("停止", weight=ft.FontWeight.W_600),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=stops,
+                            width=120,
                         ),
                         ft.ElevatedButton(
-                            "设置",
-                            icon=ft.icons.SETTINGS,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.SETTINGS),
+                                    ft.Text("设置", weight=ft.FontWeight.W_700),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=go_config,
+                            width=120,
                         ),
                         ft.ElevatedButton(
-                            "关于",
-                            icon=ft.icons.INFO,
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.INFO),
+                                    ft.Text("关于", weight=ft.FontWeight.W_600),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
                             on_click=go_about,
+                            width=120,
                         ),
                     ],
                     alignment=MainAxisAlignment.CENTER,
                     horizontal_alignment=CrossAxisAlignment.CENTER,
                 ),
-                ft.Row([ft.Container(width=340),ft.Switch(label="沉浸奖励", on_change=bonus_changed, value=config.bonus),]),
                 ft.Row(
                     [
-                        ft.IconButton(
-                            icon=ft.icons.BROWSER_UPDATED,
-                            tooltip="更新地图",
-                            icon_size=30,
-                            on_click=update_maps,
+                        ft.Container(width=315),
+                        ft.Switch(
+                            label="沉浸奖励", on_change=bonus_changed, value=config.bonus, label_position='left', scale=1.2
                         ),
-                        ft.IconButton(
-                            icon=ft.icons.LOCK_OPEN,
-                            tooltip="临时解锁",
-                            icon_size=30,
-                            on_click=unlock,
-                        ),
+                    ]
+                ),
+                ft.Row(
+                    [
+                        ft.Container(),
                         ft.IconButton(
                             icon=ft.icons.THUMB_UP,
                             tooltip="赞赏",
-                            icon_size=30,
+                            icon_size=35,
                             on_click=go_money,
                         ),
                     ],

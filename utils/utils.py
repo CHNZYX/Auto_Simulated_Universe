@@ -3,7 +3,6 @@ import cv2 as cv
 import numpy as np
 import time
 
-import pywintypes
 import win32api
 import win32gui
 import win32print
@@ -13,15 +12,17 @@ import math
 import random
 import win32gui, win32com.client, pythoncom
 import os
-import threading
+import sys
 import ctypes
 
 from utils.map_log import map_log
 from utils.config import config
 from utils.log import log
 import utils.ocr as ocr
-
-pyautogui.FAILSAFE = False
+try:
+    from mylib import isrun
+except:
+    from utils.mylib import isrun
 
 
 def notif(title, msg, cnt=None):
@@ -56,7 +57,10 @@ def set_forground():
     try:
         pythoncom.CoInitialize()
         shell = win32com.client.Dispatch("WScript.Shell")
-        shell.SendKeys("")  # Undocks my focus from Python IDLE
+        if getattr(sys, 'frozen', False):
+            shell.SendKeys(" ")  # Undocks my focus from Python IDLE
+        else:
+            shell.SendKeys("")
         game_nd = win32gui.FindWindow("UnityWndClass", "崩坏：星穹铁道")
         win32gui.SetForegroundWindow(game_nd)
     except:
@@ -76,7 +80,9 @@ class UniverseUtils:
         self.fate = config.fate
         self.my_fate = -1
         self.fail_count = 0
+        self.first_mini = 1
         self.ts = ocr.My_TS()
+        self.last_info = ''
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
@@ -285,12 +291,10 @@ class UniverseUtils:
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
         self.tm = max_val
-        if (
-            max_val > threshold
-            and path != "./imgs/run.jpg"
-            and path != "./imgs/auto_2.jpg"
-        ):
-            log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
+        if max_val > threshold:
+            if self.last_info != path:
+                log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
+            self.last_info = path
         return max_val > threshold
 
     def get_end_point(self, mask=0):
@@ -552,7 +556,7 @@ class UniverseUtils:
         return ang
 
     def get_level(self):
-        while not self.check("run", 0.9844, 0.7889, threshold=0.93):
+        while not isrun(self):
             time.sleep(0.1)
             self.get_screen()
         time.sleep(max(0, (self.fail_count - 1) * 10))
@@ -612,7 +616,7 @@ class UniverseUtils:
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
         if max_val > threshold:
             nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-            target = (nearest, 2)
+            target = (nearest, 1)
             log.info(f"交互点相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
             if self.floor >= 12:
                 self.floor = 11
@@ -623,7 +627,7 @@ class UniverseUtils:
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
             if max_val > threshold:
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
-                target = (nearest, 3)
+                target = (nearest, 2)
                 log.info(f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
                 if self.floor >= 12:
                     self.floor = 11
@@ -639,6 +643,8 @@ class UniverseUtils:
                 target = (nearest, 3)
                 if self.floor == 11:
                     self.floor = 12
+        if self.mini_target == 0:
+            self.mini_target = target[1]
         if target[1] >= 1:
             self.ang = 360 - self.get_now_direc(local_screen) - 90
             ang = (
@@ -672,8 +678,10 @@ class UniverseUtils:
         me = 0
         if self.mini_state > 2:
             me = self.move_to_end()
+            self.is_target+=me
         else:
             self.ang_off += self.move_to_interac(2)
+            self.is_target+=self.ang_off
         self.ready = 1
         now_time = time.time()
         if me == 0:
@@ -696,18 +704,20 @@ class UniverseUtils:
 
     def nof(self):
         self.get_screen()
-        if self.ts.sim("区域"):
-            self.init_map()
-            self.floor += 1
-            self.lst_changed = time.time()
-            map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
-        else:
-            if self.ts.sim("黑塔"):
-                self.quit = time.time()
-            self.mini_state += 2
-        return not self.check("run", 0.9844, 0.7889, threshold=0.93) and not self.check(
+        ava = not self.check(
             "f", 0.4443, 0.4417, mask="mask_f1"
-        )
+        ) and not isrun(self)
+        if ava:
+            if self.ts.sim("区域"):
+                self.init_map()
+                self.floor += 1
+                self.lst_changed = time.time()
+                map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
+            else:
+                if self.ts.sim("黑塔"):
+                    self.quit = time.time()
+                self.mini_state += 2
+        return ava
 
     # 寻路函数
     def get_direc(self):
@@ -776,7 +786,7 @@ class UniverseUtils:
                 time.sleep(0.5)
             ltm = time.time()
             bw_map = self.get_bw_map(sbl=bl)
-            self.get_loc(bw_map, rg=18)
+            self.get_loc(bw_map, rg=22)
             sloc = self.real_loc
             # 复杂的定位、寻路过程
             ds = self.get_dis(self.real_loc, loc)
@@ -851,7 +861,7 @@ class UniverseUtils:
                 if (
                     nds <= ps
                     or self.goodf()
-                    or self.check("run", 0.9844, 0.7889, threshold=0.93) == 0
+                    or isrun(self) == 0
                 ):
                     if nds <= ps and type == 0:
                         dls = [100000]
@@ -894,22 +904,29 @@ class UniverseUtils:
                     time.sleep(0.6)
                     self.press("w", 1)
                     pyautogui.click()
-            if type == 3:
+            self.get_screen()
+            if isrun(self) == 0:
+                if nds <= 16:
+                    try:
+                        self.target.remove((loc, type))
+                        log.info("removed:" + str((loc, type)))
+                    except:
+                        pass
+                else:
+                    return
+            elif type == 3:
                 for i in "wwwwww":
                     self.get_screen()
                     if self.goodf():
                         self.press("f")
                         time.sleep(0.3)
                         if self.nof():
-                            for j in deepcopy(self.target):
-                                if j[1] == type:
-                                    self.last = j[0]
-                                    self.target.remove(j)
-                                    log.info("removed:" + str(j))
-                                    self.lst_changed = time.time()
+                            time.sleep(1.5)
                             break
-                    self.move_to_end()
-                    self.press(i, 0.4)
+                    self.get_screen()
+                    if isrun(self):
+                        self.move_to_end()
+                        self.press(i, 0.4)
             elif type == 2:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
@@ -951,12 +968,6 @@ class UniverseUtils:
                     self.lst_changed = time.time()
                 except:
                     pass
-            elif self.check("run", 0.9844, 0.7889, threshold=0.93) == 0 and nds <= 16:
-                try:
-                    self.target.remove((loc, type))
-                    log.info("removed:" + str((loc, type)))
-                except:
-                    pass
 
     # 视角转动x度
     def mouse_move(self, x, fine=1):
@@ -992,7 +1003,7 @@ class UniverseUtils:
     # 移动后根据旧坐标获得新坐标（匹配）
     # rg：匹配的范围（以旧坐标为中心） fbw：是否进行缩放
     # fbw：（人物静止/移动时小地图会有个缩放的过程，fbw=0表示当前人物是静止状态，因此缩放到移动状态与大地图匹配）ps：大地图是移动状态录制的
-    def get_loc(self, bw_map, rg=8, fbw=0):
+    def get_loc(self, bw_map, rg=9, fbw=0):
         rg += self.loc_off // 3
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)

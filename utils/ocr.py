@@ -31,7 +31,10 @@ class My_TS:
                 log.info('error_sim|'+text+'|'+self.text+'|')
             f[i+1][0]=max(f[i][0],f[i+1][0])
             f[i+1][1]=max(f[i][1],f[i+1][1],f[i][0]+1)
-        return f[-1][1]>=len(text)-2
+        if text.strip() in ['胜军']:
+            return f[-1][0]>=len(text)-2
+        else:
+            return f[-1][1]>=len(text)-2
     
     def input(self,img):
         try:
@@ -47,7 +50,7 @@ class My_TS:
                 return t
         return None
         
-    def split_and_find(self,key_list,img,mode=None):
+    def split_and_find(self,key_list,img,mode=None,bless_skip=1):
         white=[255,255,255]
         yellow=[126,162,180]
         binary_image = np.zeros_like(img[:, :, 0])
@@ -86,9 +89,10 @@ class My_TS:
             cy = y + h // 2
             self.input(roi)
             res+='|'+self.text
-            if self.sim('回归不等式') and len(contours)>1:
-                ff=1
-                continue
+            if len(contours)>1:
+                if (self.sim('回归不等式') and bless_skip) or self.sim('大乐透'):
+                    ff=1
+                    continue
             #cv.imwrite('tmp'+str(c)+'.jpg',roi)
             for i,text in enumerate(key_list):
                 if (self.sim(text) and prior>i) or rcx==-1:
@@ -98,26 +102,27 @@ class My_TS:
                         prior=i
         if ff and find==1:
             find=3
+        if find<2:
+            text_res=''
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
     
     def find_text(self, img, text):
         for res in self.ts.detect_and_ocr(img):
             self.text = res.ocr_text
-            print(res)
             for txt in text:
                 if self.sim(txt):
-                    print("识别到",txt)
+                    print("识别到文本：",txt)
                     return res.box
 
 class text_keys:
     def __init__(self,fate=4):
         self.fate=fate
         self.interacts = ['黑塔','区域','事件','退出','沉浸','紧锁','复活','下载','模拟']
-        self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
+        self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉","繁育"]
         self.prior_bless = ['火堆外的夜']
         self.strange = []
-        self.blesses = [[] for _ in range(7)]
+        self.blesses = [[] for _ in range(8)]
         self.strange = ['福灵胶','博士之袍','降维骰子','信仰债券','时空棱镜','朋克洛德','香涎干酪']
         self.blesses[0] = ['零维强化','均晶转变','共晶反应','宏观偏析','超静定场','谐振传递','四棱锥体','聚塑','哨戒','亚共晶体','切变结构','弥合','迸裂晶格']
         self.blesses[1] = ['体验的富翁','全面记忆','第二次初恋','浮黎','缄默','纯真','难言的羞耻','怅然若失','麻木不仁','不寒而栗','特立独行','头晕目眩','多愁善感','沦浃肌髓']
@@ -126,10 +131,16 @@ class text_keys:
         self.blesses[4] = ['柘弓危矢','射不主皮','帝星君临','白矢决射御','云镝逐步离','彤弓素矰','背孤击虚']
         self.blesses[5] = ['激变变星','极端氦闪','事件视界','寰宇热寂特征数','反物质非逆方程','戒律性闪变','危害性余光','毁灭性吸积','原生黑洞','轨道红移','预兆性景深','递增性末日','灾难性共振','破坏性耀发','偏振受体','永坍缩体','不稳定带','哨戒卫星','回光效应']
         self.blesses[6] = ['末日狂欢','开盖有奖','茫茫白夜','众生安眠','阴风阵阵','被涂污的信天翁','十二猴子与怒汉','操行满分','基本有害','灰暗的火','第二十一条军规','流吧你的眼泪']
+        self.blesses[7] = ['刺吸口器']
+        self.secondary = ['巡猎','毁灭','丰饶']
         try:
             import yaml
             with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
                 config = yaml.safe_load(f)['prior']
+                try:
+                    self.secondary = yaml.safe_load(f)['config']['secondary_fate']
+                except:
+                    pass
             for i,j in enumerate(config):
                 if i>1:
                     self.blesses[i-2] = config[j]
@@ -138,4 +149,9 @@ class text_keys:
         except:
             pass
         self.prior_bless += self.blesses[fate]
+        self.skip = 1
+        for s in self.prior_bless:
+            if '回归不等式' in s:
+                self.skip = 0
         self.strange = [self.fates[self.fate]+'火漆'] + self.strange
+        self.secondary = [self.fates[self.fate]] + self.secondary

@@ -1,4 +1,4 @@
-from flet_core import MainAxisAlignment, ControlEvent, CrossAxisAlignment
+from flet_core import MainAxisAlignment, ControlEvent, CrossAxisAlignment, TextStyle
 import flet as ft
 
 from gui.common import show_snack_bar, Page
@@ -43,6 +43,14 @@ def config_view(page: Page):
     def get_info_mode(d):
         ls = [False, True, None]
         return ls[d]
+    
+    def go_money(e=None):
+        dlg = ft.AlertDialog(
+            title=ft.Text("送杯咖啡喵 QWQ"), content=ft.Image("imgs/money.jpg")
+        )
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
 
     page.views.append(
         ft.View(
@@ -89,20 +97,18 @@ def config_view(page: Page):
                             [
                                 ft.Row(
                                     [
-                                        ft.Checkbox(
-                                            label="显示地图",
-                                            value=get_info_mode(config.show_map_mode),
-                                            on_change=show_map_checkbox_changed,
-                                        ),
+                                        # ft.Checkbox(
+                                        #     label="显示地图",
+                                        #     value=get_info_mode(config.show_map_mode),
+                                        #     on_change=show_map_checkbox_changed,
+                                        # ),
                                         ft.Checkbox(
                                             label="调试模式",
                                             value=get_info_mode(config.debug_mode),
-                                            tristate=True,
                                             on_change=debug_checkbox_changed,
                                         ),
                                         ft.Checkbox(
                                             label="速通模式",
-                                            tristate=True,
                                             value=get_info_mode(config.speed_mode),
                                             on_change=speed_checkbox_changed,
                                         ),
@@ -113,6 +119,7 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
+                                ft.Container(height=20),
                                 ft.Row(
                                     [
                                         ft.Dropdown(
@@ -141,7 +148,9 @@ def config_view(page: Page):
                                                 ft.dropdown.Option("巡猎"),
                                                 ft.dropdown.Option("毁灭"),
                                                 ft.dropdown.Option("欢愉"),
+                                                ft.dropdown.Option("繁育"),
                                             ],
+                                            text_style=TextStyle(color=ft.colors.BLACK,weight=ft.FontWeight.W_600),
                                             value=config.fate,
                                             on_change=fate_changed,
                                         ),
@@ -160,11 +169,18 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
-                                ft.TextField(
-                                    label="配队",
-                                    width=80,
-                                    value=config.order_text,
-                                    on_change=textbox_changed,
+                                ft.Container(height=350),
+                                ft.ElevatedButton(
+                                    content=ft.Row(
+                                        [
+                                            ft.Icon(ft.icons.THUMB_UP),
+                                            ft.Text("赞赏", weight=ft.FontWeight.W_800, size=16),
+                                        ],
+                                        alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                                    ),
+                                    on_click=go_money,
+                                    width=150,
+                                    height=50
                                 ),
                             ],
                             alignment=MainAxisAlignment.SPACE_AROUND,

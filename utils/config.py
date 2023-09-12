@@ -1,11 +1,14 @@
 import os
 from typing import List, Dict, Union
 import yaml
+import sys
 
 
 class Config:
     def __init__(self):
         self.abspath = os.path.dirname(os.path.dirname(__file__))  # 获取项目根目录../Auto_Simulated_Universe
+        if getattr(sys, 'frozen', False):
+            self.abspath = '.'
         self.order_text = "1 2 3 4"
         self.angle = "1.0"
         self.difficult = "4"
@@ -13,7 +16,7 @@ class Config:
         self.text = "info.yml"
         self.fate = "巡猎"
         self.map_sha = ""
-        self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉"]
+        self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉", "繁育"]
         self.show_map_mode = 0
         self.debug_mode = 0
         self.speed_mode = 0
@@ -73,8 +76,9 @@ class Config:
                     prior = yaml.safe_load(f)['prior']
             except:
                 prior = {'奇物': ['福灵胶', '博士之袍', '降维骰子', '信仰债券', '时空棱镜', '朋克洛德', '香涎干酪'],
-                         '事件': ['购买1个星祝福', '购买一个', '跳上右边的砖块', '丢下雕像', '和序列扑满玩', '信仰星神',
-                                  '克里珀的恩赐', '哈克的藏品', '动作片', '感恩克里珀星神'],
+                         '事件': ['购买1个星祝福','购买一个','丢下雕像','和序列扑满玩','信仰星神','克里珀的恩赐','哈克的藏品',
+                                  '动作片','感恩克里珀星神','换取1个星祝福','星神的记载','翻开牌','摧毁黑匣','购买1个1星祝福',
+                                  '购买1个1-星祝福','选择里奥'],
                          '存护': ['零维强化', '均晶转变', '共晶反应', '宏观偏析', '超静定场', '谐振传递', '四棱锥体',
                                   '聚塑', '哨戒', '亚共晶体', '切变结构', '弥合', '迸裂晶格'],
                          '记忆': ['体验的富翁', '全面记忆', '第二次初恋', '浮黎', '缄默', '纯真', '难言的羞耻',
@@ -92,7 +96,8 @@ class Config:
                                   '回光效应'],
                          '欢愉': ['末日狂欢', '开盖有奖', '茫茫白夜', '众生安眠', '阴风阵阵', '被涂污的信天翁',
                                   '十二猴子与怒汉', '操行满分', '基本有害', '灰暗的火', '第二十一条军规',
-                                  '流吧你的眼泪']}
+                                  '流吧你的眼泪'],
+                         '繁育': ['刺吸口器','结晶鳌刺','酚类物质','子囊释放','菌种脓疤','镰刀肢足','腐殖疮','裂解酶','代谢腔','裸脑质','代谢腔','催化剂','节间膜','孢夹','骨刃','鳞翅','脊刺','槽针','液囊']}
         with open(os.path.join(self.abspath, self.text), "w", encoding="utf-8") as f:
             yaml.safe_dump({
                 "config": {

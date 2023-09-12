@@ -21,14 +21,12 @@ import requests
 import pytz
 import pyuac
 try:
-    from mylib import get_direc_only_minimap, ban
+    from mylib import get_direc_only_minimap, ban, isrun
 except:
-    from utils.mylib import get_direc_only_minimap, ban
-
-pyautogui.FAILSAFE = False
+    from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.33 beta"
+version = "v5.4 stable"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -96,6 +94,8 @@ class SimulatedUniverse(UniverseUtils):
         self.gui = gui
         self.fail_count = 0
         ex_notif = ""
+        if not debug:
+            pyautogui.FAILSAFE = False
         if bonus:
             ex_notif = " 自动领取沉浸奖励"
             log.info(ex_notif)
@@ -125,6 +125,7 @@ class SimulatedUniverse(UniverseUtils):
         self.mini_state = 1
         self.ang_off = 0
         self.ang_neg = 0
+        self.first_mini = 1
         self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
@@ -173,6 +174,8 @@ class SimulatedUniverse(UniverseUtils):
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
+                if self.threshold == 0.97 and fail_cnt==0:
+                    log.info("匹配不到任何图标")
                 if self.threshold > 0.95:
                     self.threshold -= 0.015
                 else:
@@ -241,7 +244,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.get_screen()
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 if (
-                    self.ts.split_and_find(self.tk.fates, img_down, "bless")[1]
+                    self.ts.split_and_find(self.tk.fates, img_down, mode="bless")[1]
                     or self._stop
                 ):
                     time.sleep(0.2)
@@ -249,9 +252,9 @@ class SimulatedUniverse(UniverseUtils):
                 time.sleep(0.2)
             self.get_screen()
             img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
-            res_up = self.ts.split_and_find(self.tk.prior_bless, img_up)
+            res_up = self.ts.split_and_find(self.tk.prior_bless, img_up, bless_skip=self.tk.skip)
             img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
-            res_down = self.ts.split_and_find([self.fate], img_down, "bless")
+            res_down = self.ts.split_and_find([self.fate], img_down, mode="bless")
             ban(self)
             if res_up[1] == 2:
                 self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
@@ -270,10 +273,10 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.2)
                 self.get_screen()
                 img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
-                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up)
+                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up,bless_skip=self.tk.skip)
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 res_down = self.ts.split_and_find(
-                    [self.fate, "巡猎", "毁灭", "丰饶"], img_down, "bless"
+                    self.tk.secondary, img_down, mode="bless"
                 )
                 if res_up[1] >= 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
@@ -343,7 +346,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             return 1
         # 跑图状态
-        if self.check("run", 0.9844, 0.7889, threshold=0.93):
+        if isrun(self):
             if self.floor_init == 0:
                 self.get_level()
                 self.floor_init = 1
@@ -520,6 +523,8 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("fate_2", 0.1797, 0.1009):
             self.click((0.1797, 0.1009))
         elif self.check("fate", 0.9458, 0.9481):
+            time.sleep(1)
+            self.get_screen()
             img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
             res = self.ts.split_and_find([self.fate], img)
             self.click(self.calc_point((0.4969, 0.3750), res[0]))
@@ -544,16 +549,22 @@ class SimulatedUniverse(UniverseUtils):
                         event_prior = yaml.safe_load(f)["prior"]["事件"]
                 except:
                     event_prior = [
-                        "购买1个星祝福",
-                        "购买一个",
-                        "跳上右边的砖块",
-                        "丢下雕像",
-                        "和序列扑满玩",
-                        "信仰星神",
-                        "克里珀的恩赐",
-                        "哈克的藏品",
-                        "动作片",
-                        "感恩克里珀星神",
+                        '购买1个星祝福',
+                        '购买一个',
+                        '丢下雕像',
+                        '和序列扑满玩',
+                        '信仰星神',
+                        '克里珀的恩赐',
+                        '哈克的藏品',
+                        '动作片',
+                        '感恩克里珀星神',
+                        '换取1个星祝福',
+                        '星神的记载',
+                        '翻开牌',
+                        '摧毁黑匣',
+                        '购买1个1星祝福',
+                        '购买1个1-星祝福',
+                        '选择里奥'
                     ]
                 self.click_text(event_prior)
                 time.sleep(0.3)
@@ -571,7 +582,7 @@ class SimulatedUniverse(UniverseUtils):
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
             img = self.check("z", 0.5000, 0.7333, mask="mask_strange", large=False)
-            res = self.ts.split_and_find(self.tk.strange, img, "strange")
+            res = self.ts.split_and_find(self.tk.strange, img, mode="strange")
             self.click(self.calc_point((0.5000, 0.7333), res[0]))
             self.click((0.1365, 0.1093))
         # 丢弃奇物
@@ -611,18 +622,13 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
-        elif self.check("abyss/2", 0.4297, 0.8213):
-            self.click((0.2313, 0.5324))
-        elif self.check("abyss/1", 0.8568, 0.6769):
-            self.click((0.6260, 0.8167))
         else:
             img1 = self.check("z", 0.5047, 0.1324, mask="mask_close", large=False)
             img2 = self.check("z", 0.4990, 0.0731, mask="mask_close1", large=False)
             if self.ts.sim("点击空白", img1) or self.ts.sim("点击空白", img2):
                 self.click((0.2062, 0.2054))
             else:
-                log.info("匹配不到任何图标")
-                return 0
+                 return 0
         return 1
 
     def find_latest_modified_file(self, folder_path):
