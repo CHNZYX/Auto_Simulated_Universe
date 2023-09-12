@@ -26,7 +26,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.5 stable"
+version = "v5.5 beta"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -115,6 +115,7 @@ class SimulatedUniverse(UniverseUtils):
 
     # 初始化地图，刚进图时调用
     def init_map(self):
+        self.backup_map()
         self.big_map = np.zeros((8192, 8192), dtype=np.uint8)
         self.big_map_c = 0
         self.lst_tm = 0
@@ -228,6 +229,10 @@ class SimulatedUniverse(UniverseUtils):
             # 需要打开自动战斗
             if self.check("c", 0.9464, 0.1287, threshold=0.985):
                 self.press("v")
+            if time.time() - self.f_time < 20:
+                self.f_time = 0
+                self.floor -= 1
+                self.restore_map()
             # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             if self.fate == "丰饶":
                 if random.randint(0, 5) == 3:
@@ -326,6 +331,7 @@ class SimulatedUniverse(UniverseUtils):
                         else:
                             self.init_map()
                             self.floor += 1
+                            self.f_time = time.time()
                             map_log.info(
                                 f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
                             )
@@ -605,6 +611,7 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(0.3)
             self.click_text(["脱离卡死"])
         elif self.check("enhance", 0.9208, 0.9380):
+            self.quit = time.time()
             time.sleep(1.5)
             for i in [None, (0.7984, 0.6824), (0.6859, 0.6824)]:
                 self.get_screen()
@@ -770,6 +777,15 @@ class SimulatedUniverse(UniverseUtils):
                         rx += x
                         ry += y
         return (i + rx / rt, j + ry / rt)
+    
+    def backup_map(self):
+        try:
+            self.bbig_map,self.bbig_map_c,self.blst_tm,self.btries,self.bhis_loc,self.boffset,self.bnow_loc,self.bmini_state,self.bang_off,self.bang_neg,self.bfirst_mini=self.big_map,self.big_map_c,self.lst_tm,self.tries,self.his_loc,self.offset,self.now_loc,self.mini_state,self.ang_off,self.ang_neg,self.first_mini
+        except:
+            pass
+    def restore_map(self):
+        self.big_map,self.big_map_c,self.lst_tm,self.tries,self.his_loc,self.offset,self.now_loc,self.mini_state,self.ang_off,self.ang_neg,self.first_mini=self.bbig_map,self.bbig_map_c,self.blst_tm,self.btries,self.bhis_loc,self.boffset,self.bnow_loc,self.bmini_state,self.bang_off,self.bang_neg,self.bfirst_mini
+
 
     def stop(self, *_, **__):
         log.info("尝试停止运行")

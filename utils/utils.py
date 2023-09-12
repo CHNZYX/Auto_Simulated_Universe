@@ -76,7 +76,6 @@ class UniverseUtils:
         self.check_bonus = 1
         self._stop = 0
         self.stop_move = 0
-        self.opt = 0
         self.multi = config.multi
         self.diffi = config.diffi
         self.fate = config.fate
@@ -86,6 +85,7 @@ class UniverseUtils:
         self.ts = ocr.My_TS()
         self.last_info = ''
         self.mini_target = 0
+        self.f_time = 0
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
@@ -94,9 +94,6 @@ class UniverseUtils:
             log.info("info有误，自动选择巡猎命途    错误：" + self.fate)
             self.my_fate = 4
         self.tk = ocr.text_keys(self.my_fate)
-        # 是否对命途回响构音做出优化，目前支持存护和巡猎
-        if self.my_fate in [0, 4]:
-            self.opt = 1
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
@@ -730,6 +727,7 @@ class UniverseUtils:
             if self.ts.sim("区域"):
                 self.init_map()
                 self.floor += 1
+                self.f_time = time.time()
                 self.lst_changed = time.time()
                 map_log.info(f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层")
             else:
