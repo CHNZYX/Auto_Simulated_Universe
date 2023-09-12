@@ -718,10 +718,14 @@ class UniverseUtils:
             pass
 
     def nof(self):
-        self.get_screen()
-        ava = not self.check(
-            "f", 0.4443, 0.4417, mask="mask_f1"
-        ) and not isrun(self)
+        tm = time.time()
+        ava = 0
+        while not ava and time.time()-tm<0.5:
+            self.get_screen()
+            ava = not self.check(
+                "f", 0.4443, 0.4417, mask="mask_f1"
+            ) and not isrun(self)
+        print(self.ts.text,ava)
         if ava:
             if self.ts.sim("区域"):
                 self.init_map()
@@ -934,14 +938,14 @@ class UniverseUtils:
                     self.get_screen()
                     if self.goodf():
                         self.press(self.hotkey)
-                        time.sleep(0.3)
                         if self.nof():
                             time.sleep(1.5)
                             break
                     self.get_screen()
                     if isrun(self):
                         self.move_to_end()
-                        self.press(i, 0.4)
+                        self.press(i, 0.3)
+                        time.sleep(0.2)
             elif type == 2:
                 # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
                 key_list = ["sasddwwwaw", "sdsaawwwdw"]
