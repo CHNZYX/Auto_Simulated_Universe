@@ -933,7 +933,7 @@ class UniverseUtils:
                 for i in "wwwwww":
                     self.get_screen()
                     if self.goodf():
-                        self.press("f")
+                        self.press(self.hotkey)
                         time.sleep(0.3)
                         if self.nof():
                             time.sleep(1.5)

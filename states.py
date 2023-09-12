@@ -309,13 +309,13 @@ class SimulatedUniverse(UniverseUtils):
                     # 与黑塔交互后30秒内禁止再次交互（防止死循环）
                     if time.time() - self.quit > 30 and self.floor:
                         self.quit = time.time()
-                        self.press("f")
+                        self.press(self.hotkey)
                         self.battle = 0
                 else:
                     # tele：区域-xx  exit：离开模拟宇宙
                     if self.ts.sim("区域"):
                         log.info(f"识别到传送点")
-                        self.press("f")
+                        self.press(self.hotkey)
                         time.sleep(1)
                         self.get_screen()
                         img = self.check(
@@ -336,7 +336,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.re_align += 1
                     is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
                     if is_killed == 0:
-                        self.press("f")
+                        self.press(self.hotkey)
                     self.battle = 0
                 if is_killed == 0:
                     return 1
