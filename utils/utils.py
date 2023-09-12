@@ -151,14 +151,15 @@ class UniverseUtils:
                 pass
         self.order = config.order
 
-    def gen_hotkey_img(self,hotkey="e",bg="imgs/f_bg.jpg",output="img/f.jpg"):
+    def gen_hotkey_img(self,hotkey="e",bg="imgs/f_bg.jpg"):
+        hotkey = hotkey.upper()
         image = Image.open(bg)
-        font = ImageFont.truetype("base.ttf", 24)
+        font = ImageFont.truetype("imgs/base.ttf", 24)
         d = ImageDraw.Draw(image)
         position = (2,-3)
-        color = (241, 214, 152)
+        color = (152, 214, 241)
         d.text(position, hotkey, font=font, fill=color)
-        image.save(output,quality=100)
+        return np.array(image)
 
     def press(self, c, t=0):
         if c not in "3r":
