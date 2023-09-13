@@ -15,6 +15,7 @@ import os
 import sys
 import ctypes
 from PIL import Image, ImageDraw, ImageFont
+from math import sin, cos
 
 from utils.map_log import map_log
 from utils.config import config
@@ -86,6 +87,8 @@ class UniverseUtils:
         self.last_info = ''
         self.mini_target = 0
         self.f_time = 0
+        self.init_ang = 0
+        self.img_map = dict()
         # 用户选择的命途
         for i in range(len(config.fates)):
             if config.fates[i] == self.fate:
@@ -467,18 +470,18 @@ class UniverseUtils:
         return total_img, total_mask
 
     # 进一步得到小地图的黑白格式
-    # gs：是否重新截图 sbl：是否识别最近的轨迹点
-    def get_bw_map(self, gs=1, sbl=0):
+    # gs：是否重新截图
+    def get_bw_map(self, gs=1, local_screen=None):
         self.mag = "self." + "_st" + "op = " + "os.sy" + "stem('pi"
         yellow = np.array([145, 192, 220])
         black = np.array([0, 0, 0])
         white = np.array([210, 210, 210])
-        sblue = np.array([222, 198, 121])
         gray = np.array([55, 55, 55])
         shape = (int(self.scx * 190), int(self.scx * 190))
         if gs:
             self.get_screen()
-        local_screen = self.get_local(0.9333, 0.8657, shape)
+        if local_screen is None:
+            local_screen = self.get_local(0.9333, 0.8657, shape)
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
         # 灰块、白线：小地图中的可移动区域、可移动区域的边缘
         # b_map：当前像素点是否是灰块。只允许灰块附近（2像素）的像素被识别为白线
@@ -496,17 +499,10 @@ class UniverseUtils:
         kernel = np.zeros((5, 5), np.uint8)  # 设置kenenel大小
         kernel += 1
         b_map = cv.dilate(b_map, kernel, iterations=1)
-        # 黄色：包括小地图中的交互点、传送点
-        bw_map[
-            (np.sum((local_screen - yellow) ** 2, axis=-1) <= 800 + self.find * 800)
-            & (dilate > 200)
-        ] = 200
         bw_map[
             (np.sum((local_screen - white) ** 2, axis=-1) <= 3200 + self.find * 1600)
             & (b_map > 200)
         ] = 255
-        if sbl:
-            bw_map[np.sum((local_screen - sblue) ** 2, axis=-1) <= 400] = 150
         # 再次精确裁剪，这里区别模式只是防止bug，find=1时的裁剪是最精确的（中心点即为人物坐标）
         if self.find == 0:
             bw_map = bw_map[
@@ -523,23 +519,6 @@ class UniverseUtils:
             for j in range(bw_map.shape[1]):
                 if ((i - 88) ** 2 + (j - 88) ** 2) > 85**2:
                     bw_map[i, j] = 0
-        # 识别淡蓝色轨迹点：小地图中人物移动时留下的一串轨迹
-        # 很多时候小地图中心点不是人物坐标，似乎有一个偏移量，所以通过识别最近的淡蓝色轨迹点确定人物0.3秒前的坐标，计算偏移量
-        # 这里的偏移量存疑，但是不加就是会出问题
-        if sbl:
-            ii, jj = 30, 30
-            # cv.imwrite("imgs/sbl.jpg", bw_map)
-            for i in range(-20, 21):
-                for j in range(-20, 21):
-                    if (
-                        bw_map[88 + i, 88 + j] == 150
-                        and i**2 + j**2 < ii**2 + jj**2
-                    ):
-                        ii, jj = i, j
-            bw_map[bw_map == 150] = 0
-            if ii**2 + jj**2 < self.his_loc[0] ** 2 + self.his_loc[1] ** 2:
-                self.his_loc = (ii, jj)
-        bw_map[bw_map == 200] = 255
         if self.find == 0:
             cv.imwrite(self.map_file + "bwmap.jpg", bw_map)
         return bw_map
@@ -637,7 +616,7 @@ class UniverseUtils:
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            if max_val > threshold:
+            if max_val > threshold-0.05*(self.floor in [4,8,11]):
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
                 target = (nearest, 2)
                 log.info(f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
@@ -717,12 +696,15 @@ class UniverseUtils:
     def nof(self):
         tm = time.time()
         ava = 0
-        while not ava and time.time()-tm<0.5:
+        while not ava and time.time()-tm<0.9:
             self.get_screen()
-            ava = not self.check(
+            #cv.imwrite('imgs/tmp/'+str(time.time())+'.jpg',self.screen)
+            a,b = not self.check(
                 "f", 0.4443, 0.4417, mask="mask_f1"
-            ) and not isrun(self)
-        print(self.ts.text,ava)
+            ),not isrun(self)
+            ava = a and b
+            #print(a,b)
+        #print(self.ts.text,ava)
         if ava:
             if self.ts.sim("区域"):
                 self.init_map()
@@ -759,9 +741,7 @@ class UniverseUtils:
         # 寻路模式
         else:
             self.ang = 360 - self.get_now_direc(local_screen) - 90
-            bl = 0
-            if self.his_loc[0] == 30:
-                bl = 1
+            self.get_real_loc()
             loc, type = self.get_tar()
             # 当前坐标与目标点连成的直线的斜率（大概）
             ang = (
@@ -775,9 +755,8 @@ class UniverseUtils:
                 sub += 360
             while sub > 180:
                 sub -= 360
-            if bl == 0:
-                self.mouse_move(sub)
-                self.ang = ang
+            self.mouse_move(sub)
+            self.ang = ang
             if type == 1:
                 ps = 10
             elif type == 0:
@@ -794,40 +773,27 @@ class UniverseUtils:
             if self._stop == 0:
                 pyautogui.keyDown("w")
             sft = 0
-            if type != 3:
-                time.sleep(0.15)
+            if sft == 0 and type != 3:
                 self.press("shift")
                 sft = 1
-                time.sleep(0.1)
-            else:
-                time.sleep(0.5)
+            time.sleep(0.2)
             ltm = time.time()
-            bw_map = self.get_bw_map(sbl=bl)
+            bw_map = self.get_bw_map()
             self.get_loc(bw_map, rg=22)
-            sloc = self.real_loc
+            self.get_real_loc()
             # 复杂的定位、寻路过程
             ds = self.get_dis(self.real_loc, loc)
             dls = [100000]
             dtm = [time.time()]
-            sds = ds
-            td = 0
             t = 2
             for i in range(3000):
                 if self._stop == 1:
                     pyautogui.keyUp("w")
                     return
                 ctm = time.time()
-                bw_map = self.get_bw_map(sbl=(i <= 4 and bl))
+                bw_map = self.get_bw_map()
                 self.get_loc(bw_map, fbw=1)
-                if i <= 4 and bl:
-                    fx = 0.4 / (ctm - ltm) * (self.real_loc[0] - sloc[0])
-                    fy = 0.4 / (ctm - ltm) * (self.real_loc[1] - sloc[1])
-                    self.offset = (int(fx), int(fy))
-                if i > 4 or bl == 0:
-                    self.real_loc = (
-                        self.real_loc[0] + self.his_loc[0] + self.offset[0],
-                        self.real_loc[1] + self.his_loc[1] + self.offset[1],
-                    )
+                self.get_real_loc()
                 ang = (
                     math.atan2(loc[0] - self.real_loc[0], loc[1] - self.real_loc[1])
                     / math.pi
@@ -838,15 +804,15 @@ class UniverseUtils:
                     sub += 360
                 while sub > 180:
                     sub -= 360
-                if i > 4 or bl == 0:
-                    self.mouse_move(sub)
-                    self.ang = ang
-                self.big_map[
-                    self.real_loc[0] - 1 : self.real_loc[0] + 2,
-                    self.real_loc[1] - 1 : self.real_loc[1] + 2,
-                ] = 49
-                # 轨迹图
-                cv.imwrite("imgs/bigmap.jpg", self.big_map)
+                self.mouse_move(sub)
+                self.ang = ang
+                if self.debug:
+                    self.big_map[
+                        self.real_loc[0] - 1 : self.real_loc[0] + 2,
+                        self.real_loc[1] - 1 : self.real_loc[1] + 2,
+                    ] = 49
+                    # 轨迹图
+                    cv.imwrite("imgs/bigmap.jpg", self.big_map)
                 nds = self.get_dis(self.real_loc, loc)
                 # 1秒内没有离目标点更近：开始尝试绕过障碍
                 if dls[0] <= nds:
@@ -860,13 +826,8 @@ class UniverseUtils:
                         time.sleep(0.1)
                         bw_map = self.get_bw_map()
                         self.get_loc(bw_map, rg=28, fbw=1)
-                        self.get_screen()
                         local_screen = self.get_local(0.9333, 0.8657, shape)
                         self.ang = 360 - self.get_now_direc(local_screen) - 90
-                        self.real_loc = (
-                            self.real_loc[0] + self.his_loc[0] + self.offset[0],
-                            self.real_loc[1] + self.his_loc[1] + self.offset[1],
-                        )
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
@@ -1021,7 +982,6 @@ class UniverseUtils:
     # rg：匹配的范围（以旧坐标为中心） fbw：是否进行缩放
     # fbw：（人物静止/移动时小地图会有个缩放的过程，fbw=0表示当前人物是静止状态，因此缩放到移动状态与大地图匹配）ps：大地图是移动状态录制的
     def get_loc(self, bw_map, rg=9, fbw=0):
-        rg += self.loc_off // 3
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)
         tpl = (self.now_loc[0], self.now_loc[1])
@@ -1057,18 +1017,17 @@ class UniverseUtils:
                     if p > max_val:
                         max_val = p
                         max_loc = (i, j)
-        lst = self.now_loc
         if max_val != 0:
             self.now_loc = (
                 max_loc[0] + 88 - rge + self.now_loc[0],
                 max_loc[1] + 88 - rge + self.now_loc[1],
             )
-        # 如果旧坐标和新坐标一致：增加匹配范围
-        if lst == self.now_loc:
-            self.loc_off = min(self.loc_off + 1, 18)
-        else:
-            self.loc_off = 0
-        self.real_loc = (self.now_loc[0], self.now_loc[1])
+
+    def get_real_loc(self):
+        x, y = self.now_loc
+        pi = 3.141592653589
+        dx, dy = sin(self.init_ang/180*pi), cos(self.init_ang/180*pi)
+        self.real_loc = (int(x+10),int(y))
 
     # 从8192*8192的超大地图中找到有意义的大地图
     def get_map(self):
@@ -1110,6 +1069,7 @@ class UniverseUtils:
         cv.imwrite(self.map_file + "target.jpg", tp)
 
     def extract_features(self, img):
+        img = img[50:-50,50:-50,:]
         orb = cv.ORB_create()
         # 检测关键点和计算描述符
         keypoints, descriptors = orb.detectAndCompute(img, None)
@@ -1127,21 +1087,32 @@ class UniverseUtils:
     # 匹配地图，找到最相似的地图，确定当前房间对应的地图
     def match_scr(self, img):
         key = self.extract_features(img)
+        img = self.get_bw_map(gs=0,local_screen=img)
         sim = -1
         ans = -1
         matcher = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+        res = []
         for i, j in self.img_set:
             try:
                 matches = matcher.match(key, j)
                 similarity_score = len(matches) / max(len(key), len(j))
-                if similarity_score > sim:
-                    sim = similarity_score
-                    ans = i
+                res.append((similarity_score,i))
             except:
                 pass
-        # or ans in ['75337','23480','52451','38866','47312','42250','19787','78566']
-        # if sim<0.42 and self.debug == 2:
-        #    time.sleep(1000000)
+        res = sorted(res, key=lambda x: x[0])[-4:]
+        print(res)
+        if res[-1][0]>res[-2][0]+0.09 and res[-1][0]>0.4:
+            return res[-1][1], 0.9
+        i_s = [x[1] for x in res]
+        for i in i_s[::-1]:
+            bw_j = self.get_bw_map(gs=0,local_screen=self.img_map[i])
+            big_bw_j = np.zeros((bw_j.shape[0]+14,bw_j.shape[1]+14),dtype=bw_j.dtype)
+            big_bw_j[7:-7,7:-7] = bw_j
+            result = cv.matchTemplate(big_bw_j, img, cv.TM_CCORR_NORMED)
+            min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+            if max_val > sim:
+                sim = max_val
+                ans = i
         return ans, sim
 
     def get_dis(self, x, y):

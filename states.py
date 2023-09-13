@@ -111,6 +111,7 @@ class SimulatedUniverse(UniverseUtils):
             if os.path.exists(pth):
                 image = cv.imread(pth)
                 self.img_set.append((file, self.extract_features(image)))
+                self.img_map[file]= image
         log.info("加载地图完成，共 %d 张" % len(self.img_set))
 
     # 初始化地图，刚进图时调用
@@ -164,7 +165,7 @@ class SimulatedUniverse(UniverseUtils):
                 break
             self.get_screen()
             ban(self)
-            #self.click_target('imgs/tp.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/init.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -187,7 +188,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.click((0.2062, 0.2054))
                         fail_cnt = 0
                     self.threshold = 0.97
-                time.sleep(0.5)
+                time.sleep(0.5+1.6*(self.floor in [0,5] and not self.big_map_c and self.threshold != 0.97))
             # 匹配到图片 res=1时等待一段时间
             else:
                 fail_cnt = 0
@@ -388,19 +389,22 @@ class SimulatedUniverse(UniverseUtils):
                             if self.now_map_sim < now_map_sim:
                                 self.now_map, self.now_map_sim = now_map, now_map_sim
                             if (
-                                (self.now_map_sim > 0.7 or time.time() - now_time > 2.5)
+                                (self.now_map_sim > 0.65 or time.time() - now_time > 2.5)
                                 and self.now_map_sim != -1
                             ) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
+                        if self.debug:
+                            notif(f"地图编号：{self.now_map}",f"相似度：{self.now_map_sim}")
                         if self.now_map_sim < 0.35:
                             notif("相似度过低", "疑似在黑塔办公室")
+                            time.sleep(10000)
                             # self.init_map()
                             # return 1
                         if self.debug == 2:
                             try:
                                 with open(
-                                    "check" + str(self.floor) + ".txt",
+                                    "check0.txt",
                                     "r",
                                     encoding="utf-8",
                                     errors="ignore",
@@ -411,9 +415,9 @@ class SimulatedUniverse(UniverseUtils):
                                 if not self.now_map in s:
                                     s.append(self.now_map)
                                 else:
-                                    self.kl = 0
+                                    self.kl = 1
                                 with open(
-                                    "check" + str(self.floor) + ".txt",
+                                    "check0.txt",
                                     "w",
                                     encoding="utf-8",
                                 ) as fh:
@@ -428,6 +432,10 @@ class SimulatedUniverse(UniverseUtils):
                         xy = files.split("/")[-1].split("_")[1:3]
                         self.now_loc = (4096 - int(xy[0]), 4096 - int(xy[1]))
                         self.target = self.get_target(self.now_pth + "target.jpg")
+                        self.get_screen()
+                        shape = (int(self.scx * 190), int(self.scx * 190))
+                        local_screen = self.get_local(0.9333, 0.8657, shape)
+                        self.init_ang = 360 - self.get_now_direc(local_screen) - 90
                         log.info("target %s" % self.target)
                     if self._stop:
                         return 1
@@ -447,6 +455,8 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.5)
                     self.get_screen()
             self.lst_tm = time.time()
+            
+            self.kl |= self.floor == 1 and self.debug == 2
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
@@ -504,7 +514,7 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         if self.check("yes", 0.3922, 0.3806):
             self.click((0.3922, 0.3806))
-        elif self.check("init", 0.9276, 0.6731):
+        elif self.check("init", 0.9073,0.8435):
             self.click((0.3448, 0.4926))
             self.init_map()
         elif self.check("begin", 0.3328, 0.8148):
@@ -638,7 +648,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.2062, 0.2054))
             else:
                  return 0
-        return 1
+        return 0
 
     def find_latest_modified_file(self, folder_path):
         files = [

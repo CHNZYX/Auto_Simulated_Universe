@@ -65,8 +65,8 @@ for file in os.listdir("imgs/maps"):
     pth = "imgs/maps/" + file + "/target.jpg"
     if os.path.exists(pth):
         get_target(pth)
-        #copy(os.getcwd()+'\\'+"imgs/maps/" + file + "/init.jpg",os.getcwd()+'\\'+'tmp')
-        #os.rename('tmp/init.jpg','tmp/'+str(file)+'.jpg')
+        copy(os.getcwd()+'\\'+"imgs/maps/" + file + "/target.jpg",os.getcwd()+'\\'+'targ')
+        os.rename('targ/target.jpg','targ/'+str(file)+'.jpg')
         #image = cv.imread(pth)
         # for map in os.listdir("imgs/maps/" + file):
         #     if map == "bwmap.jpg":
