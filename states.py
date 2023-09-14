@@ -183,7 +183,6 @@ class SimulatedUniverse(UniverseUtils):
                         time.sleep(0.5)
                     if self.ts.nothing:
                         self.in_battle = time.time()
-                        print('nothing')
                 if time.time()-self.in_battle>7:
                     if self.threshold == 0.97 and fail_cnt==0:
                         log.info("匹配不到任何图标")
@@ -201,7 +200,6 @@ class SimulatedUniverse(UniverseUtils):
                         time.sleep(0.25)
                         self.threshold = 0.97
                     time.sleep(0.1)
-
             # 匹配到图片 res=1时等待一段时间
             else:
                 fail_cnt = 0
@@ -654,7 +652,9 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.press("esc")
             self.confirm_time = time.time()
-        return 0
+        else:
+            return 0
+        return 1
 
     def find_latest_modified_file(self, folder_path):
         files = [

@@ -705,8 +705,6 @@ class UniverseUtils:
                 "f", 0.4443, 0.4417, mask="mask_f1"
             ),not isrun(self)
             ava = a and b
-            #print(a,b)
-        #print(self.ts.text,ava)
         if ava:
             if self.ts.sim("区域"):
                 self.init_map()
