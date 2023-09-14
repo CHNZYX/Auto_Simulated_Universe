@@ -191,6 +191,7 @@ class UniverseUtils:
                     1 - (pt[0][1] + pt[2][1]) / 2 / self.yy,
                 )
             )
+            return 1
 
     # 由click_target调用，返回图片匹配结果
     def scan_screenshot(self, prepared):
@@ -309,8 +310,7 @@ class UniverseUtils:
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
         self.tm = max_val
         if max_val > threshold:
-            if self.last_info != path:
-                log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
+            log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
             self.last_info = path
         return max_val > threshold
 
@@ -1079,7 +1079,7 @@ class UniverseUtils:
             except:
                 pass
         res = sorted(res, key=lambda x: x[0])[-4:]
-        if res[-1][0]>res[-2][0]+0.09 and res[-1][0]>0.4:
+        if res[-1][0]>res[-2][0]+0.075 and res[-1][0]>0.4:
             return res[-1][1], 0.9
         i_s = [x[1] for x in res]
         for i in i_s[::-1]:

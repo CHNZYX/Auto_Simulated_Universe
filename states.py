@@ -140,7 +140,8 @@ class SimulatedUniverse(UniverseUtils):
         self.in_battle = 0
         self.init_map()
         fail_cnt = 0
-        fail_time = time.time()
+        fail_time = 0
+        self.confirm_time = 0
         self._stop = os.stat("imgs/mon" + self.tss).st_size != 141882
         while True:
             if self._stop:
@@ -177,14 +178,19 @@ class SimulatedUniverse(UniverseUtils):
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
-                self.click_text(['空白处','确认','点击'])
+                if time.time()-self.confirm_time>4:
+                    if self.click_text(['空白处','确认','点击']):
+                        time.sleep(0.5)
+                    if self.ts.nothing:
+                        self.in_battle = time.time()
+                        print('nothing')
                 if time.time()-self.in_battle>7:
                     if self.threshold == 0.97 and fail_cnt==0:
                         log.info("匹配不到任何图标")
                         fail_time = time.time()
-                    if self.threshold > 0.94:
-                        self.threshold -= 0.009
-                    elif time.time()-fail_time>2.5:
+                    if self.threshold > 0.95:
+                        self.threshold -= 0.015
+                    elif time.time()-fail_time>4.5:
                         time.sleep(0.15)
                         if fail_cnt <= 1:
                             self.click((0.5000, 0.1454))
@@ -297,6 +303,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
             time.sleep(0.35)
+            self.confirm_time = time.time()
             return 1
         # F交互界面
         elif self.check("f", 0.4443, 0.4417, mask="mask_f1"):
@@ -539,8 +546,11 @@ class SimulatedUniverse(UniverseUtils):
                     )
                     time.sleep(0.3)
             self.click((0.1635, 0.1056))
+        elif self.check("fate_2", 0.1797, 0.1009):
+            self.click((0.1797, 0.1009))
+            self.confirm_time = time.time()
         elif self.check("fate", 0.9458, 0.9481):
-            time.sleep(1)
+            time.sleep(0.6)
             self.get_screen()
             img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
             res = self.ts.split_and_find([self.fate], img)
@@ -602,14 +612,17 @@ class SimulatedUniverse(UniverseUtils):
             res = self.ts.split_and_find(self.tk.strange, img, mode="strange")
             self.click(self.calc_point((0.5000, 0.7333), res[0]))
             self.click((0.1365, 0.1093))
+            self.confirm_time = time.time()
         # 丢弃奇物
         elif self.check("drop", 0.9406, 0.9491):
             self.click((0.4714, 0.5500))
             self.click((0.1339, 0.1028))
+            self.confirm_time = time.time()
         elif self.check("drop_bless", 0.9417, 0.9481, threshold=0.95):
             self.click((0.4714, 0.5500))
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
+            self.confirm_time = time.time()
         elif self.check("setting", 0.9734, 0.3009, threshold=0.98):
             self.click((0.9734, 0.3009))
             time.sleep(2)
@@ -640,6 +653,7 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
+            self.confirm_time = time.time()
         return 0
 
     def find_latest_modified_file(self, folder_path):

@@ -31,7 +31,7 @@ class My_TS:
                 log.info('error_sim|'+text+'|'+self.text+'|')
             f[i+1][0]=max(f[i][0],f[i+1][0])
             f[i+1][1]=max(f[i][1],f[i+1][1],f[i][0]+1)
-        if text.strip() in ['胜军']:
+        if text.strip() in ['胜军','空白处','确认','点击']:
             return f[-1][0]>=len(text)-2
         else:
             return f[-1][1]>=len(text)-2
@@ -108,8 +108,12 @@ class My_TS:
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
     
     def find_text(self, img, text):
+        self.nothing = 1
         for res in self.ts.detect_and_ocr(img):
             self.text = res.ocr_text
+            if len(self.text.strip())>1 and 'UID' not in self.text:
+                self.nothing = 0
+                print(self.text)
             for txt in text:
                 if self.sim(txt):
                     print("识别到文本：",txt)
