@@ -137,9 +137,10 @@ class SimulatedUniverse(UniverseUtils):
         self.battle = 0
         self.quit = 0
         self.floor_init = 0
+        self.in_battle = 0
         self.init_map()
         fail_cnt = 0
-        begin = 1
+        fail_time = time.time()
         self._stop = os.stat("imgs/mon" + self.tss).st_size != 141882
         while True:
             if self._stop:
@@ -176,25 +177,30 @@ class SimulatedUniverse(UniverseUtils):
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
-                if self.threshold == 0.97 and fail_cnt==0:
-                    log.info("匹配不到任何图标")
-                if self.threshold > 0.95:
-                    self.threshold -= 0.015
-                else:
-                    if fail_cnt <= 1:
-                        self.click((0.5000, 0.1454))
-                        fail_cnt += 1
-                    else:
-                        self.click((0.2062, 0.2054))
-                        fail_cnt = 0
-                    self.threshold = 0.97
-                time.sleep(0.5+1.6*(self.floor in [0,5] and not self.big_map_c and self.threshold != 0.97))
+                self.click_text(['空白处','确认','点击'])
+                if time.time()-self.in_battle>7:
+                    if self.threshold == 0.97 and fail_cnt==0:
+                        log.info("匹配不到任何图标")
+                        fail_time = time.time()
+                    if self.threshold > 0.94:
+                        self.threshold -= 0.009
+                    elif time.time()-fail_time>2:
+                        time.sleep(0.15)
+                        if fail_cnt <= 1:
+                            self.click((0.5000, 0.1454))
+                            fail_cnt += 1
+                        else:
+                            self.click((0.2062, 0.2054))
+                            fail_cnt = 0
+                        time.sleep(0.25)
+                        self.threshold = 0.97
+                    time.sleep(0.1)
+
             # 匹配到图片 res=1时等待一段时间
             else:
                 fail_cnt = 0
                 self.threshold = 0.97
-                if res == 1:
-                    time.sleep(0.4)
+                fail_time = time.time()
         log.info("停止运行")
 
     def end_of_uni(self):
@@ -241,6 +247,7 @@ class SimulatedUniverse(UniverseUtils):
                 if random.randint(0, 6) == 3:
                     self.press("r")
             self.battle = time.time()
+            self.in_battle = time.time()
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
         if self.check("choose_bless", 0.9266, 0.9491):
@@ -394,11 +401,10 @@ class SimulatedUniverse(UniverseUtils):
                             ) or self._stop:
                                 break
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
-                        if self.debug:
-                            notif(f"地图编号：{self.now_map}",f"相似度：{self.now_map_sim}")
                         if self.now_map_sim < 0.35:
                             notif("相似度过低", "疑似在黑塔办公室")
-                            time.sleep(10000)
+                            if self.debug==2:
+                                time.sleep(10000)
                             # self.init_map()
                             # return 1
                         if self.debug == 2:
@@ -414,8 +420,10 @@ class SimulatedUniverse(UniverseUtils):
                                 self.kl = 0
                                 if not self.now_map in s:
                                     s.append(self.now_map)
+                                    notif(f"地图编号：{self.now_map}",f"相似度：{self.now_map_sim}")
                                 else:
                                     self.kl = 1
+                                    pass
                                 with open(
                                     "check0.txt",
                                     "w",
@@ -641,13 +649,6 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
-        else:
-            img1 = self.check("z", 0.5047, 0.1324, mask="mask_close", large=False)
-            img2 = self.check("z", 0.4990, 0.0731, mask="mask_close1", large=False)
-            if self.ts.sim("点击空白", img1) or self.ts.sim("点击空白", img2):
-                self.click((0.2062, 0.2054))
-            else:
-                 return 0
         return 0
 
     def find_latest_modified_file(self, folder_path):

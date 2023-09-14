@@ -28,6 +28,8 @@ except:
 
 
 def notif(title, msg, cnt=None):
+    #if '完成' in title:
+    #    return 0
     log.info("通知：" + msg + "  " + title)
     if cnt is not None:
         tm = str(time.time())
@@ -729,7 +731,8 @@ class UniverseUtils:
         shape = (int(self.scx * 190), int(self.scx * 190))
         bw_map = self.get_bw_map(gs=0)
         self.loc_off = 0
-        self.get_loc(bw_map, 40 - self.find * 15)
+        tm = time.time()
+        self.get_loc(bw_map, rg = 40 - self.find * 10)
         if self.find == 1:
             self.press("w", 0.2)
         self.get_screen()
@@ -758,9 +761,9 @@ class UniverseUtils:
             self.mouse_move(sub)
             self.ang = ang
             if type == 1:
-                ps = 10
-            elif type == 0:
                 ps = 11
+            elif type == 0:
+                ps = 12
             else:
                 ps = 4
             # 如果当前就在交互点上：直接返回
@@ -777,10 +780,9 @@ class UniverseUtils:
                 self.press("shift")
                 sft = 1
             time.sleep(0.2)
-            ltm = time.time()
             bw_map = self.get_bw_map()
-            self.get_loc(bw_map, rg=22)
-            self.get_real_loc()
+            self.get_loc(bw_map, rg=24, offset=self.get_offset(4))
+            self.get_real_loc(1)
             # 复杂的定位、寻路过程
             ds = self.get_dis(self.real_loc, loc)
             dls = [100000]
@@ -792,8 +794,8 @@ class UniverseUtils:
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map()
-                self.get_loc(bw_map, fbw=1)
-                self.get_real_loc()
+                self.get_loc(bw_map, fbw=1, offset=self.get_offset(2))
+                self.get_real_loc(2)
                 ang = (
                     math.atan2(loc[0] - self.real_loc[0], loc[1] - self.real_loc[1])
                     / math.pi
@@ -823,7 +825,6 @@ class UniverseUtils:
                         self.press(ts[t], 0.4)
                         if self._stop == 0:
                             pyautogui.keyDown("w")
-                        time.sleep(0.1)
                         bw_map = self.get_bw_map()
                         self.get_loc(bw_map, rg=28, fbw=1)
                         local_screen = self.get_local(0.9333, 0.8657, shape)
@@ -836,12 +837,8 @@ class UniverseUtils:
                     else:
                         pyautogui.keyUp("w")
                         break
-                if (
-                    nds <= ps
-                    or self.goodf()
-                    or isrun(self) == 0
-                ):
-                    if nds <= ps and type == 0:
+                if nds <= ps:
+                    if type == 0:
                         dls = [100000]
                         dtm = [time.time()]
                         self.target.remove((loc, type))
@@ -856,10 +853,13 @@ class UniverseUtils:
                     else:
                         pyautogui.keyUp("w")
                         break
+                elif (self.goodf() or not isrun(self)):
+                    pyautogui.keyUp("w")
+                    break
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5 + sft * 0.4:
+                while dtm[0] < time.time() - 1.5 + sft * 0.7:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info(f"进入新地图或者进入战斗 {nds}")
@@ -868,31 +868,23 @@ class UniverseUtils:
             if type == 1:
                 if self._stop == 0:
                     pyautogui.click()
-                time.sleep(0.6)
+                time.sleep(0.9)
                 self.press("s")
                 if self._stop == 0:
                     pyautogui.click()
                 time.sleep(0.6)
                 if len(self.target) <= 2:
+                    time.sleep(0.3)
                     self.press("s")
                     pyautogui.click()
                     time.sleep(0.6)
                     self.press("s", 0.5)
                     pyautogui.click()
-                    time.sleep(0.6)
-                    self.press("w", 1)
+                    time.sleep(0.5)
+                    self.press("w", 1.4)
                     pyautogui.click()
             self.get_screen()
-            if isrun(self) == 0:
-                if nds <= 16:
-                    try:
-                        self.target.remove((loc, type))
-                        log.info("removed:" + str((loc, type)))
-                    except:
-                        pass
-                else:
-                    return
-            elif type == 3:
+            if type == 3:
                 for i in "wwwwww":
                     self.get_screen()
                     if self.goodf():
@@ -905,39 +897,6 @@ class UniverseUtils:
                         self.move_to_end()
                         self.press(i, 0.3)
                         time.sleep(0.2)
-            elif type == 2:
-                # 接近交互点/传送点但是没出现交互按钮：开始绕当前点乱走
-                key_list = ["sasddwwwaw", "sdsaawwwdw"]
-                key = key_list[random.randint(0, len(key_list) - 1)]
-                for i in range(-1, len(key)):
-                    if self._stop:
-                        return
-                    time.sleep(0.4)
-                    self.get_screen()
-                    if self.goodf():
-                        for j in deepcopy(self.target):
-                            if j[1] == type:
-                                self.last = j[0]
-                                self.target.remove(j)
-                                log.info("removed:" + str(j))
-                                self.lst_changed = time.time()
-                        break
-                    else:
-                        if i == -1:
-                            if self._stop == 0:
-                                pyautogui.click()
-                            time.sleep(1.6)
-                        else:
-                            self.press(key[i], 0.25)
-                # 多次找不到交互点，放弃寻找（不能放弃传送点）
-                self.tries += 1
-                if self.tries == 3:
-                    try:
-                        self.target.remove((loc, type))
-                        log.info("removed:" + str((loc, type)))
-                        self.lst_changed = time.time()
-                    except:
-                        pass
             # 离目标点挺近了，准备找下一个目标点
             elif nds <= 16:
                 try:
@@ -981,10 +940,12 @@ class UniverseUtils:
     # 移动后根据旧坐标获得新坐标（匹配）
     # rg：匹配的范围（以旧坐标为中心） fbw：是否进行缩放
     # fbw：（人物静止/移动时小地图会有个缩放的过程，fbw=0表示当前人物是静止状态，因此缩放到移动状态与大地图匹配）ps：大地图是移动状态录制的
-    def get_loc(self, bw_map, rg=9, fbw=0):
+    def get_loc(self, bw_map, rg=10, fbw=0, offset=None):
         rge = 88 + rg
         loc_big = np.zeros((rge * 2, rge * 2), dtype=self.big_map.dtype)
         tpl = (self.now_loc[0], self.now_loc[1])
+        if offset is not None:
+            tpl = (tpl[0]+int(offset[0]),tpl[1]+int(offset[1]))
         x0, y0 = max(rge - tpl[0], 0), max(rge - tpl[1], 0)
         x1, y1 = max(tpl[0] + rge - self.big_map.shape[0], 0), max(
             tpl[1] + rge - self.big_map.shape[1], 0
@@ -996,24 +957,37 @@ class UniverseUtils:
         max_val, max_loc = -1, 0
         bo_1 = bw_map == 255
         tt = 4
+        kernel = np.zeros((5, 5), np.uint8)
+        kernel += 1
         if self.find and fbw == 0:
             tbw = cv.resize(bw_map, (176 + tt * 2, 176 + tt * 2))
             tbw[tbw > 150] = 255
             tbw[tbw <= 150] = 0
             tbw = tbw[tt : 176 + tt, tt : 176 + tt]
             bo_2 = tbw == 255
+            b_map = cv.dilate(tbw, kernel, iterations=1)
+            bo_5 = (b_map != 0) & (bo_2 == 0)
         bo_3 = loc_big >= 50
+        b_map = cv.dilate(bw_map, kernel, iterations=1)
+        bo_4 = (b_map != 0) & (bo_1 == 0)
         # 枚举匹配，找到匹配点最多的坐标
         for i in range(rge * 2 - 176):
             for j in range(rge * 2 - 176):
                 if (i - rge + 88) ** 2 + (j - rge + 88) ** 2 > rg**2:
                     continue
-                p = np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_1)
+                p = 2*np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_1)
+                p += np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_4)
                 if p > max_val:
                     max_val = p
                     max_loc = (i, j)
+                    tmp = np.zeros((176,176), dtype=np.uint8)
+                    tpp = bo_3[i : i + 176, j : j + 176]
+                    tmp[tpp!=0]=255
+                    tmp[bo_1!=0]=150
+                    tmp[bo_4!=0]=50
                 if self.find and fbw == 0:
-                    p = np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_2)
+                    p = 2*np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_2)
+                    p += np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_5)
                     if p > max_val:
                         max_val = p
                         max_loc = (i, j)
@@ -1022,12 +996,17 @@ class UniverseUtils:
                 max_loc[0] + 88 - rge + self.now_loc[0],
                 max_loc[1] + 88 - rge + self.now_loc[1],
             )
+        cv.imwrite('tp/'+str(time.time())+'.jpg',tmp)
 
-    def get_real_loc(self):
+    def get_real_loc(self,delta=0):
         x, y = self.now_loc
+        dx, dy = self.get_offset(delta=delta)
+        self.real_loc = (int(x+10+dx),int(y+dy))
+
+    def get_offset(self,delta=1):
         pi = 3.141592653589
-        dx, dy = sin(self.init_ang/180*pi), cos(self.init_ang/180*pi)
-        self.real_loc = (int(x+10),int(y))
+        dx, dy = sin(self.ang/180*pi), cos(self.ang/180*pi)
+        return (delta*dx*3,delta*dy*3)
 
     # 从8192*8192的超大地图中找到有意义的大地图
     def get_map(self):
@@ -1100,7 +1079,6 @@ class UniverseUtils:
             except:
                 pass
         res = sorted(res, key=lambda x: x[0])[-4:]
-        print(res)
         if res[-1][0]>res[-2][0]+0.09 and res[-1][0]>0.4:
             return res[-1][1], 0.9
         i_s = [x[1] for x in res]
