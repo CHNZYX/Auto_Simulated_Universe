@@ -139,14 +139,6 @@ class Abyss(UniverseUtils):
                 self.click((1 - res[0] / self.xx + 0.06, 1 - res[1] / self.yy + 0.02))
             else:
                 self.drag((0.5, 0.5), (0.8 - 0.6 * random.randint(0, 1), 0.5))
-        elif self.check("abyss/4", 0.7865, 0.3028):
-            self.click((0.2208, 0.4296))
-        elif self.check("abyss/3", 0.7865, 0.3028):
-            self.click((0.7865, 0.3028))
-        elif self.check("abyss/2", 0.4297, 0.8213):
-            self.drag((0.7750, 0.3750), (0.7750, 0.6750))
-        elif self.check("abyss/1", 0.8568, 0.6769):
-            self.click((0.6260, 0.8167))
         else:
             self.click((0.5, 0.14))
             time.sleep(1)

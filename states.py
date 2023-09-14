@@ -184,7 +184,7 @@ class SimulatedUniverse(UniverseUtils):
                         fail_time = time.time()
                     if self.threshold > 0.94:
                         self.threshold -= 0.009
-                    elif time.time()-fail_time>2:
+                    elif time.time()-fail_time>2.5:
                         time.sleep(0.15)
                         if fail_cnt <= 1:
                             self.click((0.5000, 0.1454))
@@ -296,7 +296,7 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
-            time.sleep(1)
+            time.sleep(0.35)
             return 1
         # F交互界面
         elif self.check("f", 0.4443, 0.4417, mask="mask_f1"):
@@ -356,11 +356,6 @@ class SimulatedUniverse(UniverseUtils):
                     self.battle = 0
                 if is_killed == 0:
                     return 1
-        # 战斗失败
-        elif self.check("fail", 0.5073, 0.0676):
-            self.click((0.5073, 0.0676))
-            self.battle = 0
-            return 1
         # 跑图状态
         if isrun(self):
             if self.floor_init == 0:
@@ -520,8 +515,6 @@ class SimulatedUniverse(UniverseUtils):
         # 超过15秒没有刷新战斗状态时间，而且也没有处于非战斗状态：出现月卡界面
         elif self.battle + 15 > time.time():
             return 1
-        if self.check("yes", 0.3922, 0.3806):
-            self.click((0.3922, 0.3806))
         elif self.check("init", 0.9073,0.8435):
             self.click((0.3448, 0.4926))
             self.init_map()
@@ -546,8 +539,6 @@ class SimulatedUniverse(UniverseUtils):
                     )
                     time.sleep(0.3)
             self.click((0.1635, 0.1056))
-        elif self.check("fate_2", 0.1797, 0.1009):
-            self.click((0.1797, 0.1009))
         elif self.check("fate", 0.9458, 0.9481):
             time.sleep(1)
             self.get_screen()

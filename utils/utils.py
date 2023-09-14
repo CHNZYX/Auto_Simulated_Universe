@@ -28,8 +28,8 @@ except:
 
 
 def notif(title, msg, cnt=None):
-    #if '完成' in title:
-    #    return 0
+    if '完成' in title:
+        return 0
     log.info("通知：" + msg + "  " + title)
     if cnt is not None:
         tm = str(time.time())
