@@ -113,7 +113,6 @@ class My_TS:
             self.text = res.ocr_text
             if len(self.text.strip())>1 and 'UID' not in self.text:
                 self.nothing = 0
-                print(self.text)
             for txt in text:
                 if self.sim(txt):
                     print("识别到文本：",txt)

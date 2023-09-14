@@ -178,7 +178,7 @@ class SimulatedUniverse(UniverseUtils):
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
-                if time.time()-self.confirm_time>4:
+                if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
                     if self.click_text(['空白处','确认','点击']):
                         time.sleep(0.5)
                     if self.ts.nothing:
@@ -187,9 +187,11 @@ class SimulatedUniverse(UniverseUtils):
                     if self.threshold == 0.97 and fail_cnt==0:
                         log.info("匹配不到任何图标")
                         fail_time = time.time()
+                    else:
+                        time.sleep(0.8)
                     if self.threshold > 0.95:
                         self.threshold -= 0.015
-                    elif time.time()-fail_time>4.5:
+                    elif time.time()-fail_time>7.5:
                         time.sleep(0.15)
                         if fail_cnt <= 1:
                             self.click((0.5000, 0.1454))
@@ -197,7 +199,8 @@ class SimulatedUniverse(UniverseUtils):
                         else:
                             self.click((0.2062, 0.2054))
                             fail_cnt = 0
-                        time.sleep(0.25)
+                            fail_time = time.time()
+                        time.sleep(0.35)
                         self.threshold = 0.97
                     time.sleep(0.1)
             # 匹配到图片 res=1时等待一段时间
@@ -300,7 +303,7 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
-            time.sleep(0.35)
+            time.sleep(1.4)
             self.confirm_time = time.time()
             return 1
         # F交互界面
@@ -517,9 +520,6 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.get_direc()
             return 2
-        # 超过15秒没有刷新战斗状态时间，而且也没有处于非战斗状态：出现月卡界面
-        elif self.battle + 15 > time.time():
-            return 1
         elif self.check("init", 0.9073,0.8435):
             self.click((0.3448, 0.4926))
             self.init_map()
