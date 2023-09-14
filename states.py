@@ -26,7 +26,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.5 beta"
+version = "v5.6 beta"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -467,7 +467,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             
-            self.kl |= self.floor == 1 and self.debug == 2
+            self.kl |= self.floor == 1 and self.debug == 6
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
