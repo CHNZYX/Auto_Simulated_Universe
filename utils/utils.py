@@ -774,13 +774,14 @@ class UniverseUtils:
                 return
             if self._stop == 0:
                 pyautogui.keyDown("w")
+            time.sleep(0.25)
             sft = 0
             if sft == 0 and type != 3:
                 self.press("shift")
                 sft = 1
-            time.sleep(0.2)
+            time.sleep(0.25)
             bw_map = self.get_bw_map()
-            self.get_loc(bw_map, rg=24, offset=self.get_offset(4))
+            self.get_loc(bw_map, rg=30, offset=self.get_offset(4))
             self.get_real_loc(1)
             # 复杂的定位、寻路过程
             ds = self.get_dis(self.real_loc, loc)
@@ -793,7 +794,7 @@ class UniverseUtils:
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map()
-                self.get_loc(bw_map, fbw=1, offset=self.get_offset(2))
+                self.get_loc(bw_map, fbw=1, offset=self.get_offset(2+(i<=2)), rg=10+6*(i<=2))
                 self.get_real_loc(2)
                 ang = (
                     math.atan2(loc[0] - self.real_loc[0], loc[1] - self.real_loc[1])

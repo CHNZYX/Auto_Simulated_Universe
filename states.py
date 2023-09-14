@@ -425,7 +425,7 @@ class SimulatedUniverse(UniverseUtils):
                                     s.append(self.now_map)
                                     notif(f"地图编号：{self.now_map}",f"相似度：{self.now_map_sim}")
                                 else:
-                                    self.kl = 1
+                                    #self.kl = 1
                                     pass
                                 with open(
                                     "check0.txt",
