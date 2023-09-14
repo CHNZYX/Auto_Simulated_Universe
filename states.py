@@ -179,7 +179,7 @@ class SimulatedUniverse(UniverseUtils):
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
-                    if self.click_text(['空白处','确认','点击']):
+                    if self.click_text(['点击空白']):
                         time.sleep(0.5)
                     if self.ts.nothing:
                         self.in_battle = time.time()
@@ -652,6 +652,9 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.press("esc")
             self.confirm_time = time.time()
+        elif self.check("yes1", 0.5, 0.5, mask="mask_end"):
+            self.click((self.tx,self.ty))
+            return 1
         else:
             return 0
         return 1

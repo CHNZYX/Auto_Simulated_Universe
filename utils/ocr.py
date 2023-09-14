@@ -31,7 +31,7 @@ class My_TS:
                 log.info('error_sim|'+text+'|'+self.text+'|')
             f[i+1][0]=max(f[i][0],f[i+1][0])
             f[i+1][1]=max(f[i][1],f[i+1][1],f[i][0]+1)
-        if text.strip() in ['胜军','空白处','确认','点击']:
+        if text.strip() in ['胜军','确认']:
             return f[-1][0]>=len(text)-2
         else:
             return f[-1][1]>=len(text)-2

@@ -1078,8 +1078,11 @@ class UniverseUtils:
             except:
                 pass
         res = sorted(res, key=lambda x: x[0])[-4:]
-        if res[-1][0]>res[-2][0]+0.075 and res[-1][0]>0.4:
-            return res[-1][1], 0.9
+        try:
+            if res[-1][0]>res[-2][0]+0.075 and res[-1][0]>0.4:
+                return res[-1][1], 0.9
+        except:
+            return -1, -1
         i_s = [x[1] for x in res]
         for i in i_s[::-1]:
             bw_j = self.get_bw_map(gs=0,local_screen=self.img_map[i])
