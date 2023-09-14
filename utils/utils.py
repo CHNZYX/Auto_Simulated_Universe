@@ -996,7 +996,8 @@ class UniverseUtils:
                 max_loc[0] + 88 - rge + self.now_loc[0],
                 max_loc[1] + 88 - rge + self.now_loc[1],
             )
-        cv.imwrite('tp/'+str(time.time())+'.jpg',tmp)
+        if self.debug == 2:
+            cv.imwrite('tp/'+str(time.time())+'.jpg',tmp)
 
     def get_real_loc(self,delta=0):
         x, y = self.now_loc
