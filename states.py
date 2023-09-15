@@ -178,12 +178,12 @@ class SimulatedUniverse(UniverseUtils):
             res = self.normal()
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
-                if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
-                    if self.click_text(['点击空白']):
-                        time.sleep(0.5)
-                    if self.ts.nothing:
-                        self.in_battle = time.time()
                 if time.time()-self.in_battle>7:
+                    if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
+                        if self.click_text(['点击空白']):
+                            time.sleep(0.5)
+                        if self.ts.nothing:
+                            self.in_battle = time.time()
                     if self.threshold == 0.97 and fail_cnt==0:
                         log.info("匹配不到任何图标")
                         fail_time = time.time()
@@ -202,12 +202,14 @@ class SimulatedUniverse(UniverseUtils):
                             fail_time = time.time()
                         time.sleep(0.35)
                         self.threshold = 0.97
-                    time.sleep(0.1)
+                else:
+                    time.sleep(0.75)
             # 匹配到图片 res=1时等待一段时间
             else:
                 fail_cnt = 0
                 self.threshold = 0.97
                 fail_time = time.time()
+            time.sleep(0.25)
         log.info("停止运行")
 
     def end_of_uni(self):
@@ -403,6 +405,7 @@ class SimulatedUniverse(UniverseUtils):
                                 and self.now_map_sim != -1
                             ) or self._stop:
                                 break
+                            time.sleep(0.3)
                         log.info(f"地图编号：{self.now_map}  相似度：{self.now_map_sim}")
                         if self.now_map_sim < 0.35:
                             notif("相似度过低", "疑似在黑塔办公室")
@@ -589,7 +592,7 @@ class SimulatedUniverse(UniverseUtils):
                         '1个1-星祝福',
                         '选择里奥'
                     ]
-                event_prior = [self.fate] + event_prior + self.tk.secondary[1:] + ['存护','巡猎']
+                event_prior = [self.fate] + event_prior
                 self.click_text(event_prior)
                 time.sleep(0.3)
                 self.get_screen()
