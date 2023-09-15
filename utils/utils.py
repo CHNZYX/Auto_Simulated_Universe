@@ -704,12 +704,10 @@ class UniverseUtils:
             self.get_screen()
             if self.debug == 2:
                 cv.imwrite('imgs/tmp/'+str(time.time())+'.jpg',self.screen)
-            a,b = not self.check(
-                "f", 0.4443, 0.4417, mask="mask_f1"
-            ),not isrun(self)
-            ava = a and b
-            if self.debug == 2:
-                print(a,b)
+            if not self.check(
+                    "f", 0.4443, 0.4417, mask="mask_f1"
+                ) and not isrun(self):
+                ava = 1
         if ava:
             if self.ts.sim("区域"):
                 self.init_map()
@@ -764,7 +762,7 @@ class UniverseUtils:
             self.mouse_move(sub)
             self.ang = ang
             if type == 1:
-                ps = 11
+                ps = 14
             elif type == 0:
                 ps = 16
             else:
@@ -902,7 +900,7 @@ class UniverseUtils:
                         self.press(i, 0.3)
                         time.sleep(0.2)
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 18:
+            elif nds <= 20:
                 try:
                     self.target.remove((loc, type))
                     log.info("removed:" + str((loc, type)))
