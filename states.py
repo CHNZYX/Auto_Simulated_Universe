@@ -616,17 +616,22 @@ class SimulatedUniverse(UniverseUtils):
             self.confirm_time = time.time()
         elif self.check("drop_bless", 0.9417, 0.9481, threshold=0.95):
             time.sleep(1.5)
+            if self.debug==2:
+                time.sleep(100000)
             st = set(self.tk.fates) - set(self.tk.secondary)
             clicked = 0
             for ft in self.tk.secondary[::-1]:
-                self.get_screen()
-                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
-                res_down = self.ts.split_and_find(list(st), img_down, mode="bless")
-                if res_down[1] == 2:
-                    self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
-                    clicked = 1
-                    break
-                st.add(ft)
+                if ft != self.fate:
+                    self.get_screen()
+                    img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                    if self.debug==2:
+                        print(list(st))
+                    res_down = self.ts.split_and_find(list(st), img_down, mode="bless")
+                    if res_down[1] == 2:
+                        self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                        clicked = 1
+                        break
+                    st.add(ft)
             if not clicked:
                 self.click((0.4714, 0.5500))
             time.sleep(0.5)

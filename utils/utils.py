@@ -826,7 +826,7 @@ class UniverseUtils:
                     if t > 0:
                         pyautogui.keyUp("w")
                         self.press("s", 0.35)
-                        self.press(ts[t], 0.4)
+                        self.press(ts[t], 0.2*random.randint(1,3))
                         if self._stop == 0:
                             pyautogui.keyDown("w")
                         bw_map = self.get_bw_map()
@@ -863,7 +863,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5 + sft * 0.7:
+                while dtm[0] < time.time() - 1.5 + sft * 1:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info(f"进入新地图或者进入战斗 {nds}")

@@ -109,11 +109,11 @@ class My_TS:
     
     def find_text(self, img, text):
         self.nothing = 1
-        for res in self.ts.detect_and_ocr(img):
-            self.text = res.ocr_text
-            if len(self.text.strip())>1 and 'UID' not in self.text:
-                self.nothing = 0
-            for txt in text:
+        for txt in text:
+            for res in self.ts.detect_and_ocr(img):
+                self.text = res.ocr_text
+                if len(self.text.strip())>1 and 'UID' not in self.text:
+                    self.nothing = 0
                 if self.sim(txt):
                     print("识别到文本：",txt)
                     return res.box

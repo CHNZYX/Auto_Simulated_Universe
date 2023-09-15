@@ -7,6 +7,10 @@ config:
   angle: 1.0
   difficulty: 4
   fate: 巡猎
+  secondary_fate:
+  - 巡猎
+  - 毁灭
+  - 丰饶
   map_sha: ''
   show_map_mode: 0
   debug_mode: 0
