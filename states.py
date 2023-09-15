@@ -26,7 +26,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.6 gamma"
+version = "v5.7 air"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -179,6 +179,10 @@ class SimulatedUniverse(UniverseUtils):
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if time.time()-self.in_battle>7:
+                    if time.time()-self.in_battle>90:
+                        self.press('esc')
+                        time.sleep(1)
+                        continue
                     if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
                         if self.click_text(['点击空白']):
                             time.sleep(0.5)
@@ -249,12 +253,12 @@ class SimulatedUniverse(UniverseUtils):
                 self.f_time = 0
                 self.floor -= 1
                 self.restore_map()
-            # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             if self.fate == "丰饶":
                 if random.randint(0, 5) == 3:
                     self.press("3")
                 if random.randint(0, 6) == 3:
                     self.press("r")
+            # self.battle：最后一次处于战斗状态的时间，0表示处于非战斗状态
             self.battle = time.time()
             self.in_battle = time.time()
             return 1
@@ -642,7 +646,7 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.9734, 0.3009))
             time.sleep(2)
             self.click((0.3505,0.9398))
-            time.sleep(2)
+            time.sleep(2.5)
             self.click_text(["战斗功能"])
             for _ in range(5):
                 pyautogui.scroll(-1)
