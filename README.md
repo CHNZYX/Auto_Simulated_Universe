@@ -1,6 +1,8 @@
 [简体中文](README.md) | [繁体中文](README_CHT.md) | [English](README_ENG.md)
 
-快速上手：请访问[项目文档](https://asu.stysqy.top/)
+快速上手，请访问：[项目文档](https://asu.stysqy.top/)
+
+遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html#q-a)
 
 # Auto_Simulated_Universe
 星穹铁道-模拟宇宙全自动化
