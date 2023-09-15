@@ -69,6 +69,16 @@ class Config:
     def save(self):
         try:
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
+                secondary_fate = yaml.safe_load(f)['config']['secondary_fate']
+        except:
+            try:
+                with open(os.path.join(self.abspath, 'info_example.yml'), "r", encoding="utf-8", errors='ignore') as f:
+                    secondary_fate = yaml.safe_load(f)['config']['secondary_fate']
+            except:
+                secondary_fate = ['巡猎','毁灭','丰饶']
+                
+        try:
+            with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
                 prior = yaml.safe_load(f)['prior']
         except:
             try:
@@ -107,6 +117,7 @@ class Config:
                     "angle": float(self.angle),
                     "difficulty": self.diffi,
                     "fate": self.fate,
+                    "secondary_fate": secondary_fate,
                     "map_sha": self.map_sha,
                     "show_map_mode": self.show_map_mode,
                     "debug_mode": self.debug_mode,
