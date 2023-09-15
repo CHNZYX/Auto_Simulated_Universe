@@ -616,7 +616,7 @@ class SimulatedUniverse(UniverseUtils):
             self.confirm_time = time.time()
         elif self.check("drop_bless", 0.9417, 0.9481, threshold=0.95):
             time.sleep(1.5)
-            st = set(self.fates) - set(self.tk.secondary)
+            st = set(self.tk.fates) - set(self.tk.secondary)
             clicked = 0
             for ft in self.tk.secondary[::-1]:
                 self.get_screen()
