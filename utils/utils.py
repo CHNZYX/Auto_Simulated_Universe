@@ -371,12 +371,8 @@ class UniverseUtils:
                     dx = self.get_end_point()
                     if dx is not None:
                         break
-                while off > 180:
-                    off -= 360
-                while off < -180:
-                    off += 360
                 if dx is None:
-                    self.mouse_move(off)
+                    self.mouse_move(off*1.03)
                     time.sleep(0.3)
                     return 0
         if i == 0:
