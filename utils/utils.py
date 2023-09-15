@@ -555,13 +555,16 @@ class UniverseUtils:
         time.sleep(1)
         self.press("m", 0.2)
         time.sleep(2.5)
-        self.get_screen()
-        for i in range(12, -1, -1):
-            if self.check("floor/ff" + str(i + 1), 0.0589, 0.8796):
-                self.floor = i
-                log.info(f"当前层数：{i+1}")
-                self.floor_init = 1
-                break
+        tm = time.time()
+        self.floor_init = 0
+        while time.time()-tm<5 and not self.floor_init:
+            self.get_screen()
+            for i in range(12, -1, -1):
+                if self.check("floor/ff" + str(i + 1), 0.0589, 0.8796):
+                    self.floor = i
+                    log.info(f"当前层数：{i+1}")
+                    self.floor_init = 1
+                    break
         self.press("m", 0.2)
         time.sleep(1)
 

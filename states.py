@@ -642,8 +642,9 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                 self.click((0.1089, 0.0926))
                 time.sleep(0.3)
+                tm = time.time()
                 self.get_screen()
-                while not self.check("enhance", 0.9208, 0.9380):
+                while not self.check("enhance", 0.9208, 0.9380) and time.time()-tm<7:
                     self.click((0.2062, 0.2054))
                     time.sleep(0.3)
                     self.get_screen()
