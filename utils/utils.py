@@ -766,7 +766,7 @@ class UniverseUtils:
             if type == 1:
                 ps = 11
             elif type == 0:
-                ps = 12
+                ps = 16
             else:
                 ps = 4
             # 如果当前就在交互点上：直接返回
@@ -902,7 +902,7 @@ class UniverseUtils:
                         self.press(i, 0.3)
                         time.sleep(0.2)
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 16:
+            elif nds <= 18:
                 try:
                     self.target.remove((loc, type))
                     log.info("removed:" + str((loc, type)))
@@ -1083,9 +1083,9 @@ class UniverseUtils:
                 res.append((similarity_score,i))
             except:
                 pass
-        res = sorted(res, key=lambda x: x[0])[-4:]
+        res = sorted(res, key=lambda x: x[0])[-3:]
         try:
-            if res[-1][0]>res[-2][0]+0.075 and res[-1][0]>0.4:
+            if res[-1][0]>res[-2][0]+0.065 and res[-1][0]>0.4:
                 return res[-1][1], 0.9
         except:
             return -1, -1

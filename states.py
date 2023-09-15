@@ -573,7 +573,6 @@ class SimulatedUniverse(UniverseUtils):
                         event_prior = yaml.safe_load(f)["prior"]["事件"]
                 except:
                     event_prior = [
-                        '购买1个星祝福',
                         '购买一个',
                         '丢下雕像',
                         '和序列扑满玩',
@@ -586,10 +585,11 @@ class SimulatedUniverse(UniverseUtils):
                         '星神的记载',
                         '翻开牌',
                         '摧毁黑匣',
-                        '购买1个1星祝福',
-                        '购买1个1-星祝福',
+                        '1个1星祝福',
+                        '1个1-星祝福',
                         '选择里奥'
                     ]
+                event_prior = [self.fate] + event_prior + self.tk.secondary[1:] + ['存护','巡猎']
                 self.click_text(event_prior)
                 time.sleep(0.3)
                 self.get_screen()
@@ -615,7 +615,20 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.1339, 0.1028))
             self.confirm_time = time.time()
         elif self.check("drop_bless", 0.9417, 0.9481, threshold=0.95):
-            self.click((0.4714, 0.5500))
+            time.sleep(1.5)
+            st = set(self.fates) - set(self.tk.secondary)
+            clicked = 0
+            for ft in self.tk.secondary[::-1]:
+                self.get_screen()
+                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                res_down = self.ts.split_and_find(list(st), img_down, mode="bless")
+                if res_down[1] == 2:
+                    self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                    clicked = 1
+                    break
+                st.add(ft)
+            if not clicked:
+                self.click((0.4714, 0.5500))
             time.sleep(0.5)
             self.click((0.1203, 0.1093))
             self.confirm_time = time.time()
