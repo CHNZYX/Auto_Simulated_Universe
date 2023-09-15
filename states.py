@@ -179,7 +179,7 @@ class SimulatedUniverse(UniverseUtils):
             # 未匹配到图片，降低匹配阈值，若一直无法匹配则乱点
             if res == 0:
                 if time.time()-self.in_battle>7:
-                    if time.time()-self.in_battle>90:
+                    if time.time()-self.in_battle>90 and self.in_battle>0:
                         self.press('esc')
                         time.sleep(1)
                         continue
