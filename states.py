@@ -26,7 +26,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.6 beta"
+version = "v5.6 gamma"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -303,7 +303,7 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
-            time.sleep(1.4)
+            time.sleep(1.8)
             self.confirm_time = time.time()
             return 1
         # F交互界面
@@ -467,7 +467,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             
-            self.kl |= self.floor == 1 and self.debug == 6
+            # self.kl |= self.floor >= 6 and self.debug == 2
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
@@ -569,7 +569,6 @@ class SimulatedUniverse(UniverseUtils):
                 tx, ty = self.tx, self.ty
                 try:
                     import yaml
-
                     with open("info.yml", "r", encoding="utf-8", errors="ignore") as f:
                         event_prior = yaml.safe_load(f)["prior"]["事件"]
                 except:
@@ -602,7 +601,6 @@ class SimulatedUniverse(UniverseUtils):
                     self.click((0.1167, ty - 0.4685 + 0.3546))
                 time.sleep(1)
             else:
-                self.click((0.9479, 0.9565))
                 self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
@@ -638,8 +636,7 @@ class SimulatedUniverse(UniverseUtils):
             for i in [None, (0.7984, 0.6824), (0.6859, 0.6824)]:
                 self.get_screen()
                 if self.check("enhance_fail", 0.1068, 0.0907):
-                    self.press("esc")
-                    return 1
+                    break
                 if i is not None:
                     self.click(i)
                     time.sleep(0.3)
@@ -651,7 +648,10 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
+            time.sleep(1.8)
             self.confirm_time = time.time()
+            if self.floor >= 12:
+                self.floor = 11
         elif self.check("yes1", 0.5, 0.5, mask="mask_end"):
             self.click((self.tx,self.ty))
             return 1

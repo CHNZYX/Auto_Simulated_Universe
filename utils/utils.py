@@ -218,6 +218,8 @@ class UniverseUtils:
 
     # 点击一个点
     def click(self, points):
+        if self.debug == 2:
+            print(points)
         x, y = points
         # 如果是浮点数表示，则计算实际坐标
         if type(x) != type(0):
@@ -699,13 +701,16 @@ class UniverseUtils:
     def nof(self):
         tm = time.time()
         ava = 0
-        while not ava and time.time()-tm<0.9:
+        while not ava and time.time()-tm<1.6:
             self.get_screen()
-            #cv.imwrite('imgs/tmp/'+str(time.time())+'.jpg',self.screen)
+            if self.debug == 2:
+                cv.imwrite('imgs/tmp/'+str(time.time())+'.jpg',self.screen)
             a,b = not self.check(
                 "f", 0.4443, 0.4417, mask="mask_f1"
             ),not isrun(self)
             ava = a and b
+            if self.debug == 2:
+                print(a,b)
         if ava:
             if self.ts.sim("区域"):
                 self.init_map()
@@ -1088,8 +1093,8 @@ class UniverseUtils:
         i_s = [x[1] for x in res]
         for i in i_s[::-1]:
             bw_j = self.get_bw_map(gs=0,local_screen=self.img_map[i])
-            big_bw_j = np.zeros((bw_j.shape[0]+14,bw_j.shape[1]+14),dtype=bw_j.dtype)
-            big_bw_j[7:-7,7:-7] = bw_j
+            big_bw_j = np.zeros((bw_j.shape[0]+28,bw_j.shape[1]+28),dtype=bw_j.dtype)
+            big_bw_j[14:-14,14:-14] = bw_j
             result = cv.matchTemplate(big_bw_j, img, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
             if max_val > sim:

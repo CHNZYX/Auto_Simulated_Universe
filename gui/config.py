@@ -95,28 +95,33 @@ def config_view(page: Page):
                     [
                         ft.Column(
                             [
-                                ft.Row(
+                                ft.Column(
                                     [
                                         # ft.Checkbox(
                                         #     label="显示地图",
                                         #     value=get_info_mode(config.show_map_mode),
                                         #     on_change=show_map_checkbox_changed,
                                         # ),
-                                        ft.Checkbox(
+                                        ft.Container(height=8),
+                                        ft.Switch(
                                             label="调试模式",
                                             value=get_info_mode(config.debug_mode),
                                             on_change=debug_checkbox_changed,
+                                            label_position='left',
+                                            scale=1.2
                                         ),
-                                        ft.Checkbox(
+                                        ft.Switch(
                                             label="速通模式",
                                             value=get_info_mode(config.speed_mode),
                                             on_change=speed_checkbox_changed,
+                                            label_position='left',
+                                            scale=1.2
                                         ),
-                                        ft.Checkbox(
-                                            label="强制更新",
-                                            value=get_info_mode(config.force_update),
-                                            on_change=force_update_checkbox_changed,
-                                        ),
+                                        # ft.Checkbox(
+                                        #     label="强制更新",
+                                        #     value=get_info_mode(config.force_update),
+                                        #     on_change=force_update_checkbox_changed,
+                                        # ),
                                     ]
                                 ),
                                 ft.Container(height=20),
@@ -133,6 +138,7 @@ def config_view(page: Page):
                                                 ft.dropdown.Option("4"),
                                                 ft.dropdown.Option("5"),
                                             ],
+                                            text_style=TextStyle(color=ft.colors.PINK,weight=ft.FontWeight.W_600),
                                             value=config.difficult,
                                             on_change=difficult_changed,
                                         ),
@@ -164,12 +170,13 @@ def config_view(page: Page):
                                                 ft.dropdown.Option("America"),
                                                 ft.dropdown.Option("Europe"),
                                             ],
+                                            text_style=TextStyle(color=ft.colors.PINK,weight=ft.FontWeight.W_600),
                                             value=config.timezone,
                                             on_change=timezone_changed,
                                         ),
                                     ]
                                 ),
-                                ft.Container(height=350),
+                                ft.Container(height=270),
                                 ft.ElevatedButton(
                                     content=ft.Row(
                                         [
