@@ -74,6 +74,7 @@ def set_forground():
 class UniverseUtils:
     def __init__(self):
         self.hotkey = 'f'
+        self.runkey = 'shift'
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self.check_bonus = 1
@@ -763,9 +764,9 @@ class UniverseUtils:
             self.mouse_move(sub)
             self.ang = ang
             if type == 1:
-                ps = 14
+                ps = 7
             elif type == 0:
-                ps = 16
+                ps = 13
             else:
                 ps = 4
             # 如果当前就在交互点上：直接返回
@@ -780,7 +781,7 @@ class UniverseUtils:
             time.sleep(0.25)
             sft = 0
             if sft == 0 and type != 3:
-                self.press("shift")
+                self.press(self.runkey)
                 sft = 1
             time.sleep(0.25)
             bw_map = self.get_bw_map()
@@ -835,7 +836,7 @@ class UniverseUtils:
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
-                        self.press("shift")
+                        self.press(self.runkey)
                         sft = 1
                     else:
                         pyautogui.keyUp("w")
@@ -849,7 +850,7 @@ class UniverseUtils:
                         self.lst_changed = time.time()
                         loc, type = self.get_tar()
                         if type == 3:
-                            self.press("shift")
+                            self.press(self.runkey)
                             sft = 0
                         ds = self.get_dis(self.real_loc, loc)
                         t = 2

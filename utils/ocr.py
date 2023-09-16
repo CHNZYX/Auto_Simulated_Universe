@@ -12,29 +12,37 @@ class My_TS:
         self.ts.text_recognizer.postprocess_op.character.append(' ')
         self.text=''
 
+    def is_edit_distance_at_most_one(self, str1, str2, ch):
+        length = len(str1)
+        diff_count = sum(1 for i in range(length) if str1[i] != str2[i])
+        if diff_count <= 1:
+            return 1
+        i = 0
+        j = 0
+        diff_count = 0
+        str2 += ch
+        while i < length and j < length + 1:
+            if str1[i] != str2[j]:
+                diff_count += 1
+                j += 1
+            else:
+                i += 1
+                j += 1
+
+        return diff_count <= 1
+
     def sim(self,text,img=None):
         if img is not None:
             self.input(img)
-        if len(self.text)<len(text):
-            return False
-        text+='  '
-        f = [[0,0] for _ in range(len(self.text)+1)]
-        f[0][1]=1
-        for i in range(len(self.text)):
-            try:
-                if self.text[i]==text[f[i][0]]:
-                    f[i+1][0]=f[i][0]+1
-                if self.text[i]==text[f[i][1]]:
-                    f[i+1][1]=f[i][1]+1
-            except:
-                print(text,self.text)
-                log.info('error_sim|'+text+'|'+self.text+'|')
-            f[i+1][0]=max(f[i][0],f[i+1][0])
-            f[i+1][1]=max(f[i][1],f[i+1][1],f[i][0]+1)
+        self.text = self.text.strip()
         if text.strip() in ['胜军','确认']:
-            return f[-1][0]>=len(text)-2
-        else:
-            return f[-1][1]>=len(text)-2
+            return text.strip() in self.text
+        length = len(text)
+        res = 0
+        stext = self.text+' '
+        for i in range(len(stext)-length):
+            res |= self.is_edit_distance_at_most_one(text,stext[i:i+length],stext[i+length])
+        return res
     
     def input(self,img):
         try:
@@ -116,7 +124,7 @@ class My_TS:
                 if len(self.text.strip())>1 and 'UID' not in self.text:
                     self.nothing = 0
                 if self.sim(txt):
-                    print("识别到文本：",txt)
+                    print("识别到文本：",txt,"匹配文本：",self.text)
                     return res.box
 
 class text_keys:
