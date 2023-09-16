@@ -269,6 +269,7 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("choose_bless", 0.9266, 0.9491):
             self.battle = 0
             ok = 0
+            self.click((0.2,0.2),click=0)
             for _ in range(12):
                 self.get_screen()
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
