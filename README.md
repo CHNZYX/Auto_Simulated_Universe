@@ -215,3 +215,9 @@ F8/‘停止’按钮停止运行。
 如果喜欢本项目，可以打赏送作者一杯咖啡喵！
 
 ![打赏](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/money.jpg)
+
+----------------------------------------------------------------------------------------------
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=CHNZYX/Auto_Simulated_Universe&type=Date)](https://star-history.com/#CHNZYX/Auto_Simulated_Universe&Date)
