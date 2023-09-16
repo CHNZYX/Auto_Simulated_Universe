@@ -745,12 +745,7 @@ class UniverseUtils:
                 sub -= 360
             self.mouse_move(sub)
             self.ang = ang
-            if type == 1:
-                ps = 7
-            elif type == 0:
-                ps = 13
-            else:
-                ps = 4
+            ps = [13,9,11,7]
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.ts.sim("黑塔"):
                 for j in deepcopy(self.target):
@@ -823,7 +818,7 @@ class UniverseUtils:
                     else:
                         pyautogui.keyUp("w")
                         break
-                if nds <= ps:
+                if nds <= ps[type]:
                     if type == 0:
                         dls = [100000]
                         dtm = [time.time()]

@@ -128,6 +128,7 @@ class SimulatedUniverse(UniverseUtils):
         self.ang_off = 0
         self.ang_neg = 0
         self.first_mini = 1
+        self.in_battle = time.time()
         self.map_file = "imgs/maps/my_" + str(random.randint(0, 99999)) + "/"
         if self.find == 0 and not os.path.exists(self.map_file):
             os.mkdir(self.map_file)
@@ -186,29 +187,30 @@ class SimulatedUniverse(UniverseUtils):
                         self.in_battle = time.time() - 84 * fp
                         fp = not fp
                         continue
-                    if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
-                        if self.click_text(['点击空白']):
-                            time.sleep(0.5)
-                        if self.ts.nothing:
-                            self.in_battle = time.time()
-                    if self.threshold == 0.97 and fail_cnt==0:
-                        log.info("匹配不到任何图标")
-                        fail_time = time.time()
-                    else:
-                        time.sleep(0.8)
-                    if self.threshold > 0.95:
-                        self.threshold -= 0.015
-                    elif time.time()-fail_time>7.5:
-                        time.sleep(0.15)
-                        if fail_cnt <= 1:
-                            self.click((0.5000, 0.1454))
-                            fail_cnt += 1
-                        else:
-                            self.click((0.2062, 0.2054))
-                            fail_cnt = 0
+                    if time.time()-self.confirm_time>4:
+                        if time.time()-fail_time<=7.5:
+                            if self.click_text(['点击空白']):
+                                time.sleep(0.5)
+                            if self.ts.nothing:
+                                self.in_battle = time.time()
+                        if self.threshold == 0.97 and fail_cnt==0:
+                            log.info("匹配不到任何图标")
                             fail_time = time.time()
-                        time.sleep(0.35)
-                        self.threshold = 0.97
+                        else:
+                            time.sleep(0.8)
+                        if self.threshold > 0.95:
+                            self.threshold -= 0.015
+                        elif time.time()-fail_time>7.5:
+                            time.sleep(0.15)
+                            if fail_cnt <= 1:
+                                self.click((0.5000, 0.1454))
+                                fail_cnt += 1
+                            else:
+                                self.click((0.2062, 0.2054))
+                                fail_cnt = 0
+                                fail_time = time.time()
+                            time.sleep(0.35)
+                            self.threshold = 0.97
                 else:
                     time.sleep(0.75)
             # 匹配到图片 res=1时等待一段时间
@@ -615,12 +617,12 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1.5)
             st = set(self.tk.fates) - set(self.tk.secondary)
             clicked = 0
-            for ft in self.tk.secondary[::-1]:
-                if ft != self.fate:
+            for i,ft in enumerate(self.tk.secondary[::-1]):
+                if ft != self.fate or i == len(self.tk.secondary):
                     self.get_screen()
                     img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                     if self.debug==2:
-                        print(list(st))
+                        print(list(st),self.tk.secondary)
                     res_down = self.ts.split_and_find(list(st), img_down, mode="bless")
                     if res_down[1] == 2:
                         self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
@@ -663,11 +665,11 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.press("esc")
             tm = time.time()
-            while time.time()-tm<3.5 and not self.check("f", 0.4443, 0.4417, mask="mask_f1") and not isrun(self):
+            while time.time()-tm<2 and not self.check("f", 0.4443, 0.4417, mask="mask_f1") and not isrun(self):
                 self.get_screen()
                 time.sleep(0.15)
-            time.sleep(0.35)
-            self.mouse_move(-30)
+            # time.sleep(0.35)
+            # self.mouse_move(-30)
             self.confirm_time = time.time()
             if self.floor >= 12:
                 self.floor = 11
