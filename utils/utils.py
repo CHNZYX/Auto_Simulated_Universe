@@ -25,6 +25,7 @@ try:
     from mylib import isrun
 except:
     from utils.mylib import isrun
+from utils.screenshot import Screen
 
 
 def notif(title, msg, cnt=None):
@@ -154,6 +155,7 @@ class UniverseUtils:
                 time.sleep(0.3)
                 pass
         self.order = config.order
+        self.sct = Screen()
 
     def gen_hotkey_img(self,hotkey="e",bg="imgs/f_bg.jpg"):
         hotkey = hotkey.upper()
@@ -420,25 +422,7 @@ class UniverseUtils:
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
-        i = 0
-        while True:
-            try:
-                screen_raw = pyautogui.screenshot(
-                    region=[self.x0, self.y0, self.xx, self.yy]
-                )
-                screen_raw = np.array(screen_raw)
-            except:
-                log.info("截图失败!")
-                time.sleep(0.1)
-                continue
-            if screen_raw.shape[0] > 3:
-                break
-            else:
-                i = min(i + 1, 20)
-                log.info("截图失败")
-                time.sleep(0.2 * i)
-        self.screen = cv.cvtColor(screen_raw, cv.COLOR_BGR2RGB)
-        # cv.imwrite("imgs/screen.jpg", self.screen)
+        self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
 
     # 移动视角，获得小地图中不变的部分（白线、灰块）

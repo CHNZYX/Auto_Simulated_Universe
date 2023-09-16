@@ -17,3 +17,4 @@ pyyaml
 winotify
 pystray
 psutil
+mss
