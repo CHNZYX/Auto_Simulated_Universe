@@ -225,7 +225,7 @@ F8/‘停止’按钮停止运行。
 
 </a>
 
-![Alt](https://repobeats.axiom.co/api/embed/79d87540c597fc0b30893860e7b92da60c555fa9.svg "Repobeats analytics image")
+![Alt](https://repobeats.axiom.co/api/embed/a24da575ebc375e58ec8d8a0d7fff6d26306d2fc.svg "Repobeats analytics image")
 
 ## Star History
 
