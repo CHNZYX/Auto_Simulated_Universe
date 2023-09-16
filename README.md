@@ -28,6 +28,8 @@ This software is open source, free of charge and for learning and exchange purpo
     "严禁使用外挂、加速器、脚本或其他破坏游戏公平性的第三方工具。"
     "一经发现，米哈游（下亦称“我们”）将视违规严重程度及违规次数，采取扣除违规收益、冻结游戏账号、永久封禁游戏账号等措施。"
 
+## 安装GUI [![](https://img.shields.io/github/downloads/CHNZYX/Auto_Simulated_Universe/total?color=66ccff)](https://github.com/CHNZYX/Auto_Simulated_Universe/releases)
+
 ### 用法
 
 只支持1920\*1080(窗口化或全屏幕)，文本语言选择简体中文。
@@ -105,8 +107,6 @@ python align_angle.py
 
 
 ### GUI使用方法
-
-#### 安装 [![](https://img.shields.io/github/downloads/CHNZYX/Auto_Simulated_Universe/total?color=4e4c97)](https://github.com/CHNZYX/Auto_Simulated_Universe/releases)
 
 **第一次运行**
 
