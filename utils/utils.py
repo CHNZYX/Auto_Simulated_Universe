@@ -217,7 +217,7 @@ class UniverseUtils:
         return x, y
 
     # 点击一个点
-    def click(self, points):
+    def click(self, points, click=1):
         if self.debug == 2:
             print(points)
         x, y = points
@@ -230,7 +230,8 @@ class UniverseUtils:
             y += 9
         if self._stop == 0:
             win32api.SetCursorPos((x, y))
-            pyautogui.click()
+            if click:
+                pyautogui.click()
         time.sleep(0.3)
 
     # 拖动

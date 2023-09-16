@@ -186,7 +186,9 @@ class SimulatedUniverse(UniverseUtils):
                         continue
                     if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
                         if self.click_text(['点击空白']):
-                            time.sleep(0.5)
+                            time.sleep(0.2)
+                            self.click((0.2,0.2),click=0)
+                            time.sleep(0.3)
                         if self.ts.nothing:
                             self.in_battle = time.time()
                     if self.threshold == 0.97 and fail_cnt==0:
