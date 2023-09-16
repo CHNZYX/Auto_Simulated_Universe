@@ -17,14 +17,17 @@ def get_latest_release_info(repo_url):
         return None
 
 def kill_process_by_name(process_name):
+    res = 0
     for process in psutil.process_iter(attrs=['pid', 'name']):
         if process.info['name'] == process_name:
             try:
                 # Terminate the process
                 psutil.Process(process.info['pid']).terminate()
                 print(f"Killed process {process_name} with PID {process.info['pid']}")
-            except psutil.NoSuchProcess:
+                res = 1
+            except:
                 pass
+    return res
 
 def unzip_and_overwrite(zip_path, extract_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
@@ -57,9 +60,14 @@ def download_file(url, save_path):
                 operation_label.config(text="下载中... {:.0f}%\t{:.0f}KB/s".format(progress_bar["value"],(size-size_ls[cnt_ls[-5]])/(time.time()-tm_ls[cnt_ls[-5]])/1024))
             progress_bar.update()
     
-    operation_label.config(text="下载完成，解压中...")
-    target_process_name = "flet.exe"  # 替换为目标进程名
-    kill_process_by_name(target_process_name)
+    operation_label.config(text="下载完成，正在退出gui...")
+    res = kill_process_by_name("flet.exe")
+    res |= kill_process_by_name("gui.exe")
+    if res:
+        time.sleep(4)
+    else:
+        time.sleep(1.5)
+    operation_label.config(text="解压文件中...")
     unzip_and_overwrite('./archive.zip','.')
     os.remove('./archive.zip')
     operation_label.config(text="更新完成")
