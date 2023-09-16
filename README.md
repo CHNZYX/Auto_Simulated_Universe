@@ -1,17 +1,13 @@
 [简体中文](README.md) | [繁体中文](README_CHT.md) | [English](README_ENG.md)
 
+# Auto_Simulated_Universe
+星穹铁道-模拟宇宙全自动化
+
 快速上手，请访问：[项目文档](https://asu.stysqy.top/)
 
 遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html)
 
 运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://asu.stysqy.top/guide/bs.html)
-
-# Auto_Simulated_Universe
-星穹铁道-模拟宇宙全自动化
-
-有一定的断点回复功能，你可以切出去做其他事，切回来会继续自动化。
-
-目前支持模拟宇宙所有世界
 
 ----------------------------------------------------------------------------------------------
 
@@ -30,9 +26,9 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ## 安装GUI [![](https://img.shields.io/github/downloads/CHNZYX/Auto_Simulated_Universe/total?color=66ccff)](https://github.com/CHNZYX/Auto_Simulated_Universe/releases)
 
-### 用法
+## 命令行用法
 
-只支持1920\*1080(窗口化或全屏幕)，文本语言选择简体中文。
+只支持1920\*1080(窗口化或全屏幕)，文本语言选择简体中文。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
 
 默认世界：比如说如果你当前模拟宇宙默认世界4，但是想自动化世界6，那么请先进入一次世界6来改变默认世界
 
@@ -106,7 +102,7 @@ python align_angle.py
 双击`update.bat`
 
 
-### GUI使用方法
+## GUI使用方法
 
 **第一次运行**
 
@@ -146,11 +142,11 @@ F8/‘停止’按钮停止运行。
 
 改变鼠标dpi可能会影响校准值，此时需要重新校准。
 
-### 更新
+## 更新
 
 双击update.exe
 
-### 自动深渊
+## 自动深渊
 
 自动深渊可以使用固定配队自动刷忘却之庭，这项功能的目的是节省手动刷前几层的时间。
 
@@ -164,7 +160,7 @@ F8/‘停止’按钮停止运行。
 
 比如说这张图中，你想选择娜塔莎，景元，希儿，彦卿，那么请在配队中输入：`6 4 3 2`
 
-### 通知插件使用方法（notif.exe）
+## 通知插件使用方法（notif.exe）
 
 如果你没有用本地多用户，那么直接双击`notif.exe`即可开启windows通知，每刷完一次都会通知哦
 
@@ -176,7 +172,7 @@ F8/‘停止’按钮停止运行。
 
 ----------------------------------------------------------------------------------------------
 
-### 部分逻辑
+## 部分逻辑
 
 选择祝福的逻辑基于ocr+自定义优先级
 
