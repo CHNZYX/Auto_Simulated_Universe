@@ -182,6 +182,7 @@ class SimulatedUniverse(UniverseUtils):
                     if time.time()-self.in_battle>90 and self.in_battle>0:
                         self.press('esc')
                         time.sleep(1)
+                        self.in_battle = time.time()
                         continue
                     if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
                         if self.click_text(['点击空白']):
