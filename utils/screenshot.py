@@ -52,3 +52,4 @@ class Screen():
                     time.sleep(0.05)
                     continue
                 return np.frombuffer(bytearray(self.data), dtype=np.uint8).reshape((self.height,self.width,4))[:,:,:3]
+        return np.zeros((self.height,self.width,4))
