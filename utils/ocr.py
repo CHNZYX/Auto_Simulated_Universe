@@ -107,10 +107,11 @@ class My_TS:
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
     
-    def find_text(self, img, text):
+    def find_text(self, img, text, env=None):
         self.nothing = 1
+        results = self.ts.detect_and_ocr(img)
         for txt in text:
-            for res in self.ts.detect_and_ocr(img):
+            for res in results:
                 self.text = res.ocr_text
                 if len(self.text.strip())>1 and 'UID' not in self.text:
                     self.nothing = 0

@@ -181,9 +181,9 @@ class UniverseUtils:
     def calc_point(self, point, offset):
         return (point[0] - offset[0] / self.xx, point[1] - offset[1] / self.yy)
 
-    def click_text(self, text):
+    def click_text(self, text, env=None):
         img = self.get_screen()
-        pt = self.ts.find_text(img, text)
+        pt = self.ts.find_text(img, text, env=env)
         if pt is not None:
             self.click(
                 (
@@ -861,7 +861,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5 + sft * 1:
+                while dtm[0] < time.time() - 1.5 + sft * 0.75:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info(f"进入新地图或者进入战斗 {nds}")
@@ -982,11 +982,12 @@ class UniverseUtils:
                 if p > max_val:
                     max_val = p
                     max_loc = (i, j)
-                    tmp = np.zeros((176,176), dtype=np.uint8)
-                    tpp = bo_3[i : i + 176, j : j + 176]
-                    tmp[tpp!=0]=255
-                    tmp[bo_1!=0]=150
-                    tmp[bo_4!=0]=50
+                    if self.debug == 2:
+                        tmp = np.zeros((176,176), dtype=np.uint8)
+                        tpp = bo_3[i : i + 176, j : j + 176]
+                        tmp[tpp!=0]=255
+                        tmp[bo_1!=0]=150
+                        tmp[bo_4!=0]=50
                 if self.find and fbw == 0:
                     p = 2*np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_2)
                     p += np.count_nonzero(bo_3[i : i + 176, j : j + 176] & bo_5)
