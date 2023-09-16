@@ -2,7 +2,9 @@
 
 快速上手，请访问：[项目文档](https://asu.stysqy.top/)
 
-遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html#q-a)
+遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html)
+
+运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://asu.stysqy.top/guide/bs.html)
 
 # Auto_Simulated_Universe
 星穹铁道-模拟宇宙全自动化
@@ -184,11 +186,11 @@ F8/‘停止’按钮停止运行。
 
 支持录制地图，具体方法为
 
-运行 `python states.py --debug=2 --find=1`
+运行 `python states.py --debug --find=1`
 
 如果遇到新图会角色停住，这时候结束自动化并且游戏中暂离模拟宇宙
 
-然后运行 `python states.py --debug=2 --find=0`
+然后运行 `python states.py --debug --find=0`
 
 运行后会自动进入地图，期间请不要移动鼠标也不要动键盘
 
