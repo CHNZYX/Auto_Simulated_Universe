@@ -106,6 +106,8 @@ python align_angle.py
 
 ### GUI使用方法
 
+#### 安装 [![](https://img.shields.io/github/downloads/CHNZYX/Auto_Simulated_Universe/total?color=4e4c97)](https://github.com/CHNZYX/Auto_Simulated_Universe/releases)
+
 **第一次运行**
 
 在设置中选择自己想要的难度和命途，配队请在游戏中预先选择默认配队
@@ -217,6 +219,17 @@ F8/‘停止’按钮停止运行。
 ![打赏](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/money.jpg)
 
 ----------------------------------------------------------------------------------------------
+## 贡献者
+
+感谢以下贡献者对本项目做出的贡献
+
+<a href="https://github.com/CHNZYX/Auto_Simulated_Universe/graphs/contributors">
+
+  <img src="https://contrib.rocks/image?repo=CHNZYX/Auto_Simulated_Universe" />
+
+</a>
+
+![Alt](https://repobeats.axiom.co/api/embed/79d87540c597fc0b30893860e7b92da60c555fa9.svg "Repobeats analytics image")
 
 ## Star History
 
