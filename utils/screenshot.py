@@ -22,6 +22,8 @@ class BITMAPINFOHEADER(Structure):
     ]
 class BITMAPINFO(Structure):
     _fields_ = [("bmiHeader", BITMAPINFOHEADER), ("bmiColors", DWORD * 3)]
+
+lock = Lock()
 class Screen():
     def __init__(self,w=1920,h=1080):
         self.gdi = ctypes.WinDLL("gdi32")
@@ -40,10 +42,9 @@ class Screen():
         self.data = ctypes.create_string_buffer(self.width * self.height * 4)
         self.bmp = self.gdi.CreateCompatibleBitmap(self.srcdc, self.width, self.height)
         self.gdi.SelectObject(self.memdc, self.bmp)
-        self.lock = Lock()
 
     def grab(self, x, y):
-        with self.lock:
+        with lock:
             for _ in range(10):
                 self.gdi.BitBlt(self.memdc, 0, 0, self.width, self.height, self.srcdc, x, y, 0x40CC0020)
                 bits = self.gdi.GetDIBits(self.memdc, self.bmp, 0, self.height, self.data, self.bmi, 0)
