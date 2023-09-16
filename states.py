@@ -143,6 +143,7 @@ class SimulatedUniverse(UniverseUtils):
         fail_time = 0
         self.confirm_time = 0
         self._stop = os.stat("imgs/mon" + self.tss).st_size != 141882
+        fp = 1
         while True:
             if self._stop:
                 break
@@ -182,13 +183,12 @@ class SimulatedUniverse(UniverseUtils):
                     if time.time()-self.in_battle>90 and self.in_battle>0:
                         self.press('esc')
                         time.sleep(1)
-                        self.in_battle = time.time()
+                        self.in_battle = time.time() - 84 * fp
+                        fp = not fp
                         continue
                     if time.time()-self.confirm_time>4 and time.time()-fail_time<=7.5:
                         if self.click_text(['点击空白']):
-                            time.sleep(0.2)
-                            self.click((0.2,0.2),click=0)
-                            time.sleep(0.3)
+                            time.sleep(0.5)
                         if self.ts.nothing:
                             self.in_battle = time.time()
                     if self.threshold == 0.97 and fail_cnt==0:
@@ -269,7 +269,6 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("choose_bless", 0.9266, 0.9491):
             self.battle = 0
             ok = 0
-            self.click((0.2,0.2),click=0)
             for _ in range(12):
                 self.get_screen()
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
@@ -349,21 +348,7 @@ class SimulatedUniverse(UniverseUtils):
                     if self.ts.sim("区域"):
                         log.info(f"识别到传送点")
                         self.press(self.hotkey)
-                        time.sleep(1)
-                        self.get_screen()
-                        img = self.check(
-                            "z", 0.3182, 0.4333, mask="mask_f", large=False
-                        )
-                        if self.ts.sim("区域", img):
-                            return 0
-                        else:
-                            self.init_map()
-                            self.floor += 1
-                            self.f_time = time.time()
-                            map_log.info(
-                                f"地图{self.now_map}已完成,相似度{self.now_map_sim},进入{self.floor+1}层"
-                            )
-                            return 1
+                        return self.nof()
                     elif self.re_align == 1 and self.debug == 0:
                         # align_angle(10, 1)
                         # self.multi = config.multi
@@ -677,7 +662,12 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
-            time.sleep(1.8)
+            tm = time.time()
+            while time.time()-tm<3.5 and not self.check("f", 0.4443, 0.4417, mask="mask_f1") and not isrun(self):
+                self.get_screen()
+                time.sleep(0.15)
+            time.sleep(0.35)
+            self.mouse_move(-30)
             self.confirm_time = time.time()
             if self.floor >= 12:
                 self.floor = 11

@@ -641,9 +641,7 @@ class UniverseUtils:
             if sub == 0:
                 sub = 1e-9
             if ii == 0:
-                if abs(sub) < 20:
-                    sub *= 1.2
-                else:
+                if abs(sub) > 20:
                     sub = 0
             # if (abs(sub)>50 and target[1]==3 and not abyss) or self.floor in [3,7,12]:
             #    sub=0
