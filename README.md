@@ -184,11 +184,11 @@ F8/‘停止’按钮停止运行。
 
 支持录制地图，具体方法为
 
-运行 `python states.py --debug=2 --find=1`
+运行 `python states.py --debug --find=1`
 
 如果遇到新图会角色停住，这时候结束自动化并且游戏中暂离模拟宇宙
 
-然后运行 `python states.py --debug=2 --find=0`
+然后运行 `python states.py --debug --find=0`
 
 运行后会自动进入地图，期间请不要移动鼠标也不要动键盘
 
