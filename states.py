@@ -75,7 +75,7 @@ class SimulatedUniverse(UniverseUtils):
         self.now_map_sim = None
         self.real_loc = [0, 0]
         self.debug_map = np.zeros((8192, 8192), dtype=np.uint8)
-        self._stop = False
+        self._stop = True
         self.img_set = []
         self.find = find
         self.debug = debug
@@ -187,12 +187,11 @@ class SimulatedUniverse(UniverseUtils):
                         self.in_battle = time.time() - 84 * fp
                         fp = not fp
                         continue
+                    if self.click_text(['点击空白']):
+                        time.sleep(0.5)
+                    if self.ts.nothing:
+                        self.in_battle = time.time()
                     if time.time()-self.confirm_time>4:
-                        if time.time()-fail_time<=7.5:
-                            if self.click_text(['点击空白']):
-                                time.sleep(0.5)
-                            if self.ts.nothing:
-                                self.in_battle = time.time()
                         if self.threshold == 0.97 and fail_cnt==0:
                             log.info("匹配不到任何图标")
                             fail_time = time.time()

@@ -3,6 +3,7 @@ import flet as ft
 
 from gui.common import show_snack_bar, Page
 from utils.config import config
+import os
 
 
 def config_view(page: Page):
@@ -52,6 +53,39 @@ def config_view(page: Page):
         dlg.open = True
         page.update()
 
+    def go_del(e=None):
+        try:
+            if page.su._stop == 0:
+                show_snack_bar(page, "请先退出自动化", ft.colors.RED)
+            return
+        except:
+            pass
+        nonlocal txt
+        file_name = 'logs/notif.txt'
+        cnt='0'
+        if os.path.exists(file_name):
+            try:
+                with open(file_name, 'w', encoding="utf-8") as file:
+                    file.write(f"0\n已清空\n计数:0\n0")
+                show_snack_bar(page, "清空成功", ft.colors.GREEN)
+                txt.value = '已通关0次'
+                page.update()
+            except:
+                show_snack_bar(page, "发生错误", ft.colors.RED)
+
+    def getnum():
+        file_name = 'logs/notif.txt'
+        cnt='0'
+        if os.path.exists(file_name):
+            try:
+                with open(file_name, 'r', encoding="utf-8",errors='ignore') as file:
+                    s=file.readlines()
+                    cnt=s[0].strip('\n')
+            except:
+                pass
+        return cnt
+
+    txt = ft.Text('已通关'+getnum()+'次',weight=ft.FontWeight.W_600,size=20)
     page.views.append(
         ft.View(
             "/config",
@@ -176,7 +210,19 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
-                                ft.Container(height=270),
+                                ft.Container(height=20),
+                                ft.Row(
+                                    [
+                                        txt,
+                                        ft.IconButton(
+                                            icon=ft.icons.DELETE,
+                                            tooltip="清空通关计数",
+                                            icon_size=35,
+                                            on_click=go_del,
+                                        ),
+                                    ]
+                                ),
+                                ft.Container(height=210),
                                 ft.ElevatedButton(
                                     content=ft.Row(
                                         [
@@ -196,7 +242,6 @@ def config_view(page: Page):
                     ],
                     alignment=MainAxisAlignment.CENTER,
                     vertical_alignment=CrossAxisAlignment.CENTER,
-                    height=200,
                 ),
             ],
             padding=20,
