@@ -22,6 +22,7 @@ from utils.map_log import map_log
 from utils.config import config
 from utils.log import log
 import utils.ocr as ocr
+import utils.keyops as keyops
 try:
     from mylib import isrun
 except:
@@ -75,8 +76,6 @@ def set_forground():
 
 class UniverseUtils:
     def __init__(self):
-        self.hotkey = 'f'
-        self.runkey = 'shift'
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self.check_bonus = 1
@@ -172,11 +171,11 @@ class UniverseUtils:
         if c not in "3r":
             log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
         if self._stop == 0:
-            pyautogui.keyDown(c)
+            keyops.keyDown(c)
         else:
             raise ValueError("正在退出")
         time.sleep(t)
-        pyautogui.keyUp(c)
+        keyops.keyUp(c)
 
     def get_point(self, x, y):
         # 得到一个点的浮点表示
@@ -295,8 +294,9 @@ class UniverseUtils:
             threshold = self.threshold
         path = self.format_path(path)
         target = cv.imread(path)
-        if path == './imgs/f.jpg' and self.hotkey != 'f':
-            target = self.gen_hotkey_img(self.hotkey)
+        if path == './imgs/f.jpg' and config.mapping[0]!='f':
+            target = self.gen_hotkey_img(config.mapping[0])
+            threshold -= 0.01
         target = cv.resize(
             target,
             dsize=(int(self.scx * target.shape[1]), int(self.scx * target.shape[0])),
@@ -314,8 +314,7 @@ class UniverseUtils:
             return local_screen
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        if path == "./imgs/floor/ff1.jpg#" or 0:
-            cv.imwrite("tmp.jpg", local_screen)
+        if path == "./imgs/f.jpg" and self.debug == 2:
             print(max_val)
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
@@ -754,11 +753,11 @@ class UniverseUtils:
                         log.info("removed:" + str(j))
                 return
             if self._stop == 0:
-                pyautogui.keyDown("w")
+                keyops.keyDown("w")
             time.sleep(0.25)
             sft = 0
             if sft == 0 and type != 3:
-                self.press(self.runkey)
+                self.press('shift')
                 sft = 1
             time.sleep(0.25)
             bw_map = self.get_bw_map()
@@ -771,7 +770,7 @@ class UniverseUtils:
             t = 2
             for i in range(3000):
                 if self._stop == 1:
-                    pyautogui.keyUp("w")
+                    keyops.keyUp("w")
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map()
@@ -801,11 +800,11 @@ class UniverseUtils:
                 if dls[0] <= nds:
                     ts = " da"
                     if t > 0:
-                        pyautogui.keyUp("w")
+                        keyops.keyUp("w")
                         self.press("s", 0.35)
                         self.press(ts[t], 0.2*random.randint(1,3))
                         if self._stop == 0:
-                            pyautogui.keyDown("w")
+                            keyops.keyDown("w")
                         bw_map = self.get_bw_map()
                         self.get_loc(bw_map, rg=28, fbw=1)
                         local_screen = self.get_local(0.9333, 0.8657, shape)
@@ -813,10 +812,10 @@ class UniverseUtils:
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
-                        self.press(self.runkey)
+                        self.press('shift')
                         sft = 1
                     else:
-                        pyautogui.keyUp("w")
+                        keyops.keyUp("w")
                         break
                 if nds <= ps[type]:
                     if type == 0:
@@ -827,15 +826,15 @@ class UniverseUtils:
                         self.lst_changed = time.time()
                         loc, type = self.get_tar()
                         if type == 3:
-                            self.press(self.runkey)
+                            self.press('shift')
                             sft = 0
                         ds = self.get_dis(self.real_loc, loc)
                         t = 2
                     else:
-                        pyautogui.keyUp("w")
+                        keyops.keyUp("w")
                         break
                 elif (self.goodf() or not isrun(self)):
-                    pyautogui.keyUp("w")
+                    keyops.keyUp("w")
                     break
                 ds = nds
                 dls.append(ds)
@@ -869,7 +868,7 @@ class UniverseUtils:
                 for i in "wwwwww":
                     self.get_screen()
                     if self.goodf():
-                        self.press(self.hotkey)
+                        self.press('f')
                         if self.nof():
                             time.sleep(1.5)
                             break

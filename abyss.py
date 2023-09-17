@@ -7,6 +7,7 @@ import random
 import sys
 from utils.log import log
 from utils.utils import UniverseUtils, set_forground
+import utils.keyops as keyops
 import os
 import yaml
 import pyuac

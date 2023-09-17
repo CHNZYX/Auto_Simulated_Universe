@@ -25,6 +25,8 @@ class Config:
         self.bonus = 0
         self.timezones = ['America', 'Asia', 'Europe', 'Default']
         self.timezone = 'Default'
+        self.origin_key = ['f','m','shift','v','e','w','a','s','d','1','2','3','4']
+        self.mapping = self.origin_key
         self.read()
 
     @property
@@ -63,6 +65,11 @@ class Config:
                     self.timezone = config['timezone']
                 except:
                     pass
+            with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
+                try:
+                    self.mapping = yaml.safe_load(f)['key_mapping']
+                except:
+                    pass
         else:
             self.save()
 
@@ -76,7 +83,7 @@ class Config:
                     secondary_fate = yaml.safe_load(f)['config']['secondary_fate']
             except:
                 secondary_fate = ['巡猎','毁灭','丰饶']
-                
+
         try:
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
                 prior = yaml.safe_load(f)['prior']
@@ -125,7 +132,8 @@ class Config:
                     "force_update": self.force_update,
                     "timezone": self.timezone
                 },
-                "prior": prior
+                "prior": prior,
+                "key_mapping": self.mapping
             }, f, allow_unicode=True, sort_keys=False)
 
 

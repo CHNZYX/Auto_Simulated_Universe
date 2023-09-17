@@ -20,13 +20,14 @@ import datetime
 import requests
 import pytz
 import pyuac
+import utils.keyops as keyops
 try:
     from mylib import get_direc_only_minimap, ban, isrun
 except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.7 ProMax"
+version = "v5.8 Light"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -340,7 +341,7 @@ class SimulatedUniverse(UniverseUtils):
                     # 与黑塔交互后30秒内禁止再次交互（防止死循环）
                     if time.time() - self.quit > 30 and self.floor:
                         self.quit = time.time()
-                        self.press(self.hotkey)
+                        self.press('f')
                         self.battle = 0
                     else:
                         is_killed = 1
@@ -348,7 +349,7 @@ class SimulatedUniverse(UniverseUtils):
                     # tele：区域-xx  exit：离开模拟宇宙
                     if self.ts.sim("区域"):
                         log.info(f"识别到传送点")
-                        self.press(self.hotkey)
+                        self.press('f')
                         return self.nof()
                     elif self.re_align == 1 and self.debug == 0:
                         # align_angle(10, 1)
@@ -356,7 +357,7 @@ class SimulatedUniverse(UniverseUtils):
                         self.re_align += 1
                     is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
                     if is_killed == 0:
-                        self.press(self.hotkey)
+                        self.press('f')
                     self.battle = 0
                 if is_killed == 0:
                     return 1
@@ -369,7 +370,7 @@ class SimulatedUniverse(UniverseUtils):
             self.battle = 0
             # 刚进图，初始化一些数据
             if self.big_map_c == 0:
-                pyautogui.keyUp("w")
+                keyops.keyUp("w")
                 # 黑屏检测
                 while 1:
                     men = np.mean(self.get_screen())
@@ -459,7 +460,7 @@ class SimulatedUniverse(UniverseUtils):
                 if self.find == 0:
                     self.press("s", 0.5)
                     if self._stop == 0:
-                        pyautogui.keyDown("w")
+                        keyops.keyDown("w")
                     time.sleep(0.5)
                     self.get_screen()
             self.lst_tm = time.time()

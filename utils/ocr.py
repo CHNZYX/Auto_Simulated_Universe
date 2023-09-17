@@ -149,6 +149,7 @@ class text_keys:
             import yaml
             with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
                 config = yaml.safe_load(f)['prior']
+            with open('info.yml', "r", encoding="utf-8",errors='ignore') as f:
                 try:
                     self.secondary = yaml.safe_load(f)['config']['secondary_fate']
                 except:
