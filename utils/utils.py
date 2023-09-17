@@ -16,6 +16,7 @@ import sys
 import ctypes
 from PIL import Image, ImageDraw, ImageFont
 from math import sin, cos
+import threading
 
 from utils.map_log import map_log
 from utils.config import config
@@ -79,7 +80,7 @@ class UniverseUtils:
         self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self.check_bonus = 1
-        self._stop = 0
+        self._stop = False
         self.stop_move = 0
         self.multi = config.multi
         self.diffi = config.diffi
@@ -172,6 +173,8 @@ class UniverseUtils:
             log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
         if self._stop == 0:
             pyautogui.keyDown(c)
+        else:
+            raise ValueError("正在退出")
         time.sleep(t)
         pyautogui.keyUp(c)
 
@@ -235,6 +238,8 @@ class UniverseUtils:
             win32api.SetCursorPos((x, y))
             if click:
                 pyautogui.click()
+        else:
+            raise ValueError("正在退出")
         time.sleep(0.3)
 
     # 拖动
@@ -683,8 +688,6 @@ class UniverseUtils:
         ava = 0
         while not ava and time.time()-tm<1.6:
             self.get_screen()
-            if self.debug == 2:
-                cv.imwrite('imgs/tmp/'+str(time.time())+'.jpg',self.screen)
             if not self.check(
                     "f", 0.4443, 0.4417, mask="mask_f1"
                 ) and not isrun(self):
@@ -897,7 +900,10 @@ class UniverseUtils:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
         time.sleep(0.05 * fine)
         if x != y:
-            self.mouse_move(x - y, fine)
+            if self._stop == 0:
+                self.mouse_move(x - y, fine)
+            else:
+                raise ValueError("正在退出")
 
     # 在大地图中覆盖小地图
     def write_map(self, bw_map):

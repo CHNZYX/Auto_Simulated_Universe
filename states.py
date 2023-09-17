@@ -831,7 +831,7 @@ class SimulatedUniverse(UniverseUtils):
     def stop(self, *_, **__):
         log.info("尝试停止运行")
         self._stop = True
-
+    
     def on_key_press(self, event):
         global stop_flag
         if event.name == "f8":
@@ -871,11 +871,11 @@ class SimulatedUniverse(UniverseUtils):
         cv.destroyAllWindows()
 
     def check_req(self):
-        self._stop = os.system("pip show numpy > NUL 2>&1") and not self.unlock
+        self._stop |= os.system("pip show numpy > NUL 2>&1") and not self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
         time.sleep(10)
-        self._stop = os.system("pip show numpy > NUL 2>&1") and not self.unlock
+        self._stop |= os.system("pip show numpy > NUL 2>&1") and not self.unlock
         if self._stop:
             log.info("未安装依赖库或环境变量未正确设置")
 
@@ -887,7 +887,7 @@ class SimulatedUniverse(UniverseUtils):
         if self._show_map:
             t_map = threading.Thread(target=self.show_map)
             t_map.start()
-        threading.Thread(target=self.check_req).start()
+        # threading.Thread(target=self.check_req).start()
         try:
             self.route()
         except KeyboardInterrupt:
@@ -901,6 +901,8 @@ def main():
     su = SimulatedUniverse(find, debug, show_map, speed, bonus=bonus, update=update)
     try:
         su.start()
+    except ValueError as e:
+        pass
     except Exception:
         traceback.print_exc()
     finally:

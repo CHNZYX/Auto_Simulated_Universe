@@ -57,21 +57,18 @@ def config_view(page: Page):
         try:
             if page.su._stop == 0:
                 show_snack_bar(page, "请先退出自动化", ft.colors.RED)
-            return
+                return
         except:
             pass
         nonlocal txt
         file_name = 'logs/notif.txt'
         cnt='0'
         if os.path.exists(file_name):
-            try:
-                with open(file_name, 'w', encoding="utf-8") as file:
-                    file.write(f"0\n已清空\n计数:0\n0")
-                show_snack_bar(page, "清空成功", ft.colors.GREEN)
-                txt.value = '已通关0次'
-                page.update()
-            except:
-                show_snack_bar(page, "发生错误", ft.colors.RED)
+            with open(file_name, 'w', encoding="utf-8") as file:
+                file.write(f"0\n已清空\n计数:0\n0")
+            show_snack_bar(page, "清空成功", ft.colors.GREEN)
+            txt.value = '已通关0次'
+            page.update()
 
     def getnum():
         file_name = 'logs/notif.txt'

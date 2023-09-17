@@ -31,6 +31,8 @@ def choose_view(page: Page):
             res = func(*args, **kwargs)
             change_all_button(False)
             return res
+        except ValueError as e:
+            pass
         except Exception:
             print("E: 运行函数时出现错误")
             traceback.print_exc()
@@ -84,6 +86,8 @@ def choose_view(page: Page):
             win32gui.SetForegroundWindow(page.su.my_nd)
         except:
             pass
+        if page.su is not None:
+            run(page.su.stop)
         notif("已退出自动化", txt)
 
     def start_abyss(_e):
