@@ -573,6 +573,7 @@ class UniverseUtils:
             img = self.check("z", 0.3365, 0.4231, mask="mask_f", large=False)
             text = self.ts.sim_list(self.tk.interacts, img)
         is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
+        log.info('识别到交互信息：'+text)
         return text is not None and not is_killed
 
     def get_tar(self):
@@ -687,7 +688,7 @@ class UniverseUtils:
         except:
             pass
 
-    def nof(self):
+    def nof(self,must_be_tp=0):
         tm = time.time()
         ava = 0
         while not ava and time.time()-tm<1.6:
@@ -696,8 +697,9 @@ class UniverseUtils:
                     "f", 0.4443, 0.4417, mask="mask_f1"
                 ) and not isrun(self):
                 ava = 1
+        log.info('交互点生效：'+str(ava))
         if ava:
-            if self.ts.sim("区域"):
+            if self.ts.sim("区域") or must_be_tp:
                 self.init_map()
                 self.floor += 1
                 self.f_time = time.time()
@@ -868,13 +870,13 @@ class UniverseUtils:
                     time.sleep(0.5)
                     self.press("w", 1.6)
                     pyautogui.click()
-            self.get_screen()
             if type == 3:
                 for i in "wwwwww":
                     self.get_screen()
-                    if self.goodf():
+                    if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                        log.info("大图识别到传送点")
                         self.press('f')
-                        if self.nof():
+                        if self.nof(must_be_tp=1):
                             time.sleep(1.5)
                             break
                     self.get_screen()

@@ -317,7 +317,7 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
-            time.sleep(1.8)
+            time.sleep(1)
             self.confirm_time = time.time()
             return 1
         # F交互界面
@@ -472,7 +472,7 @@ class SimulatedUniverse(UniverseUtils):
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
-                    (time.time() - self.lst_changed >= 45 - 7 * self.debug)
+                    (time.time() - self.lst_changed >= 37 - 4 * self.debug)
                     and self.find == 1
                 )
                 or (self.floor == 12 and self.mini_state > 4)
