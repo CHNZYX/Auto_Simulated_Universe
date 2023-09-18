@@ -591,10 +591,10 @@ class SimulatedUniverse(UniverseUtils):
                         '选择里奥'
                     ]
                 event_prior = [self.fate] + event_prior
-                self.click_text(event_prior,'event')
+                success = self.click_text(event_prior,'event')
                 time.sleep(0.3)
                 self.get_screen()
-                if self.check("confirm", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
+                if success and self.check("confirm", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                     self.click((self.tx, self.ty))
                 else:
                     self.click((tx, ty))

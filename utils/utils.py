@@ -197,6 +197,7 @@ class UniverseUtils:
                 )
             )
             return 1
+        return 0
 
     # 由click_target调用，返回图片匹配结果
     def scan_screenshot(self, prepared):
@@ -314,10 +315,14 @@ class UniverseUtils:
             return local_screen
         result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-        if path == "./imgs/f.jpg" and self.debug == 2:
+        self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1] + 0.5 * target.shape[1]) / self.xx
+        self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0] + 0.5 * target.shape[0]) / self.yy
+        if path == "./imgs/confirm.jpg" and self.debug == 2 and 0:
             print(max_val)
-        self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1]) / self.xx
-        self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0]) / self.yy
+            print(self.tx,self.ty)
+            print(x,y,max_loc,local_screen.shape)
+            self.click((self.tx,self.ty),click=0)
+            exit()
         self.tm = max_val
         if max_val > threshold:
             if self.last_info != path:
@@ -1063,9 +1068,9 @@ class UniverseUtils:
                 res.append((similarity_score,i))
             except:
                 pass
-        res = sorted(res, key=lambda x: x[0])[-3:]
+        res = sorted(res, key=lambda x: x[0])[-2:]
         try:
-            if res[-1][0]>res[-2][0]+0.065 and res[-1][0]>0.4:
+            if res[-1][0]>res[-2][0]+0.065 and (res[-1][0]>0.4 or self.debug!=2):
                 return res[-1][1], 0.9
         except:
             return -1, -1
