@@ -249,8 +249,7 @@ class SimulatedUniverse(UniverseUtils):
         self.lst_changed = time.time()
         # 战斗界面
         if self.check("c", 0.9464, 0.1287, threshold=0.985) or self.check(
-            "auto_2", 0.0583, 0.0769
-        ):
+            "auto_2", 0.0583, 0.0769):
             # 需要打开自动战斗
             if self.check("c", 0.9464, 0.1287, threshold=0.985):
                 self.press("v")
@@ -271,7 +270,7 @@ class SimulatedUniverse(UniverseUtils):
         if self.check("choose_bless", 0.9266, 0.9491):
             self.battle = 0
             ok = 0
-            for _ in range(12):
+            for _ in range(14):
                 self.get_screen()
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 if (
@@ -280,6 +279,8 @@ class SimulatedUniverse(UniverseUtils):
                 ):
                     time.sleep(0.2)
                     break
+                if not self.check("choose_bless", 0.9266, 0.9491):
+                    return 1
                 time.sleep(0.2)
             self.get_screen()
             img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
@@ -295,12 +296,14 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.click((0.2990, 0.1046))
                 time.sleep(0.8)
-                for _ in range(8):
+                for _ in range(10):
                     self.get_screen()
                     img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                     if self.ts.split_and_find(self.tk.fates, img_down)[1] or self._stop:
                         time.sleep(0.2)
                         break
+                    if not self.check("choose_bless", 0.9266, 0.9491):
+                        return 1
                     time.sleep(0.2)
                 self.get_screen()
                 img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
@@ -591,13 +594,18 @@ class SimulatedUniverse(UniverseUtils):
                 self.click_text(event_prior,'event')
                 time.sleep(0.3)
                 self.get_screen()
-                if self.check("confirm", 0.1828, 0.5000, mask="mask_event"):
+                if self.check("confirm", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                     self.click((self.tx, self.ty))
                 else:
                     self.click((tx, ty))
                     time.sleep(0.3)
                     self.click((0.1167, ty - 0.4685 + 0.3546))
-                time.sleep(1)
+                time.sleep(0.5)
+                for _ in range(7):
+                    self.get_screen()
+                    if not self.check("event", 0.9479, 0.9565):
+                        break
+                    time.sleep(0.1)
                 self.lst_changed = time.time()
             else:
                 self.click((0.9479, 0.9565))

@@ -57,7 +57,7 @@ class Abyss(UniverseUtils):
             if self.check("c", 0.9464, 0.1287, threshold=0.985):
                 # self.press('v')
                 pass
-            if time.time() - tm > 10 or self.check("abyss/in", 0.9130, 0.6074):
+            if time.time() - tm > 14 or self.check("abyss/in", 0.9130, 0.6074):
                 # print(time.time() - tm)
                 break
             time.sleep(0.1)
@@ -95,6 +95,7 @@ class Abyss(UniverseUtils):
             if abs(t) > 30:
                 time.sleep(1)
                 self.press("w")
+                time.sleep(0.3)
                 self.move_to_interac(1, 1)
                 self.press("w", 1.7)
                 self.ready()
