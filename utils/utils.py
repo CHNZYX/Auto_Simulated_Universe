@@ -1070,7 +1070,7 @@ class UniverseUtils:
                 res.append((similarity_score,i))
             except:
                 pass
-        res = sorted(res, key=lambda x: x[0])[-2:]
+        res = sorted(res, key=lambda x: x[0])[-3:]
         try:
             if res[-1][0]>res[-2][0]+0.065 and (res[-1][0]>0.4 or self.debug!=2):
                 return res[-1][1], 0.9
