@@ -219,7 +219,7 @@ class SimulatedUniverse(UniverseUtils):
                 fail_cnt = 0
                 self.threshold = 0.97
                 fail_time = time.time()
-            time.sleep(0.25)
+            time.sleep(0.1)
         log.info("停止运行")
 
     def end_of_uni(self):
@@ -853,6 +853,10 @@ class SimulatedUniverse(UniverseUtils):
 
     def stop(self, *_, **__):
         log.info("尝试停止运行")
+        self._stop = True
+        self._stop = 1
+        self._stop = True
+        self._stop = 1
         self._stop = True
     
     def on_key_press(self, event):

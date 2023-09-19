@@ -95,6 +95,10 @@ def choose_view(page: Page):
 
     def stops(_e):
         show_snack_bar(page, "停止运行（>∀<）", ft.colors.GREEN)
+        try:
+            page.su._stop = 1
+        except:
+            pass
         if page.su is not None:
             run(page.su.stop)
 
