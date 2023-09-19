@@ -27,7 +27,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.8 Light"
+version = "v5.8 XPro"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -71,7 +71,7 @@ class SimulatedUniverse(UniverseUtils):
         else:
             self.validation = 1
         if "debug" in version and not gui:
-            log.info("欢迎加入模拟宇宙小群，群号：921407322 密码：zyxxyz")
+            log.info("欢迎加入模拟宇宙小群，群号：921407322 密码：xyzzyx")
         self.now_map = None
         self.now_map_sim = None
         self.real_loc = [0, 0]
@@ -691,6 +691,7 @@ class SimulatedUniverse(UniverseUtils):
             # time.sleep(0.35)
             # self.mouse_move(-30)
             self.confirm_time = time.time()
+            self.lst_changed = time.time()
             if self.floor >= 12:
                 self.floor = 11
         elif self.check("yes1", 0.5, 0.5, mask="mask_end"):

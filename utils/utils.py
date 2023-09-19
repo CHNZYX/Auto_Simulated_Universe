@@ -843,15 +843,17 @@ class UniverseUtils:
                     else:
                         keyops.keyUp("w")
                         break
-                elif type == 3 and self.check("f", 0.4443, 0.4417, mask="mask_f1"):
-                    self.press('f')
-                    keyops.keyUp("w")
-                    if self.nof(must_be='tp'):
-                        log.info('大图识别到传送点!')
-                        return
-                elif (type != 3 and self.goodf()) or not isrun(self):
-                    keyops.keyUp("w")
-                    break
+                else:
+                    self.get_screen()
+                    if type == 3 and self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                        self.press('f')
+                        keyops.keyUp("w")
+                        if self.nof(must_be='tp'):
+                            log.info('大图识别到传送点!')
+                            return
+                    elif (type != 3 and self.goodf()) or not isrun(self):
+                        keyops.keyUp("w")
+                        break
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())

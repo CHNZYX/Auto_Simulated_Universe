@@ -35,7 +35,7 @@ class My_TS:
         if img is not None:
             self.input(img)
         self.text = self.text.strip()
-        if text.strip() in ['胜军','确认']:
+        if text.strip() in ['胜军','脊刺']:
             return text.strip() in self.text
         length = len(text)
         res = 0
