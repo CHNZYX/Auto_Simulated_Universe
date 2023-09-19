@@ -170,7 +170,7 @@ class SimulatedUniverse(UniverseUtils):
                 break
             self.get_screen()
             ban(self)
-            #self.click_target('imgs/bonus.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/reset.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -188,7 +188,8 @@ class SimulatedUniverse(UniverseUtils):
                         self.in_battle = time.time() - 84 * fp
                         fp = not fp
                         continue
-                    if self.click_text(['点击空白']):
+                    if self.click_text(['点击空白','开始游戏'],click=0):
+                        self.click((0.2062, 0.2054))
                         time.sleep(0.5)
                     if self.ts.nothing:
                         self.in_battle = time.time()
@@ -268,35 +269,40 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         # 祝福界面/回响界面 （放在一起处理了）
         if self.check("choose_bless", 0.9266, 0.9491):
+            time.sleep(0.3)
+            chose = 0
             self.battle = 0
-            ok = 0
-            for _ in range(14):
-                self.get_screen()
-                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
-                if (
-                    self.ts.split_and_find(self.tk.fates, img_down, mode="bless")[1]
-                    or self._stop
-                ):
+            if self.check("reset",0.2938,0.0954):
+                for _ in range(14):
+                    self.get_screen()
+                    img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                    if (
+                        self.ts.split_and_find(self.tk.fates, img_down, mode="bless")[1]
+                        or self._stop
+                    ):
+                        time.sleep(0.2)
+                        break
+                    if not self.check("choose_bless", 0.9266, 0.9491):
+                        return 1
                     time.sleep(0.2)
-                    break
-                if not self.check("choose_bless", 0.9266, 0.9491):
-                    return 1
-                time.sleep(0.2)
-            self.get_screen()
-            img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
-            res_up = self.ts.split_and_find(self.tk.prior_bless, img_up, bless_skip=self.tk.skip)
-            img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
-            res_down = self.ts.split_and_find([self.fate], img_down, mode="bless")
-            ban(self)
-            if res_up[1] == 2:
-                self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
-            elif res_down[1] == 2 and (res_up[1] != 3 or self.fate != "毁灭"):
-                self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                self.get_screen()
+                img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
+                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up, bless_skip=self.tk.skip)
+                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                res_down = self.ts.split_and_find([self.fate], img_down, mode="bless")
+                ban(self)
+                if res_up[1] == 2:
+                    self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
+                    chose = 1
+                elif res_down[1] == 2 and (res_up[1] != 3 or self.fate != "毁灭"):
+                    self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                    chose = 1
+                if not chose:
+                    self.click((0.2990, 0.1046))
+                    time.sleep(1.2)
             # 未匹配到优先祝福，刷新祝福并再次匹配
-            else:
-                self.click((0.2990, 0.1046))
-                time.sleep(0.8)
-                for _ in range(10):
+            if not chose:
+                for _ in range(8):
                     self.get_screen()
                     img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                     if self.ts.split_and_find(self.tk.fates, img_down)[1] or self._stop:
@@ -317,7 +323,7 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
             self.click((0.1203, 0.1093))
-            time.sleep(1)
+            time.sleep(1.4)
             self.confirm_time = time.time()
             return 1
         # F交互界面
@@ -591,7 +597,7 @@ class SimulatedUniverse(UniverseUtils):
                         '选择里奥'
                     ]
                 event_prior = [self.fate] + event_prior
-                success = self.click_text(event_prior,'event')
+                success = self.click_text(event_prior,env='event')
                 time.sleep(0.3)
                 self.get_screen()
                 if success and self.check("confirm", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
@@ -615,12 +621,18 @@ class SimulatedUniverse(UniverseUtils):
             res = self.ts.split_and_find(self.tk.strange, img, mode="strange")
             self.click(self.calc_point((0.5000, 0.7333), res[0]))
             self.click((0.1365, 0.1093))
-            self.confirm_time = time.time()
+            tm=time.time()
+            while time.time()-tm<1.4 and self.check("strange", 0.9417, 0.9481):
+                time.sleep(0.1)
+                self.get_screen()
         # 丢弃奇物
         elif self.check("drop", 0.9406, 0.9491):
             self.click((0.4714, 0.5500))
             self.click((0.1339, 0.1028))
-            self.confirm_time = time.time()
+            tm=time.time()
+            while time.time()-tm<1.4 and self.check("drop", 0.9406, 0.9491):
+                time.sleep(0.1)
+                self.get_screen()
         elif self.check("drop_bless", 0.9417, 0.9481, threshold=0.95):
             time.sleep(1.5)
             st = set(self.tk.fates) - set(self.tk.secondary)
@@ -683,6 +695,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.floor = 11
         elif self.check("yes1", 0.5, 0.5, mask="mask_end"):
             self.click((self.tx,self.ty))
+            time.sleep(1)
             return 1
         else:
             return 0

@@ -186,16 +186,17 @@ class UniverseUtils:
     def calc_point(self, point, offset):
         return (point[0] - offset[0] / self.xx, point[1] - offset[1] / self.yy)
 
-    def click_text(self, text, env=None):
+    def click_text(self, text, env=None, click=1):
         img = self.get_screen()
         pt = self.ts.find_text(img, text, env=env)
         if pt is not None:
-            self.click(
-                (
-                    1 - (pt[0][0] + pt[1][0]) / 2 / self.xx,
-                    1 - (pt[0][1] + pt[2][1]) / 2 / self.yy,
+            if click:
+                self.click(
+                    (
+                        1 - (pt[0][0] + pt[1][0]) / 2 / self.xx,
+                        1 - (pt[0][1] + pt[2][1]) / 2 / self.yy,
+                    )
                 )
-            )
             return 1
         return 0
 
@@ -616,7 +617,7 @@ class UniverseUtils:
             sp = minicon.shape
             result = cv.matchTemplate(local_screen, minicon, cv.TM_CCORR_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            if max_val > threshold-0.05*(self.floor in [4,8,11]):
+            if max_val > threshold-0.035*(self.floor in [4,8,11]):
                 nearest = (max_loc[1] + sp[0] // 2, max_loc[0] + sp[1] // 2)
                 target = (nearest, 2)
                 log.info(f"黑塔相似度{max_val}，位置{max_loc[1]},{max_loc[0]}")
@@ -688,7 +689,7 @@ class UniverseUtils:
         except:
             pass
 
-    def nof(self,must_be_tp=0):
+    def nof(self,must_be=None):
         tm = time.time()
         ava = 0
         while not ava and time.time()-tm<1.6:
@@ -699,7 +700,9 @@ class UniverseUtils:
                 ava = 1
         log.info('交互点生效：'+str(ava))
         if ava:
-            if self.ts.sim("区域") or must_be_tp:
+            if must_be == 'event':
+                self.mini_state += 2
+            elif self.ts.sim("区域") or must_be=='tp':
                 self.init_map()
                 self.floor += 1
                 self.f_time = time.time()
@@ -840,7 +843,13 @@ class UniverseUtils:
                     else:
                         keyops.keyUp("w")
                         break
-                elif (self.goodf() or not isrun(self)):
+                elif type == 3 and self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                    self.press('f')
+                    keyops.keyUp("w")
+                    if self.nof(must_be='tp'):
+                        log.info('大图识别到传送点!')
+                        return
+                elif (type != 3 and self.goodf()) or not isrun(self):
                     keyops.keyUp("w")
                     break
                 ds = nds
@@ -855,11 +864,11 @@ class UniverseUtils:
             if type == 1:
                 if self._stop == 0:
                     pyautogui.click()
-                time.sleep(0.9)
+                time.sleep(1.1)
                 self.press("s")
                 if self._stop == 0:
                     pyautogui.click()
-                time.sleep(0.6)
+                time.sleep(0.8)
                 if len(self.target) <= 2:
                     time.sleep(0.3)
                     self.press("s")
@@ -876,7 +885,7 @@ class UniverseUtils:
                     if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
                         log.info("大图识别到传送点")
                         self.press('f')
-                        if self.nof(must_be_tp=1):
+                        if self.nof(must_be='tp'):
                             time.sleep(1.5)
                             break
                     self.get_screen()
