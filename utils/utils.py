@@ -318,12 +318,14 @@ class UniverseUtils:
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
         self.tx = x - (max_loc[0] - 0.5 * local_screen.shape[1] + 0.5 * target.shape[1]) / self.xx
         self.ty = y - (max_loc[1] - 0.5 * local_screen.shape[0] + 0.5 * target.shape[0]) / self.yy
-        if path == "./imgs/confirm.jpg" and self.debug == 2 and 0:
+        if path == "./imgs/run.jpg" and 0:
             print(max_val)
-            print(self.tx,self.ty)
-            print(x,y,max_loc,local_screen.shape)
-            self.click((self.tx,self.ty),click=0)
-            exit()
+            cv.imwrite('target.jpg',target)
+            cv.imwrite('local.jpg',local_screen)
+            #print(self.tx,self.ty)
+            #print(x,y,max_loc,local_screen.shape)
+            #self.click((self.tx,self.ty),click=0)
+            #exit()
         self.tm = max_val
         if max_val > threshold:
             if self.last_info != path:
@@ -857,7 +859,7 @@ class UniverseUtils:
                 ds = nds
                 dls.append(ds)
                 dtm.append(time.time())
-                while dtm[0] < time.time() - 1.5 + sft * 0.75:
+                while dtm[0] < time.time() - 1.5 + sft * 1:
                     dtm = dtm[1:]
                     dls = dls[1:]
             log.info(f"进入新地图或者进入战斗 {nds}")
