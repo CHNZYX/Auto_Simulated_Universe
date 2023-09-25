@@ -27,7 +27,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.81 Fixed"
+version = "v5.82 Omega"
 
 
 class SimulatedUniverse(UniverseUtils):
