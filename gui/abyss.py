@@ -51,7 +51,10 @@ def abyss_view(page: Page):
         page.ab.start_abyss()
 
     def stop(_e):
-        page.ab._stop = 1
+        try:
+            page.ab._stop = 1
+        except:
+            pass
         
 
     def order_changed1(e):

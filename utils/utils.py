@@ -16,7 +16,7 @@ import sys
 import ctypes
 from PIL import Image, ImageDraw, ImageFont
 from math import sin, cos
-import threading
+import traceback
 
 from utils.map_log import map_log
 from utils.config import config
@@ -151,7 +151,8 @@ class UniverseUtils:
                     break
                 else:
                     time.sleep(0.3)
-            except:
+            except Exception:
+                traceback.print_exc()
                 time.sleep(0.3)
                 pass
         self.order = config.order
@@ -576,7 +577,8 @@ class UniverseUtils:
             img = self.check("z", 0.3365, 0.4231, mask="mask_f", large=False)
             text = self.ts.sim_list(self.tk.interacts, img)
         is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
-        log.info('识别到交互信息：'+text)
+        if text is not None:
+            log.info('识别到交互信息：'+text)
         return text is not None and not is_killed
 
     def get_tar(self):
