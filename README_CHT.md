@@ -24,7 +24,7 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ### 用法
 
-只支持1920\*1080(窗口化或全屏幕)，文本語言選擇簡體中文。
+只支持1920\*1080(窗口化或全屏幕)，關閉hdr，文本語言選擇簡體中文。
 
 默認世界：比如說如果你當前模擬宇宙默認世界4，但是想自動化世界6，那麽請先進入一次世界6來改變默認世界
 
