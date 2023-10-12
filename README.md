@@ -28,7 +28,7 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ## 命令行用法
 
-只支持1920\*1080(窗口化或全屏幕)，文本语言选择简体中文。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
+只支持1920\*1080(窗口化或全屏幕)，关闭hdr，文本语言选择简体中文。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
 
 默认世界：比如说如果你当前模拟宇宙默认世界4，但是想自动化世界6，那么请先进入一次世界6来改变默认世界
 
