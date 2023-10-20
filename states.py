@@ -32,7 +32,7 @@ version = "v5.82 Omega"
 
 class SimulatedUniverse(UniverseUtils):
     def __init__(
-        self, find, debug, show_map, speed, unlock=False, bonus=False, update=0, gui=0
+        self, find, debug, show_map, speed, nums=10000, unlock=False, bonus=False, update=0, gui=0
     ):
         super().__init__()
         # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
@@ -94,6 +94,7 @@ class SimulatedUniverse(UniverseUtils):
         self.kl = 0
         self.gui = gui
         self.fail_count = 0
+        self.nums = nums
         ex_notif = ""
         if not debug:
             pyautogui.FAILSAFE = False
@@ -239,7 +240,11 @@ class SimulatedUniverse(UniverseUtils):
             )
             >= 34
             and self.debug == 0
-        ):
+        ) and self.nums == 10000:
+            log.info('已完成每周上限，停止运行')
+            self._stop = 1
+        if self.nums == self.my_cnt:
+            log.info('已完成指定次数，停止运行')
             self._stop = 1
         ban(self)
         self.floor = 0
@@ -919,13 +924,17 @@ class SimulatedUniverse(UniverseUtils):
             self.route()
         except KeyboardInterrupt:
             print("KeyboardInterrupt")
+            try:
+                log.info('用户终止进程')
+            except:
+                pass
             if not self._stop:
                 self.stop()
 
 
 def main():
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, speed, bonus=bonus, update=update)
+    su = SimulatedUniverse(find, debug, show_map, speed, nums=nums, bonus=bonus, update=update)
     try:
         su.start()
     except ValueError as e:
@@ -946,6 +955,7 @@ if __name__ == "__main__":
         update = 0
         speed = 0
         bonus = 0
+        nums = 10000
         for i in sys.argv[1:]:
             st = i.split("-")[-1]
             if "=" not in st:

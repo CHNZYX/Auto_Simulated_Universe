@@ -86,6 +86,9 @@ class Abyss(UniverseUtils):
         if self.check("abyss/fail", 0.5995, 0.1343):
             self.click((0.5995, 0.1343))
         elif self.check("abyss/in", 0.9130, 0.6074):
+            time.sleep(2.5)
+            self.click((0.5, 0.14))
+            time.sleep(2)
             self.press("w", 3.5)
             t = self.move_to_interac(1, 1)
             if abs(t) > 30:
@@ -142,6 +145,7 @@ class Abyss(UniverseUtils):
             else:
                 self.drag((0.5, 0.5), (0.8 - 0.6 * random.randint(0, 1), 0.5))
         else:
+            print('未知界面')
             self.click((0.5, 0.14))
             time.sleep(1)
 

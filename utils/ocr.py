@@ -98,7 +98,7 @@ class My_TS:
             self.input(roi)
             res+='|'+self.text
             if len(contours)>1:
-                if (self.sim('回归不等式') and bless_skip) or self.sim('大乐透'):
+                if (self.sim('回归不等式') and bless_skip) or self.sim_list(['大乐透','普通八卦','愚者面具']):
                     ff=1
                     continue
             #cv.imwrite('tmp'+str(c)+'.jpg',roi)
