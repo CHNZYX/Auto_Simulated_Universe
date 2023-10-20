@@ -858,6 +858,11 @@ class SimulatedUniverse(UniverseUtils):
 
     def stop(self, *_, **__):
         log.info("尝试停止运行")
+        try:
+            if self.debug:
+                traceback.print_stack()
+        except:
+            pass
         self._stop = True
         self._stop = 1
         self._stop = True

@@ -228,6 +228,7 @@ class UniverseUtils:
     def click(self, points, click=1):
         if self.debug == 2:
             print(points)
+        self.print_stack()
         x, y = points
         # 如果是浮点数表示，则计算实际坐标
         if type(x) != type(0):
@@ -1114,3 +1115,12 @@ class UniverseUtils:
                 if not (sred == loc_scr[k, t]).all():
                     return 0
         return 1
+
+    def print_stack(self, num=1):
+        if self.debug:
+            stk = traceback.extract_stack()
+            for i in range(num):
+                try:
+                    print(stk[-2].name,stk[-3-i].filename.split('\\')[-1].split('.')[0],stk[-3-i].name,stk[-3-i].lineno)
+                except:
+                    pass
