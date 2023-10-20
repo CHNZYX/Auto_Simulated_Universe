@@ -22,7 +22,7 @@ Please note that according to MiHoYo's [Fair Play Declaration for Honkai Star Ra
 
 ### Usage
 
-Only supports 1920x1080 resolution (windowed or fullscreen), and text language selection is simplified Chinese.
+Only supports 1920x1080 resolution (windowed or fullscreen), turn off hdr, and text language selection is simplified Chinese.
 
 Default World: For instance, if your current default world in the simulated universe is World 4 but you want to automate World 6, please enter World 6 once to change the default world.
 
