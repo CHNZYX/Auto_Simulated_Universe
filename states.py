@@ -91,6 +91,7 @@ class SimulatedUniverse(UniverseUtils):
         self.re_align = 0
         self.unlock = unlock
         self.check_bonus = bonus
+        self.bonus = bonus
         self.kl = 0
         self.gui = gui
         self.fail_count = 0
@@ -239,7 +240,7 @@ class SimulatedUniverse(UniverseUtils):
                 cnt=str(self.count),
             )
             >= 34
-            and self.debug == 0
+            and self.debug == 0 and self.bonus == 0
         ) and self.nums == 10000:
             log.info('已完成每周上限，停止运行')
             self._stop = 1
