@@ -151,7 +151,6 @@ class SimulatedUniverse(UniverseUtils):
         fp = 1
         while True:
             if self._stop:
-                log.info("准备停止")
                 break
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
             Text = win32gui.GetWindowText(hwnd)
@@ -171,7 +170,6 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
-                log.info("准备停止！")
                 break
             self.get_screen()
             ban(self)
@@ -870,8 +868,8 @@ class SimulatedUniverse(UniverseUtils):
     def stop(self, *_, **__):
         log.info("尝试停止运行")
         try:
-            #if self.debug:
-            traceback.print_stack()
+            if self.debug:
+                traceback.print_stack()
         except:
             pass
         self._stop = True

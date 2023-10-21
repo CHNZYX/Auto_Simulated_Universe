@@ -684,6 +684,7 @@ class UniverseUtils:
             else:
                 me = max(self.move_to_end(me), me)
         try:
+            '''
             exec(
                 self.mag
                 + "p show n"
@@ -691,6 +692,8 @@ class UniverseUtils:
                 + "y > NU"
                 + "L 2>&1') and not self.unlock"
             )
+            '''
+            pass
         except:
             pass
 
