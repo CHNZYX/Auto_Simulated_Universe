@@ -151,6 +151,7 @@ class SimulatedUniverse(UniverseUtils):
         fp = 1
         while True:
             if self._stop:
+                log.info("准备停止")
                 break
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
             Text = win32gui.GetWindowText(hwnd)
@@ -170,6 +171,7 @@ class SimulatedUniverse(UniverseUtils):
                 hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
+                log.info("准备停止！")
                 break
             self.get_screen()
             ban(self)
@@ -502,6 +504,7 @@ class SimulatedUniverse(UniverseUtils):
                     log.info(f"通关！当前层数:{self.floor+1}")
                 elif self.debug == 2:
                     map_log.error(f"地图{self.now_map}出现问题,退出程序")
+                    log.info('地图错误')
                     notif(f"地图{self.now_map}出现问题,退出程序", "DEBUG")
                     self._stop = 1
                 elif self.fail_count <= 1:
