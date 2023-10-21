@@ -96,6 +96,7 @@ class SimulatedUniverse(UniverseUtils):
         self.gui = gui
         self.fail_count = 0
         self.nums = nums
+        self.end = 0
         ex_notif = ""
         if not debug:
             pyautogui.FAILSAFE = False
@@ -242,11 +243,11 @@ class SimulatedUniverse(UniverseUtils):
             >= 34
             and self.debug == 0 and self.bonus == 0
         ) and self.nums == 10000:
-            log.info('已完成每周上限，停止运行')
-            self._stop = 1
+            log.info('已完成每周上限，准备停止运行')
+            self.end = 1
         if self.nums == self.my_cnt:
-            log.info('已完成指定次数，停止运行')
-            self._stop = 1
+            log.info('已完成指定次数，准备停止运行')
+            self.end = 1
         ban(self)
         self.floor = 0
 
@@ -534,6 +535,12 @@ class SimulatedUniverse(UniverseUtils):
                 self.get_direc()
             return 2
         elif self.check("init", 0.9073,0.8435):
+            if self.end:
+                time.sleep(1)
+                self.press('esc')
+                self._stop = 1
+                log.info('已退出模拟宇宙，自动化结束')
+                return 1
             self.click((0.3448, 0.4926))
             self.init_map()
         elif self.check("begin", 0.3328, 0.8148):
