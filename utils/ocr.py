@@ -87,7 +87,6 @@ class My_TS:
         rcx,rcy,find=-1,-1,0
         res=''
         text_res=''
-        ff=0
         for c,contour in enumerate(contours):
             x, y, w, h = cv.boundingRect(contour)
             if h==binary_image.shape[0] or w<55:
@@ -95,23 +94,18 @@ class My_TS:
             roi = enhance_image[y:y+h, x:x+w]
             cx = x + w // 2
             cy = y + h // 2
+            if c == 0 and len(self.text.strip()) > 1:
+                rcx,rcy,find = cx,cy,1
             self.input(roi)
             res+='|'+self.text
-            if len(contours)>1:
-                if (self.sim('回归不等式') and bless_skip) or self.sim_list(['大乐透','普通八卦','愚者面具']):
-                    ff=1
-                    continue
-            #cv.imwrite('tmp'+str(c)+'.jpg',roi)
+            if (self.sim('回归不等式') and bless_skip) or self.sim_list(['大乐透','普通八卦','愚者面具','机械齿轮']):
+                continue
             for i,text in enumerate(key_list):
-                if (self.sim(text) and prior>i) or rcx==-1:
-                    rcx,rcy,find=cx,cy,1+(self.sim(text) and prior>i)
+                if self.sim(text) and prior>i:
+                    rcx,rcy,find=cx,cy,2
                     text_res=text
                     if find==2:
                         prior=i
-        if ff and find==1:
-            find=3
-        if find<2:
-            text_res=''
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
     

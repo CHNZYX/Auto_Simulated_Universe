@@ -27,7 +27,7 @@ except:
     from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.82 Omega"
+version = "v5.9 Max"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -301,7 +301,7 @@ class SimulatedUniverse(UniverseUtils):
                 if res_up[1] == 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
                     chose = 1
-                elif res_down[1] == 2 and (res_up[1] != 3 or self.fate != "毁灭"):
+                elif res_down[1] == 2:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
                     chose = 1
                 if not chose:
