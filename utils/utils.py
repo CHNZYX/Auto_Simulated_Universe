@@ -1127,3 +1127,13 @@ class UniverseUtils:
                     print(stk[-2].name,stk[-3-i].filename.split('\\')[-1].split('.')[0],stk[-3-i].name,stk[-3-i].lineno)
                 except:
                     pass
+
+    def check_auto(self):
+        auto = self.check("z", 0.0878,0.9630, large=False, mask="mask_auto")
+        cv.imwrite('auto.jpg',auto)
+        cvt = cv.cvtColor(auto, cv.COLOR_BGR2HSV)
+        lower = np.array([22, 58, 100])
+        upper = np.array([26, 100, 255])
+        mask = cv.inRange(cvt, lower, upper)
+        result = np.sum(mask)//255
+        return result > 180 and result < 280

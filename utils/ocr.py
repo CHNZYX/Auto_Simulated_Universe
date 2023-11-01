@@ -35,7 +35,7 @@ class My_TS:
         if img is not None:
             self.input(img)
         self.text = self.text.strip()
-        if text.strip() in ['胜军','脊刺']:
+        if text.strip() in ['胜军','脊刺','佩拉']:
             return text.strip() in self.text
         length = len(text)
         res = 0
@@ -120,6 +120,7 @@ class My_TS:
                 if self.sim(txt):
                     print("识别到文本：",txt,"匹配文本：",self.text)
                     return res.box
+        return None
 
 class text_keys:
     def __init__(self,fate=4):
