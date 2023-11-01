@@ -27,6 +27,7 @@ class Abyss(UniverseUtils):
             self.team = [config[:4], config[4:]]
 
     def start_abyss(self):
+        self.fail_drag = 0
         while self._stop == 0:
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
             Text = win32gui.GetWindowText(hwnd)
@@ -45,9 +46,13 @@ class Abyss(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             self.route()
             time.sleep(0.2)
+            if self.fail_drag > 4:
+                self.press('esc')
+                break
 
     def wait(self,peila=False):
         tm = time.time()
+        ee = 0
         while self._stop == 0:
             self.get_screen()
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
@@ -58,8 +63,12 @@ class Abyss(UniverseUtils):
                 if peila:
                     tm = time.time()
                     if self.check("peila", 0.6953,0.1880, mask="battle_mask"):
-                        self.press(' ')
-                        time.sleep(0.2)
+                        if ee == 2:
+                            ee = 0
+                        else:
+                            self.press(' ')
+                            time.sleep(0.2)
+                            ee += 1
                         self.press('v')
                     else:
                         self.press('v')
@@ -97,7 +106,7 @@ class Abyss(UniverseUtils):
         # self.click_target('imgs/abyss/fail.jpg',0.9,True)
         if self.check("abyss/fail", 0.5995, 0.1343):
             self.click((0.5995, 0.1343))
-        elif self.check("abyss/team", 0.6500, 0.4019):
+        elif self.ts.find_text(img, ['角色编队']) is not None:
             if self.check("abyss/begin", 0.1062, 0.0815):
                 self.click((0.1062, 0.0806))
                 return
@@ -158,6 +167,7 @@ class Abyss(UniverseUtils):
                 self.click((1 - res[0] / self.xx + 0.06, 1 - res[1] / self.yy + 0.02))
             else:
                 self.drag((0.5, 0.5), (0.8 - 0.6 * random.randint(0, 1), 0.5))
+                self.fail_drag += 1
         else:
             print('未知界面')
             self.click((0.5, 0.14))
