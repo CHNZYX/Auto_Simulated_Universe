@@ -76,7 +76,9 @@ class Abyss(UniverseUtils):
                     self.press('v')
             if peila and self.check_auto():
                 self.press('v')
-            if time.time() - tm > 14 + peila * 4 or self.check("abyss/in", 0.9130, 0.6074):
+                tm = time.time()
+            if time.time() - tm > 14 or self.check("abyss/in", 0.9130, 0.6074):
+                self.click((0.5, 0.14))
                 break
             time.sleep(0.1)
 
