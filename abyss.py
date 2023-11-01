@@ -63,7 +63,7 @@ class Abyss(UniverseUtils):
                 if peila:
                     tm = time.time()
                     if self.check("peila", 0.6953,0.1880, mask="battle_mask"):
-                        if ee == 2:
+                        if ee == 3:
                             ee = 0
                         else:
                             self.press(' ')
