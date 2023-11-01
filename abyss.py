@@ -116,7 +116,7 @@ class Abyss(UniverseUtils):
         elif self.ts.find_text(img, ['取得胜利时']) is not None:
             time.sleep(1.5)
             img = self.get_screen()
-            self.ts.find_text(img, ['点击空白处']) is not None:
+            if self.ts.find_text(img, ['点击空白处']) is not None:
                 self.click((0.5, 0.14))
             time.sleep(2)
             self.press("w", 3.5)
