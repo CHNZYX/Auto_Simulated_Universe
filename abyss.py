@@ -54,15 +54,16 @@ class Abyss(UniverseUtils):
             Text = win32gui.GetWindowText(hwnd)
             if self.check("auto_2", 0.0583, 0.0769) or Text != "崩坏：星穹铁道":
                 tm = time.time()
-            if peila and self.check("c", 0.9464, 0.1287, threshold=0.985):
-                print(self.tm)
-                tm = time.time()
-                if self.check("peila", 0.6953,0.1880, mask="battle_mask"):
-                    self.press(' ')
-                    time.sleep(0.2)
-                    self.press('v')
+            if self.check("c", 0.9464, 0.1287, threshold=0.985):
+                if peila:
+                    tm = time.time()
+                    if self.check("peila", 0.6953,0.1880, mask="battle_mask"):
+                        self.press(' ')
+                        time.sleep(0.2)
+                        self.press('v')
+                    else:
+                        self.press('v')
                 else:
-                    print(self.tm)
                     self.press('v')
             if peila and self.check_auto():
                 self.press('v')
