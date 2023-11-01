@@ -28,6 +28,7 @@ class Abyss(UniverseUtils):
 
     def start_abyss(self):
         self.fail_drag = 0
+        self.end_battle_time = 0
         while self._stop == 0:
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
             Text = win32gui.GetWindowText(hwnd)
@@ -78,7 +79,9 @@ class Abyss(UniverseUtils):
                 self.press('v')
                 tm = time.time()
             if time.time() - tm > 14 or self.check("abyss/in", 0.9130, 0.6074):
-                self.click((0.5, 0.14))
+                if self.click_text(['返回忘却之庭']):
+                    time.sleep(1.5)
+                self.end_battle_time = time.time()
                 break
             time.sleep(0.1)
 
@@ -125,12 +128,12 @@ class Abyss(UniverseUtils):
                         )
                         time.sleep(0.2)
             self.click((0.1062, 0.0806))
-        elif self.ts.find_text(img, ['取得胜利时']) is not None:
-            time.sleep(1.5)
-            img = self.get_screen()
-            if self.ts.find_text(img, ['点击空白处']) is not None:
+            time.sleep(1)
+        elif self.ts.find_text(img[:600,:600], ['取得胜利时']) is not None:
+            time.sleep(2)
+            if time.time() - self.end_battle_time > 10:
                 self.click((0.5, 0.14))
-                time.sleep(2)
+            time.sleep(2)
             self.press("w", 3.5)
             t = self.move_to_interac(1, 1)
             if abs(t) > 30:
