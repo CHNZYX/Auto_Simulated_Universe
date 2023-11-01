@@ -1130,7 +1130,6 @@ class UniverseUtils:
 
     def check_auto(self):
         auto = self.check("z", 0.0878,0.9630, large=False, mask="mask_auto")
-        cv.imwrite('auto.jpg',auto)
         cvt = cv.cvtColor(auto, cv.COLOR_BGR2HSV)
         lower = np.array([22, 58, 100])
         upper = np.array([26, 100, 255])
