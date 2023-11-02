@@ -327,8 +327,10 @@ class SimulatedUniverse(UniverseUtils):
                 )
                 if res_up[1] >= 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
-                else:
+                elif res_down[1] >= 2:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                else:
+                    self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
             self.click((0.1203, 0.1093))
             time.sleep(1.4)
             self.confirm_time = time.time()

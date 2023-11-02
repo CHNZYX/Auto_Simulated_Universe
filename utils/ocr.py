@@ -100,6 +100,8 @@ class My_TS:
             res+='|'+self.text
             if (self.sim('回归不等式') and bless_skip) or self.sim_list(['大乐透','普通八卦','愚者面具','机械齿轮']):
                 continue
+            if find==0:
+                rcx,rcy=cx,cy
             for i,text in enumerate(key_list):
                 if self.sim(text) and prior>i:
                     rcx,rcy,find=cx,cy,2
