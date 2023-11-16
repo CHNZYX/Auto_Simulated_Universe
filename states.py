@@ -21,13 +21,9 @@ import requests
 import pytz
 import pyuac
 import utils.keyops as keyops
-try:
-    from mylib import get_direc_only_minimap, ban, isrun
-except:
-    from utils.mylib import get_direc_only_minimap, ban, isrun
 
 # 版本号
-version = "v5.9 Max"
+version = "v6.0"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -172,7 +168,6 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            ban(self)
             #self.click_target('imgs/skill_pt.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
@@ -248,7 +243,6 @@ class SimulatedUniverse(UniverseUtils):
         if self.nums == self.my_cnt:
             log.info('已完成指定次数，准备停止运行')
             self.end = 1
-        ban(self)
         self.floor = 0
 
     def normal(self):
@@ -297,7 +291,6 @@ class SimulatedUniverse(UniverseUtils):
                 res_up = self.ts.split_and_find(self.tk.prior_bless, img_up, bless_skip=self.tk.skip)
                 img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
                 res_down = self.ts.split_and_find([self.fate], img_down, mode="bless")
-                ban(self)
                 if res_up[1] == 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
                     chose = 1
@@ -380,7 +373,7 @@ class SimulatedUniverse(UniverseUtils):
                 if is_killed == 0:
                     return 1
         # 跑图状态
-        if isrun(self):
+        if self.isrun():
             if self.floor_init == 0:
                 self.get_level()
                 self.floor_init = 1
@@ -483,7 +476,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             
-            # self.kl |= self.floor >= 6 and self.debug == 2
+            self.kl |= self.floor >= 1 and self.debug == 2
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
@@ -510,6 +503,7 @@ class SimulatedUniverse(UniverseUtils):
                 elif self.fail_count <= 1:
                     notif("暂离", f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离")
+                    self.click((0.2708, 0.2324))
                     self.re_align += 1
                     self.fail_count += 1
                 else:
@@ -527,13 +521,14 @@ class SimulatedUniverse(UniverseUtils):
                         map_log.error(
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离 DEBUG"
                         )
+                        self.click((0.2708, 0.2324))
                 self.lst_changed = time.time()
                 return 1
             if self.multi == 1.01:
                 align_angle(0, 1, [1], self)
             # 寻路
             if self.mini_state:
-                get_direc_only_minimap(self)
+                self.get_direc_only_minimap()
             else:
                 self.get_direc()
             return 2
@@ -577,7 +572,8 @@ class SimulatedUniverse(UniverseUtils):
             res = self.ts.split_and_find([self.fate], img)
             self.click(self.calc_point((0.4969, 0.3750), res[0]))
         elif self.check("fate_3", 0.9422, 0.9472):
-            self.click((0.5047, 0.4917))
+            if not self.click_text(['2星祝福','奇物']):
+                self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
         # 事件界面
         elif self.check("event", 0.9479, 0.9565):
@@ -671,18 +667,7 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.1203, 0.1093))
             self.confirm_time = time.time()
         elif self.check("setting", 0.9734, 0.3009, threshold=0.98):
-            self.click((0.9734, 0.3009))
-            time.sleep(1.75)
-        elif self.check("setting2", 0.9490,0.9389):
-            self.click((0.3505,0.9398))
-            time.sleep(1.75)
-        elif self.check("setting3", 0.9490,0.9389):
-            if self.click_text(["战斗功能"]):
-                for _ in range(5):
-                    pyautogui.scroll(-1)
-                    time.sleep(0.1)
-                time.sleep(0.3)
-            self.click_text(["脱离卡死"])
+            self.click((0.2708, 0.2324))
             time.sleep(1)
         elif self.check("enhance", 0.9208, 0.9380):
             self.quit = time.time()
@@ -704,7 +689,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.press("esc")
             tm = time.time()
-            while time.time()-tm<2 and not self.check("f", 0.4443, 0.4417, mask="mask_f1") and not isrun(self):
+            while time.time()-tm<2 and not self.check("f", 0.4443, 0.4417, mask="mask_f1") and not self.isrun():
                 self.get_screen()
                 time.sleep(0.15)
             # time.sleep(0.35)

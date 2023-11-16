@@ -84,7 +84,7 @@ class My_TS:
                 binary_image = cv.erode(binary_image,kernel,iterations=2)
         contours, _ = cv.findContours(binary_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         prior = len(key_list)
-        rcx,rcy,find=-1,-1,0
+        rcx,rcy,find,black=-1,-1,0,0
         res=''
         text_res=''
         for c,contour in enumerate(contours):
@@ -94,14 +94,15 @@ class My_TS:
             roi = enhance_image[y:y+h, x:x+w]
             cx = x + w // 2
             cy = y + h // 2
+            self.input(roi)
             if c == 0 and len(self.text.strip()) > 1:
                 rcx,rcy,find = cx,cy,1
-            self.input(roi)
             res+='|'+self.text
-            if (self.sim('回归不等式') and bless_skip) or self.sim_list(['大乐透','普通八卦','愚者面具','机械齿轮']):
+            if (self.sim('回归不等式') and bless_skip) or self.sim_list(['银河大乐透','普通八卦','愚者面具','机械齿轮']) is not None:
+                black = 1
                 continue
-            if find==0:
-                rcx,rcy=cx,cy
+            if find==1:
+                rcx,rcy,text_res=cx,cy,self.text+'?'
             for i,text in enumerate(key_list):
                 if self.sim(text) and prior>i:
                     rcx,rcy,find=cx,cy,2
@@ -109,7 +110,7 @@ class My_TS:
                     if find==2:
                         prior=i
         print('识别结果：',res+'|',' 识别到：',text_res)
-        return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find
+        return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find+black
     
     def find_text(self, img, text, env=None):
         self.nothing = 1
@@ -132,7 +133,7 @@ class text_keys:
         self.prior_bless = ['火堆外的夜']
         self.strange = []
         self.blesses = [[] for _ in range(8)]
-        self.strange = ['福灵胶','博士之袍','降维骰子','信仰债券','时空棱镜','朋克洛德','香涎干酪']
+        self.strange = ['福灵胶','博士之袍','陨石球','降维骰子','信仰债券','时空棱镜','朋克洛德','香涎干酪','龋齿星系']
         self.blesses[0] = ['零维强化','均晶转变','共晶反应','宏观偏析','超静定场','谐振传递','四棱锥体','聚塑','哨戒','亚共晶体','切变结构','弥合','迸裂晶格']
         self.blesses[1] = ['体验的富翁','全面记忆','第二次初恋','浮黎','缄默','纯真','难言的羞耻','怅然若失','麻木不仁','不寒而栗','特立独行','头晕目眩','多愁善感','沦浃肌髓']
         self.blesses[2] = ['苦难与阳光','怀疑的四重根','局外人','为何一切尚未消失','感官追奉者的葬礼','被装在套子里的人','旷野的呼告','存在的黄昏','火堆外的夜','知觉迷墙','虚妄贡品','日出之前','无根据颂歌','自欺咖啡馆','他人即地狱','开端与终结']
