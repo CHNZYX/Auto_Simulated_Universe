@@ -101,7 +101,7 @@ class My_TS:
                 rcx,rcy,find,text_res = cx,cy,1,self.text+';'
             res+='|'+self.text
             if (self.sim('回归不等式') and bless_skip) or self.sim_list(['银河大乐透','普通八卦','愚者面具','机械齿轮']) is not None:
-                black = 2
+                black = 1
                 res+='x'
                 continue
             if find == 1:
@@ -114,6 +114,8 @@ class My_TS:
                     text_res=text+'!'
                     prior=i
         print('识别结果：',res+'|',' 识别到：',text_res)
+        if black and find==1:
+            find=3
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find+black
     
     def find_text(self, img, text, env=None):

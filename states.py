@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.0"
+version = "v6.01 X"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -572,7 +572,7 @@ class SimulatedUniverse(UniverseUtils):
             res = self.ts.split_and_find([self.fate], img)
             self.click(self.calc_point((0.4969, 0.3750), res[0]))
         elif self.check("fate_3", 0.9422, 0.9472):
-            if not self.click_text(['奇物','2星祝福','奇物']):
+            if not self.click_text(['2星祝福','奇物']):
                 self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
             time.sleep(1)
