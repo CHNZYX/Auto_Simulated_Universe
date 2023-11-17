@@ -86,7 +86,7 @@ class My_TS:
         prior = len(key_list)
         rcx,rcy,find,black=-1,-1,0,0
         res=''
-        text_res=''
+        text_res='.'
         for c,contour in enumerate(contours):
             x, y, w, h = cv.boundingRect(contour)
             if h==binary_image.shape[0] or w<55:
@@ -95,20 +95,24 @@ class My_TS:
             cx = x + w // 2
             cy = y + h // 2
             self.input(roi)
-            if c == 0 and len(self.text.strip()) > 1:
-                rcx,rcy,find = cx,cy,1
+            if len(self.text.strip())<=1:
+                continue
+            if find == 0:
+                rcx,rcy,find,text_res = cx,cy,1,self.text+';'
             res+='|'+self.text
             if (self.sim('回归不等式') and bless_skip) or self.sim_list(['银河大乐透','普通八卦','愚者面具','机械齿轮']) is not None:
-                black = 1
+                black = 2
+                res+='x'
                 continue
-            if find==1:
+            if find == 1:
                 rcx,rcy,text_res=cx,cy,self.text+'?'
             for i,text in enumerate(key_list):
-                if self.sim(text) and prior>i:
+                if i==prior:
+                    break
+                if self.sim(text):
                     rcx,rcy,find=cx,cy,2
-                    text_res=text
-                    if find==2:
-                        prior=i
+                    text_res=text+'!'
+                    prior=i
         print('识别结果：',res+'|',' 识别到：',text_res)
         return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find+black
     

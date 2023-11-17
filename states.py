@@ -318,7 +318,7 @@ class SimulatedUniverse(UniverseUtils):
                 res_down = self.ts.split_and_find(
                     self.tk.secondary, img_down, mode="bless"
                 )
-                if res_up[1] >= 2:
+                if res_up[1] == 2:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
                 elif res_down[1] >= 2:
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
@@ -476,7 +476,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             
-            self.kl |= self.floor >= 1 and self.debug == 2
+            self.kl |= self.floor >= 4 and self.debug == 2
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
@@ -572,9 +572,10 @@ class SimulatedUniverse(UniverseUtils):
             res = self.ts.split_and_find([self.fate], img)
             self.click(self.calc_point((0.4969, 0.3750), res[0]))
         elif self.check("fate_3", 0.9422, 0.9472):
-            if not self.click_text(['2星祝福','奇物']):
+            if not self.click_text(['奇物','2星祝福','奇物']):
                 self.click((0.5047, 0.4917))
             self.click((0.5062, 0.1065))
+            time.sleep(1)
         # 事件界面
         elif self.check("event", 0.9479, 0.9565):
             # 事件界面：选择
@@ -629,6 +630,8 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
+            time.sleep(0.4)
+            self.get_screen()
             img = self.check("z", 0.5000, 0.7333, mask="mask_strange", large=False)
             res = self.ts.split_and_find(self.tk.strange, img, mode="strange")
             self.click(self.calc_point((0.5000, 0.7333), res[0]))
