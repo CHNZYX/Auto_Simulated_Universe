@@ -154,7 +154,7 @@ def config_view(page: Page):
                                         ft.Switch(
                                             label="慢速模式",
                                             value=get_info_mode(config.slow_mode),
-                                            on_change=speed_checkbox_changed,
+                                            on_change=slow_checkbox_changed,
                                             label_position='left',
                                             scale=1.2
                                         ),

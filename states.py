@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.03 Unpro Min"
+version = "v6.03 Unpro Mini"
 
 
 class SimulatedUniverse(UniverseUtils):
