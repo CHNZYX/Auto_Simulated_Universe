@@ -68,6 +68,7 @@ config:
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0
+  slow_mode: 0
   force_update: 0
   timezone: Default
 prior:

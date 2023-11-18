@@ -26,6 +26,9 @@ def config_view(page: Page):
     def speed_checkbox_changed(_e):
         config.speed_mode = not config.speed_mode
 
+    def slow_checkbox_changed(_e):
+        config.slow_mode = not config.slow_mode
+
     def force_update_checkbox_changed(_e):
         config.force_update = (config.force_update + 1) % 2
 
@@ -144,6 +147,13 @@ def config_view(page: Page):
                                         ft.Switch(
                                             label="速通模式",
                                             value=get_info_mode(config.speed_mode),
+                                            on_change=speed_checkbox_changed,
+                                            label_position='left',
+                                            scale=1.2
+                                        ),
+                                        ft.Switch(
+                                            label="慢速模式",
+                                            value=get_info_mode(config.slow_mode),
                                             on_change=speed_checkbox_changed,
                                             label_position='left',
                                             scale=1.2

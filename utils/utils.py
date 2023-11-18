@@ -88,6 +88,7 @@ class UniverseUtils:
         self.last_info = ''
         self.mini_target = 0
         self.f_time = 0
+        self.slow = 0
         self.init_ang = 0
         self.img_map = dict()
         # 用户选择的命途
@@ -168,6 +169,8 @@ class UniverseUtils:
     def press(self, c, t=0):
         if c not in "3r":
             log.debug(f"按下按钮 {c}，等待 {t} 秒后释放")
+        if self.slow and c=='shift':
+            return
         if self._stop == 0:
             keyops.keyDown(c)
         else:
@@ -818,12 +821,15 @@ class UniverseUtils:
                         keyops.keyUp("w")
                         self.press("s", 0.35)
                         self.press(ts[t], 0.2*random.randint(1,3))
-                        if self._stop == 0:
-                            keyops.keyDown("w")
+                        self.press("w", 0.3)
+                        self.stop_move = 0
+                        threading.Thread(target=self.keep_move).start()
                         bw_map = self.get_bw_map()
                         self.get_loc(bw_map, rg=28, fbw=1)
                         local_screen = self.get_local(0.9333, 0.8657, shape)
                         self.ang = 360 - self.get_now_direc(local_screen) - 90
+                        self.stop_move = 1
+                        time.sleep(0.12)
                         t -= 1
                         dls = [100000]
                         dtm = [time.time()]
@@ -909,6 +915,12 @@ class UniverseUtils:
                     self.lst_changed = time.time()
                 except:
                     pass
+
+    def keep_move(self):
+        op = 'wasd'
+        while not self.stop_move:
+            self.press(op[random.randint(0,3)], 0.1)
+        keyops.keyDown("w")
 
     # 视角转动x度
     def mouse_move(self, x, fine=1):
@@ -1174,7 +1186,7 @@ class UniverseUtils:
             self.mini_state+=2
             return
         if self.mini_state==3 and self.floor in [3,7,12] and self.check_bonus:
-            self.press('d',0.4)
+            self.press('d',0.45)
             keyops.keyDown('w')
             nt = time.time()
             while time.time()-nt<1.3:
@@ -1266,7 +1278,7 @@ class UniverseUtils:
                     break
                 if self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                     self.stop_move=1
-                    time.sleep(1.7)
+                    time.sleep(1.7+self.slow*1.1)
                     if self.mini_state==1 and self.floor==12:
                         keyops.keyUp("w")
                         for i in range(4):
