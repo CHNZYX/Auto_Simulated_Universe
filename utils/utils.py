@@ -887,7 +887,7 @@ class UniverseUtils:
                     self.press("w", 1.6)
                     pyautogui.click()
             if type == 3:
-                for i in range(6):
+                for i in range(9):
                     self.get_screen()
                     if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
                         log.info("大图识别到传送点")
@@ -899,7 +899,7 @@ class UniverseUtils:
                     if self.isrun():
                         if i in [0,4]:
                             self.move_to_end()
-                        self.press('w', 0.45)
+                        self.press('w', 0.5)
                         time.sleep(0.2)
             # 离目标点挺近了，准备找下一个目标点
             elif nds <= 20:
@@ -1286,8 +1286,9 @@ class UniverseUtils:
                         if iters>10:
                             break
                         pyautogui.click()
-                        self.press('d',0.9)
-                        self.press('a',0.45)
+                        time.sleep(0.75)
+                        self.press('d',0.65)
+                        self.press('a',0.3)
                         self.get_screen()
                     self.mini_state+=2
                     break
