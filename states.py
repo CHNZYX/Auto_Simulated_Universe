@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.01 X"
+version = "v6.02"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -54,7 +54,8 @@ class SimulatedUniverse(UniverseUtils):
                     ).text.strip()
                     log.info("版本下限：v" + lowest)
                 except:
-                    log.info("网络异常，强制退出")
+                    log.info("网络异常")#，强制退出")
+                    lowest = '5.31'
             ves = version[1:].split(" ")[0]
             try:
                 if float(lowest) > float(ves):
@@ -476,7 +477,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             
-            self.kl |= self.floor >= 4 and self.debug == 2
+            # self.kl |= self.floor >= 4 and self.debug == 2
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
