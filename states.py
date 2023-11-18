@@ -633,7 +633,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.9479, 0.9565))
         # 选取奇物
         elif self.check("strange", 0.9417, 0.9481):
-            time.sleep(0.4)
+            time.sleep(0.6)
             self.get_screen()
             img = self.check("z", 0.5000, 0.7333, mask="mask_strange", large=False)
             res = self.ts.split_and_find(self.tk.strange, img, mode="strange")

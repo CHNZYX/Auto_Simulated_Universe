@@ -1283,12 +1283,15 @@ class UniverseUtils:
                     iters = 0
                     while self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95) and not self._stop:
                         iters+=1
-                        if iters>10:
+                        if iters>4:
                             break
                         pyautogui.click()
-                        time.sleep(0.75)
-                        self.press('d',0.65)
-                        self.press('a',0.3)
+                        if iters == 2:
+                            time.sleep(0.6)
+                            self.press('d',0.85)
+                            self.press('a',0.3)
+                        else:
+                            time.sleep(0.9)
                         self.get_screen()
                     self.mini_state+=2
                     break
