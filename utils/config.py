@@ -62,9 +62,9 @@ class Config:
                     self.show_map_mode = config['show_map_mode']
                     self.debug_mode = config['debug_mode']
                     self.speed_mode = config['speed_mode']
-                    self.slow_mode = config['slow_mode']
                     self.force_update = config['force_update']
                     self.timezone = config['timezone']
+                    self.slow_mode = config['slow_mode']
                 except:
                     pass
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
