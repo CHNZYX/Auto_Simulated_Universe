@@ -34,9 +34,11 @@ def main(cnt=10, safe=0, ang=[1,1,3], su=None):
     init_ang = get_angle(su, safe)
     lst_ang = init_ang
     for i in ang:
+        if lst_ang != init_ang and i==1:
+            continue
         ang_list = []
         for j in range(i):
-            su.mouse_move(100, fine=3 // i)
+            su.mouse_move(60, fine=3 // i)
             time.sleep(0.2)
             now_ang = get_angle(su, safe)
             sub = lst_ang - now_ang
@@ -50,8 +52,8 @@ def main(cnt=10, safe=0, ang=[1,1,3], su=None):
         ax = 0
         ay = 0
         for j in ang_list:
-            if abs(j - np.median(ang_list)) <= 5:
-                ax += 100
+            if abs(j - np.median(ang_list)) <= 3:
+                ax += 60
                 ay += j
         su.multi *= ax / ay
     su.multi += 1e-9

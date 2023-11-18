@@ -477,7 +477,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.lst_tm = time.time()
             
-            # self.kl |= self.floor >= 4 and self.debug == 2
+            self.kl |= self.floor >= 4 and self.debug == 2
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
@@ -505,6 +505,7 @@ class SimulatedUniverse(UniverseUtils):
                     notif("暂离", f"地图{self.now_map}，当前层数:{self.floor+1}")
                     map_log.error(f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离")
                     self.click((0.2708, 0.2324))
+                    self.re_enter()
                     self.re_align += 1
                     self.fail_count += 1
                 else:
@@ -523,6 +524,7 @@ class SimulatedUniverse(UniverseUtils):
                             f"地图{self.now_map}未发现目标,相似度{self.now_map_sim}，尝试暂离 DEBUG"
                         )
                         self.click((0.2708, 0.2324))
+                        self.re_enter()
                 self.lst_changed = time.time()
                 return 1
             if self.multi == 1.01:
@@ -672,7 +674,7 @@ class SimulatedUniverse(UniverseUtils):
             self.confirm_time = time.time()
         elif self.check("setting", 0.9734, 0.3009, threshold=0.98):
             self.click((0.2708, 0.2324))
-            time.sleep(1)
+            self.re_enter()
         elif self.check("enhance", 0.9208, 0.9380):
             self.quit = time.time()
             time.sleep(1.5)
@@ -858,6 +860,17 @@ class SimulatedUniverse(UniverseUtils):
     def restore_map(self):
         self.big_map,self.big_map_c,self.lst_tm,self.tries,self.his_loc,self.offset,self.now_loc,self.mini_state,self.ang_off,self.ang_neg,self.first_mini=self.bbig_map,self.bbig_map_c,self.blst_tm,self.btries,self.bhis_loc,self.boffset,self.bnow_loc,self.bmini_state,self.bang_off,self.bang_neg,self.bfirst_mini
 
+    def re_enter(self):
+        tm = time.time()
+        while time.time() - tm < 10:
+            self.get_screen()
+            if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                self.press('f')
+                time.sleep(0.5)
+                self.press('f')
+                time.sleep(0.5)
+                self.press('f')
+                break
 
     def stop(self, *_, **__):
         log.info("尝试停止运行")
