@@ -133,7 +133,11 @@ class UniverseUtils:
                 win32gui.ReleaseDC(hwnd, dc)
                 scale_x = dpi_x / 96
                 scale_y = dpi_y / 96
-                self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
+                try:
+                    self.scale = ctypes.windll.user32.GetDpiForWindow(hwnd) / 96.0
+                except:
+                    log.info('DPI获取失败')
+                    self.scale = 1.0
                 log.info(
                     "DPI: " + str(self.scale) + " A:" + str(int(self.multi * 100) / 100)
                 )
@@ -923,11 +927,12 @@ class UniverseUtils:
     def keep_move(self):
         op = 'ws'
         i = 0
-        while self.move:
+        while self.move and not self._stop:
             self.press(op[i], 0.05)
             time.sleep(0.08)
             i ^= 1
-        keyops.keyDown("w")
+        if not self._stop:
+            keyops.keyDown("w")
 
     # 视角转动x度
     def mouse_move(self, x, fine=1):
