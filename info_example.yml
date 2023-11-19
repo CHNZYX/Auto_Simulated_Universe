@@ -11,14 +11,15 @@ config:
   - 4
   #校准值
   angle: 1.0
-  #难度
-  difficulty: 4
+  #难度，1-5，（5代表最高难度，如果世界没有难度5则会选择难度4）
+  difficulty: 5
   #主命途
   fate: 巡猎
   #副命途
   secondary_fate:
-  - 巡猎
   - 毁灭
+  - 巡猎
+  - 丰饶
   #后面这些无视即可
   map_sha: ''
   show_map_mode: 0

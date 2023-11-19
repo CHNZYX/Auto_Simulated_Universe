@@ -548,6 +548,9 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("begin", 0.3328, 0.8148):
             con = self.check("conti", 0.1099, 0.0972)
             if not con:
+                if self.diffi == 5:
+                    self.click((0.9375, 0.8565 - 0.3))
+                    time.sleep(0.2)
                 self.click((0.9375, 0.8565 - 0.1 * (self.diffi - 1)))
             self.click((0.1083, 0.1009))
             if con:
