@@ -899,7 +899,7 @@ class UniverseUtils:
             if type == 3:
                 for i in range(9):
                     self.get_screen()
-                    if 0 and self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                    if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
                         log.info("大图识别到传送点")
                         self.press('f')
                         if self.nof(must_be='tp'):
