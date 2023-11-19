@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.03 Unpro Mini"
+version = "v6.04 Pro Mini"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -482,7 +482,7 @@ class SimulatedUniverse(UniverseUtils):
             # 长时间未交互/战斗，暂离或重开
             if (
                 (
-                    (time.time() - self.lst_changed >= 37 - 4 * self.debug)
+                    (time.time() - self.lst_changed >= 37 - 4 * self.debug + 8 * self.slow)
                     and self.find == 1
                 )
                 or (self.floor == 12 and self.mini_state > 4)
