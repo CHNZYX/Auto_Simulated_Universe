@@ -78,6 +78,7 @@ class UniverseUtils:
         self.check_bonus = 1
         self._stop = False
         self.stop_move = 0
+        self.move = 0
         self.multi = config.multi
         self.diffi = config.diffi
         self.fate = config.fate
@@ -823,13 +824,13 @@ class UniverseUtils:
                         self.press("s", 0.35)
                         self.press(ts[t], 0.2*random.randint(1,3))
                         self.press("w", 0.3)
-                        self.stop_move = 0
+                        self.move = 1
+                        self.get_screen()
                         threading.Thread(target=self.keep_move).start()
-                        bw_map = self.get_bw_map()
+                        bw_map = self.get_bw_map(gs=0)
                         self.get_loc(bw_map, rg=28, fbw=1)
-                        local_screen = self.get_local(0.9333, 0.8657, shape)
-                        self.ang = 360 - self.get_now_direc(local_screen) - 90
-                        self.stop_move = 1
+                        self.get_real_loc()
+                        self.move = 0
                         time.sleep(0.12)
                         t -= 1
                         dls = [100000]
@@ -898,7 +899,7 @@ class UniverseUtils:
             if type == 3:
                 for i in range(9):
                     self.get_screen()
-                    if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                    if 0 and self.check("f", 0.4443, 0.4417, mask="mask_f1"):
                         log.info("大图识别到传送点")
                         self.press('f')
                         if self.nof(must_be='tp'):
@@ -922,7 +923,7 @@ class UniverseUtils:
     def keep_move(self):
         op = 'ws'
         i = 0
-        while not self.stop_move:
+        while self.move:
             self.press(op[i], 0.05)
             time.sleep(0.08)
             i ^= 1

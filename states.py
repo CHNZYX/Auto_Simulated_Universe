@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.04 Pro Mini"
+version = "v6.04 Pro Max"
 
 
 class SimulatedUniverse(UniverseUtils):
