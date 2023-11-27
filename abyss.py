@@ -53,7 +53,7 @@ class Abyss(UniverseUtils):
 
     def wait(self,peila=False):
         tm = time.time()
-        ee = 0
+        ee = -2
         while self._stop == 0:
             self.get_screen()
             hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄

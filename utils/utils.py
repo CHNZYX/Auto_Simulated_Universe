@@ -1158,7 +1158,7 @@ class UniverseUtils:
         upper = np.array([26, 100, 255])
         mask = cv.inRange(cvt, lower, upper)
         result = np.sum(mask)//255
-        return result > 180 and result < 280
+        return result > 100 and result < 280
     
     def isrun(self):
         scr = self.screen
@@ -1313,11 +1313,11 @@ class UniverseUtils:
                             break
                         pyautogui.click()
                         if iters == 2:
-                            time.sleep(0.6)
+                            time.sleep(0.9)
                             self.press('d',0.85)
                             self.press('a',0.3)
                         else:
-                            time.sleep(0.9)
+                            time.sleep(1.2)
                         self.get_screen()
                     self.mini_state+=2
                     break

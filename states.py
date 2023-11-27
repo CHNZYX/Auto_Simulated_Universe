@@ -238,7 +238,7 @@ class SimulatedUniverse(UniverseUtils):
                 cnt=str(self.count),
             )
             >= 34
-            and self.debug == 0 and self.bonus == 0
+            and self.debug == 0 and self.check_bonus == 0
         ) and self.nums == 10000:
             log.info('已完成每周上限，准备停止运行')
             self.end = 1
@@ -327,7 +327,10 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
             self.click((0.1203, 0.1093))
-            time.sleep(1.4)
+            tm=time.time()
+            while time.time()-tm<1.6 and self.check("choose_bless", 0.9266, 0.9491):
+                time.sleep(0.1)
+                self.get_screen()
             self.confirm_time = time.time()
             return 1
         # F交互界面
