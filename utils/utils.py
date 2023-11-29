@@ -183,6 +183,23 @@ class UniverseUtils:
         time.sleep(t)
         keyops.keyUp(c)
 
+    # 使用x排，y列的消耗品
+    def use_consumable(self, x, y):
+        self.press("b", 0.5)
+        time.sleep(1)
+        self.click((0.903 - 0.06 * (x - 1), 0.827 - 0.14 * (y - 1)))
+        time.sleep(0.5)
+        # 点击使用
+        self.click((0.154,0.088))
+        time.sleep(0.5)
+        # 点击确认
+        self.click((0.386,0.294))
+        time.sleep(0.5)
+        # 覆盖效果
+        self.click((0.386,0.294))
+        time.sleep(3)
+        self.press("b", 0.5)
+
     def get_point(self, x, y):
         # 得到一个点的浮点表示
         x = self.x1 - x

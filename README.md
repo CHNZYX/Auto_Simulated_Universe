@@ -55,6 +55,8 @@ bonus in [0,1]：是否开启沉浸奖励
 
 speed in [0,1]：开启速通模式
 
+consumable in [0,1]：精英和首领战之前是否使用最左上角的消耗品
+
 debug in [0,1,2]：开启调试模式
 
 find in [0,1]：0为录图，1为跑图
@@ -74,6 +76,7 @@ config:
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0
+  use_consumable: 0
   slow_mode: 0
   force_update: 0
   timezone: Default
