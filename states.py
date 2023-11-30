@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.05 E"
+version = "v6.051 E"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -171,7 +171,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/use_package.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/use_star.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0

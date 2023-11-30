@@ -210,16 +210,24 @@ class UniverseUtils:
     # 使用x排，y列的消耗品
     def use_consumable(self, x=1, y=1):
         self.press("b")
-        print("!!!!!!!!!!!!!!!!!")
         if self.wait_fig(lambda:not self.check("use_atk",0.3677,0.0861), 3):
+            time.sleep(0.4)
             self.click((0.3677,0.0861))
-            self.use_it(x, y)
-            if self.wait_fig(lambda:not self.check("use_def",0.3198,0.0880), 2.2):
-                time.sleep(0.3)
-                self.click((0.3198,0.0880))
+            time.sleep(0.4)
+            self.get_screen()
+            if self.wait_fig(lambda:not self.check("use_star",0.8828,0.8648,threshold=0.9), 0.8):
                 self.use_it(x, y)
-                self.wait_fig(lambda:not self.check("use_package",0.9417,0.9398), 2)
-                time.sleep(0.3)
+                if self.wait_fig(lambda:not self.check("use_def",0.3198,0.0880), 2.2):
+                    time.sleep(0.4)
+                    self.click((0.3198,0.0880))
+                    time.sleep(0.4)
+                    self.get_screen()
+                    if self.wait_fig(lambda:not self.check("use_star",0.8828,0.8648,threshold=0.9), 0.6):
+                        self.use_it(x, y)
+                        self.wait_fig(lambda:not self.check("use_package",0.9417,0.9398), 2)
+                        time.sleep(0.3)
+                    self.press("esc")
+            else:
                 self.press("esc")
         if not self.isrun():
             for _ in range(3):
