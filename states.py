@@ -28,7 +28,7 @@ version = "v6.04 Pro Max"
 
 class SimulatedUniverse(UniverseUtils):
     def __init__(
-        self, find, debug, show_map, speed, slow, nums=10000, unlock=False, bonus=False, update=0, gui=0
+        self, find, debug, show_map, speed, consumable, slow, nums=10000, unlock=False, bonus=False, update=0, gui=0
     ):
         super().__init__()
         # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
@@ -78,6 +78,7 @@ class SimulatedUniverse(UniverseUtils):
         self.find = find
         self.debug = debug
         self.speed = speed
+        self.consumable = consumable
         self.slow = slow
         self._show_map = show_map & find
         self.floor = 0
@@ -464,6 +465,8 @@ class SimulatedUniverse(UniverseUtils):
                         log.info("target %s" % self.target)
                     if self._stop:
                         return 1
+                    if self.consumable != 0 and self.floor in [3, 7, 12]:
+                        self.use_consumable(1, 1)
                     self.press("1")
                 # 录制模式，保存初始小地图
                 else:
@@ -961,8 +964,8 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    log.info(f"find: {find}, debug: {debug}, show_map: {show_map}")
-    su = SimulatedUniverse(find, debug, show_map, speed, slow, nums=nums, bonus=bonus, update=update)
+    log.info(f"find: {find}, debug: {debug}, show_map: {show_map}, consumable: {consumable}")
+    su = SimulatedUniverse(find, debug, show_map, speed, consumable, slow, nums=nums, bonus=bonus, update=update)
     try:
         su.start()
     except ValueError as e:
@@ -982,6 +985,7 @@ if __name__ == "__main__":
         show_map = 0
         update = 0
         speed = 0
+        consumable = 0
         slow = 0
         bonus = 0
         nums = 10000

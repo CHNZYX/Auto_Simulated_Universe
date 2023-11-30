@@ -51,6 +51,8 @@ bonus in [0,1]：是否開啟沈浸獎勵
 
 speed in [0,1]：開啟速通模式
 
+consumable in [0,1]：菁英和首領戰之前是否使用最左上角的消耗品
+
 debug in [0,1,2]：開啟調試模式
 
 find in [0,1]：0為錄圖，1為跑圖
@@ -68,6 +70,7 @@ config:
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0
+  use_consumable: 0
   slow_mode: 0
   force_update: 0
   timezone: Default

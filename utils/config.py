@@ -20,6 +20,7 @@ class Config:
         self.show_map_mode = 0
         self.debug_mode = 0
         self.speed_mode = 0
+        self.use_consumable = 0
         self.slow_mode = 0
         self.force_update = 0
         self.unlock = 0
@@ -62,6 +63,7 @@ class Config:
                     self.show_map_mode = config['show_map_mode']
                     self.debug_mode = config['debug_mode']
                     self.speed_mode = config['speed_mode']
+                    self.use_consumable = config['use_consumable']
                     self.force_update = config['force_update']
                     self.timezone = config['timezone']
                     self.slow_mode = config['slow_mode']
@@ -131,6 +133,7 @@ class Config:
                     "show_map_mode": self.show_map_mode,
                     "debug_mode": self.debug_mode,
                     "speed_mode": self.speed_mode,
+                    "use_consumable": self.use_consumable,
                     "slow_mode": self.slow_mode,
                     "force_update": self.force_update,
                     "timezone": self.timezone

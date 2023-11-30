@@ -49,6 +49,8 @@ bonus in [0,1]: Whether to enable immersion bonus.
 
 speed in [0,1]: Enable speedrun mode.
 
+consumable in [0,1]：Enable using the most top-left consumable before elite & boss battle
+
 debug in [0,1,2]: Enable debug mode.
 
 find in [0,1]: 0 for recording, 1 for speedrunning.
@@ -64,6 +66,7 @@ config:
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0
+  use_consumable: 0
   slow_mode: 0
   force_update: 0
   timezone: Default
