@@ -465,7 +465,7 @@ class SimulatedUniverse(UniverseUtils):
                         log.info("target %s" % self.target)
                     if self._stop:
                         return 1
-                    if self.consumable != 0 and self.floor in [3, 7, 12][-self.consumable:]:
+                    if self.consumable and not self.check_bonus and self.floor in [3, 7, 12][-self.consumable:]:
                         self.use_consumable(1, 1)
                     self.press("1")
                 # 录制模式，保存初始小地图
@@ -958,6 +958,13 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
+    global speed, consumable, slow, bonus, nums, update
+    if speed == -1:
+        speed = config.speed_mode
+    if consumable == -1:
+        consumable = config.use_consumable
+    if slow == -1:
+        slow = config.slow_mode
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}, consumable: {consumable}")
     su = SimulatedUniverse(find, debug, show_map, speed, consumable, slow, nums=nums, bonus=bonus, update=update)
     try:
@@ -978,9 +985,9 @@ if __name__ == "__main__":
         debug = 0
         show_map = 0
         update = 0
-        speed = 0
-        consumable = 0
-        slow = 0
+        speed = -1
+        consumable = -1
+        slow = -1
         bonus = 0
         nums = 10000
         for i in sys.argv[1:]:

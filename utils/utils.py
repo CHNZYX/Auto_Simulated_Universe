@@ -210,6 +210,7 @@ class UniverseUtils:
     # 使用x排，y列的消耗品
     def use_consumable(self, x=1, y=1):
         self.press("b")
+        print("!!!!!!!!!!!!!!!!!")
         if self.wait_fig(lambda:not self.check("use_atk",0.3677,0.0861), 3):
             self.click((0.3677,0.0861))
             self.use_it(x, y)
