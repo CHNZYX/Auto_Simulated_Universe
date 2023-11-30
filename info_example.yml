@@ -20,13 +20,15 @@ config:
   - 毁灭
   - 巡猎
   - 丰饶
-  #后面这些无视即可
+  #这些无视即可
   map_sha: ''
   show_map_mode: 0
   debug_mode: 0
   speed_mode: 0
-  use_consumable: 0
   slow_mode: 0
+  #use_consumable：0代表不使用消耗品，1代表最终boss使用消耗品，2代表最后两个boss使用消耗品，3代表所有boss都使用消耗品
+  #自动使用第一个攻击/防御消耗品，可以收藏消耗品（星星标记）来改变背包中消耗品的顺序
+  use_consumable: 0
   force_update: 0
   timezone: Default
 #奇物，事件和祝福的优先级。祝福优先级只对主命途生效

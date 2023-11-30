@@ -183,22 +183,48 @@ class UniverseUtils:
         time.sleep(t)
         keyops.keyUp(c)
 
-    # 使用x排，y列的消耗品
-    def use_consumable(self, x, y):
-        self.press("b", 0.5)
-        time.sleep(1)
-        self.click((0.903 - 0.06 * (x - 1), 0.827 - 0.14 * (y - 1)))
-        time.sleep(0.5)
+    # example: self.wait_fig(lambda:self.check("strange", 0.9417, 0.9481), 1.4)
+    def wait_fig(self, f, timeout=3):
+        tm=time.time()
+        while time.time()-tm<timeout:
+            if not f():
+                return 1
+            time.sleep(0.1)
+            self.get_screen()
+        return 0
+
+    def use_it(self, x, y):
+        if x != 1 or y != 1:
+            self.click((0.903 - 0.06 * (x - 1), 0.827 - 0.14 * (y - 1)))
+            time.sleep(0.5)
         # 点击使用
         self.click((0.154,0.088))
-        time.sleep(0.5)
+        self.wait_fig(lambda:not self.check("yes1",0.3812,0.2926), 1.2)
         # 点击确认
         self.click((0.386,0.294))
-        time.sleep(0.5)
-        # 覆盖效果
-        self.click((0.386,0.294))
-        time.sleep(3)
-        self.press("b", 0.5)
+        r = self.wait_fig(lambda:not self.check("use_replace",0.5260,0.6935), 0.8)
+        if r:
+            # 覆盖效果
+            self.click((0.386,0.294))
+
+    # 使用x排，y列的消耗品
+    def use_consumable(self, x=1, y=1):
+        self.press("b")
+        if self.wait_fig(lambda:not self.check("use_atk",0.3677,0.0861), 3):
+            self.click((0.3677,0.0861))
+            self.use_it(x, y)
+            if self.wait_fig(lambda:not self.check("use_def",0.3198,0.0880), 2.2):
+                time.sleep(0.3)
+                self.click((0.3198,0.0880))
+                self.use_it(x, y)
+                self.wait_fig(lambda:not self.check("use_package",0.9417,0.9398), 2)
+                time.sleep(0.3)
+                self.press("esc")
+        if not self.isrun():
+            for _ in range(3):
+                self.press("esc")
+                if self.wait_fig(lambda:not self.isrun(), 3):
+                    return
 
     def get_point(self, x, y):
         # 得到一个点的浮点表示
