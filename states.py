@@ -550,7 +550,7 @@ class SimulatedUniverse(UniverseUtils):
                 log.info('已退出模拟宇宙，自动化结束')
                 return 1
             self.click((0.3448, 0.4926))
-            time.sleep(3)
+            time.sleep(1)
             self.init_map()
         elif self.check("begin", 0.3328, 0.8148):
             con = self.check("conti", 0.1099, 0.0972)
