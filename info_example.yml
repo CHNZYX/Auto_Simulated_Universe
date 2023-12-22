@@ -26,7 +26,9 @@ config:
   debug_mode: 0
   speed_mode: 0
   slow_mode: 0
-  #use_consumable：0代表不使用消耗品，1代表最终boss使用消耗品，2代表最后两个boss使用消耗品，3代表所有boss都使用消耗品
+  #是否使用长按进入疾跑状态，0代表不启用，1代表启用
+  long_press_sprint: 0
+  #0代表不使用消耗品，1代表最终boss使用消耗品，2代表最后两个boss使用消耗品，3代表所有boss都使用消耗品
   #自动使用第一个已星标的攻击/防御消耗品，必须收藏消耗品（星星标记）
   #如果不希望使用防御消耗品，可以取消所有防御消耗品的星标
   use_consumable: 0
