@@ -5,7 +5,7 @@
 
 快速上手，请访问：[项目文档](https://asu.stysqy.top/)
 
-遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html)
+遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html) [备用](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/qa.md)
 
 运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://asu.stysqy.top/guide/bs.html)
 
