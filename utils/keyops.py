@@ -9,4 +9,6 @@ def get_mapping(x):
 def keyDown(x):
     pyautogui.keyDown(get_mapping(x))
 def keyUp(x):
+    if config.long_press_sprint and x=='w':
+        pyautogui.keyUp(get_mapping('shift'))
     pyautogui.keyUp(get_mapping(x))
