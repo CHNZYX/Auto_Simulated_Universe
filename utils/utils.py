@@ -210,7 +210,7 @@ class UniverseUtils:
     # 使用x排，y列的消耗品
     def use_consumable(self, x=1, y=1):
         self.press("b")
-        if self.wait_fig(lambda:not self.check("use_atk",0.3677,0.0861), 3):
+        if self.wait_fig(lambda:not self.check("use_package",0.5182,0.9407), 3):
             time.sleep(0.4)
             self.click((0.3677,0.0861))
             time.sleep(0.4)
@@ -224,7 +224,7 @@ class UniverseUtils:
                     self.get_screen()
                     if self.wait_fig(lambda:not self.check("use_star",0.8828,0.8648,threshold=0.9), 0.6):
                         self.use_it(x, y)
-                        self.wait_fig(lambda:not self.check("use_package",0.9417,0.9398), 2)
+                        self.wait_fig(lambda:not self.check("use_package",0.5182,0.9407), 2)
                         time.sleep(0.3)
                     self.press("esc")
             else:
@@ -1270,12 +1270,12 @@ class UniverseUtils:
                 self.get_screen()
                 if self.check('bonus_c',0.2385,0.6685):
                     self.click((0.4453,0.3250))
-                    time.sleep(0.5)
+                    time.sleep(0.8)
                     self.get_screen()
                     if self.check("yes1", 0.5, 0.5, mask="mask_end"):
                         self.check_bonus = 0
                     self.click((0.5062, 0.1454))
-                    time.sleep(1.2)
+                    time.sleep(1.4)
             keyops.keyUp('w')
             self.get_screen()
             if self.check('bonus_c',0.2385,0.6685):
@@ -1345,9 +1345,9 @@ class UniverseUtils:
                 if self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                     self.stop_move=1
                     time.sleep(1.7+self.slow*1.1)
-                    if self.mini_state==1 and self.floor==12:
+                    if self.mini_state==1 and self.floor in [3, 7, 12]:
                         keyops.keyUp("w")
-                        for i in range(4):
+                        for i in range([3, 7, 12].index(self.floor)+2):
                             self.press(str(i+1))
                             time.sleep(0.4)
                             self.press('e')

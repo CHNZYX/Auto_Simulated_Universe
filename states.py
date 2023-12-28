@@ -171,7 +171,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/use_star.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/use_package.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -465,7 +465,7 @@ class SimulatedUniverse(UniverseUtils):
                         log.info("target %s" % self.target)
                     if self._stop:
                         return 1
-                    if self.consumable and not self.check_bonus and self.floor in [3, 7, 12][-self.consumable:]:
+                    if self.consumable and (self.check_bonus or self.count<34) and self.floor in [3, 7, 12][-self.consumable:]:
                         self.use_consumable(1, 1)
                     self.press("1")
                 # 录制模式，保存初始小地图
@@ -542,7 +542,7 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.get_direc()
             return 2
-        elif self.check("init", 0.9073,0.8435):
+        elif self.check("init", 0.9120,0.8361):
             if self.end:
                 time.sleep(1)
                 self.press('esc')
@@ -551,7 +551,7 @@ class SimulatedUniverse(UniverseUtils):
                 return 1
             self.click((0.3448, 0.4926))
             self.init_map()
-        elif self.check("begin", 0.3328, 0.8148):
+        elif self.check("begin", 0.3578,0.8046):
             con = self.check("conti", 0.1099, 0.0972)
             if not con:
                 if self.diffi == 5:
@@ -575,10 +575,10 @@ class SimulatedUniverse(UniverseUtils):
                     )
                     time.sleep(0.3)
             self.click((0.1635, 0.1056))
-        elif self.check("fate_2", 0.1797, 0.1009):
-            self.click((0.1797, 0.1009))
+        elif self.check("fate_2", 0.1182,0.0926):
+            self.click((0.1182,0.0926))
             self.confirm_time = time.time()
-        elif self.check("fate", 0.9458, 0.9481):
+        elif self.check("fate", 0.9432,0.9389):
             time.sleep(0.6)
             self.get_screen()
             img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
