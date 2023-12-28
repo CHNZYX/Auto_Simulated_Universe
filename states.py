@@ -171,7 +171,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/use_package.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/conti.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -553,7 +553,7 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(1)
             self.init_map()
         elif self.check("begin", 0.3578,0.8046):
-            con = self.check("conti", 0.1099, 0.0972)
+            con = self.check("conti", 0.1422,0.0907)
             if not con:
                 if self.diffi == 5:
                     self.click((0.9375, 0.8565 - 0.3))
