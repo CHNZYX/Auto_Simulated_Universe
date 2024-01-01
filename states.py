@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.1"
+version = "v6.11"
 
 
 class SimulatedUniverse(UniverseUtils):
