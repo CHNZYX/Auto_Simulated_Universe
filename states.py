@@ -171,7 +171,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/conti.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/e.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -536,12 +536,21 @@ class SimulatedUniverse(UniverseUtils):
                 return 1
             if self.multi == 1.01:
                 align_angle(0, 1, [1], self)
+            self.get_screen()
+            if self.floor > 0 and self.check("ruan",0.0625,0.7065) and not self.check("U", 0.0240,0.7759):
+                self.press('e')
+                time.sleep(1.5)
+                self.get_screen()
+                if self.check('e',0.4995,0.7500):
+                    self.solve_snack()
             # 寻路
             if self.mini_state:
                 self.get_direc_only_minimap()
             else:
                 self.get_direc()
             return 2
+        elif self.check('e',0.4995,0.7500):
+            self.solve_snack()
         elif self.check("init", 0.9120,0.8361):
             if self.end:
                 time.sleep(1)
@@ -567,6 +576,7 @@ class SimulatedUniverse(UniverseUtils):
             self.floor_init = 1
         elif self.check("start", 0.6594, 0.8389):
             self.fail_count = 0
+            self.allow_e = 1
             if self.check("team4", 0.5797, 0.2389):
                 dx = 0.9266 - 0.8552
                 dy = 0.8194 - 0.6741
