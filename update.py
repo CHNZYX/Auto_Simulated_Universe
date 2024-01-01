@@ -91,8 +91,7 @@ def main_operation():
     except:
         try:
             info = dict()
-            repo_url = "https://github.moeyy.xyz/https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest"
-            info = get_latest_release_info(repo_url)
+            info['tag_name']= 'v'+requests.get("https://chnzyx.github.io/asu_version_latest/").text.strip()
             version_remote = info['tag_name'].strip('v').split(' ')[0]
             operation_label.config(text=f"网络异常，当前可用最高版本：{info['tag_name']}")
         except:

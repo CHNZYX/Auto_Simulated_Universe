@@ -49,15 +49,9 @@ class SimulatedUniverse(UniverseUtils):
             except:
                 log.info("网络异常，尝试备用网址")
                 try:
-                    lowest = (
-                        requests.get(
-                            "https://github.moeyy.xyz/https://api.github.com/repos/CHNZYX/Auto_Simulated_Universe/releases/latest"
-                        )
-                        .json()["name"]
-                        .split("lowest")[1]
-                        .strip()
-                        .strip("v")
-                    )
+                    lowest = requests.get(
+                        "https://chnzyx.github.io/asu_version_check/"
+                    ).text.strip()
                     log.info("版本下限：v" + lowest)
                 except:
                     log.info("网络异常")#，强制退出")
