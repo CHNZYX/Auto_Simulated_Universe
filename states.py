@@ -591,9 +591,22 @@ class SimulatedUniverse(UniverseUtils):
             self.confirm_time = time.time()
         elif self.check("fate", 0.9432,0.9389):
             time.sleep(0.6)
-            self.get_screen()
-            img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
-            res = self.ts.split_and_find([self.fate], img)
+            click_x = [0.02, 0.98]
+            n = 4  # 重试次数
+            res = None
+            while n:
+                self.get_screen()
+                img = self.check("z", 0.4969, 0.3750, mask="mask_fate", large=False)
+                res = self.ts.split_and_find([self.fate], img)
+                if res[1] == 1 and n:
+                    # 没有找到命途
+                    log.info(f"未找到 {self.fate} 命途，尝试翻页")
+                    self.click((click_x[n % len(click_x)], 0.5))
+                    n -= 1
+                    time.sleep(0.5)
+                    continue
+                else:
+                    break
             self.click(self.calc_point((0.4969, 0.3750), res[0]))
         elif self.check("fate_3", 0.9422, 0.9472):
             if not self.click_text(['2星祝福','奇物']):

@@ -196,6 +196,7 @@ def config_view(page: Page):
                                                 ft.dropdown.Option("毁灭"),
                                                 ft.dropdown.Option("欢愉"),
                                                 ft.dropdown.Option("繁育"),
+                                                ft.dropdown.Option("智识"),
                                             ],
                                             text_style=TextStyle(color=ft.colors.PINK,weight=ft.FontWeight.W_600),
                                             value=config.fate,
