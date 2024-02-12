@@ -1281,7 +1281,7 @@ class UniverseUtils:
                     self.click((0.4453,0.3250))
                     time.sleep(1.5)
                     self.get_screen()
-                    if self.check("yes1", 0.5, 0.5, mask="mask_end"):
+                    if self.check('lack',0.5036,0.6769):
                         self.check_bonus = 0
                     self.click((0.5062, 0.1454))
                     time.sleep(1.4)
@@ -1356,7 +1356,7 @@ class UniverseUtils:
                     time.sleep(1.7+self.slow*1.1)
                     if self.mini_state==1 and self.floor in [3, 7, 12]:
                         keyops.keyUp("w")
-                        if not self.check("ruan",0.0625,0.7065,threshold=0.95):
+                        if not self.check("ruan",0.0625,0.7065,threshold=0.95) and not self.check("U", 0.0240,0.7759):
                             for i in range([3, 7, 12].index(self.floor)+2):
                                 self.press(str(i+1))
                                 time.sleep(0.4)
@@ -1407,7 +1407,7 @@ class UniverseUtils:
                     return
                 self.get_screen()
                 if self.mini_target==1:
-                    if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96dw):
+                    if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                         self.press('f')
                         if self.nof(must_be='event'):
                             return
