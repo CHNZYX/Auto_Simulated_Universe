@@ -335,12 +335,12 @@ class SimulatedUniverse(UniverseUtils):
             self.confirm_time = time.time()
             return 1
         # F交互界面
-        elif self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+        elif self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
             # is_killed：是否是禁用交互（沉浸奖励、复活装置、下载装置）
             is_killed = 0
             time.sleep(0.4)
             self.get_screen()
-            if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+            if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                 for _ in range(4):
                     img = self.check("z", 0.3344, 0.4241, mask="mask_f", large=False)
                     text = self.ts.sim_list(self.tk.interacts, img)
@@ -537,7 +537,7 @@ class SimulatedUniverse(UniverseUtils):
             if self.multi == 1.01:
                 align_angle(0, 1, [1], self)
             self.get_screen()
-            if self.floor > 0 and self.check("ruan",0.0625,0.7065) and not self.check("U", 0.0240,0.7759):
+            if self.floor > 0 and self.check("ruan",0.0625,0.7065,threshold=0.95) and not self.check("U", 0.0240,0.7759):
                 self.press('e')
                 time.sleep(1.5)
                 self.get_screen()
@@ -723,7 +723,7 @@ class SimulatedUniverse(UniverseUtils):
                     self.get_screen()
             self.press("esc")
             tm = time.time()
-            while time.time()-tm<2 and not self.check("f", 0.4443, 0.4417, mask="mask_f1") and not self.isrun():
+            while time.time()-tm<2 and not self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96) and not self.isrun():
                 self.get_screen()
                 time.sleep(0.15)
             # time.sleep(0.35)
@@ -892,7 +892,7 @@ class SimulatedUniverse(UniverseUtils):
         tm = time.time()
         while time.time() - tm < 10:
             self.get_screen()
-            if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+            if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                 self.press('f')
                 time.sleep(0.5)
                 self.press('f')

@@ -635,7 +635,7 @@ class UniverseUtils:
         time.sleep(1)
 
     def goodf(self):
-        if not self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+        if not self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
             return False
         img = self.check("z", 0.3344, 0.4241, mask="mask_f", large=False)
         text = self.ts.sim_list(self.tk.interacts, img)
@@ -769,7 +769,7 @@ class UniverseUtils:
         while not ava and time.time()-tm<1.6:
             self.get_screen()
             if not self.check(
-                    "f", 0.4443, 0.4417, mask="mask_f1"
+                    "f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96
                 ) and not self.isrun():
                 ava = 1
         log.info('交互点生效：'+str(ava))
@@ -924,7 +924,7 @@ class UniverseUtils:
                         break
                 else:
                     self.get_screen()
-                    if type == 3 and self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                    if type == 3 and self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                         self.press('f')
                         keyops.keyUp("w")
                         if self.nof(must_be='tp'):
@@ -964,7 +964,7 @@ class UniverseUtils:
             if type == 3:
                 for i in range(9):
                     self.get_screen()
-                    if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                    if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                         log.info("大图识别到传送点")
                         self.press('f')
                         if self.nof(must_be='tp'):
@@ -1261,12 +1261,12 @@ class UniverseUtils:
             self.mini_state+=2
             return
         if self.mini_state==3 and self.floor in [3,7,12] and self.check_bonus:
-            self.press('d',0.45)
+            self.press('d',0.6)
             keyops.keyDown('w')
             nt = time.time()
             while time.time()-nt<1.3:
                 self.get_screen()
-                if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                     self.press('f')
                     keyops.keyUp('w')
                     break
@@ -1279,7 +1279,7 @@ class UniverseUtils:
                 self.get_screen()
                 if self.check('bonus_c',0.2385,0.6685):
                     self.click((0.4453,0.3250))
-                    time.sleep(0.8)
+                    time.sleep(1.5)
                     self.get_screen()
                     if self.check("yes1", 0.5, 0.5, mask="mask_end"):
                         self.check_bonus = 0
@@ -1327,7 +1327,7 @@ class UniverseUtils:
                 self.stop_move=1
                 break
             if self.mini_target==1:
-                if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                     self.press('f')
                     log.info('发现事件交互')
                     self.stop_move=1
@@ -1356,7 +1356,7 @@ class UniverseUtils:
                     time.sleep(1.7+self.slow*1.1)
                     if self.mini_state==1 and self.floor in [3, 7, 12]:
                         keyops.keyUp("w")
-                        if not self.check("ruan",0.0625,0.7065):
+                        if not self.check("ruan",0.0625,0.7065,threshold=0.95):
                             for i in range([3, 7, 12].index(self.floor)+2):
                                 self.press(str(i+1))
                                 time.sleep(0.4)
@@ -1407,7 +1407,7 @@ class UniverseUtils:
                     return
                 self.get_screen()
                 if self.mini_target==1:
-                    if self.check("f", 0.4443, 0.4417, mask="mask_f1"):
+                    if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96dw):
                         self.press('f')
                         if self.nof(must_be='event'):
                             return
