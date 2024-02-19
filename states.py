@@ -190,7 +190,7 @@ class SimulatedUniverse(UniverseUtils):
                         fp = not fp
                         continue
                     if self.click_text(['点击空白','开始游戏'],click=0):
-                        self.click((0.2062, 0.2054))
+                        self.click((0.2062, 0.1554))
                         time.sleep(0.5)
                     if self.ts.nothing:
                         self.in_battle = time.time()
@@ -537,7 +537,7 @@ class SimulatedUniverse(UniverseUtils):
             if self.multi == 1.01:
                 align_angle(0, 1, [1], self)
             self.get_screen()
-            if self.floor > 0 and self.check("ruan",0.0625,0.7065,threshold=0.95) and not self.check("U", 0.0240,0.7759):
+            if self.floor > 0 and self.check("ruan",0.0625,0.7065,threshold=0.95) and not self.check("U", 0.0240,0.7759) and not (self.floor==12 and self.mini_state>1):
                 self.press('e')
                 time.sleep(1.5)
                 self.get_screen()
