@@ -129,7 +129,7 @@ def choose_view(page: Page):
         dlg = ft.AlertDialog(
             title=ft.Text("此程序为免费开源项目，如果你付了钱请立刻退款！"),
             content=ft.Text(
-                "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n群号：831830526\n10秒后自动关闭"
+                "咸鱼倒狗4000+！你付给倒狗的每一分钱都会让开源自动化更艰难，请退款并举报商家！本项目已经因倒卖行为受到严重威胁，请帮助我们！\n链接：https://github.com/CHNZYX/Auto_Simulated_Universe\n新群群号：545443061\n10秒后自动关闭"
             ),
         )
         page.dialog = dlg
