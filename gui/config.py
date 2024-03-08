@@ -222,22 +222,22 @@ def config_view(page: Page):
                                 ft.Row(
                                     [
                                         txt,
-                                        ft.IconButton(
-                                            icon=ft.icons.DELETE,
-                                            tooltip="清空通关计数",
-                                            icon_size=35,
-                                            on_click=go_del,
-                                        ),
+                                        # ft.IconButton(
+                                        #     icon=ft.icons.DELETE,
+                                        #     tooltip="清空通关计数",
+                                        #     icon_size=35,
+                                        #     on_click=go_del,
+                                        # ),
                                     ]
                                 ),
                                 ft.Row(
                                     [
-                                        ft.Text("上限次数："),
+                                        ft.Text("本轮运行：",weight=ft.FontWeight.W_400,size=18),
                                         ft.TextButton(
                                             text=str(config.max_run),
                                             on_click=lambda _: go_input_x(page),
                                         ),
-                                        ft.Text("次（-1为无限循环）"),
+                                        ft.Text("次（-1为无限循环）",weight=ft.FontWeight.W_400,size=18),
                                     ]
                                 ),
                                 ft.Container(height=100),

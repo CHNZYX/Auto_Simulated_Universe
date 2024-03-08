@@ -23,7 +23,7 @@ import pyuac
 import utils.keyops as keyops
 
 # 版本号
-version = "v6.12"
+version = "v6.2"
 
 
 class SimulatedUniverse(UniverseUtils):
@@ -97,7 +97,7 @@ class SimulatedUniverse(UniverseUtils):
         self.nums = nums
         self.end = 0
         ex_notif = ""
-        if not debug:
+        if debug != 2:
             pyautogui.FAILSAFE = False
         if bonus:
             ex_notif = " 自动领取沉浸奖励"
@@ -227,21 +227,19 @@ class SimulatedUniverse(UniverseUtils):
         self.update_count(0)
         self.my_cnt += 1
         tm = int((time.time() - self.init_tm) / 60)
-        remain = 34 - self.count
-        if remain > 0:
-            remain = int(remain * (time.time() - self.init_tm) / self.my_cnt / 60)
+        remain_round = self.nums-self.my_cnt
+        if remain_round > 0:
+            remain = int(remain_round * (time.time() - self.init_tm) / self.my_cnt / 60)
         else:
             remain = 0
-        if (
-            notif(
-                "已完成",
-                f"计数:{self.count} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",
-                cnt=str(self.count),
-            )
-            >= 34
-            and self.debug == 0 and self.check_bonus == 0
-        ) and self.nums == self.my_cnt:
-            log.info('已完成每周上限，准备停止运行')
+            remain_round = -1
+        notif(
+            "已完成",
+            f"计数:{self.count} 剩余:{remain_round} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",
+            cnt=str(self.count),
+        )
+        if self.debug == 0 and self.check_bonus == 0 and self.nums <= self.my_cnt:
+            log.info('已完成上限，准备停止运行')
             self.end = 1
         self.floor = 0
 
@@ -732,7 +730,7 @@ class SimulatedUniverse(UniverseUtils):
         elif self.check("yes1", 0.5, 0.5, mask="mask_end"):
             self.click((self.tx,self.ty))
             time.sleep(1)
-            return 1
+            return 0
         else:
             return 0
         return 1
