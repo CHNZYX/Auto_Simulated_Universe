@@ -30,6 +30,7 @@ class Config:
         self.timezone = 'Default'
         self.origin_key = ['f','m','shift','v','e','w','a','s','d','1','2','3','4']
         self.mapping = self.origin_key
+        self.max_run = 34
         self.read()
 
     @property
@@ -69,6 +70,7 @@ class Config:
                     self.force_update = config['force_update']
                     self.timezone = config['timezone']
                     self.slow_mode = config['slow_mode']
+                    self.max_run = config['max_run']
                 except:
                     pass
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
@@ -156,7 +158,8 @@ class Config:
                     "use_consumable": self.use_consumable,
                     "slow_mode": self.slow_mode,
                     "force_update": self.force_update,
-                    "timezone": self.timezone
+                    "timezone": self.timezone,
+                    "max_run": self.max_run
                 },
                 "prior": prior,
                 "key_mapping": self.mapping

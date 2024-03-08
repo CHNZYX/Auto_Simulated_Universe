@@ -70,6 +70,7 @@ def choose_view(page: Page):
             int(config.speed_mode),
             int(config.use_consumable),
             int(config.slow_mode),
+            int(config.max_run),
             unlock = True,
             bonus=config.bonus,
             gui=1,

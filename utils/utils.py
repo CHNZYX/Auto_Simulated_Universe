@@ -52,7 +52,11 @@ def notif(title, msg, cnt=None):
         tm = str(time.time())
     with open("logs/notif.txt", "w", encoding="utf-8") as fh:
         fh.write(cnt + "\n" + title + "\n" + msg + "\n" + tm)
-    return int(cnt)
+    try:
+        cnt = int(cnt)
+    except:
+        cnt = 0
+    return cnt
 
 
 # 将游戏窗口设为前台
@@ -1338,14 +1342,21 @@ class UniverseUtils:
                     break
             else:
                 if self.goodf() and not (self.ts.sim("黑塔") and time.time() - self.quit < 30):
-                    self.press('f')
-                    log.info('need_confirm '+self.ts.text)
-                    self.stop_move=1
-                    need_confirm = 1
-                    if self.nof():
+                    if self.speed <= 0 or not self.ts.sim("黑塔"):
+                        self.press('f')
+                        log.info('need_confirm '+self.ts.text)
+                        self.stop_move=1
+                        need_confirm = 1
+                        if self.nof():
+                            keyops.keyUp("w")
+                            return
+                        break
+                    else:
+                        self.quit = time.time()
                         keyops.keyUp("w")
+                        self.stop_move=1
+                        self.mini_state+=2
                         return
-                    break
                 if self.check("auto_2", 0.0583, 0.0769): 
                     keyops.keyUp("w")
                     self.stop_move=1
@@ -1421,12 +1432,16 @@ class UniverseUtils:
 
     def solve_snack(self):
         self.get_screen()
+        f = 0
         if self.check('snack', 0.3844,0.5065, mask='mask_snack'):
             self.click((self.tx,self.ty))
             time.sleep(0.3)
             self.click((0.3807,0.2472))
             time.sleep(0.4)
+            f = 1
         else:
             self.allow_e = 0
         self.press('esc')
         time.sleep(1)
+        if f:
+            self.press('e')

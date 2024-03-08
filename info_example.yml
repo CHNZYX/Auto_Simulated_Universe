@@ -34,6 +34,7 @@ config:
   use_consumable: 0
   force_update: 0
   timezone: Default
+  max_run: 34
 #奇物，事件和祝福的优先级。祝福优先级只对主命途生效
 #不要擅自更改每一部分之间的顺序
 #比如说调换命途顺序，删除某个命途都是不行的

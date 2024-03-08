@@ -28,7 +28,7 @@ version = "v6.12"
 
 class SimulatedUniverse(UniverseUtils):
     def __init__(
-        self, find, debug, show_map, speed, consumable, slow, nums=10000, unlock=False, bonus=False, update=0, gui=0
+        self, find, debug, show_map, speed, consumable, slow, nums=-1, unlock=False, bonus=False, update=0, gui=0
     ):
         super().__init__()
         # t1 = threading.Thread(target=os.system,kwargs={'command':'notif.exe > NUL 2>&1'})
@@ -240,11 +240,8 @@ class SimulatedUniverse(UniverseUtils):
             )
             >= 34
             and self.debug == 0 and self.check_bonus == 0
-        ) and self.nums == 10000:
+        ) and self.nums == self.my_cnt:
             log.info('已完成每周上限，准备停止运行')
-            self.end = 1
-        if self.nums == self.my_cnt:
-            log.info('已完成指定次数，准备停止运行')
             self.end = 1
         self.floor = 0
 
@@ -989,8 +986,10 @@ def main():
         consumable = config.use_consumable
     if slow == -1:
         slow = config.slow_mode
+    if nums == 34:
+        nums = config.max_run
     log.info(f"find: {find}, debug: {debug}, show_map: {show_map}, consumable: {consumable}")
-    su = SimulatedUniverse(find, debug, show_map, speed, consumable, slow, nums=nums, bonus=bonus, update=update)
+    su = SimulatedUniverse(find, debug, show_map, speed, consumable, slow, nums, bonus=bonus, update=update)
     try:
         su.start()
     except ValueError as e:
@@ -1013,7 +1012,7 @@ if __name__ == "__main__":
         consumable = -1
         slow = -1
         bonus = 0
-        nums = 10000
+        nums = 34
         for i in sys.argv[1:]:
             st = i.split("-")[-1]
             if "=" not in st:

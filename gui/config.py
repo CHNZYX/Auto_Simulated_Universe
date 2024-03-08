@@ -230,7 +230,17 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
-                                ft.Container(height=210),
+                                ft.Row(
+                                    [
+                                        ft.Text("上限次数："),
+                                        ft.TextButton(
+                                            text=str(config.max_run),
+                                            on_click=lambda _: go_input_x(page),
+                                        ),
+                                        ft.Text("次（-1为无限循环）"),
+                                    ]
+                                ),
+                                ft.Container(height=100),
                                 ft.ElevatedButton(
                                     content=ft.Row(
                                         [
@@ -256,3 +266,36 @@ def config_view(page: Page):
             spacing=0,
         )
     )
+
+def go_input_x(page):
+    def close_dialog(e):
+        try:
+            new_x = int(textfield_ref.value)
+            if 0 <= new_x <= 999 or new_x == -1:
+                config.max_run = new_x
+                x_button.text = str(config.max_run)
+                page.update()
+        except:
+            pass
+        dialog.open = False
+        page.update()
+    x_button = page.views[-1].controls[-1].controls[-1].controls[-3].controls[1]
+    textfield_ref = ft.TextField(
+        label="上限次数（-1为无限循环）",
+        keyboard_type=ft.KeyboardType.NUMBER,
+        on_submit=close_dialog,
+    )
+    
+    dialog = ft.AlertDialog(
+        title=ft.Text("输入上限次数"),
+        content=textfield_ref,
+        actions=[
+            ft.TextButton("取消", on_click=lambda _: close_dialog(ft.ControlEvent(None))),
+            ft.TextButton("确认", on_click=close_dialog),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+
+    page.dialog = dialog
+    dialog.open = True
+    page.update()
