@@ -238,7 +238,7 @@ class SimulatedUniverse(UniverseUtils):
             f"计数:{self.count} 剩余:{remain_round} 已使用：{tm//60}小时{tm%60}分钟  平均{tm//self.my_cnt}分钟一次  预计剩余{remain//60}小时{remain%60}分钟",
             cnt=str(self.count),
         )
-        if self.debug == 0 and self.check_bonus == 0 and self.nums <= self.my_cnt:
+        if self.debug == 0 and self.check_bonus == 0 and self.nums <= self.my_cnt and self.nums >= 0:
             log.info('已完成上限，准备停止运行')
             self.end = 1
         self.floor = 0
