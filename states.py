@@ -51,7 +51,7 @@ class SimulatedUniverse(UniverseUtils):
                 try:
                     lowest = requests.get(
                         "https://chnzyx.github.io/asu_version_check/"
-                    ).text.strip()
+                    ).text.strip().split('\n')[0]
                     log.info("版本下限：v" + lowest)
                 except:
                     log.info("网络异常")#，强制退出")
@@ -96,6 +96,7 @@ class SimulatedUniverse(UniverseUtils):
         self.fail_count = 0
         self.nums = nums
         self.end = 0
+        self.quan = 0
         ex_notif = ""
         if debug != 2:
             pyautogui.FAILSAFE = False
@@ -171,7 +172,7 @@ class SimulatedUniverse(UniverseUtils):
             if self._stop:
                 break
             self.get_screen()
-            #self.click_target('imgs/lack.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            #self.click_target('imgs/huangquan.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             """
             if begin and not self.check("f", 0.4437,0.4231) and not self.check("abyss/1",0.8568,0.6769):
                 begin = 0
@@ -322,12 +323,15 @@ class SimulatedUniverse(UniverseUtils):
                     self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
                 else:
                     self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
+                time.sleep(0.4)
             self.click((0.1203, 0.1093))
             tm=time.time()
             while time.time()-tm<1.6 and self.check("choose_bless", 0.9266, 0.9491):
                 time.sleep(0.1)
                 self.get_screen()
             self.confirm_time = time.time()
+            if self.quan:
+                self.use_e()
             return 1
         # F交互界面
         elif self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
@@ -375,6 +379,8 @@ class SimulatedUniverse(UniverseUtils):
                     return 1
         # 跑图状态
         if self.isrun():
+            if self.speed and not self.quan and self.check("huangquan", 0.0578,0.7083):
+                self.quan = 1
             if self.floor_init == 0:
                 self.get_level()
                 self.floor_init = 1

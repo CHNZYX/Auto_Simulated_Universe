@@ -96,6 +96,7 @@ class UniverseUtils:
         self.slow = 0
         self.init_ang = 0
         self.allow_e = 1
+        self.quan = 0
         self.img_map = dict()
         # 用户选择的命途
         for i in range(len(config.fates)):
@@ -448,7 +449,7 @@ class UniverseUtils:
             dx = self.get_end_point()
             off = 0
             if dx is None:
-                for k in [60, -30, -60, -30, -40, -40, -40, -40, -40]:
+                for k in [60,120,60,60,30,-60,-60,-60,-60]:
                     if self.ang_neg:
                         self.mouse_move(k)
                         off -= k
@@ -551,6 +552,8 @@ class UniverseUtils:
         shape = (int(self.scx * 190), int(self.scx * 190))
         if gs:
             self.get_screen()
+            if self.check("choose_bless", 0.9266, 0.9491):
+                return None
         if local_screen is None:
             local_screen = self.get_local(0.9333, 0.8657, shape)
         bw_map = np.zeros(local_screen.shape[:2], dtype=np.uint8)
@@ -815,6 +818,11 @@ class UniverseUtils:
             self.get_map()
         # 寻路模式
         else:
+            if self.now_map == '19787':
+                self.press('w',0.3)
+                self.get_screen()
+                local_screen = self.get_local(0.9333, 0.8657, shape)
+                self.now_map = '19788'
             self.ang = 360 - self.get_now_direc(local_screen) - 90
             self.get_real_loc()
             loc, type = self.get_tar()
@@ -830,9 +838,6 @@ class UniverseUtils:
                 sub += 360
             while sub > 180:
                 sub -= 360
-            self.mouse_move(sub)
-            self.ang = ang
-            ps = [13,9,11,7]
             # 如果当前就在交互点上：直接返回
             if self.goodf() and not self.ts.sim("黑塔"):
                 for j in deepcopy(self.target):
@@ -840,6 +845,9 @@ class UniverseUtils:
                         self.target.remove(j)
                         log.info("removed:" + str(j))
                 return
+            self.mouse_move(sub)
+            self.ang = ang
+            ps = [13,9 + self.quan*7,11,7]
             if self._stop == 0:
                 keyops.keyDown("w")
             time.sleep(0.25)
@@ -849,6 +857,8 @@ class UniverseUtils:
                 sft = 1
             time.sleep(0.25)
             bw_map = self.get_bw_map()
+            if bw_map is None:
+                return
             self.get_loc(bw_map, rg=30, offset=self.get_offset(4))
             self.get_real_loc(1)
             # 复杂的定位、寻路过程
@@ -863,6 +873,8 @@ class UniverseUtils:
                     return
                 ctm = time.time()
                 bw_map = self.get_bw_map()
+                if bw_map is None:
+                    return
                 self.get_loc(bw_map, fbw=1, offset=self.get_offset(2+(c<=2)), rg=10+6*(c<=2))
                 self.get_real_loc(2)
                 ang = (
@@ -948,26 +960,43 @@ class UniverseUtils:
             if type == 0:
                 self.lst_tm = time.time()
             if type == 1:
-                if self._stop == 0:
-                    pyautogui.click()
-                time.sleep(1.1)
-                self.press("s")
-                if self._stop == 0:
-                    pyautogui.click()
-                time.sleep(0.8)
-                if len(self.target) <= 2:
-                    time.sleep(0.3)
+                if not self.quan:
+                    if self._stop == 0:
+                        pyautogui.click()
+                    time.sleep(1.1)
                     self.press("s")
-                    pyautogui.click()
-                    time.sleep(0.6)
-                    self.press("s", 0.5)
-                    pyautogui.click()
-                    time.sleep(0.5)
-                    self.press("w", 1.6)
-                    pyautogui.click()
+                    if self._stop == 0:
+                        pyautogui.click()
+                    time.sleep(0.8)
+                    if len(self.target) <= 2:
+                        time.sleep(0.3)
+                        self.press("s")
+                        pyautogui.click()
+                        time.sleep(0.6)
+                        self.press("s", 0.5)
+                        pyautogui.click()
+                        time.sleep(0.5)
+                        self.press("w", 1.6)
+                        pyautogui.click()
+                else:
+                    keyops.keyUp("w")
+                    for ii in range(2):
+                        self.use_e()
+                        if ii:
+                            time.sleep(0.6)
+                        self.use_e()
+                        bw_map = self.get_bw_map()
+                        if bw_map is None:
+                            continue
+                        self.get_loc(bw_map, fbw=1, offset=self.get_offset(2), rg=24)
+                        self.get_real_loc(1)
+                        self.press('w')
+                        self.bless()
             if type == 3:
                 for i in range(9):
                     self.get_screen()
+                    if self.quan and self.check("choose_bless", 0.9266, 0.9491):
+                        return
                     if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                         log.info("大图识别到传送点")
                         self.press('f')
@@ -981,7 +1010,7 @@ class UniverseUtils:
                         self.press('w', 0.5)
                         time.sleep(0.2)
             # 离目标点挺近了，准备找下一个目标点
-            elif nds <= 20:
+            elif nds <= 20 or self.quan:
                 try:
                     self.target.remove((loc, type))
                     log.info("removed:" + str((loc, type)))
@@ -1364,18 +1393,14 @@ class UniverseUtils:
                     break
                 if self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                     self.stop_move=1
-                    time.sleep(1.7+self.slow*1.1)
-                    if self.mini_state==1 and self.floor in [3, 7, 12]:
+                    time.sleep(1.7+self.slow*1.1-(self.quan and self.floor not in [3, 7, 12])*0.5)
+                    if self.mini_state==1 and self.floor in [3, 7, 12] and not self.quan:
                         keyops.keyUp("w")
                         if not self.check("ruan",0.0625,0.7065,threshold=0.95) and not self.check("U", 0.0240,0.7759):
                             for i in range([3, 7, 12].index(self.floor)+2):
                                 self.press(str(i+1))
                                 time.sleep(0.4)
-                                self.press('e')
-                                time.sleep(1.5)
-                                self.get_screen()
-                                if self.check('e',0.4995,0.7500):
-                                    self.solve_snack()
+                                self.use_e()
                                 self.get_screen()
                                 if not self.check("z",0.5906,0.9537,mask="mask_z",threshold=0.95):
                                     break
@@ -1387,8 +1412,24 @@ class UniverseUtils:
                         iters+=1
                         if iters>4:
                             break
-                        pyautogui.click()
-                        if iters == 2:
+                        if self.quan:
+                            keyops.keyUp("w")
+                            self.use_e()
+                            if self.floor not in [3, 7, 12]:
+                                for _ in range(3):
+                                    self.use_e()
+                                self.stop_move=1
+                                self.mini_state+=2
+                                time.sleep(0.4)
+                                self.press('w')
+                                time.sleep(1.4)
+                                return
+                            else:
+                                time.sleep(0.8)
+                                keyops.keyDown("w")
+                        else:
+                            pyautogui.click()
+                        if iters + self.quan == 2:
                             time.sleep(0.9)
                             self.press('d',0.85)
                             self.press('a',0.3)
@@ -1442,6 +1483,88 @@ class UniverseUtils:
         else:
             self.allow_e = 0
         self.press('esc')
-        time.sleep(1)
-        if f:
+        if not self.quan:
+            time.sleep(1)
             self.press('e')
+        else:
+            for _ in range(2):
+                self.press('e')
+                time.sleep(0.2)
+    
+    def use_e(self):
+        self.press('e')
+        time.sleep(0.4)
+        if not self.quan:
+            time.sleep(0.8)
+        self.get_screen()
+        if self.check('e',0.4995,0.7500):
+            self.solve_snack()
+
+    def bless(self):
+        self.get_screen()
+        if self.wait_fig(lambda:not self.check("choose_bless", 0.9266, 0.9491), 2.3):
+            self.wait_fig(lambda:not self.check("reset",0.2938,0.0954), 0.7)
+            time.sleep(1.2)
+        else:
+            return
+        for _ in range(6):
+            chose = 0
+            self.battle = 0
+            self.get_screen()
+            if self.check("reset",0.2938,0.0954, threshold=0.96):
+                for _ in range(14):
+                    self.get_screen()
+                    img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                    if (
+                        self.ts.split_and_find(self.tk.fates, img_down, mode="bless")[1]
+                        or self._stop
+                    ):
+                        time.sleep(0.2)
+                        break
+                    if not self.check("choose_bless", 0.9266, 0.9491, threshold=0.945):
+                        return 1
+                    time.sleep(0.2)
+                self.get_screen()
+                img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
+                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up, bless_skip=self.tk.skip)
+                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                res_down = self.ts.split_and_find([self.fate], img_down, mode="bless")
+                if res_up[1] == 2:
+                    self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
+                    chose = 1
+                elif res_down[1] == 2:
+                    self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                    chose = 1
+                if not chose:
+                    self.click((0.2990, 0.1046))
+                    time.sleep(1.2)
+            # 未匹配到优先祝福，刷新祝福并再次匹配
+            if not chose:
+                for _ in range(8):
+                    self.get_screen()
+                    img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                    if self.ts.split_and_find(self.tk.fates, img_down)[1] or self._stop:
+                        time.sleep(0.2)
+                        break
+                    if not self.check("choose_bless", 0.9266, 0.9491, threshold=0.945):
+                        return 1
+                    time.sleep(0.2)
+                self.get_screen()
+                img_up = self.check("z", 0.5047, 0.5491, mask="mask_bless", large=False)
+                res_up = self.ts.split_and_find(self.tk.prior_bless, img_up,bless_skip=self.tk.skip)
+                img_down = self.check("z", 0.5042, 0.3204, mask="mask", large=False)
+                res_down = self.ts.split_and_find(
+                    self.tk.secondary, img_down, mode="bless"
+                )
+                if res_up[1] == 2:
+                    self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
+                elif res_down[1] >= 2:
+                    self.click(self.calc_point((0.5042, 0.3204), res_down[0]))
+                else:
+                    self.click(self.calc_point((0.5047, 0.5491), res_up[0]))
+                time.sleep(0.5)
+            self.click((0.1203, 0.1093))
+            time.sleep(1.7)
+            self.get_screen()
+            if not self.check("choose_bless", 0.9266, 0.9491, threshold=0.945):
+                return
