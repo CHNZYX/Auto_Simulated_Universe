@@ -341,7 +341,7 @@ class SimulatedUniverse(UniverseUtils):
             self.get_screen()
             if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
                 for _ in range(4):
-                    img = self.check("z", 0.3344, 0.4241, mask="mask_f", large=False)
+                    img = self.check("z", 0.3181, 0.4324, mask="mask_f", large=False)
                     text = self.ts.sim_list(self.tk.interacts, img)
                     if text is None:
                         img = self.check(
