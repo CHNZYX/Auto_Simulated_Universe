@@ -648,7 +648,7 @@ class UniverseUtils:
         text = self.ts.sim_list(self.tk.interacts, img)
         if text is None:
             # 使用新坐标重新尝试
-            img = self.check("z", 0.3365, 0.4231, mask="mask_f", large=False)
+            img = self.check("z", 0.3181, 0.4324, mask="mask_f", large=False)
             text = self.ts.sim_list(self.tk.interacts, img)
         is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
         if text is not None:
