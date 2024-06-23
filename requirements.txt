@@ -1,4 +1,4 @@
-numpy
+numpy<2
 opencv_python
 PyAutoGUI
 pywin32
