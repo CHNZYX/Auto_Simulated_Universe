@@ -191,6 +191,7 @@ class SimulatedUniverse(UniverseUtils):
         portal = None
         moving = 0
         if static:
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
             for i in [0, 60, 90, 90, 90, -120, -120, -90]:
                 self.mouse_move(i)
                 time.sleep(0.3)
@@ -262,7 +263,7 @@ class SimulatedUniverse(UniverseUtils):
     def find_event_text(self):
         self.ts.forward(self.get_screen())
         print(self.ts.find_with_box())
-        text = self.ts.find_with_box([400, 1920, 0, 230], redundancy=0)
+        text = self.ts.find_with_box([400, 1920, 0, 320], redundancy=0)
         print(text)
         res = 0
         for i in text:
@@ -276,7 +277,7 @@ class SimulatedUniverse(UniverseUtils):
         print(res)
         return res
     
-    def align_event(self, key='d', deep=0):
+    def align_event(self, deep=0):
         if deep == 0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-160 * self.multi * self.scale))
         event_text = self.find_event_text()
@@ -286,12 +287,12 @@ class SimulatedUniverse(UniverseUtils):
             return
         if event_text:
             if abs(event_text - 950) > 40:
-                self.press(key,0.2)
+                self.press('a',0.2)
                 event_text_after = self.find_event_text()
                 if event_text_after == 0:
                     self.close_and_exit(click = False)
                     return
-                sub = event_text - event_text_after
+                sub = event_text_after - event_text
                 sub = (event_text_after - 950) // sub
                 for _ in range(sub):
                     self.press('d',0.2)
@@ -300,7 +301,7 @@ class SimulatedUniverse(UniverseUtils):
         else:
             if deep < 3:
                 self.press('w',[0,0.3,0.5][deep])
-                self.align_event(key, deep+1)
+                self.align_event(deep+1)
             else:
                 self.close_and_exit(click = False)
             return
@@ -342,7 +343,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.press('d',0.8)
                 keyops.keyUp('w')
                 time.sleep(0.8)
-                self.align_event('a')
+                self.align_event()
             elif self.area_state==1:
                 self.press('a', 1.3)
                 self.get_screen()
@@ -355,8 +356,9 @@ class SimulatedUniverse(UniverseUtils):
                         self.press('f')
                     else:
                         self.press('s',1)
-                        self.align_event('a')
+                        self.align_event()
             else:
+                self.mouse_move(20)
                 self.portal_opening_days(static=1)
             self.area_state += 1
         elif area_now == '休整':
@@ -400,7 +402,7 @@ class SimulatedUniverse(UniverseUtils):
             if self.area_state == 0:
                 self.press('w', 3.2)
                 pyautogui.click()
-            elif self.area_state == 1:
+            else:
                 self.press('w', 0.5)
                 self.portal_opening_days(static=1)
             self.area_state += 1
@@ -449,6 +451,7 @@ class SimulatedUniverse(UniverseUtils):
         self.click_box(blesses[0]['box'])
         time.sleep(0.5)
         self.click_posintion([1695, 962])
+        time.sleep(1)
 
     def end_of_uni(self):
         self.update_count(0)
