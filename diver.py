@@ -263,7 +263,7 @@ class SimulatedUniverse(UniverseUtils):
     def find_event_text(self):
         self.ts.forward(self.get_screen())
         print(self.ts.find_with_box())
-        text = self.ts.find_with_box([400, 1920, 0, 320], redundancy=0)
+        text = self.ts.find_with_box([300, 1920, 0, 320], redundancy=0)
         print(text)
         res = 0
         for i in text:
@@ -279,7 +279,7 @@ class SimulatedUniverse(UniverseUtils):
     
     def align_event(self, deep=0):
         if deep == 0:
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-160 * self.multi * self.scale))
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-300 * self.multi * self.scale))
         event_text = self.find_event_text()
         self.get_screen()
         if self.check_f(check_text=0):
@@ -345,11 +345,13 @@ class SimulatedUniverse(UniverseUtils):
                 time.sleep(0.8)
                 self.align_event()
             elif self.area_state==1:
+                self.keys.fff = 1
                 self.press('a', 1.3)
-                self.get_screen()
+                self.keys.fff = 0
+                self.ts.forward(self.get_screen())
                 if self.check_f(check_text=0):
                     self.press('f')
-                else:
+                elif self.get_now_area() is not None:
                     self.press('w', 0.3)
                     self.get_screen()
                     if self.check_f(check_text=0):
