@@ -317,6 +317,7 @@ class SimulatedUniverse(UniverseUtils):
             self.floor, self.area_state = now_floor, 0
             self.event_solved = 0
             self.bless_solved = 0
+        print(self.floor, self.area_state, self.bless_solved)
         if area_now == '长石号':
             self.press('f')
             self.press('F4')
@@ -363,11 +364,11 @@ class SimulatedUniverse(UniverseUtils):
                     self.press('f')
                     self.area_state = 2
             elif self.area_state == 2:
-                self.press('d', 0.5)
+                self.press('d', 0.4)
                 self.press('f')
             elif self.area_state == 3:
                 if self.bless_solved:
-                    self.press('a', 1)
+                    self.press('a', 0.8)
                     self.press('f')
                     keyops.keyDown('s')
                     self.press('d', 0.3)
@@ -387,8 +388,8 @@ class SimulatedUniverse(UniverseUtils):
             self.area_state += 1
         elif area_now == '财富':
             keyops.keyDown('w')
-            time.sleep(2.5)
-            self.press('a', 0.5)
+            time.sleep(2.4)
+            self.press('a', 0.6)
             time.sleep(1)
             keyops.keyUp('w')
             self.press('f')
