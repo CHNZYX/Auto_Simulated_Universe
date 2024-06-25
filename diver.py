@@ -351,7 +351,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.portal_opening_days(static=1)
             self.area_state += 1
         elif area_now == '休整':
-            self.press('a', 0.26)
+            self.press('a', 0.3)
             self.press('w', 4)
             self.portal_opening_days(aimed=1)
         elif area_now == '商店':
@@ -359,7 +359,7 @@ class SimulatedUniverse(UniverseUtils):
             self.portal_opening_days()
         elif area_now == '首领':
             if self.area_state == 0:
-                self.press('w', 3.8)
+                self.press('w',3)
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
@@ -367,7 +367,7 @@ class SimulatedUniverse(UniverseUtils):
                 if self.floor == 13:
                     self.close_and_exit()
                 elif self.bless_solved:
-                    self.press('w', 1)
+                    self.press('w', 1.8)
                     self.press('f')
                 else:
                     self.area_state = 3
