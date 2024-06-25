@@ -276,9 +276,14 @@ class SimulatedUniverse(UniverseUtils):
         print(res)
         return res
     
-    def align_event(self, key='d'):
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-160 * self.multi * self.scale))
+    def align_event(self, key='d', deep=0):
+        if deep == 0:
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-160 * self.multi * self.scale))
         event_text = self.find_event_text()
+        self.get_screen()
+        if self.check_f(check_text=0):
+            self.press('f')
+            return
         if event_text:
             if abs(event_text - 950) > 40:
                 self.press(key,0.2)
@@ -293,7 +298,11 @@ class SimulatedUniverse(UniverseUtils):
                 for _ in range(-sub):
                     self.press('a',0.2)
         else:
-            self.close_and_exit(click = False)
+            if deep < 3:
+                self.press('w',[0,0.3,0.5][deep])
+                self.align_event(key, deep+1)
+            else:
+                self.close_and_exit(click = False)
             return
         keyops.keyDown('w')
         self.keys.fff = 1
