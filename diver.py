@@ -266,12 +266,12 @@ class SimulatedUniverse(UniverseUtils):
     def find_event_text(self):
         self.ts.forward(self.get_screen())
         print(self.ts.find_with_box())
-        text = self.ts.find_with_box([300, 1920, 0, 320], redundancy=0)
+        text = self.ts.find_with_box([300, 1920, 0, 350], redundancy=0)
         print(text)
         res = 0
         for i in text:
             box = i['box']
-            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120):
+            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290):
                 continue
             w, h = box[1] - box[0], box[3] - box[2]
             if w < 40 or h < 20 or h > 40:
@@ -346,10 +346,10 @@ class SimulatedUniverse(UniverseUtils):
         elif area_now in ['事件', '奖励', '遭遇']:
             if self.area_state==0:
                 keyops.keyDown('w')
-                time.sleep(1.8)
+                time.sleep(2)
                 self.press('d',0.8)
                 keyops.keyUp('w')
-                time.sleep(0.8)
+                time.sleep(0.6)
                 self.align_event('a')
             elif self.area_state==1:
                 self.keys.fff = 1
