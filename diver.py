@@ -41,6 +41,7 @@ class SimulatedUniverse(UniverseUtils):
         self.init_tm = time.time()
         self.area_state = 0
         self.action_history = []
+        self.event_solved = self.bless_solved = 0
         if debug != 2:
             pyautogui.FAILSAFE = False
         self.update_count()
@@ -261,14 +262,19 @@ class SimulatedUniverse(UniverseUtils):
 
     def find_event_text(self):
         self.ts.forward(self.get_screen())
+        print(self.ts.find_with_box())
         text = self.ts.find_with_box([400, 1920, 0, 230], redundancy=0)
+        print(text)
         res = 0
         for i in text:
             box = i['box']
+            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120):
+                continue
             w, h = box[1] - box[0], box[3] - box[2]
             if w < 40 or h < 20 or h > 40:
                 continue
             res = max(res, (box[0] + box[1]) // 2)
+        print(res)
         return res
     
     def align_event(self, key='d'):
