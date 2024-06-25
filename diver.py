@@ -80,7 +80,6 @@ class SimulatedUniverse(UniverseUtils):
         self.get_screen()
         self.ts.forward(self.screen)
         # self.ts.find_with_box()
-        # self.portal_opening_days(static=1)
         # exit()
         self.run_static(json_path = "actions/default.json")
         
@@ -278,6 +277,7 @@ class SimulatedUniverse(UniverseUtils):
         return res
     
     def align_event(self, key='d'):
+        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-160 * self.multi * self.scale))
         event_text = self.find_event_text()
         if event_text:
             if abs(event_text - 950) > 40:
@@ -307,11 +307,11 @@ class SimulatedUniverse(UniverseUtils):
 
     def area(self):
         area_now = self.get_now_area()
-        time.sleep(0.6)
+        time.sleep(0.7)
         self.ts.forward(self.get_screen())
         if self.get_now_area() != area_now:
             return
-        time.sleep(1.4)
+        time.sleep(1.2)
         if self.area_state == -1:
             self.close_and_exit(click = False)
             return
@@ -323,7 +323,6 @@ class SimulatedUniverse(UniverseUtils):
             self.floor, self.area_state = now_floor, 0
             self.event_solved = 0
             self.bless_solved = 0
-        print(self.floor, self.area_state, self.bless_solved)
         if area_now == '长石号':
             self.press('f')
             self.press('F4')
@@ -333,8 +332,8 @@ class SimulatedUniverse(UniverseUtils):
                 time.sleep(1.8)
                 self.press('d',0.8)
                 keyops.keyUp('w')
-                time.sleep(0.5)
-                self.align_event('d')
+                time.sleep(0.8)
+                self.align_event('a')
             elif self.area_state==1:
                 self.press('a', 1.3)
                 self.get_screen()
@@ -362,24 +361,28 @@ class SimulatedUniverse(UniverseUtils):
             if self.area_state == 0:
                 self.press('w', 3.8)
                 pyautogui.click()
+                time.sleep(0.2)
+                pyautogui.click()
             elif self.area_state == 1:
                 if self.floor == 13:
                     self.close_and_exit()
                 elif self.bless_solved:
                     self.press('w', 1)
                     self.press('f')
-                    self.area_state = 2
+                else:
+                    self.area_state = 3
             elif self.area_state == 2:
                 self.press('d', 0.4)
                 self.press('f')
             elif self.area_state == 3:
+                self.press('a', 0.8)
+                self.press('f')
+            elif self.area_state == 4:
                 if self.bless_solved:
-                    self.press('a', 0.8)
-                    self.press('f')
-                    keyops.keyDown('s')
-                    self.press('d', 0.3)
+                    keyops.keyDown('d')
+                    self.press('s', 0.2)
                     time.sleep(0.2)
-                    keyops.keyUp('s')
+                    keyops.keyUp('d')
                     self.portal_opening_days(static=1)
                 else:
                     self.portal_opening_days()
