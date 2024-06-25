@@ -258,6 +258,14 @@ class UniverseUtils:
     def calc_point(self, point, offset):
         return (point[0] - offset[0] / self.xx, point[1] - offset[1] / self.yy)
 
+    def click_box(self, box):
+        x = (box[0] + box[1]) / 2
+        y = (box[2] + box[3]) / 2
+        self.click((1 - x / self.xx, 1 - y / self.yy))
+
+    def click_posintion(self, position):
+        self.click_box([position[0], position[0], position[1], position[1]])
+
     def click_text(self, text, env=None, click=1):
         img = self.get_screen()
         pt = self.ts.find_text(img, text, env=env)
@@ -302,7 +310,7 @@ class UniverseUtils:
         self.print_stack()
         x, y = points
         # 如果是浮点数表示，则计算实际坐标
-        if type(x) != type(0):
+        if type(x) != int:
             x, y = self.x1 - int(x * self.xx), self.y1 - int(y * self.yy)
         # 全屏模式会有一个偏移
         if self.full:
@@ -641,19 +649,21 @@ class UniverseUtils:
         self.press("m", 0.2)
         time.sleep(1)
 
-    def goodf(self):
-        if not self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
-            return False
-        img = self.check("z", 0.3344, 0.4241, mask="mask_f", large=False)
-        text = self.ts.sim_list(self.tk.interacts, img)
-        if text is None:
-            # 使用新坐标重新尝试
-            img = self.check("z", 0.3365, 0.4231, mask="mask_f", large=False)
-            text = self.ts.sim_list(self.tk.interacts, img)
-        is_killed = text in ["沉浸", "紧锁", "复活", "下载"]
-        if text is not None:
-            log.info('识别到交互信息：'+text)
-        return text is not None and not is_killed
+    def check_f(self, is_in=[], check_text=1):
+        if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.95):
+            if not check_text:
+                return 1
+            ans = self.ts.find_with_box([1200, 1380, 580, 630])
+            print(ans)
+            if len(ans):
+                text = ans[0]['raw_text']
+                log.info('识别到交互信息：'+text)
+                for i in is_in:
+                    if i in text:
+                        return 1
+            return 0
+        else:
+            return None
 
     def get_tar(self):
         # 寻找最近的目标点

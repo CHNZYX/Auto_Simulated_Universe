@@ -909,10 +909,6 @@ class SimulatedUniverse(UniverseUtils):
         except:
             pass
         self._stop = True
-        self._stop = 1
-        self._stop = True
-        self._stop = 1
-        self._stop = True
     
     def on_key_press(self, event):
         global stop_flag

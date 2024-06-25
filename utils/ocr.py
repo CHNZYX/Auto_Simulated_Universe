@@ -11,6 +11,8 @@ class My_TS:
         self.ts = TextSystem(use_angle_cls=False)
         self.ts.text_recognizer.postprocess_op.character.append(' ')
         self.text=''
+        self.res=[]
+        self.forward_img = None
 
     def is_edit_distance_at_most_one(self, str1, str2, ch):
         length = len(str1)
@@ -35,8 +37,6 @@ class My_TS:
         if img is not None:
             self.input(img)
         self.text = self.text.strip()
-        if text.strip() in ['胜军','脊刺','佩拉']:
-            return text.strip() in self.text
         length = len(text)
         res = 0
         stext = self.text+' '
@@ -58,83 +58,45 @@ class My_TS:
                 return t
         return None
 
-    def split_and_find(self,key_list,img,mode=None,bless_skip=1):
-        white=[255,255,255]
-        yellow=[126,162,180]
-        binary_image = np.zeros_like(img[:, :, 0])
-        enhance_image = np.zeros_like(img)
-        if mode=='strange':
-            binary_image[np.sum((img - yellow) ** 2, axis=-1) <= 512]=255
-            enhance_image[np.sum((img - yellow) ** 2, axis=-1) <= 3200]=[255,255,255]
-        else:
-            binary_image[np.sum((img - white) ** 2, axis=-1) <= 1600]=255
-            enhance_image[np.sum((img - white) ** 2, axis=-1) <= 3200]=[255,255,255]
-        if mode=='bless':
-            kerneld = np.zeros((7,3),np.uint8) + 1
-            kernele = np.zeros((1,39),np.uint8) + 1
-            kernele2 = np.zeros((7,1),np.uint8) + 1
-            binary_image = cv.dilate(binary_image,kerneld,iterations=2)
-            binary_image = cv.erode(binary_image,kernele,iterations=5)
-            binary_image = cv.erode(binary_image,kernele2,iterations=2)
-            enhance_image = img
-        else:
-            kernel = np.zeros((5,9),np.uint8) + 1
-            for i in range(2):
-                binary_image = cv.dilate(binary_image,kernel,iterations=3)
-                binary_image = cv.erode(binary_image,kernel,iterations=2)
-        contours, _ = cv.findContours(binary_image, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-        prior = len(key_list)
-        rcx,rcy,find,black=-1,-1,0,0
-        res=''
-        text_res='.'
-        for c,contour in enumerate(contours):
-            x, y, w, h = cv.boundingRect(contour)
-            if h==binary_image.shape[0] or w<55:
-                continue
-            roi = enhance_image[y:y+h, x:x+w]
-            cx = x + w // 2
-            cy = y + h // 2
-            self.input(roi)
-            if len(self.text.strip())<=1:
-                continue
-            if find == 0:
-                rcx,rcy,find,text_res = cx,cy,1,self.text+';'
-            res+='|'+self.text
-            if (self.sim('回归不等式') and bless_skip) or self.sim_list(['银河大乐透','普通八卦','愚者面具','机械齿轮']) is not None:
-                black = 1
-                res+='x'
-                continue
-            if find == 1:
-                rcx,rcy,text_res=cx,cy,self.text+'?'
-            for i,text in enumerate(key_list):
-                if i==prior:
-                    break
-                if self.sim(text):
-                    rcx,rcy,find=cx,cy,2
-                    text_res=text+'!'
-                    prior=i
-        print('识别结果：',res+'|',' 识别到：',text_res)
-        if black and find==1:
-            find=3
-        return (rcx-img.shape[1]//2,rcy-img.shape[0]//2),find+black
-    
-    def find_text(self, img, text, env=None):
-        self.nothing = 1
-        results = self.ts.detect_and_ocr(img)
+    def forward(self, img):
+        if self.forward_img is not None and np.sum(np.abs(self.forward_img-img))<1e-6:
+            return
+        self.forward_img = img
+        self.res = self.ts.detect_and_ocr(img)
+        for res in self.res:
+            res.box = [int(np.min(res.box[:,0])),int(np.max(res.box[:,0])),int(np.min(res.box[:,1])),int(np.max(res.box[:,1]))]
+
+    def find_with_text(self, text=[]):
+        ans = []
         for txt in text:
-            for res in results:
+            for res in self.res:
                 self.text = res.ocr_text
-                if len(self.text.strip())>1 and 'UID' not in self.text:
-                    self.nothing = 0
                 if self.sim(txt):
                     print("识别到文本：",txt,"匹配文本：",self.text)
-                    return res.box
-        return None
+                    ans.append({'raw_text':res.ocr_text, 'text':text, 'box':res.box, 'score':res.score})
+        return sorted(ans, key=lambda x: x['score'], reverse=True)
+
+    def box_contain(self, box_out, box_in, redundancy):
+        if type(redundancy) in [tuple, list]:
+            r = redundancy
+        else:
+            r = (redundancy, redundancy)
+        return box_out[0]<=box_in[0]+r[0] and box_out[1]>=box_in[1]-r[0] and box_out[2]<=box_in[2]+r[1] and box_out[3]>=box_in[3]-r[1]
+
+    def find_with_box(self, box=None, redundancy=10):
+        ans = []
+        for res in self.res:
+            if box is None:
+                print(res.ocr_text, res.box)
+            else:
+                if self.box_contain(box, res.box, redundancy=redundancy):
+                    ans.append({'raw_text':res.ocr_text, 'box':res.box, 'score':res.score})
+        return sorted(ans, key=lambda x: x['score'], reverse=True)
 
 class text_keys:
     def __init__(self,fate=4):
         self.fate=fate
-        self.interacts = ['黑塔', '区域', '事件', '退出', '沉浸', '紧锁', '复活', '下载', '模拟']
+        self.interacts = ['造物调试台', '复活装置']
         self.fates = ["存护", "记忆", "虚无", "丰饶", "巡猎", "毁灭", "欢愉", "繁育", "智识"]
         self.prior_bless = ['火堆外的夜']
         self.strange = []

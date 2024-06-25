@@ -1,0 +1,282 @@
+[
+    {
+        "name": "差分宇宙中",
+        "trigger":{
+            "text": "位面",
+            "box": [58, 525, 9, 32],
+            "redundancy": 30
+        },
+        "actions": ["area"]
+    },
+    {
+        "name": "差分宇宙外",
+        "trigger":{
+            "text": "长石号",
+            "box": [48, 135, 7, 31],
+            "redundancy": 30
+        },
+        "actions": ["area"]
+    },
+    {
+        "name": "加载界面",
+        "trigger":{
+            "text": "开始游戏",
+            "box": [1525, 1633, 940, 968],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "开始游戏"
+            }
+        ]
+    },
+    {
+        "name": "模式选择",
+        "trigger":{
+            "text": "模式选择",
+            "box": [92, 195, 53, 87],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "继续进度"
+            },
+            {
+                "text": "常规演算"
+            }
+        ]
+    },
+    {
+        "name": "折磨难度",
+        "trigger":{
+            "text": "折磨难度",
+            "box": [1081, 1173, 82, 112],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "position": [1529, 884]
+            }
+        ]
+    },
+    {
+        "name": "启动[差分宇宙]",
+        "trigger":{
+            "text": "启动",
+            "box": [1573, 1760, 944, 976],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "启动"
+            }
+        ]
+    },
+    {
+        "name": "丢弃",
+        "trigger":{
+            "text": "丢弃",
+            "box": [94, 193, 58, 85],
+            "redundancy": 30
+        },
+        "actions": ["drop_bless"]
+    },
+    {
+        "name": "方程选择",
+        "trigger":{
+            "text": "方程",
+            "box": [92, 195, 54, 88],
+            "redundancy": 30
+        },
+        "actions": ["bless"]
+    },
+    {
+        "name": "祝福选择",
+        "trigger":{
+            "text": "祝福",
+            "box": [92, 195, 54, 88],
+            "redundancy": 30
+        },
+        "actions": ["bless"]
+    },
+    {
+        "name": "加权奇物选择",
+        "trigger":{
+            "text": "奇物",
+            "box": [94, 240, 58, 84],
+            "redundancy": 30
+        },
+        "actions": ["bless"]
+    },
+    {
+        "name": "事件选择",
+        "trigger":{
+            "text": "事件",
+            "box": [92, 195, 54, 88],
+            "redundancy": 30
+        },
+        "actions": ["event"]
+    },
+    {
+        "name": "奇物大转盘",
+        "trigger":{
+            "text": "开始抽奖",
+            "box": [1533, 1632, 962, 990],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "开始抽奖"
+            }
+        ]
+    },  
+    {
+        "name": "探索结束",
+        "trigger":{
+            "text": "返回主界面",
+            "box": [646, 767, 942, 966],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "返回主界面"
+            }
+        ]
+    },
+    {
+        "name": "探索结束-失败",
+        "trigger":{
+            "text": "返回主界面",
+            "box": [890, 1012, 940, 967],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "返回主界面"
+            }
+        ]
+    },
+    {
+        "name": "战斗结束-失败",
+        "trigger":{
+            "text": "终止战斗并结算",
+            "box": [621, 791, 965, 994],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "终止战斗并结算"
+            }
+        ]
+    },
+    {
+        "name": "确认界面",
+        "trigger":{ 
+            "text": "确认",
+            "box": [1152, 1205, 648, 678],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "确认",
+                "box": [1152, 1205, 648, 678],
+                "redundancy": 30
+            }
+        ]
+    },
+    {
+        "name": "确认界面-退出并结算",
+        "trigger":{ 
+            "text": "确认",
+            "box": [1152, 1206, 756, 786],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "确认",
+                "box": [1152, 1206, 756, 786],
+                "redundancy": 30
+            }
+        ]
+    },
+    {
+        "name": "退出界面",
+        "trigger":{
+            "text": "暂离",
+            "box": [1312, 1372, 873, 905],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "暂离"
+            }
+        ]
+    },
+    {
+        "name": "星际和平指南-生存索引",
+        "trigger":{
+            "text": "规则说明",
+            "box": [1127, 1225, 43, 70],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "position": [597, 212]
+            }
+        ]
+    },
+    {
+        "name": "星际和平指南-模拟宇宙",
+        "trigger":{
+            "text": "前往参与",
+            "box": [1440, 1535, 857, 883],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "前往参与"
+            }
+        ]
+    },
+    {
+        "name": "点击空白处关闭",
+        "trigger":{
+            "text": "空白",
+            "box": [867, 1037, 981, 1008],
+            "redundancy": 60
+        },
+        "actions":
+        [
+            {
+                "text": "点击空白"
+            }
+        ]
+    },
+    {
+        "name": "点击空白处关闭-战斗",
+        "trigger":{
+            "text": "空白",
+            "box": [868, 1035, 803, 829],
+            "redundancy": 60
+        },
+        "actions":
+        [
+            {
+                "text": "点击空白"
+            }
+        ]
+    }
+]
