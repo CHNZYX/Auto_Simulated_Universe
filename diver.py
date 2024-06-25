@@ -378,15 +378,15 @@ class SimulatedUniverse(UniverseUtils):
             self.press('w', 1.5)
             self.portal_opening_days()
         elif area_now == '首领':
+            if self.floor == 13 and self.area_state > 0:
+                self.close_and_exit()
             if self.area_state == 0:
                 self.press('w',3)
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
             elif self.area_state == 1:
-                if self.floor == 13:
-                    self.close_and_exit()
-                elif self.bless_solved:
+                if self.bless_solved:
                     self.press('w', 1.8)
                     self.press('f')
                 else:
@@ -397,7 +397,7 @@ class SimulatedUniverse(UniverseUtils):
             elif self.area_state == 3:
                 self.press('a', 0.95)
                 self.press('f')
-            elif self.area_state == 4:
+            else:
                 if self.bless_solved:
                     keyops.keyDown('d')
                     self.press('s', 0.2)
