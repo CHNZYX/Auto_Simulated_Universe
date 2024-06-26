@@ -1,4 +1,4 @@
-numpy
+numpy==1.26.0
 opencv_python
 PyAutoGUI
 pywin32
@@ -8,7 +8,9 @@ pyuac
 pillow
 keyboard
 requests
-ppocr-onnx
+onnxruntime-directml
+shapely
+pyclipper
 pyscreeze==0.1.28
 tzdata
 tzlocal

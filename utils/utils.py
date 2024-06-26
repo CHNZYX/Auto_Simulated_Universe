@@ -89,7 +89,7 @@ class UniverseUtils:
         self.my_fate = -1
         self.fail_count = 0
         self.first_mini = 1
-        self.ts = ocr.My_TS()
+        self.ts = ocr.My_TS(father=self)
         self.last_info = ''
         self.mini_target = 0
         self.f_time = 0
@@ -263,7 +263,7 @@ class UniverseUtils:
         y = (box[2] + box[3]) / 2
         self.click((1 - x / self.xx, 1 - y / self.yy))
 
-    def click_posintion(self, position):
+    def click_position(self, position):
         self.click_box([position[0], position[0], position[1], position[1]])
 
     def click_text(self, text, env=None, click=1):
