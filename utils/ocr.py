@@ -3,6 +3,7 @@ import numpy as np
 import cv2 as cv
 from utils.log import log
 from functools import cmp_to_key
+import time
 
 # mode: bless1 bless2 strange
 
@@ -91,6 +92,8 @@ class My_TS:
     def find_with_box(self, box=None, redundancy=10, forward=0):
         if forward and box is not None:
             self.forward(self.father.get_screen()[box[2]:box[3],box[0]:box[1]])
+            if box[3]==540:
+                cv.imwrite('img/'+str(int(time.time()))+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
         ans = []
         for res in self.res:
             if box is None:

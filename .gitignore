@@ -4,6 +4,7 @@ venv/
 .vscode/
 build/
 dist/
+img/
 *.spec
 imgs/bigmap.jpg
 imgs/bwmap.jpg
