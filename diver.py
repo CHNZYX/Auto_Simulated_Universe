@@ -152,7 +152,7 @@ class SimulatedUniverse(UniverseUtils):
         print(text)
         portal = {'score':100}
         for i in text:
-            if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][1] > 400 or i['box'][3] > 60):
+            if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
                 portal_type = self.get_text_type(i['raw_text'], prefer_portal)
                 if portal_type is not None:
                     i.update({'score':prefer_portal.index(portal_type), 'type':portal_type})
@@ -168,8 +168,8 @@ class SimulatedUniverse(UniverseUtils):
     
     def aim_portal(self, portal):
         zero = bisect.bisect_left(config.angles, 0)
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-100 * self.multi * self.scale))
-        while abs(self.portal_bias(portal)) > 25:
+        # win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
+        while abs(self.portal_bias(portal)) > 50:
             angle = bisect.bisect_left(config.angles, self.portal_bias(portal)) - zero
             self.mouse_move(angle)
             time.sleep(0.3)
@@ -190,7 +190,7 @@ class SimulatedUniverse(UniverseUtils):
         portal = None
         moving = 0
         if static:
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
+            # win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
             for i in [0, 60, 90, 90, 90, -120, -120, -90]:
                 self.mouse_move(i)
                 time.sleep(0.3)
@@ -217,7 +217,7 @@ class SimulatedUniverse(UniverseUtils):
                         time.sleep(0.5)
             if portal is not None and not aimed:
                 x = self.portal_bias(portal)
-                if abs(x) > 25:
+                if abs(x) > 50:
                     if moving:
                         keyops.keyUp('w')
                         moving = 0
@@ -283,7 +283,7 @@ class SimulatedUniverse(UniverseUtils):
     
     def align_event(self, key, deep=0):
         if deep == 0:
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-300 * self.multi * self.scale))
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
         event_text = self.find_event_text()
         self.get_screen()
         if self.check_f(check_text=0):
@@ -339,7 +339,8 @@ class SimulatedUniverse(UniverseUtils):
             self.event_solved = 0
             self.bless_solved = 0
             if self.floor in [5,10]:
-                time.sleep(2)
+                time.sleep(3.5)
+        print('floor:',self.floor,'state:',self.area_state,'area:',area_now)
         if area_now == '长石号':
             self.press('f')
             self.press('F4')

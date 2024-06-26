@@ -5,7 +5,7 @@ class PredictBase(object):
         pass
 
     def get_onnx_session(self, model_dir, use_gpu):
-        providers = onnxruntime.get_available_providers()
+        providers = onnxruntime.get_available_providers()[1:]
         sess_options = onnxruntime.SessionOptions()
         onnx_session = onnxruntime.InferenceSession(model_dir, providers=providers, sess_options=sess_options)
 

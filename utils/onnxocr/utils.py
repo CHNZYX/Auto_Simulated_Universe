@@ -237,8 +237,8 @@ def infer_args():
     parser.add_argument("--image_dir", type=str)
     parser.add_argument("--page_num", type=int, default=0)
     parser.add_argument("--det_algorithm", type=str, default='DB')
-    parser.add_argument("--det_model_dir", type=str, default='./utils/models/v4_det.onnx')
-    parser.add_argument("--det_limit_side_len", type=float, default=1440)
+    parser.add_argument("--det_model_dir", type=str, default='./utils/models/v3_det.onnx')
+    parser.add_argument("--det_limit_side_len", type=float, default=1280)
     parser.add_argument("--det_limit_type", type=str, default='max')
     parser.add_argument("--det_box_type", type=str, default='quad')
 
