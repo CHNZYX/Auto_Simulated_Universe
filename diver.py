@@ -11,6 +11,7 @@ import json
 import sys
 from copy import deepcopy
 from utils.log import log, set_debug
+from utils.args import args
 from utils.map_log import map_log
 from utils.update_map import update_map
 from utils.utils import UniverseUtils, set_forground, notif
@@ -81,7 +82,7 @@ class SimulatedUniverse(UniverseUtils):
         # self.ts.find_with_box()
         # print(self.ts.find_with_box([0,1920,60,500], forward=1))
         # exit()
-        self.run_static(json_path = "actions/default.json")
+        self.run_static(json_path = args.path + "/actions/default.json")
         
     def do_action(self, action) -> int:
         if type(action) == str:
@@ -103,7 +104,7 @@ class SimulatedUniverse(UniverseUtils):
             return 1
         return 0
 
-    def run_static(self, json_path="actions/default.json", json_file=None) -> str:
+    def run_static(self, json_path=args.path + "/actions/default.json", json_file=None) -> str:
         if json_file is None:
             json_file = json.load(open(json_path, "r", encoding="utf-8"))
         for i in json_file:
@@ -150,7 +151,7 @@ class SimulatedUniverse(UniverseUtils):
         prefer_portal = ['事件', '奖励', '商店', '首领', '财富', '战斗', '休整', '遭遇']
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1)
-        print(text,f'截图时间:{int((time.time()-tm)*1000)}ms')
+        print(f'截图时间:{int((time.time()-tm)*1000)}ms', text)
         portal = {'score':100}
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
@@ -267,9 +268,7 @@ class SimulatedUniverse(UniverseUtils):
             self.click((0.9479, 0.9565))
 
     def find_event_text(self):
-        print(self.ts.find_with_box())
         text = self.ts.find_with_box([300, 1920, 0, 350], forward=1)
-        print(text)
         res = 0
         for i in text:
             box = i['box']
@@ -279,7 +278,6 @@ class SimulatedUniverse(UniverseUtils):
             if w < 40 or h < 20 or h > 40:
                 continue
             res = max(res, (box[0] + box[1]) // 2)
-        print(res)
         return res
     
     def align_event(self, key, deep=0):
@@ -426,7 +424,7 @@ class SimulatedUniverse(UniverseUtils):
         elif area_now == '财富':
             keyops.keyDown('w')
             time.sleep(2.4)
-            self.press('a', 0.6)
+            self.press('a', 0.5)
             time.sleep(1)
             keyops.keyUp('w')
             self.press('f')
@@ -460,7 +458,7 @@ class SimulatedUniverse(UniverseUtils):
         for i in text:
             box = i["box"]
             x, y = (box[0] + box[1]) // 2, (box[2] + box[3]) // 2
-            box = [x - 220, x + 220, y - 350, y]
+            box = [x - 220, x + 220, 450, 850]
             bless_text = self.ts.find_with_box(box)
             bless_raw_text = self.merge_text(bless_text)
             blesses.append({'raw_text': bless_raw_text, 'box': box, 'score': self.bless_score(bless_raw_text)})
@@ -578,10 +576,8 @@ class SimulatedUniverse(UniverseUtils):
 
 
 def main():
-    global nums, speed, debug
-    nums = config.max_run
-    log.info(f"debug: {debug}")
-    su = SimulatedUniverse(debug, nums, speed)
+    log.info(f"debug: {args.debug}")
+    su = SimulatedUniverse(args.debug, args.nums, args.speed)
     try:
         su.start()
     # except ValueError as e:
@@ -596,12 +592,4 @@ if __name__ == "__main__":
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:
-        debug = 0
-        nums = 34
-        speed = 0
-        for i in sys.argv[1:]:
-            st = i.split("-")[-1]
-            if "=" not in st:
-                st = st + "=1"
-            exec(st)
         main()

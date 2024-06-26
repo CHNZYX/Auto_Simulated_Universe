@@ -3,6 +3,7 @@ import cv2
 import argparse
 import math
 from PIL import Image, ImageDraw, ImageFont
+from utils.args import args
 
 def get_rotate_crop_image(img, points):
     '''
@@ -237,7 +238,7 @@ def infer_args():
     parser.add_argument("--image_dir", type=str)
     parser.add_argument("--page_num", type=int, default=0)
     parser.add_argument("--det_algorithm", type=str, default='DB')
-    parser.add_argument("--det_model_dir", type=str, default='./utils/models/v3_det.onnx')
+    parser.add_argument("--det_model_dir", type=str, default=args.path + '/utils/models/v3_det.onnx')
     parser.add_argument("--det_limit_side_len", type=float, default=1280)
     parser.add_argument("--det_limit_type", type=str, default='max')
     parser.add_argument("--det_box_type", type=str, default='quad')
@@ -273,7 +274,7 @@ def infer_args():
 
     # params for text recognizer
     parser.add_argument("--rec_algorithm", type=str, default='SVTR_LCNet')
-    parser.add_argument("--rec_model_dir", type=str, default='./utils/models/v4_rec.onnx')
+    parser.add_argument("--rec_model_dir", type=str, default=args.path + '/utils/models/v4_rec.onnx')
     parser.add_argument("--rec_image_inverse", type=str2bool, default=True)
     parser.add_argument("--rec_image_shape", type=str, default="3, 48, 320")
     parser.add_argument("--rec_batch_num", type=int, default=6)
@@ -281,7 +282,7 @@ def infer_args():
     parser.add_argument(
         "--rec_char_dict_path",
         type=str,
-        default='./utils/models/ppocr_keys_v1.txt')
+        default=args.path + '/utils/models/ppocr_keys_v1.txt')
     parser.add_argument("--use_space_char", type=str2bool, default=True)
     parser.add_argument(
         "--vis_font_path", type=str, default="./onnxocr/fonts/simfang.ttf")

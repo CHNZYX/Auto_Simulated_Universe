@@ -20,6 +20,7 @@ import traceback
 
 from utils.map_log import map_log
 from utils.config import config
+from utils.args import args
 from utils.log import log
 import utils.ocr as ocr
 import utils.keyops as keyops
@@ -368,7 +369,7 @@ class UniverseUtils:
         ]
 
     def format_path(self, path):
-        return f"./imgs/{path}.jpg"
+        return f"{args.path}/imgs/{path}.jpg"
 
     # 判断截图中匹配中心点附近是否存在匹配模板
     # path：匹配模板的路径，x,y：匹配中心点，mask：如果存在，则以mask大小为基准裁剪截图，threshold：匹配阈值
