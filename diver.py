@@ -148,8 +148,9 @@ class SimulatedUniverse(UniverseUtils):
     
     def find_portal(self):
         prefer_portal = ['事件', '奖励', '商店', '首领', '财富', '战斗', '休整', '遭遇']
+        tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1)
-        print(text)
+        print(text,f'截图时间:{int((time.time()-tm)*1000)}ms')
         portal = {'score':100}
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
