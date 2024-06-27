@@ -95,6 +95,7 @@ class SimulatedUniverse(UniverseUtils):
             if self.speed and '转化' in self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0)):
                 time.sleep(6)
                 self.press('esc')
+                time.sleep(2)
         
     def do_action(self, action) -> int:
         if type(action) == str:
@@ -170,6 +171,7 @@ class SimulatedUniverse(UniverseUtils):
         self.event_solved = 0
         self.bless_solved = 0
         self.fail_cnt = 0
+        self.now_event = ''
 
     def close_and_exit(self, click=True):
         self.press('esc')
@@ -327,6 +329,7 @@ class SimulatedUniverse(UniverseUtils):
     def event(self):
         event_id = (-1, '')
         self.event_solved = 1
+        start = self.now_event == ''
         tm = time.time()
         while time.time() - tm < 20:
             title_text = self.merge_text(self.ts.find_with_box([170, 850, 900, 1020], redundancy=0), char=0)
@@ -334,6 +337,7 @@ class SimulatedUniverse(UniverseUtils):
                 for i, e in enumerate(self.event_prior):
                     if e in title_text and len(e) > len(event_id[1]):
                         event_id = (i, e)
+                self.now_event = event_id[1]
                 print('event_id:', event_id)
             if '事件' not in self.merge_text(self.ts.find_with_box([92, 195, 54, 88])):
                 return
@@ -385,7 +389,8 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.click((0.9479, 0.9565))
                 self.click((0.9479, 0.9565))
-                time.sleep(1)
+                if not start:
+                    time.sleep(2)
                 self.ts.forward(self.get_screen())
 
     def find_event_text(self):
