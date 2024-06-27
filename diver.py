@@ -49,6 +49,7 @@ class SimulatedUniverse(UniverseUtils):
         self.team_member = []
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
+        self.event_text = ''
         self.init_floor()
         self.default_json_path = args.path + "/actions/default.json"
         self.default_json = self.load_actions(self.default_json_path)
@@ -248,7 +249,7 @@ class SimulatedUniverse(UniverseUtils):
                         portal = i
         ocr_time = time.time() - tm
         self.ocr_time_list = self.ocr_time_list[-5:] + [ocr_time]
-        print(f'截图时间:{int(()*1000)}ms', text, portal)
+        print(f'截图时间:{int(ocr_time*1000)}ms', text, portal)
         if portal['score'] == 100:
             return None
         else:
@@ -421,28 +422,33 @@ class SimulatedUniverse(UniverseUtils):
                 self.click((0.9479, 0.9565))
                 self.ts.forward(self.get_screen())
 
-    def find_event_text(self):
+    def find_event_text(self, save=0):
         time.sleep(0.3)
         text = self.ts.find_with_box([300, 1920, 0, 350], forward=1)
         res = 0
+        event_text = ''
         debug_res = []
         print('event_text:', text)
         for i in text:
             box = i['box']
-            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290):
+            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290) or box[2] < 60:
                 continue
             w, h = box[1] - box[0], box[3] - box[2]
             if w < 40 or h < 20 or h > 40:
                 continue
-            res = max(res, (box[0] + box[1]) // 2)
+            if (box[0] + box[1]) // 2 > res or self.event_text in i['raw_text'] or i['raw_text'] in self.event_text:
+                res = (box[0] + box[1]) // 2
+                event_text = i['raw_text']
             debug_res.append(i)
-        print(debug_res, res)
+        print(debug_res, res, event_text)
+        if save:
+            self.event_text = event_text
         return res
     
     def align_event(self, key, deep=0):
         if deep == 0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
-        event_text = self.find_event_text()
+        event_text = self.find_event_text(1)
         self.ts.forward(self.get_screen())
         if self.check_f(is_in=['事件','奖励','遭遇','交易']):
             self.press('f')
@@ -468,7 +474,8 @@ class SimulatedUniverse(UniverseUtils):
                 if key == 'a':
                     sub = -sub
                 print('sub:', sub)
-                sub = min(max(sub, 60), 150)
+                if sub < 60 or sub > 150:
+                    sub = 100
                 sub = int((event_text_after - 950) / sub)
                 sub = min(5, max(-5, int(sub)))
                 for _ in range(sub-1):
@@ -496,6 +503,7 @@ class SimulatedUniverse(UniverseUtils):
     def skill(self):
         if not self.allow_e:
             return
+        time.sleep(1)
         self.press('e')
         time.sleep(1.5)
         self.get_screen()
@@ -565,6 +573,8 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.portal_opening_days(static=1)
         elif area_now == '休整':
+            pyautogui.click()
+            time.sleep(0.6)
             self.press('a', 0.3)
             self.press('w', 4)
             self.portal_opening_days(aimed=1)
@@ -577,9 +587,9 @@ class SimulatedUniverse(UniverseUtils):
                 return
             if self.area_state == 0:
                 self.press('w',3)
-                for i, c in enumerate(self.team_member):
-                    if c in config.skill_char:
-                        self.press(str(i+1))
+                for c in config.skill_char:
+                    if c in self.team_member:
+                        self.press(str(self.team_member.index(c)+1))
                         self.skill()
                 pyautogui.click()
                 time.sleep(0.2)
