@@ -37,14 +37,15 @@ class SimulatedUniverse(UniverseUtils):
         super().__init__()
         self._stop = True
         self.floor = 0
+        self.allow_e = 1
         self.count = self.my_cnt = 0
         self.nums = nums
         self.speed = speed
         self.init_tm = time.time()
         self.area_now = None
         self.action_history = []
-        self.event_prior = self.read_csv(args.path + "/actions/event.csv")
-        self.character_prior = self.read_csv(args.path + "/actions/character.csv")
+        self.event_prior = self.read_csv(args.path + "/actions/event.csv", name='event')
+        self.character_prior = self.read_csv(args.path + "/actions/character.csv", name='char')
         self.bless_prior = defaultdict(int)
         self.team_member = []
         self.init_floor()
@@ -87,9 +88,7 @@ class SimulatedUniverse(UniverseUtils):
     def loop(self):
         self.ts.forward(self.get_screen())
         # self.ts.find_with_box()
-        # self.run_static(action_list=['点击空白处关闭'])
         # exit()
-        # print(self.ts.res)
         res = self.run_static()
         if res == '':
             text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
@@ -155,14 +154,20 @@ class SimulatedUniverse(UniverseUtils):
                     return i['name']
         return ''
 
-    def read_csv(self, file_path):
+    def read_csv(self, file_path, name):
         with open(file_path, mode='r', newline='') as file:
             reader = csv.reader(file)
             next(reader)
-            data = {row[0]:[s.replace('，',',') for s in row[1:]] for row in reader}
+            if name == 'char':
+                data = defaultdict(dict)
+                for row in reader:
+                    data[row[0]].update({white:int(row[3]) for white in row[1].replace('，',',').split(',')})
+                    data[row[0]].update({black:-int(row[3]) for black in row[2].replace('，',',').split(',')})
+            else:
+                data = {row[0]:[s.replace('，',',') for s in row[1:]] for row in reader}
         return data
 
-    def clean_text(self, text, char):
+    def clean_text(self, text, char=1):
         symbols = r"[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~—“”‘’«»„…·¿¡£¥€©®™°±÷×¶§‰]，。！？；：（）【】「」《》、￥"
         if char:
             symbols += r"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -194,17 +199,17 @@ class SimulatedUniverse(UniverseUtils):
         return None
     
     def find_team_member(self):
-        text = self.ts.find_with_box([1640, 1800, 280, 620], redundancy=0)
+        boxes = [[1620, 1790, 289, 335],[1620, 1790, 384, 427],[1620, 1790, 478, 521],[1620, 1790, 570, 618]]
         team_member = []
-        for i in text:
-            if i['raw_text'] in self.character_prior:
-                team_member.append(i['raw_text'])
+        for i in boxes:
+            name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), i))
+            if name in self.character_prior:
+                team_member.append(name)
         return team_member
 
     def get_now_area(self):
         team_member = self.find_team_member()
-        self.area_text = self.ts.find_with_box([0, 555, 0, 80], forward=1)
-        self.area_text = self.merge_text(self.area_text, char=0)
+        self.area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
         if '长石' in self.area_text:
             return '长石号'
         elif '位面' in self.area_text:
@@ -215,9 +220,9 @@ class SimulatedUniverse(UniverseUtils):
             return None
     
     def find_portal(self):
-        prefer_portal = ['奖励', '事件', '商店', '首领', '财富', '战斗', '休整', '遭遇']
+        prefer_portal = ['奖励', '事件', '战斗', '遭遇', '商店', '财富', '首领', '休整']
         if self.speed:
-            prefer_portal = ['商店', '财富', '奖励', '事件', '首领', '战斗', '休整', '遭遇']
+            prefer_portal = ['商店', '财富', '奖励', '事件', '战斗', '遭遇', '首领', '休整']
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1)
         portal = {'score':100}
@@ -331,7 +336,6 @@ class SimulatedUniverse(UniverseUtils):
     def event(self):
         event_id = (-1, '')
         self.event_solved = 1
-        start = self.now_event == ''
         tm = time.time()
         while time.time() - tm < 20:
             title_text = self.merge_text(self.ts.find_with_box([170, 850, 900, 1020], redundancy=0), char=0)
@@ -339,6 +343,7 @@ class SimulatedUniverse(UniverseUtils):
                 for i, e in enumerate(self.event_prior):
                     if e in title_text and len(e) > len(event_id[1]):
                         event_id = (i, e)
+                start = self.now_event == event_id[1]
                 self.now_event = event_id[1]
                 print('event_id:', event_id)
             if '事件' not in self.merge_text(self.ts.find_with_box([92, 195, 54, 88])):
@@ -388,11 +393,15 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.click((0.1167, ty - 0.4685 + 0.3546))
                 time.sleep(0.8)
+                start = 0
             else:
-                self.click((0.9479, 0.9565))
-                self.click((0.9479, 0.9565))
                 if not start:
-                    time.sleep(2)
+                    time.sleep(0.6)
+                    self.ts.forward(self.get_screen())
+                    if '事件' not in self.merge_text(self.ts.find_with_box([92, 195, 54, 88])):
+                        return
+                self.click((0.9479, 0.9565))
+                self.click((0.9479, 0.9565))
                 self.ts.forward(self.get_screen())
 
     def find_event_text(self):
@@ -464,6 +473,15 @@ class SimulatedUniverse(UniverseUtils):
                 self.keys.fff = 0
                 keyops.keyUp('w')
                 return
+            
+    def skill(self):
+        if not self.allow_e:
+            return
+        self.press('e')
+        time.sleep(1.5)
+        self.get_screen()
+        if self.check('e',0.4995,0.7500):
+            self.solve_snack()
 
     def area(self):
         area_now = self.get_now_area()
@@ -474,11 +492,14 @@ class SimulatedUniverse(UniverseUtils):
         if self.area_state == -1:
             self.close_and_exit(click = False)
             return
+        self.press('1')
         now_floor = self.floor
         for i in range(1,14):
             if f'{i}13' in self.area_text:
                 now_floor = i
         if now_floor != self.floor:
+            if now_floor < self.floor:
+                self.init_floor()
             self.floor = now_floor
             if self.floor in [5,10]:
                 time.sleep(3.5)
@@ -490,6 +511,7 @@ class SimulatedUniverse(UniverseUtils):
         if area_now == '长石号':
             self.press('f')
             self.press('F4')
+            self.init_floor()
         elif area_now in ['事件', '奖励', '遭遇']:
             if self.area_state==0:
                 keyops.keyDown('w')
@@ -533,6 +555,10 @@ class SimulatedUniverse(UniverseUtils):
                 return
             if self.area_state == 0:
                 self.press('w',3)
+                for i, c in enumerate(self.team_member):
+                    if c in config.skill_char:
+                        self.press(str(i+1))
+                        self.skill()
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
@@ -600,11 +626,8 @@ class SimulatedUniverse(UniverseUtils):
         self.bless_prior = defaultdict(int)
         for i in self.team_member + ['全局']:
             prior = self.character_prior[i]
-            weight = int(prior[2])
-            for j in prior[0]:
-                self.bless_prior[j] += weight
-            for j in prior[1]:
-                self.bless_prior[j] -= weight * 2
+            for j in prior:
+                self.bless_prior[j] += prior[j]
     
     def bless_score(self, text):
         score = 0

@@ -50,8 +50,6 @@ class TextSystem(object):
         # 图像识别
         rec_res = self.text_recognizer(img_crop_list)
 
-        if self.args.save_crop_res:
-            self.draw_crop_rec_res(self.args.crop_res_save_dir, img_crop_list,rec_res)
         filter_boxes, filter_rec_res = [], []
         for box, rec_result in zip(dt_boxes, rec_res):
             text, score = rec_result

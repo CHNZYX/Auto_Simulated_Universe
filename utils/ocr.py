@@ -15,6 +15,12 @@ class My_TS:
         self.forward_img = None
         self.father = father
 
+    def ocr_one_row(self, img, box=None):
+        if box is None:
+            return self.ts.text_recognizer([img])[0][0]
+        else:
+            return self.ts.text_recognizer([img[box[2]:box[3],box[0]:box[1]]])[0][0]
+
     def is_edit_distance_at_most_one(self, str1, str2, ch):
         length = len(str1)
         diff_count = sum(1 for i in range(length) if str1[i] != str2[i])
