@@ -85,17 +85,23 @@ class SimulatedUniverse(UniverseUtils):
         log.info("停止运行")
 
     def loop(self):
-        self.get_screen()
-        self.ts.forward(self.screen)
+        self.ts.forward(self.get_screen())
         # self.ts.find_with_box()
         # self.run_static(action_list=['点击空白处关闭'])
         # exit()
+        print(self.ts.res)
         res = self.run_static()
         if res == '':
-            if self.speed and '转化' in self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0)):
-                time.sleep(6)
-                self.press('esc')
-                time.sleep(2)
+            text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
+            if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
+                time.sleep(10)
+                tm = time.time()
+                while time.time() - tm < 15:
+                    self.press('esc')
+                    time.sleep(2)
+                    self.ts.forward(self.get_screen())
+                    if self.run_static(action_list=['过量转化']) != '':
+                        break
         
     def do_action(self, action) -> int:
         if type(action) == str:
@@ -245,11 +251,7 @@ class SimulatedUniverse(UniverseUtils):
             time.sleep(0.2)
             portal = self.find_portal()
             if portal is None:
-                self.mouse_move(10)
-                time.sleep(0.2)
-                portal = self.find_portal()
-                if portal is None:
-                    return None
+                return None
         return portal
 
     def portal_opening_days(self, aimed=0, static=0, deep=0):
@@ -424,6 +426,7 @@ class SimulatedUniverse(UniverseUtils):
             self.run_static(action_list=['混沌药箱'], skip_check=1)
             tm = time.time()
             while time.time() - tm < 3:
+                self.ts.forward(self.get_screen())
                 res = self.run_static(action_list=['点击空白处关闭'])
                 if len(res):
                     tm = time.time()
