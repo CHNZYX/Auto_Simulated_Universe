@@ -89,7 +89,7 @@ class SimulatedUniverse(UniverseUtils):
         # self.ts.find_with_box()
         # self.run_static(action_list=['点击空白处关闭'])
         # exit()
-        print(self.ts.res)
+        # print(self.ts.res)
         res = self.run_static()
         if res == '':
             text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
@@ -434,6 +434,7 @@ class SimulatedUniverse(UniverseUtils):
         if event_text:
             if abs(event_text - 950) > 40:
                 self.press(key,0.2)
+                time.sleep(0.3)
                 event_text_after = self.find_event_text()
                 if event_text_after == 0:
                     return
@@ -441,13 +442,15 @@ class SimulatedUniverse(UniverseUtils):
                 if key == 'a':
                     sub = -sub
                 print('sub:', sub)
-                sub = min(max(sub, 40), 150)
-                sub = (event_text_after - 950) // (sub + 0.01)
+                sub = min(max(sub, 60), 150)
+                sub = int((event_text_after - 950) / sub)
                 sub = min(5, max(-5, int(sub)))
-                for _ in range(sub):
+                for _ in range(sub-1):
                     self.press('d',0.2)
-                for _ in range(-sub):
+                    time.sleep(0.1)
+                for _ in range(-sub-1):
                     self.press('a',0.2)
+                    time.sleep(0.1)
         else:
             if deep < 3:
                 self.press('w',[0,0.3,0.5][deep])
@@ -467,7 +470,7 @@ class SimulatedUniverse(UniverseUtils):
         time.sleep(0.5)
         if self.get_now_area() != area_now or area_now is None:
             return
-        time.sleep(1.4)
+        time.sleep(1.6)
         if self.area_state == -1:
             self.close_and_exit(click = False)
             return
@@ -490,10 +493,13 @@ class SimulatedUniverse(UniverseUtils):
         elif area_now in ['事件', '奖励', '遭遇']:
             if self.area_state==0:
                 keyops.keyDown('w')
-                time.sleep(2)
-                self.press('d',0.8)
+                time.sleep(2.2)
+                keyops.keyDown('d')
+                time.sleep(0.4)
                 keyops.keyUp('w')
-                time.sleep(0.6)
+                time.sleep(0.2)
+                keyops.keyUp('d')
+                time.sleep(0.2)
                 self.align_event('a')
                 self.area_state += 1
             elif self.area_state==1:
@@ -629,7 +635,7 @@ class SimulatedUniverse(UniverseUtils):
         blesses = sorted(blesses, key=lambda x: x['score'], reverse=reverse)
         print(blesses)
         box = blesses[0]['box']
-        for _ in range(2):
+        for _ in range(1):
             self.click_position([(box[0] + box[1]) // 2, 500])
         self.click_position([1695, 962])
         time.sleep(1)

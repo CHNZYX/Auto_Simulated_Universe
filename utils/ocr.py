@@ -62,8 +62,8 @@ class My_TS:
     
     def filter_non_white(self, image):
         hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-        lower_white = np.array([0, 0, 180])
-        upper_white = np.array([180, 55, 255])
+        lower_white = np.array([0, 0, 160])
+        upper_white = np.array([180, 40, 255])
         mask = cv.inRange(hsv_image, lower_white, upper_white)
         filtered_image = cv.bitwise_and(image, image, mask=mask)
         return filtered_image
@@ -71,6 +71,7 @@ class My_TS:
     def forward(self, img):
         if self.forward_img is not None and self.forward_img.shape == img.shape and np.sum(np.abs(self.forward_img-img))<1e-6:
             return
+        tm = time.time()
         self.forward_img = img
         self.res = []
         ocr_res = self.ts.ocr(img)
@@ -79,6 +80,7 @@ class My_TS:
             res['box'] = [int(np.min(res['box'][:,0])),int(np.max(res['box'][:,0])),int(np.min(res['box'][:,1])),int(np.max(res['box'][:,1]))]
             self.res.append(res)
         self.res = self.merge(self.res)
+        # time.sleep(max(0,0.5-(time.time()-tm)))
 
     def find_with_text(self, text=[]):
         ans = []
@@ -102,6 +104,7 @@ class My_TS:
             self.forward(self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]]))
             if box[3]==540 or box[3] == 350:
                 cv.imwrite('img/'+str(int(time.time()*100)%1000000)+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
+                cv.imwrite('img/'+str(int(time.time()*100)%1000000)+'w.jpg',self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]]))
         ans = []
         for res in self.res:
             if box is None:
