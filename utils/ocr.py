@@ -34,11 +34,11 @@ class My_TS:
 
         return diff_count <= 1
     
-    def merge_text(self, text, char=1):
+    def sort_text(self, text):
         def compare(item1, item2):
             x1, _, y1, _ = item1['box']
             x2, _, y2, _ = item2['box']
-            if abs(y1 - y2) <= 5:
+            if abs(y1 - y2) <= 7:
                 return x1 - x2
             return y1 - y2
         text = sorted(text, key=cmp_to_key(compare))
@@ -47,11 +47,11 @@ class My_TS:
     def merge(self, text):
         if len(text) == 0:
             return text
-        text = self.merge_text(text)
+        text = self.sort_text(text)
         res = []
         merged = text[0]
         for i in range(1, len(text)):
-            if abs(text[i]['box'][2] - merged['box'][2]) <= 5 and abs(text[i]['box'][3] - merged['box'][3]) <= 5 and abs(text[i]['box'][0] - merged['box'][1]) <= 35:
+            if abs(text[i]['box'][2] - merged['box'][2]) <= 10 and abs(text[i]['box'][3] - merged['box'][3]) <= 10 and abs(text[i]['box'][0] - merged['box'][1]) <= 35:
                 merged['raw_text'] += text[i]['raw_text']
                 merged['box'][1] = text[i]['box'][1]
             else:
@@ -59,6 +59,14 @@ class My_TS:
                 merged = text[i]
         res.append(merged)
         return res
+    
+    def filter_non_white(self, image):
+        hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+        lower_white = np.array([0, 0, 180])
+        upper_white = np.array([180, 55, 255])
+        mask = cv.inRange(hsv_image, lower_white, upper_white)
+        filtered_image = cv.bitwise_and(image, image, mask=mask)
+        return filtered_image
 
     def forward(self, img):
         if self.forward_img is not None and self.forward_img.shape == img.shape and np.sum(np.abs(self.forward_img-img))<1e-6:
@@ -91,9 +99,9 @@ class My_TS:
 
     def find_with_box(self, box=None, redundancy=10, forward=0):
         if forward and box is not None:
-            self.forward(self.father.get_screen()[box[2]:box[3],box[0]:box[1]])
-            if box[3]==540:
-                cv.imwrite('img/'+str(int(time.time()))+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
+            self.forward(self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]]))
+            if box[3]==540 or box[3] == 350:
+                cv.imwrite('img/'+str(int(time.time()*100)%1000000)+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
         ans = []
         for res in self.res:
             if box is None:
@@ -104,7 +112,7 @@ class My_TS:
             else:
                 res['box'] = [box[0]+res['box'][0], box[0]+res['box'][1], box[2]+res['box'][2], box[2]+res['box'][3]]
                 ans.append(res)
-        return sorted(ans, key=lambda x: x['score'], reverse=True)
+        return self.sort_text(ans)
 
 class text_keys:
     def __init__(self,fate=4):

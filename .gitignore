@@ -5,6 +5,7 @@ venv/
 build/
 dist/
 img/
+test.*
 *.spec
 imgs/bigmap.jpg
 imgs/bwmap.jpg
