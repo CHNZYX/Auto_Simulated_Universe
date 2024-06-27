@@ -47,6 +47,7 @@ class SimulatedUniverse(UniverseUtils):
         self.character_prior = self.read_csv(args.path + "/actions/character.csv", name='char')
         self.bless_prior = defaultdict(int)
         self.team_member = []
+        self.ocr_time_list = [0.5]
         self.fail_tm = 0
         self.init_floor()
         self.default_json_path = args.path + "/actions/default.json"
@@ -245,7 +246,9 @@ class SimulatedUniverse(UniverseUtils):
                     i.update({'score':prefer_portal.index(portal_type), 'type':portal_type})
                     if i['score'] < portal['score']:
                         portal = i
-        print(f'截图时间:{int((time.time()-tm)*1000)}ms', text, portal)
+        ocr_time = time.time() - tm
+        self.ocr_time_list = self.ocr_time_list[-5:] + [ocr_time]
+        print(f'截图时间:{int(()*1000)}ms', text, portal)
         if portal['score'] == 100:
             return None
         else:
@@ -315,7 +318,7 @@ class SimulatedUniverse(UniverseUtils):
                     if moving:
                         keyops.keyUp('w')
                         moving = 0
-                        self.press('s',0.4)
+                        self.press('s',min(max(self.ocr_time_list), 0.4))
                         continue
                     else:
                         print('aiming...')
