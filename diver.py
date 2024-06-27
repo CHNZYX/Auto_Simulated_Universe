@@ -19,7 +19,6 @@ import os
 from align_angle import main as align_angle
 from utils.config import config
 import datetime
-import requests
 import csv
 import pytz
 import pyuac
@@ -48,6 +47,7 @@ class SimulatedUniverse(UniverseUtils):
         self.character_prior = self.read_csv(args.path + "/actions/character.csv", name='char')
         self.bless_prior = defaultdict(int)
         self.team_member = []
+        self.fail_tm = 0
         self.init_floor()
         self.default_json_path = args.path + "/actions/default.json"
         self.default_json = self.load_actions(self.default_json_path)
@@ -153,6 +153,10 @@ class SimulatedUniverse(UniverseUtils):
                     self.action_history = self.action_history[-10:]
                     return i['name']
         return ''
+    
+    def select_difficulty(self):
+        time.sleep(0.5)
+        self.click_position([125, 175+int((self.diffi-1)*(605-175)/4)])
 
     def read_csv(self, file_path, name):
         with open(file_path, mode='r', newline='') as file:
@@ -178,6 +182,7 @@ class SimulatedUniverse(UniverseUtils):
         return self.clean_text(''.join([i['raw_text'] for i in self.ts.sort_text(text)]), char)
     
     def init_floor(self):
+        self.portal_cnt = 0 
         self.area_state = 0
         self.event_solved = 0
         self.bless_solved = 0
@@ -187,10 +192,17 @@ class SimulatedUniverse(UniverseUtils):
     def close_and_exit(self, click=True):
         self.press('esc')
         time.sleep(2.5)
+        if not click:
+            if time.time() - self.fail_tm < 60:
+                click = True
+                self.fail_tm = 0
+            else:
+                self.fail_tm = time.time()
         if click:
-            self.click_position([1530, 990])
             self.init_floor()
             self.floor = 0
+            self.click_position([1530, 990])
+            time.sleep(1)
 
     def get_text_type(self, text, types, prefix=1):
         for i in types:
@@ -264,6 +276,8 @@ class SimulatedUniverse(UniverseUtils):
             self.close_and_exit(click = self.fail_count > 1)
             self.fail_count += 1
             return
+        if deep == 0:
+            self.portal_cnt += 1
         tm = time.time()
         portal = None
         moving = 0
@@ -405,6 +419,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.ts.forward(self.get_screen())
 
     def find_event_text(self):
+        time.sleep(0.3)
         text = self.ts.find_with_box([300, 1920, 0, 350], forward=1)
         res = 0
         debug_res = []
@@ -443,7 +458,6 @@ class SimulatedUniverse(UniverseUtils):
         if event_text:
             if abs(event_text - 950) > 40:
                 self.press(key,0.2)
-                time.sleep(0.3)
                 event_text_after = self.find_event_text()
                 if event_text_after == 0:
                     return
@@ -461,6 +475,8 @@ class SimulatedUniverse(UniverseUtils):
                     self.press('a',0.2)
                     time.sleep(0.1)
         else:
+            if key == 'a':
+                return
             if deep < 3:
                 self.press('w',[0,0.3,0.5][deep])
                 self.align_event(key, deep+1)
@@ -507,6 +523,9 @@ class SimulatedUniverse(UniverseUtils):
             self.area_now = area_now
         else:
             area_now = self.area_now
+        if self.portal_cnt > 2:
+            self.close_and_exit(click = False)
+            return
         print('floor:',self.floor,'state:',self.area_state,'area:',area_now,'text:',self.area_text)
         if area_now == '长石号':
             self.press('f')
@@ -537,7 +556,7 @@ class SimulatedUniverse(UniverseUtils):
                     if self.check_f(check_text=0):
                         self.press('f')
                     else:
-                        self.press('s',1.2)
+                        self.press('s',1)
                         self.align_event('d')
                 self.area_state += 1
             else:
@@ -624,10 +643,11 @@ class SimulatedUniverse(UniverseUtils):
     
     def update_bless_prior(self):
         self.bless_prior = defaultdict(int)
-        for i in self.team_member + ['全局']:
-            prior = self.character_prior[i]
-            for j in prior:
-                self.bless_prior[j] += prior[j]
+        for i in self.team_member + ['全局', config.team]:
+            if i in self.character_prior:
+                prior = self.character_prior[i]
+                for j in prior:
+                    self.bless_prior[j] += prior[j]
     
     def bless_score(self, text):
         score = 0

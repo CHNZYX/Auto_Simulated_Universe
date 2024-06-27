@@ -86,7 +86,6 @@ class UniverseUtils:
         self.move = 0
         self.multi = config.multi
         self.diffi = config.diffi
-        self.fate = config.fate
         self.my_fate = -1
         self.fail_count = 0
         self.first_mini = 1
@@ -99,13 +98,6 @@ class UniverseUtils:
         self.allow_e = 1
         self.quan = 0
         self.img_map = dict()
-        # 用户选择的命途
-        for i in range(len(config.fates)):
-            if config.fates[i] == self.fate:
-                self.my_fate = i
-        if self.my_fate == -1:
-            log.info("info有误，自动选择巡猎命途    错误：" + self.fate)
-            self.my_fate = 4
         self.tk = ocr.text_keys(self.my_fate)
         self.debug, self.find = 0, 1
         self.bx, self.by = 1920, 1080
@@ -165,7 +157,6 @@ class UniverseUtils:
                 traceback.print_exc()
                 time.sleep(0.3)
                 pass
-        self.order = config.order
         self.sct = Screen()
 
     def gen_hotkey_img(self,hotkey="e",bg="imgs/f_bg.jpg"):
@@ -516,6 +507,11 @@ class UniverseUtils:
 
     # 从全屏截屏中裁剪得到游戏窗口截屏
     def get_screen(self):
+        hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
+        Text = win32gui.GetWindowText(hwnd)
+        while Text != "崩坏：星穹铁道" and not self._stop:
+            log.warning("等待游戏窗口")
+            time.sleep(0.5)
         self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
 

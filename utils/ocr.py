@@ -109,8 +109,9 @@ class My_TS:
         if forward and box is not None:
             self.forward(self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]]))
             if box[3]==540 or box[3] == 350:
-                cv.imwrite('img/'+str(int(time.time()*100)%1000000)+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
-                cv.imwrite('img/'+str(int(time.time()*100)%1000000)+'w.jpg',self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]]))
+                tm = str(int(time.time()*100)%1000000)
+                cv.imwrite('img/'+tm+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
+                cv.imwrite('img/'+tm+'w.jpg',self.filter_non_white(self.father.screen[box[2]:box[3],box[0]:box[1]]))
         ans = []
         for res in self.res:
             if box is None:
