@@ -503,14 +503,13 @@ class DivergentUniverse(UniverseUtils):
     
     def align_event(self, key, deep=0):
         find = 0
-        if deep == 0:
+        if deep == 0 and key == 'd':
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
-            if key == 'd':
-                event_text = self.find_event_text(1)
-                if not event_text:
-                    self.press('s', 1)
-                else:
-                    find = 1
+            event_text = self.find_event_text(1)
+            if not event_text:
+                self.press('s', 1)
+            else:
+                find = 1
         if not find:
             event_text = self.find_event_text(1)
         self.ts.forward(self.get_screen())
@@ -744,15 +743,20 @@ class DivergentUniverse(UniverseUtils):
                 self.press('w', 0.5)
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
-            self.press('w', 3.2)
-            self.press('a', 0.3)
+            self.press('w',3)
+            pyautogui.click()
+            time.sleep(0.6)
+            keyops.keyDown('w')
+            time.sleep(0.2)
             self.keys.fff = 1
-            for key in ['a','d']:
-                keyops.keyDown(key)
-                for i in range(3):
-                    self.press('w', 0.15)
-                    time.sleep(0.15)
-                keyops.keyUp(key)
+            self.press('a', 0.5)
+            time.sleep(0.65)
+            keyops.keyUp('w')
+            if self.find_portal() is None:
+                self.press('a', 0.4)
+                self.press('s',1)
+                self.press('d',0.7)
+                self.press('w',0.8)
             self.keys.fff = 0
             self.portal_opening_days(static=1)
         elif area_now == '位面':
@@ -885,11 +889,6 @@ class DivergentUniverse(UniverseUtils):
         log.info("尝试停止运行")
         try:
             self.init_floor()
-        except:
-            pass
-        try:
-            stack_trace_list = traceback.format_stack()
-            print(''.join(stack_trace_list))
         except:
             pass
         self._stop = True
