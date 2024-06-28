@@ -1,0 +1,57 @@
+name: Pack Flet Application
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: "pip"
+
+    - name: Install dependencies
+      run:
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Pack Flet Application
+      run: flet pack gui.py --icon imgs/icon.ico --uac-admin --add-data "utils/models;utils/models" -y
+
+    - name: Move assets to dist directory
+      run: |
+        Copy-Item -Path ".\imgs\" -Destination ".\dist\Auto_Simulated_Universe\imgs\" -Recurse -Force
+        Copy-Item -Path ".\actions\" -Destination ".\dist\Auto_Simulated_Universe\actions\" -Recurse -Force
+        Copy-Item -Path ".\info_example.yml" -Destination ".\dist\Auto_Simulated_Universe\" -Force
+        Copy-Item -Path ".\info_example_old.yml" -Destination ".\dist\Auto_Simulated_Universe\" -Force
+        Copy-Item -Path ".\README.md" -Destination ".\dist\Auto_Simulated_Universe\" -Force
+
+    - name: Create zip archive
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        Rename-Item -Path .\dist\Auto_Simulated_Universe -NewName AutoSimulatedUniverse_${{ github.ref_name }}
+        Compress-Archive -Path .\dist\AutoSimulatedUniverse_${{ github.ref_name }}\ -DestinationPath .\dist\AutoSimulatedUniverse_${{ github.ref_name }}.zip -Force
+
+    - name: Create release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        name: AutoSimulatedUniverse_${{ github.ref_name }}
+        files: |
+          ./dist/AutoSimulatedUniverse_${{ github.ref_name }}.zip
+        prerelease: true
