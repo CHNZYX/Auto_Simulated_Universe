@@ -3,3 +3,4 @@ pyinstaller
 winotify
 pystray
 pillow
+pygame

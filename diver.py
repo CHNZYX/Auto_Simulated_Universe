@@ -27,7 +27,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.01"
+version = "v7.02"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -248,20 +248,33 @@ class DivergentUniverse(UniverseUtils):
                 team_member[name] = i
         return team_member
 
-    def get_now_area(self):
+    def get_now_area(self, deep=0):
         team_member = self.find_team_member()
         self.area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
-        if '长石' in self.area_text:
-            return '长石号'
-        elif '位面' in self.area_text:
-            if len(team_member) > len(self.team_member):
+        print('area_text:', self.area_text, 'deep:', deep)
+        if '位面' in self.area_text or '区域' in self.area_text or '第' in self.area_text:
+            check_ok = 1
+            for i in team_member:
+                if i not in self.team_member or team_member[i] != self.team_member[i]:
+                    check_ok = 0
+                    break
+            if not check_ok:
                 self.team_member = team_member
                 print('team_member:', team_member)
                 for i in self.team_member:
                     if i in config.long_range_list:
                         self.long_range = str(self.team_member[i]+1)
                         break
-            return self.get_text_type(self.area_text, ['长石号', '事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])
+            res = self.get_text_type(self.area_text, ['事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])
+            if (res == '位面' or res is None) and deep == 0:
+                self.mouse_move(20)
+                scr = self.screen
+                time.sleep(0.3)
+                self.get_screen()
+                self.mouse_move(-20)
+                res = self.get_now_area(deep=1)
+                self.screen = scr
+            return res
         else:
             return None
     
@@ -362,7 +375,7 @@ class DivergentUniverse(UniverseUtils):
                     if self.check_f(is_in=[portal['type'] if portal else '区域']):
                         self.press('f')
                         for _ in range(2):
-                            self.press('s',0.15)
+                            self.press('s',0.25)
                             self.press('f')
                         self.init_floor()
                         return
@@ -490,7 +503,8 @@ class DivergentUniverse(UniverseUtils):
         print('event_text:', text)
         for i in text:
             box = i['box']
-            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290) or (box[1] < 400 and box[3] < 160):
+            if 'ms' in i['raw_text'] or '状态效' in i['raw_text'] or len(i['raw_text']) < 2 \
+                  or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290) or (box[1] < 400 and box[3] < 160):
                 continue
             w, h = box[1] - box[0], box[3] - box[2]
             if w < 40 or h > 40:
@@ -570,7 +584,7 @@ class DivergentUniverse(UniverseUtils):
         if not self.allow_e:
             return
         self.press('e')
-        time.sleep(0.6)
+        time.sleep(0.5)
         self.get_screen()
         if self.check('e',0.4995,0.7500):
             self.solve_snack()
@@ -598,7 +612,7 @@ class DivergentUniverse(UniverseUtils):
             if self.floor in [5,10]:
                 time.sleep(3)
         time.sleep(1)
-        if self.area_state == 0 and area_now != '长石号':
+        if self.area_state == 0:
             if '黄泉' in self.team_member and '黄泉' in config.skill_char:
                 self.quan = 1
             if area_now == '战斗' and self.quan and self.allow_e and self.floor > 1:
@@ -619,11 +633,7 @@ class DivergentUniverse(UniverseUtils):
             self.close_and_exit(click = False)
             return
         print('floor:',self.floor,'state:',self.area_state,'area:',area_now,'text:',self.area_text)
-        if area_now == '长石号':
-            self.press('f')
-            self.press('F4')
-            self.init_floor()
-        elif area_now in ['事件', '奖励', '遭遇']:
+        if area_now in ['事件', '奖励', '遭遇']:
             if self.area_state==0:
                 keyops.keyDown('w')
                 time.sleep(2.2)

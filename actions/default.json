@@ -1,5 +1,22 @@
 [
     {
+        "name": "差分宇宙外",
+        "trigger":{
+            "text": "差分宇宙",
+            "box": [1217, 1351, 589, 621],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "press": "f"
+            },
+            {
+                "sleep": 1
+            }
+        ]
+    },
+    {
         "name": "差分宇宙中",
         "trigger":{
             "text": "位面",
@@ -9,10 +26,10 @@
         "actions": ["area"]
     },
     {
-        "name": "差分宇宙外",
+        "name": "差分宇宙中",
         "trigger":{
-            "text": "长石号",
-            "box": [48, 135, 7, 31],
+            "text": "第",
+            "box": [58, 525, 9, 32],
             "redundancy": 30
         },
         "actions": ["area"]
@@ -293,6 +310,9 @@
         [
             {
                 "text": "暂离"
+            },
+            {
+                "sleep": 3
             }
         ]
     },
