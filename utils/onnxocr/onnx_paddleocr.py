@@ -21,6 +21,7 @@ class ONNXPaddleOcr(TextSystem):
         params.rec_image_shape = "3, 48, 320"
 
         # 根据传入的参数覆盖更新默认参数
+        params.__dict__.update({"cpu": False})
         params.__dict__.update(**kwargs)
 
         # 初始化模型

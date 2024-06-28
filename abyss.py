@@ -6,8 +6,8 @@ import win32gui
 import random
 import sys
 from utils.log import log
-from utils.utils import UniverseUtils, set_forground
-import utils.keyops as keyops
+from utils.simul.utils import UniverseUtils, set_forground
+import utils.simul.keyops as keyops
 import os
 import yaml
 import pyuac

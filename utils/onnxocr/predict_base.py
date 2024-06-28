@@ -1,12 +1,11 @@
 import onnxruntime
-from utils.args import args
 
 class PredictBase(object):
-    def __init__(self):
-        pass
+    def __init__(self, cpu=False):
+        self.cpu = cpu
 
     def get_onnx_session(self, model_dir, use_gpu):
-        if args.cpu:
+        if self.cpu:
             providers = ['CPUExecutionProvider']
         else:
             providers = onnxruntime.get_available_providers()

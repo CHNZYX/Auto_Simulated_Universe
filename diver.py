@@ -11,19 +11,17 @@ import json
 import sys
 from copy import deepcopy
 from utils.log import log, set_debug
-from utils.args import args
-from utils.map_log import map_log
-from utils.update_map import update_map
-from utils.utils import UniverseUtils, set_forground, notif
+from utils.diver.args import args
+from utils.diver.utils import UniverseUtils, set_forground, notif
 import os
 from align_angle import main as align_angle
-from utils.config import config
+from utils.diver.config import config
 import datetime
 import csv
 import pytz
 import pyuac
-import utils.keyops as keyops
-from utils.keyops import KeyController
+import utils.diver.keyops as keyops
+from utils.diver.keyops import KeyController
 import bisect
 from collections import defaultdict
 
@@ -31,7 +29,7 @@ from collections import defaultdict
 version = "v7.0"
 
 
-class SimulatedUniverse(UniverseUtils):
+class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
         self._stop = True
@@ -43,9 +41,9 @@ class SimulatedUniverse(UniverseUtils):
         self.init_tm = time.time()
         self.area_now = None
         self.action_history = []
-        self.event_prior = self.read_csv(args.path + "/actions/event.csv", name='event')
-        self.character_prior = self.read_csv(args.path + "/actions/character.csv", name='char')
-        self.all_bless = self.read_csv(args.path + "/actions/bless.csv", name='bless')
+        self.event_prior = self.read_csv("actions/event.csv", name='event')
+        self.character_prior = self.read_csv("actions/character.csv", name='char')
+        self.all_bless = self.read_csv("actions/bless.csv", name='bless')
         self.bless_prior = defaultdict(int)
         self.team_member = []
         self.ocr_time_list = [0.5]
@@ -54,7 +52,8 @@ class SimulatedUniverse(UniverseUtils):
         self.event_text = ''
         self.long_range = '1'
         self.init_floor()
-        self.default_json_path = args.path + "/actions/default.json"
+        self.saved_num = 0
+        self.default_json_path = "actions/default.json"
         self.default_json = self.load_actions(self.default_json_path)
         if debug != 2:
             pyautogui.FAILSAFE = False
@@ -86,7 +85,7 @@ class SimulatedUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            # self.click_target('imgs/divergent/start.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            # self.click_target('imgs/divergent/arrow.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             self.loop()
         log.info("停止运行")
 
@@ -202,6 +201,21 @@ class SimulatedUniverse(UniverseUtils):
         for i in ['w','a','s','d','f']:
             keyops.keyUp(i)
 
+    def save_or_exit(self):
+        print('saved_num:', self.saved_num, 'save_cnt:', config.save_cnt)
+        if self.saved_num < config.save_cnt:
+            self.saved_num += 1
+            self.click_position([1204, 959])
+            time.sleep(1)
+        else:
+            self.click_position([716, 959])
+        time.sleep(1.5)
+
+    def select_save(self):
+        self.click_position([186, 237 + int((self.saved_num-1) * (622 - 237) / 3)])
+        time.sleep(1)
+        self.ts.forward(self.get_screen())
+
     def close_and_exit(self, click=True):
         self.press('esc')
         time.sleep(2.5)
@@ -248,7 +262,7 @@ class SimulatedUniverse(UniverseUtils):
         else:
             return None
     
-    def find_portal(self):
+    def find_portal(self, type=None):
         prefer_portal = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
         if self.speed:
             prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
@@ -262,7 +276,7 @@ class SimulatedUniverse(UniverseUtils):
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
                 portal_type = self.get_text_type(i['raw_text'], prefer_portal)
                 if portal_type is not None:
-                    i.update({'score':prefer_portal[portal_type], 'type':portal_type, 'nums':portal['nums']+1})
+                    i.update({'score':prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
                     if i['score'] > portal['score']:
                         portal = i
         ocr_time = time.time() - tm
@@ -288,7 +302,7 @@ class SimulatedUniverse(UniverseUtils):
             if abs(self.portal_bias(portal)) < 200:
                 return portal
             time.sleep(0.2)
-            portal_after = self.find_portal()
+            portal_after = self.find_portal(portal['type'])
             if portal_after is None:
                 return portal
             else:
@@ -587,6 +601,11 @@ class SimulatedUniverse(UniverseUtils):
                 self.press(str(self.team_member.index('黄泉')+1))
             else:
                 self.press(self.long_range)
+        if self.check("divergent/arrow", 0.7833,0.9231, threshold=0.96):
+            keyops.keyDown('alt')
+            time.sleep(0.2)
+            self.click_position([413, 79])
+            keyops.keyUp('alt')
         time.sleep(0.6)
         if area_now is not None:
             self.area_now = area_now
@@ -654,6 +673,7 @@ class SimulatedUniverse(UniverseUtils):
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
                 self.close_and_exit()
+                self.end_of_uni()
                 return
             if self.area_state == 0:
                 self.press('w',3)
@@ -704,6 +724,7 @@ class SimulatedUniverse(UniverseUtils):
                 else:
                     self.portal_opening_days()
             else:
+                time.sleep(1)
                 self.portal_opening_days()
         elif area_now == '战斗':
             if self.area_state == 0:
@@ -798,6 +819,7 @@ class SimulatedUniverse(UniverseUtils):
             log.info('已完成上限，准备停止运行')
             self.end = 1
         self.floor = 0
+        self.init_floor()
 
     def update_count(self, read=True):
         file_name = "logs/notif.txt"
@@ -857,6 +879,10 @@ class SimulatedUniverse(UniverseUtils):
     def stop(self, *_, **__):
         log.info("尝试停止运行")
         try:
+            self.init_floor()
+        except:
+            pass
+        try:
             if self.debug:
                 traceback.print_stack()
         except:
@@ -887,7 +913,7 @@ class SimulatedUniverse(UniverseUtils):
 
 def main():
     log.info(f"debug: {args.debug}")
-    su = SimulatedUniverse(args.debug, args.nums, args.speed)
+    su = DivergentUniverse(args.debug, args.nums, args.speed)
     try:
         su.start()
     # except ValueError as e:

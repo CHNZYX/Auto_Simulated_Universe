@@ -8,7 +8,8 @@ from .rec_postprocess import CTCLabelDecode
 from .predict_base import PredictBase
 
 class TextRecognizer(PredictBase):
-    def __init__(self, args):
+    def __init__(self, args, cpu=False):
+        super(TextRecognizer, self).__init__(cpu)
         self.rec_image_shape = [int(v) for v in args.rec_image_shape.split(",")]
         self.rec_batch_num = args.rec_batch_num
         self.rec_algorithm = args.rec_algorithm

@@ -5,7 +5,8 @@ from .predict_base import PredictBase
 
 
 class TextDetector(PredictBase):
-    def __init__(self, args):
+    def __init__(self, args, cpu=False):
+        super(TextDetector, self).__init__(cpu)
         self.args = args
         self.det_algorithm = args.det_algorithm
         pre_process_list = [{

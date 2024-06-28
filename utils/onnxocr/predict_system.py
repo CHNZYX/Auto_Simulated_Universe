@@ -8,8 +8,8 @@ from .utils import get_rotate_crop_image, get_minarea_rect_crop
 
 class TextSystem(object):
     def __init__(self, args):
-        self.text_detector = predict_det.TextDetector(args)
-        self.text_recognizer = predict_rec.TextRecognizer(args)
+        self.text_detector = predict_det.TextDetector(args, cpu=args.cpu)
+        self.text_recognizer = predict_rec.TextRecognizer(args, cpu=args.cpu)
         self.drop_score = args.drop_score
 
         self.args = args

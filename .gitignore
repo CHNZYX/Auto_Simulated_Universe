@@ -30,6 +30,7 @@ check5.txt
 *.zip
 ocr/
 info.yml
+info_old.yml
 version.txt
 *.exe
 test.py

@@ -93,6 +93,41 @@
         ]
     },
     {
+        "name": "本轮存档",
+        "trigger":{
+            "text": "本轮存档",
+            "box": [1635, 1723, 956, 984],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "press": "esc"
+            },
+            {
+                "sleep": 1
+            }
+        ]
+    },
+    {
+        "name": "存档管理",
+        "trigger":{
+            "text": "存档管理",
+            "box": [93, 193, 57, 85],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            "select_save",
+            {
+                "text": "保存本轮数据"
+            },
+            {
+                "text": "覆盖存档"
+            }
+        ]
+    },
+    {
         "name": "丢弃",
         "trigger":{
             "text": "丢弃",
@@ -147,15 +182,19 @@
         "actions":
         [
             {
-                "text": "开始抽奖"
-            }
+                "press": "esc"
+            },
+            {
+                "sleep": "2"
+            },
+            "close_and_exit"
         ]
-    },  
+    },
     {
-        "name": "探索结束",
+        "name": "已存档-返回",
         "trigger":{
-            "text": "返回主界面",
-            "box": [646, 767, 942, 966],
+            "text": "查看存档",
+            "box": [1144, 1248, 938, 971],
             "redundancy": 30
         },
         "actions":
@@ -164,6 +203,15 @@
                 "text": "返回主界面"
             }
         ]
+    },
+    {
+        "name": "探索结束",
+        "trigger":{
+            "text": "返回主界面",
+            "box": [646, 767, 942, 966],
+            "redundancy": 30
+        },
+        "actions": ["save_or_exit"]
     },
     {
         "name": "探索结束-失败",
@@ -206,11 +254,14 @@
                 "text": "确认",
                 "box": [1152, 1205, 648, 678],
                 "redundancy": 30
+            },
+            {
+                "sleep": 1
             }
         ]
     },
     {
-        "name": "确认界面-退出并结算",
+        "name": "确认界面",
         "trigger":{ 
             "text": "确认",
             "box": [1152, 1206, 756, 786],
@@ -222,6 +273,9 @@
                 "text": "确认",
                 "box": [1152, 1206, 756, 786],
                 "redundancy": 30
+            },
+            {
+                "sleep": 1
             }
         ]
     },
