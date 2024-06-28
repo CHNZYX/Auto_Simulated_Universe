@@ -743,7 +743,7 @@ class DivergentUniverse(UniverseUtils):
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
             self.press('w', 3.2)
-            self.press('a',0.3)
+            self.press('a', 0.3)
             self.keys.fff = 1
             for key in ['a','d']:
                 keyops.keyDown(key)
