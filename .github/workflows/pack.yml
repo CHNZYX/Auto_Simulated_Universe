@@ -55,14 +55,14 @@ jobs:
     - name: Create zip archive
       if: startsWith(github.ref, 'refs/tags/')
       run: |
-        Rename-Item -Path AutoSimulatedUniverse -NewName AutoSimulatedUniverse_${{ github.ref_name }}
-        Compress-Archive -Path AutoSimulatedUniverse_${{ github.ref_name }}\ -DestinationPath AutoSimulatedUniverse_${{ github.ref_name }}.zip -Force
+        $files = Get-ChildItem -Path AutoSimulatedUniverse -Recurse
+        Compress-Archive -Path $files.FullName -DestinationPath "AutoSimulatedUniverse_${{ github.ref_name }}.zip" -Force
 
     - name: Create release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
-        name: AutoSimulatedUniverse_${{ github.ref_name }}
+        name: ${{ github.ref_name }}
         files: |
           AutoSimulatedUniverse_${{ github.ref_name }}.zip
         prerelease: true
