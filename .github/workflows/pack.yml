@@ -7,7 +7,7 @@ on:
     paths:
       - '**.py'
     tags:
-      - "v*.*.*"
+      - "v*"
   pull_request:
     branches:
       - main
