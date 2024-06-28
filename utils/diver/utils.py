@@ -25,6 +25,7 @@ import utils.diver.ocr as ocr
 import utils.diver.keyops as keyops
 from utils.screenshot import Screen
 import threading
+from utils.log import my_print as print
 
 
 def notif(title, msg, cnt=None):
@@ -77,7 +78,6 @@ def set_forground():
 
 class UniverseUtils:
     def __init__(self):
-        self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self.check_bonus = 1
         self._stop = False
@@ -513,6 +513,8 @@ class UniverseUtils:
         while Text != "崩坏：星穹铁道" and not self._stop:
             log.warning("等待游戏窗口")
             time.sleep(0.5)
+            hwnd = win32gui.GetForegroundWindow()  # 根据当前活动窗口获取句柄
+            Text = win32gui.GetWindowText(hwnd)
         self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
 

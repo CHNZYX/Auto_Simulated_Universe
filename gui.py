@@ -9,7 +9,7 @@ from utils.gui.choose import choose_view
 from utils.gui.config_simul import config_view as config_view_simul
 from utils.gui.config_diver import config_view as config_view_diver
 from utils.gui.abyss import abyss_view
-from utils.gui.common import cleanup, mynd, Page, init_page, update_nd
+from utils.gui.common import cleanup, mynd, Page, init_page
 
 
 def main(page: Page):

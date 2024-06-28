@@ -11,6 +11,7 @@ import json
 import sys
 from copy import deepcopy
 from utils.log import log, set_debug
+from utils.log import my_print as print
 from utils.diver.args import args
 from utils.diver.utils import UniverseUtils, set_forground, notif
 import os
@@ -252,7 +253,7 @@ class DivergentUniverse(UniverseUtils):
         if '长石' in self.area_text:
             return '长石号'
         elif '位面' in self.area_text:
-            if len(team_member) >= len(self.team_member):
+            if len(team_member) > len(self.team_member):
                 self.team_member = team_member
                 print('team_member:', team_member)
                 for i in self.team_member:
@@ -887,8 +888,8 @@ class DivergentUniverse(UniverseUtils):
         except:
             pass
         try:
-            if self.debug:
-                traceback.print_stack()
+            stack_trace_list = traceback.format_stack()
+            print(''.join(stack_trace_list))
         except:
             pass
         self._stop = True
@@ -913,6 +914,9 @@ class DivergentUniverse(UniverseUtils):
                 pass
             if not self._stop:
                 self.stop()
+        except:
+            stack_trace_list = traceback.format_stack()
+            print(''.join(stack_trace_list))
 
 
 def main():

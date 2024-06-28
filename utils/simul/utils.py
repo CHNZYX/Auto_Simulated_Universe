@@ -77,7 +77,6 @@ def set_forground():
 
 class UniverseUtils:
     def __init__(self):
-        self.my_nd = win32gui.GetForegroundWindow()
         set_forground()
         self.check_bonus = 1
         self._stop = False

@@ -55,7 +55,10 @@ def choose_view(page: Page):
             show_snack_bar(page, "校准成功（＾∀＾●）", ft.colors.GREEN)
         else:
             show_snack_bar(page, "校准失败（⊙.⊙）", ft.colors.RED)
-        win32gui.SetForegroundWindow(guind)
+        try:
+            win32gui.SetForegroundWindow(guind)
+        except:
+            pass
 
     def start(_e, name):
         if page.first == 1:
@@ -90,7 +93,7 @@ def choose_view(page: Page):
         run(page.su.start)
         txt = " "
         try:
-            win32gui.SetForegroundWindow(page.su.my_nd)
+            win32gui.SetForegroundWindow(guind)
         except:
             pass
         if page.su is not None:

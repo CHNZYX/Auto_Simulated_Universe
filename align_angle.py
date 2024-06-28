@@ -71,11 +71,6 @@ def main(cnt=10, safe=0, ang=[1,1,3], su=None):
         from utils.simul.config import config
         config.angle = str(su.multi+len(ang)-1)
         config.save()
-    if safe == 0:
-        try:
-            win32gui.SetForegroundWindow(su.my_nd)
-        except pywintypes.error:
-            pass
     log.info("校准完成")
     return 1
 
