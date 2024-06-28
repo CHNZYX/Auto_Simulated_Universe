@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*.*"
   pull_request:
     branches:
       - main
@@ -38,6 +36,9 @@ jobs:
     - name: Move assets to dist directory
       run: |
         Copy-Item -Path ".\imgs\" -Destination ".\dist\Auto_Simulated_Universe\imgs\" -Recurse -Force
+        Copy-Item -Path ".\actions\" -Destination ".\dist\Auto_Simulated_Universe\actions\" -Recurse -Force
+        Copy-Item -Path ".\info_example.yml" -Destination ".\dist\Auto_Simulated_Universe\" -Force
+        Copy-Item -Path ".\info_example_old.yml" -Destination ".\dist\Auto_Simulated_Universe\" -Force
         Copy-Item -Path ".\README.md" -Destination ".\dist\Auto_Simulated_Universe\" -Force
 
     - name: Create zip archive
