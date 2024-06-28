@@ -5,7 +5,7 @@ import win32gui
 from flet_core import MainAxisAlignment, CrossAxisAlignment
 
 from align_angle import main as align_angle
-from utils.gui.common import show_snack_bar, mynd, Page
+from utils.gui.common import show_snack_bar, mynd, Page, guind
 from simul import SimulatedUniverse
 from diver import DivergentUniverse, version
 from utils.diver.config import config as config_diver
@@ -55,6 +55,7 @@ def choose_view(page: Page):
             show_snack_bar(page, "校准成功（＾∀＾●）", ft.colors.GREEN)
         else:
             show_snack_bar(page, "校准失败（⊙.⊙）", ft.colors.RED)
+        win32gui.SetForegroundWindow(guind)
 
     def start(_e, name):
         if page.first == 1:
@@ -211,17 +212,6 @@ def choose_view(page: Page):
                         ft.ElevatedButton(
                             content=ft.Row(
                                 [
-                                    ft.Icon(ft.icons.HIDE_SOURCE),
-                                    ft.Text("显隐", weight=ft.FontWeight.W_800),
-                                ],
-                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
-                            ),
-                            on_click=hide,
-                            width=120,
-                        ),
-                        ft.ElevatedButton(
-                            content=ft.Row(
-                                [
                                     ft.Icon(ft.icons.INFO),
                                     ft.Text("关于", weight=ft.FontWeight.W_600),
                                 ],
@@ -241,9 +231,11 @@ def choose_view(page: Page):
                             on_click=stops,
                             width=120,
                         ),
+                        ft.Container(height=25),
                         ft.Row([
                             ft.Column([
                                 ft.Text("模拟宇宙", size=18, weight=ft.FontWeight.W_600, offset=ft.Offset(x=0.3, y=0), color=ft.colors.PINK_600),
+                                ft.Container(),
                                 ft.ElevatedButton(
                                     content=ft.Row(
                                         [
@@ -270,6 +262,7 @@ def choose_view(page: Page):
                             ft.Container(width=100),
                             ft.Column([
                                 ft.Text("差分宇宙", size=18, weight=ft.FontWeight.W_600, offset=ft.Offset(x=0.3, y=0), color=ft.colors.PINK_600),
+                                ft.Container(),
                                 ft.ElevatedButton(
                                     content=ft.Row(
                                         [
@@ -302,7 +295,7 @@ def choose_view(page: Page):
                 ),
                 ft.Row(
                     [
-                        ft.Container(),
+                        ft.Container(width=630),
                         ft.IconButton(
                             icon=ft.icons.THUMB_UP,
                             tooltip="赞赏",
@@ -310,7 +303,7 @@ def choose_view(page: Page):
                             on_click=go_money,
                         ),
                     ],
-                    alignment=MainAxisAlignment.SPACE_BETWEEN,
+                    alignment=MainAxisAlignment.CENTER,
                     vertical_alignment=CrossAxisAlignment.END,
                 ),
             ],
