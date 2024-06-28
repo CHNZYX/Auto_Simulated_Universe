@@ -66,13 +66,24 @@ class My_TS:
         res.append(merged)
         return res
     
-    def filter_non_white(self, image):
+    def filter_non_white(self, image, mode=0):
+        if not mode:
+            return image
         hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
         lower_white = np.array([0, 0, 160])
         upper_white = np.array([180, 40, 255])
         mask = cv.inRange(hsv_image, lower_white, upper_white)
-        filtered_image = cv.bitwise_and(image, image, mask=mask)
-        return filtered_image
+        if mode == 1:
+            filtered_image = cv.bitwise_and(image, image, mask=mask)
+            return filtered_image
+        elif mode == 2:
+            lower_black = np.array([0, 0, 0])
+            upper_black = np.array([180, 40, 50])
+            mask_black = cv.inRange(hsv_image, lower_black, upper_black)
+            kernel = np.ones((5, 30), np.uint8)
+            mask_black = cv.dilate(mask_black, kernel, iterations=1)
+            filtered_image = cv.bitwise_and(image, image, mask=mask & mask_black)
+            return filtered_image
 
     def forward(self, img):
         if self.forward_img is not None and self.forward_img.shape == img.shape and np.sum(np.abs(self.forward_img-img))<1e-6:
@@ -105,9 +116,9 @@ class My_TS:
             r = (redundancy, redundancy)
         return box_out[0]<=box_in[0]+r[0] and box_out[1]>=box_in[1]-r[0] and box_out[2]<=box_in[2]+r[1] and box_out[3]>=box_in[3]-r[1]
 
-    def find_with_box(self, box=None, redundancy=10, forward=0):
+    def find_with_box(self, box=None, redundancy=10, forward=0, mode=0):
         if forward and box is not None:
-            self.forward(self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]]))
+            self.forward(self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]], mode=mode))
             if box[3]==540 or box[3] == 350:
                 tm = str(int(time.time()*100)%1000000)
                 cv.imwrite('img/'+tm+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])

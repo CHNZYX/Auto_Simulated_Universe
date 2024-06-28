@@ -1488,7 +1488,7 @@ class UniverseUtils:
         else:
             self.allow_e = 0
         self.press('esc')
-        time.sleep(1)
+        time.sleep(0.6)
         if self.allow_e:
             self.press('e')
 

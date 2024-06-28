@@ -45,11 +45,14 @@ class SimulatedUniverse(UniverseUtils):
         self.action_history = []
         self.event_prior = self.read_csv(args.path + "/actions/event.csv", name='event')
         self.character_prior = self.read_csv(args.path + "/actions/character.csv", name='char')
+        self.all_bless = self.read_csv(args.path + "/actions/bless.csv", name='bless')
         self.bless_prior = defaultdict(int)
         self.team_member = []
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
+        self.quan = 0
         self.event_text = ''
+        self.long_range = '1'
         self.init_floor()
         self.default_json_path = args.path + "/actions/default.json"
         self.default_json = self.load_actions(self.default_json_path)
@@ -95,13 +98,17 @@ class SimulatedUniverse(UniverseUtils):
         if res == '':
             text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
             if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
-                time.sleep(10)
+                print('ready to stop')
+                time.sleep(6)
                 tm = time.time()
                 while time.time() - tm < 15:
+                    print('trying to stop')
                     self.press('esc')
                     time.sleep(2)
                     self.ts.forward(self.get_screen())
-                    if self.run_static(action_list=['过量转化']) != '':
+                    static_res = self.run_static(action_list=['过量转化'])
+                    if static_res != '':
+                        print(static_res)
                         break
         
     def do_action(self, action) -> int:
@@ -190,10 +197,15 @@ class SimulatedUniverse(UniverseUtils):
         self.bless_solved = 0
         self.fail_cnt = 0
         self.now_event = ''
+        if hasattr(self, 'keys'):
+            self.keys.fff = 0
+        for i in ['w','a','s','d','f']:
+            keyops.keyUp(i)
 
     def close_and_exit(self, click=True):
         self.press('esc')
         time.sleep(2.5)
+        self.init_floor()
         if not click:
             if time.time() - self.fail_tm < 60:
                 click = True
@@ -201,7 +213,6 @@ class SimulatedUniverse(UniverseUtils):
             else:
                 self.fail_tm = time.time()
         if click:
-            self.init_floor()
             self.floor = 0
             self.click_position([1530, 990])
             time.sleep(1)
@@ -229,28 +240,35 @@ class SimulatedUniverse(UniverseUtils):
         elif '位面' in self.area_text:
             if len(team_member) >= len(self.team_member):
                 self.team_member = team_member
+                for i,c in enumerate(self.team_member):
+                    if c in config.long_range_list:
+                        self.long_range = str(i+1)
+                        break
             return self.get_text_type(self.area_text, ['长石号', '事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])
         else:
             return None
     
     def find_portal(self):
-        prefer_portal = ['奖励', '事件', '战斗', '遭遇', '商店', '财富', '首领', '休整']
+        prefer_portal = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
         if self.speed:
-            prefer_portal = ['商店', '财富', '奖励', '事件', '战斗', '遭遇', '首领', '休整']
+            prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
+            if self.quan and self.allow_e:
+                prefer_portal['战斗'] = 2
+        prefer_portal.update({'首领':4, '休整':4})
         tm = time.time()
-        text = self.ts.find_with_box([0,1920,0,540], forward=1)
-        portal = {'score':100}
+        text = self.ts.find_with_box([0,1920,0,540], forward=1, mode=2)
+        portal = {'score':-1,'nums':0}
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
                 portal_type = self.get_text_type(i['raw_text'], prefer_portal)
                 if portal_type is not None:
-                    i.update({'score':prefer_portal.index(portal_type), 'type':portal_type})
-                    if i['score'] < portal['score']:
+                    i.update({'score':prefer_portal[portal_type], 'type':portal_type, 'nums':portal['nums']+1})
+                    if i['score'] > portal['score']:
                         portal = i
         ocr_time = time.time() - tm
         self.ocr_time_list = self.ocr_time_list[-5:] + [ocr_time]
-        print(f'截图时间:{int(ocr_time*1000)}ms', text, portal)
-        if portal['score'] == 100:
+        print(f'识别时间:{int(ocr_time*1000)}ms', text, portal)
+        if portal['score'] == -1:
             return None
         else:
             return portal
@@ -270,9 +288,11 @@ class SimulatedUniverse(UniverseUtils):
             if abs(self.portal_bias(portal)) < 200:
                 return portal
             time.sleep(0.2)
-            portal = self.find_portal()
-            if portal is None:
-                return None
+            portal_after = self.find_portal()
+            if portal_after is None:
+                return portal
+            else:
+                portal = portal_after
         return portal
 
     def portal_opening_days(self, aimed=0, static=0, deep=0):
@@ -287,12 +307,29 @@ class SimulatedUniverse(UniverseUtils):
         moving = 0
         if static:
             # win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
-            for i in [0, 60, 90, 90, 90, -120, -120, -90]:
-                self.mouse_move(i)
+            angles = [0, 90, 90, 90, 45, -90, -90, -90]
+            for i,angle in enumerate(angles):
+                self.mouse_move(angle)
                 time.sleep(0.2)
                 portal = self.find_portal()
                 if portal is not None:
                     break
+            if self.floor in [1,2,4,5,6,7,9,10]:
+                if portal is not None and portal['nums'] == 1 and portal['score'] < 2:
+                    portal_pre = portal
+                    portal_type = portal['type']
+                    bias = 0
+                    for i in range(i+1, len(angles)):
+                        self.mouse_move(angles[i])
+                        bias += angles[i]
+                        time.sleep(0.2)
+                        portal_after = self.find_portal()
+                        if portal_after is not None and portal_type != portal_after['type']:
+                            portal = portal_after
+                            break
+                    if portal['type'] == portal_type:
+                        portal = portal_pre
+                        self.mouse_move(-bias)
         while time.time() - tm < 5 + 2 * (portal is not None):
             if aimed == 0:
                 if portal is None:
@@ -420,21 +457,24 @@ class SimulatedUniverse(UniverseUtils):
                         return
                 self.click((0.9479, 0.9565))
                 self.click((0.9479, 0.9565))
+                if start:
+                    self.click((0.9479, 0.9565))
+                    self.click((0.9479, 0.9565))
                 self.ts.forward(self.get_screen())
 
     def find_event_text(self, save=0):
         time.sleep(0.3)
-        text = self.ts.find_with_box([300, 1920, 0, 350], forward=1)
+        text = self.ts.find_with_box([300, 1920, 0, 350], forward=1, mode=2)
         res = 0
         event_text = ''
         debug_res = []
         print('event_text:', text)
         for i in text:
             box = i['box']
-            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290) or box[2] < 60:
+            if 'ms' in i['raw_text'] or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290) or (box[1] < 400 and box[3] < 160):
                 continue
             w, h = box[1] - box[0], box[3] - box[2]
-            if w < 40 or h < 20 or h > 40:
+            if w < 40 or h > 40:
                 continue
             if (box[0] + box[1]) // 2 > res or self.event_text in i['raw_text'] or i['raw_text'] in self.event_text:
                 res = (box[0] + box[1]) // 2
@@ -446,9 +486,17 @@ class SimulatedUniverse(UniverseUtils):
         return res
     
     def align_event(self, key, deep=0):
+        find = 0
         if deep == 0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
-        event_text = self.find_event_text(1)
+            if key == 'd':
+                event_text = self.find_event_text(1)
+                if not event_text:
+                    self.press('s', 1)
+                else:
+                    find = 1
+        if not find:
+            event_text = self.find_event_text(1)
         self.ts.forward(self.get_screen())
         if self.check_f(is_in=['事件','奖励','遭遇','交易']):
             self.press('f')
@@ -474,14 +522,14 @@ class SimulatedUniverse(UniverseUtils):
                 if key == 'a':
                     sub = -sub
                 print('sub:', sub)
-                if sub < 60 or sub > 150:
+                if sub < 60:
                     sub = 100
-                sub = int((event_text_after - 950) / sub)
+                sub = int((event_text_after - 950) / min(150, sub))
                 sub = min(5, max(-5, int(sub)))
-                for _ in range(sub-1):
+                for _ in range(sub):
                     self.press('d',0.2)
                     time.sleep(0.1)
-                for _ in range(-sub-1):
+                for _ in range(-sub):
                     self.press('a',0.2)
                     time.sleep(0.1)
         else:
@@ -494,32 +542,33 @@ class SimulatedUniverse(UniverseUtils):
         keyops.keyDown('w')
         self.keys.fff = 1
         tm = time.time()
-        while time.time() - tm < 6:
+        while time.time() - tm < 3:
             if self.get_now_area() == None:
                 self.keys.fff = 0
                 keyops.keyUp('w')
                 return
             
-    def skill(self):
+    def skill(self, quan=0):
         if not self.allow_e:
             return
-        time.sleep(1)
         self.press('e')
-        time.sleep(1.5)
+        time.sleep(0.6)
         self.get_screen()
         if self.check('e',0.4995,0.7500):
             self.solve_snack()
+            if quan and self.allow_e:
+                time.sleep(0.5)
+            else:
+                time.sleep(1.5*self.allow_e)
 
     def area(self):
         area_now = self.get_now_area()
         time.sleep(0.5)
         if self.get_now_area() != area_now or area_now is None:
             return
-        time.sleep(1.6)
         if self.area_state == -1:
             self.close_and_exit(click = False)
             return
-        self.press('1')
         now_floor = self.floor
         for i in range(1,14):
             if f'{i}13' in self.area_text:
@@ -529,7 +578,16 @@ class SimulatedUniverse(UniverseUtils):
                 self.init_floor()
             self.floor = now_floor
             if self.floor in [5,10]:
-                time.sleep(3.5)
+                time.sleep(3)
+        time.sleep(1)
+        if self.area_state == 0 and area_now != '长石号':
+            if '黄泉' in self.team_member and '黄泉' in config.skill_char:
+                self.quan = 1
+            if area_now == '战斗' and self.quan and self.allow_e and self.floor > 1:
+                self.press(str(self.team_member.index('黄泉')+1))
+            else:
+                self.press(self.long_range)
+        time.sleep(0.6)
         if area_now is not None:
             self.area_now = area_now
         else:
@@ -555,32 +613,44 @@ class SimulatedUniverse(UniverseUtils):
                 self.align_event('a')
                 self.area_state += 1
             elif self.area_state==1:
-                self.keys.fff = 1
-                self.press('a', 1.3)
-                time.sleep(0.4)
-                self.keys.fff = 0
-                self.get_screen()
-                if self.get_now_area() is not None:
-                    self.press('w', 0.3)
-                    time.sleep(0.6)
+                if self.event_solved:
+                    self.keys.fff = 1
+                    self.press('a', 1.3)
+                    time.sleep(0.4)
+                    self.keys.fff = 0
                     self.get_screen()
-                    if self.check_f(check_text=0):
-                        self.press('f')
-                    else:
-                        self.press('s',1)
-                        self.align_event('d')
-                self.area_state += 1
+                    if self.get_now_area() is not None:
+                        self.press('w', 0.3)
+                        time.sleep(0.6)
+                        self.get_screen()
+                        if self.check_f(check_text=0):
+                            self.press('f')
+                        else:
+                            self.align_event('d')
+                    self.area_state += 1
+                else:
+                    self.align_event('a')
+                    self.event_solved = 1
             else:
                 self.portal_opening_days(static=1)
         elif area_now == '休整':
             pyautogui.click()
-            time.sleep(0.6)
+            time.sleep(0.8)
+            keyops.keyDown('w')
             self.press('a', 0.3)
-            self.press('w', 4)
+            time.sleep(3)
+            self.press('d', 0.3)
+            keyops.keyUp('w')
             self.portal_opening_days(aimed=1)
         elif area_now == '商店':
-            self.press('w', 1.5)
-            self.portal_opening_days()
+            pyautogui.click()
+            time.sleep(0.8)
+            keyops.keyDown('w')
+            time.sleep(1.3)
+            self.press('d',0.4)
+            keyops.keyUp('w')
+            time.sleep(1)
+            self.portal_opening_days(static=1)
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
                 self.close_and_exit()
@@ -588,9 +658,11 @@ class SimulatedUniverse(UniverseUtils):
             if self.area_state == 0:
                 self.press('w',3)
                 for c in config.skill_char:
-                    if c in self.team_member:
+                    if c in self.team_member and self.allow_e:
                         self.press(str(self.team_member.index(c)+1))
+                        time.sleep(1)
                         self.skill()
+                        time.sleep(1)
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
@@ -610,8 +682,7 @@ class SimulatedUniverse(UniverseUtils):
                     else:
                         self.press('w', 1)
                         self.press('f')
-                        self.bless_solved = 0
-                        self.area_state = 4
+                        self.area_state = 5
                 else:
                     self.press('w', 0.5)
                     self.area_state = 4
@@ -623,7 +694,7 @@ class SimulatedUniverse(UniverseUtils):
                 self.press('a', 0.95)
                 self.press('f')
                 self.area_state += 1
-            else:
+            elif self.area_state == 4:
                 if self.bless_solved:
                     keyops.keyDown('d')
                     self.press('s', 0.2)
@@ -632,10 +703,19 @@ class SimulatedUniverse(UniverseUtils):
                     self.portal_opening_days(static=1)
                 else:
                     self.portal_opening_days()
+            else:
+                self.portal_opening_days()
         elif area_now == '战斗':
             if self.area_state == 0:
-                self.press('w', 3.2)
-                pyautogui.click()
+                if self.quan and self.allow_e and self.floor > 1:
+                    self.press('w', 3)
+                    for _ in range(4):
+                        self.skill(1)
+                    self.press('w')
+                    time.sleep(1.5)
+                else:
+                    self.press('w', 3.2)
+                    pyautogui.click()
                 self.area_state += 1
             else:
                 self.press('w', 0.5)
@@ -643,9 +723,9 @@ class SimulatedUniverse(UniverseUtils):
         elif area_now == '财富':
             keyops.keyDown('w')
             self.keys.fff = 1
-            time.sleep(2.4)
-            self.press('a', 0.55)
-            time.sleep(1.2)
+            time.sleep(3)
+            self.press('a', 0.5)
+            time.sleep(0.65)
             keyops.keyUp('w')
             self.keys.fff = 0
             self.portal_opening_days(static=1)
@@ -667,6 +747,9 @@ class SimulatedUniverse(UniverseUtils):
         for i in self.bless_prior:
             if i in text:
                 score += self.bless_prior[i]
+        for i in self.all_bless:
+            if i[-4:] in text:
+                score += int(self.all_bless[i][0]) - 1
         return score
 
     def drop_bless(self):
@@ -686,7 +769,7 @@ class SimulatedUniverse(UniverseUtils):
             x, y = (box[0] + box[1]) // 2, (box[2] + box[3]) // 2
             box = [x - 220, x + 220, 450, 850]
             bless_text = self.ts.find_with_box(box)
-            bless_raw_text = self.merge_text(bless_text)
+            bless_raw_text = self.merge_text(bless_text, char=0)
             blesses.append({'raw_text': bless_raw_text, 'box': box, 'score': self.bless_score(bless_raw_text)})
         blesses = sorted(blesses, key=lambda x: x['score'], reverse=reverse)
         print(blesses)

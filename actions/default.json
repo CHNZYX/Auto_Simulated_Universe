@@ -355,5 +355,39 @@
                 "sleep": 1
             }
         ]
+    },
+    {
+        "name": "月卡界面",
+        "trigger":{
+            "text": "今日补给",
+            "box": [852, 1052, 883, 922],
+            "redundancy": 60
+        },
+        "actions":
+        [
+            {
+                "text": "今日补给"
+            },
+            {
+                "sleep": 2
+            }
+        ]
+    },
+    { 
+        "name": "梦境护照",
+        "trigger":{
+            "text": "梦境护照",
+            "box": [69, 169, 209, 239],
+            "redundancy": 60
+        },
+        "actions":
+        [
+            {
+                "press": "esc"
+            },
+            {
+                "sleep": 1
+            }
+        ]
     }
 ]

@@ -26,7 +26,7 @@ class KeyController:
         while not self.father._stop:
             if self.fff:
                 keyDown('f')
-                time.sleep(0.05)
+                time.sleep(0.02)
                 keyUp('f')
             else:
                 time.sleep(0.1)
