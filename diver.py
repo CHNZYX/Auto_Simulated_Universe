@@ -45,7 +45,7 @@ class DivergentUniverse(UniverseUtils):
         self.character_prior = self.read_csv("actions/character.csv", name='char')
         self.all_bless = self.read_csv("actions/bless.csv", name='bless')
         self.bless_prior = defaultdict(int)
-        self.team_member = []
+        self.team_member = {}
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
         self.quan = 0
@@ -126,7 +126,7 @@ class DivergentUniverse(UniverseUtils):
                     return 1
         elif "position" in action:
             log.info(f"点击 {action['position']}")
-            self.click(action["position"])
+            self.click_position(action["position"])
             return 1
         elif "sleep" in action:
             time.sleep(action["sleep"])
@@ -239,11 +239,11 @@ class DivergentUniverse(UniverseUtils):
     
     def find_team_member(self):
         boxes = [[1620, 1790, 289, 335],[1620, 1790, 384, 427],[1620, 1790, 478, 521],[1620, 1790, 570, 618]]
-        team_member = []
-        for i in boxes:
-            name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), i))
+        team_member = {}
+        for i,b in enumerate(boxes):
+            name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
             if name in self.character_prior:
-                team_member.append(name)
+                team_member[name] = i
         return team_member
 
     def get_now_area(self):
@@ -254,9 +254,10 @@ class DivergentUniverse(UniverseUtils):
         elif '位面' in self.area_text:
             if len(team_member) >= len(self.team_member):
                 self.team_member = team_member
-                for i,c in enumerate(self.team_member):
-                    if c in config.long_range_list:
-                        self.long_range = str(i+1)
+                print('team_member:', team_member)
+                for i in self.team_member:
+                    if i in config.long_range_list:
+                        self.long_range = str(self.team_member[i]+1)
                         break
             return self.get_text_type(self.area_text, ['长石号', '事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])
         else:
@@ -598,7 +599,7 @@ class DivergentUniverse(UniverseUtils):
             if '黄泉' in self.team_member and '黄泉' in config.skill_char:
                 self.quan = 1
             if area_now == '战斗' and self.quan and self.allow_e and self.floor > 1:
-                self.press(str(self.team_member.index('黄泉')+1))
+                self.press(str(self.team_member['黄泉']+1))
             else:
                 self.press(self.long_range)
         if self.check("divergent/arrow", 0.7833,0.9231, threshold=0.96):
@@ -679,7 +680,7 @@ class DivergentUniverse(UniverseUtils):
                 self.press('w',3)
                 for c in config.skill_char:
                     if c in self.team_member and self.allow_e:
-                        self.press(str(self.team_member.index(c)+1))
+                        self.press(str(self.team_member[c]+1))
                         time.sleep(1)
                         self.skill()
                         time.sleep(1)
@@ -760,7 +761,7 @@ class DivergentUniverse(UniverseUtils):
     
     def update_bless_prior(self):
         self.bless_prior = defaultdict(int)
-        for i in self.team_member + ['全局', config.team]:
+        for i in list(self.team_member) + ['全局', config.team]:
             if i in self.character_prior:
                 prior = self.character_prior[i]
                 for j in prior:
