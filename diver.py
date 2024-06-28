@@ -27,7 +27,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.02"
+version = "v7.03"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -220,6 +220,11 @@ class DivergentUniverse(UniverseUtils):
 
     def close_and_exit(self, click=True):
         self.press('esc')
+        if self.debug:
+            with open('test.txt', 'a') as f:
+                format_string = "%H:%M:%S"
+                formatted_time = time.strftime(format_string, time.localtime())
+                f.write(formatted_time + '\n')
         time.sleep(2.5)
         self.init_floor()
         if not click:
@@ -659,6 +664,7 @@ class DivergentUniverse(UniverseUtils):
                         if self.check_f(check_text=0):
                             self.press('f')
                         else:
+                            self.press('s', 0.5)
                             self.align_event('d')
                     self.area_state += 1
                 else:
@@ -742,14 +748,13 @@ class DivergentUniverse(UniverseUtils):
                 self.portal_opening_days()
         elif area_now == '战斗':
             if self.area_state == 0:
+                self.press('w', 3)
                 if self.quan and self.allow_e and self.floor > 1:
-                    self.press('w', 3)
                     for _ in range(4):
                         self.skill(1)
                     self.press('w')
                     time.sleep(1.5)
                 else:
-                    self.press('w', 3.2)
                     pyautogui.click()
                 self.area_state += 1
             else:
