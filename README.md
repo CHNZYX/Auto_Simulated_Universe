@@ -9,6 +9,8 @@
 
 运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://asu.stysqy.top/guide/bs.html) [备用](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/bs.md)
 
+此页面主要介绍差分宇宙自动化，如需详细的普通模拟宇宙自动化介绍请移步[普通宇宙](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/old/README.md)
+
 ----------------------------------------------------------------------------------------------
 
 ## 免责声明
@@ -30,8 +32,6 @@ This software is open source, free of charge and for learning and exchange purpo
 
 只支持1920\*1080(窗口化或全屏幕)，关闭hdr，文本语言选择简体中文。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
 
-默认世界：比如说如果你当前模拟宇宙默认世界4，但是想自动化世界6，那么请先进入一次世界6来改变默认世界
-
 如果没怎么接触过python，建议直接在[release](https://github.com/CHNZYX/Auto_Simulated_Universe/releases/latest)中下载gui版本，并直接阅读GUI使用方法
 
 **第一次运行**
@@ -42,14 +42,32 @@ This software is open source, free of charge and for learning and exchange purpo
 
 **运行自动化**
 
-双击`run.bat` 或者 命令行运行 
+命令行运行
+
+差分宇宙
 ```plaintext
-python states.py
+python diver.py
+```
+
+或普通模拟宇宙
+```plaintext
+python simul.py
 ```
 
 详细参数：
 ```plaintext
-python states.py --bonus=<bonus> --debug=<debug> --speed=<speed> --find=<find> --nums=<nums>
+python diver.py <--debug> <--speed> <--cpu> --nums=<nums>
+```
+--speed：开启速通模式
+
+--debug：开启调试模式
+
+--cpu：图像识别强制使用cpu
+
+nums：指定通关次数，必须为正整数
+
+```plaintext
+python simul.py --bonus=<bonus> --debug=<debug> --speed=<speed> --find=<find> --nums=<nums>
 ```
 bonus in [0,1]：是否开启沉浸奖励
 
@@ -68,29 +86,24 @@ nums：指定通关次数，必须为正整数
 `info.yml`内容如下
 ```yaml
 config:
-  order_text: [1, 2, 3, 4] //模拟宇宙开局选的角色，建议改成自己的配队，1表示第一个角色。最好在一号位选远程角色（艾丝妲、三月七）方便开怪。
-  angle: 1.0  //校准数据请勿更改
-  difficulty: 4 //宇宙的难度，如果你要打难度1就改成1保存
-  fate: 巡猎 //命途选择，默认巡猎，可以直接修改为其它命途。
-  map_sha: '' //地图数据的版本，不建议更改
-  show_map_mode: 0
-  debug_mode: 0
+  # 难度，1-5，（5代表最高难度，如果世界没有难度5则会选择难度4）
+  difficulty: 5
+  # 队伍类型 目前只支持：追击/dot/终结技/击破/盾反
+  team: 终结技
+  # 速通模式
   speed_mode: 0
-  use_consumable: 0
-  slow_mode: 0
-  force_update: 0
+  # 图像识别强制使用cpu
+  cpu_mode: 0
+  # 首领房间需要开秘技的角色，按顺序开
+  skill:
+    - 黄泉
+  # 自动存档数量，0-4，0代表不存档，1-4代表自动存档到前1-4个存档位
+  save: 4
   timezone: Default
-prior:
-  优先级信息，按需调整
+  max_run: 34
 ```
 
-use_consumable：0代表不使用消耗品，1代表最终boss使用消耗品，2代表最后两个boss使用消耗品，3代表所有boss都使用消耗品
-
-自动使用第一个攻击/防御消耗品，可以收藏消耗品（星星标记）来改变背包中消耗品的顺序
-
-默认是哪个宇宙就会进哪个！如果你默认不是第6世界，记得先手动切到第6世界！
-
-尽量使用远程成女角色作为一号位，其他体型也能适配。
+必须携带至少一名远程平a角色，最好放在1号位
 
 注意！！！！！ 开始运行/开始校准之后就不要移动游戏窗口了！要移动请先停止自动化！
 
@@ -116,9 +129,7 @@ python align_angle.py
 
 **第一次运行**
 
-在设置中选择自己想要的难度和命途，配队请在游戏中预先选择默认配队
-
-最好在一号位选远程角色（艾丝妲、三月七等）方便开怪。
+在游戏中设置“自动沿用战斗设置”
 
 **运行自动化**
 
@@ -128,7 +139,7 @@ python align_angle.py
 
 **TIPS：**
 
-尽量使用远程成女角色作为一号位，近战成女也能适配，其它体型（成男等）会出现稳定性问题。
+尽量使用远程角色作为一号位，队伍中必须至少有一名远程角色。
 
 F8/‘停止’按钮停止运行。
 
@@ -136,9 +147,7 @@ F8/‘停止’按钮停止运行。
 
 调试模式：如果不希望迷路后退出结算，请开启调试模式
 
-如果不希望打完34次后自动停止，也请开启调试模式
-
-速通模式：开启表示只打每层最后一个怪
+速通模式：开启表示追求最高效率通关，低配队伍慎用
 
 推荐最低画质配置：
 
@@ -156,20 +165,6 @@ F8/‘停止’按钮停止运行。
 
 双击update.exe
 
-## 自动深渊
-
-自动深渊可以使用固定配队自动刷忘却之庭，这项功能的目的是节省手动刷前几层的时间。
-
-代码版启动方法为`python abyss.py`，gui版启动方法为主界面中的“深渊”按钮。
-
-代码版第一次运行需要修改abyss文件夹下的info_example.yml为info.yml，并且修改info.yml为自己的两队配队，gui版可以在深渊界面中输入自己的配队。
-
-每队的配队信息为四个数字
-
-![配队编号](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/main/imgs/team.jpg)
-
-比如说这张图中，你想选择娜塔莎，景元，希儿，彦卿，那么请在配队中输入：`6 4 3 2`
-
 ## 通知插件使用方法（notif.exe）
 
 如果你没有用本地多用户，那么直接双击`notif.exe`即可开启windows通知，每刷完一次都会通知哦
@@ -179,40 +174,6 @@ F8/‘停止’按钮停止运行。
 计数会在每周自动重置，如果想手动改变计数，请打开`logs/notif.txt`，修改第一行的信息
 
 通知插件会在右下角显示托盘图标
-
-----------------------------------------------------------------------------------------------
-
-## 部分逻辑
-
-选择祝福的逻辑基于ocr+自定义优先级
-
-寻路模块基于小地图
-
-小地图中只会识别白色边缘线和黄色交互点。
-
-----------------------------------------------------------------------------------------------
-
-支持录制地图，具体方法为
-
-运行 `python states.py --debug --find=1`
-
-如果遇到新图会角色停住，这时候结束自动化并且游戏中暂离模拟宇宙
-
-然后运行 `python states.py --debug --find=0`
-
-运行后会自动进入地图，期间请不要移动鼠标也不要动键盘
-
-几秒后角色会后退，然后前进。在角色前进时，你可以移动鼠标改变视角，也可以按键盘wasd。
-
-在地图中绕一圈，感觉差不多就`F8/ctrl+c`结束进程能得到地图数据了。保存在`imgs/maps/my_xxxxx`目录下（可以按修改时间排序）
-
-有怪的图最好用希儿战技，被锁定会影响小地图识别。
-
-`imgs/maps/my_xxxxx`目录下会存在`target.jpg`，你可以用windows自带的画图打开它，然后在上面标记点（可以参考其它地图文件中的`target.jpg`）
-
-靛蓝色：路径点 黄色：终点 绿色：交互点（问号点） 红色：怪点
-
-录制结束后可以暂离并重新运行自动化测试地图，如果通过测试，你就成功录制到了新图！
 
 ----------------------------------------------------------------------------------------------
 
