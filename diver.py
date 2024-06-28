@@ -27,7 +27,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.0"
+version = "v7.01"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -37,6 +37,7 @@ class DivergentUniverse(UniverseUtils):
         self.floor = 0
         self.allow_e = 1
         self.count = self.my_cnt = 0
+        self.debug = debug
         self.nums = nums
         self.speed = speed
         self.init_tm = time.time()
@@ -270,6 +271,8 @@ class DivergentUniverse(UniverseUtils):
             prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
             if self.quan and self.allow_e:
                 prefer_portal['战斗'] = 2
+        if self.debug:
+            prefer_portal.update({'商店':1, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':2})
         prefer_portal.update({'首领':4, '休整':4})
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1, mode=2)
@@ -750,13 +753,12 @@ class DivergentUniverse(UniverseUtils):
             time.sleep(0.2)
             self.keys.fff = 1
             self.press('a', 0.5)
-            time.sleep(0.65)
+            time.sleep(0.35)
             keyops.keyUp('w')
             if self.find_portal() is None:
                 self.press('a', 0.4)
-                self.press('s',1)
-                self.press('d',0.7)
-                self.press('w',0.8)
+                self.press('s', 0.7)
+                self.press('w', 0.5)
             self.keys.fff = 0
             self.portal_opening_days(static=1)
         elif area_now == '位面':
