@@ -131,7 +131,7 @@ class DivergentUniverse(UniverseUtils):
             self.click_position(action["position"])
             return 1
         elif "sleep" in action:
-            time.sleep(action["sleep"])
+            time.sleep(float(action["sleep"]))
             return 1
         elif "press" in action:
             self.press(action["press"], action["time"] if "time" in action else 0)

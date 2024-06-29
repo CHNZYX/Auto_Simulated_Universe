@@ -190,13 +190,49 @@
             "box": [92, 195, 54, 88],
             "redundancy": 30
         },
-        "actions": ["event"]
+        "actions": ["event"] 
     },
     {
         "name": "奇物大转盘",
         "trigger":{
             "text": "开始抽奖",
             "box": [1533, 1632, 962, 990],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "press": "esc"
+            },
+            {
+                "sleep": "2"
+            },
+            "close_and_exit"
+        ]
+    },
+    {
+        "name": "造物调试台",
+        "trigger":{
+            "text": "造物调试",
+            "box": [92, 216, 52, 89],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "press": "esc"
+            },
+            {
+                "sleep": "2"
+            },
+            "close_and_exit"
+        ]
+    },
+    {
+        "name": "角色重置",
+        "trigger":{
+            "text": "角色重置",
+            "box": [92, 196, 54, 86],
             "redundancy": 30
         },
         "actions":
