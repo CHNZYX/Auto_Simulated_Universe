@@ -59,7 +59,7 @@ jobs:
         Compress-Archive -Path $files.FullName -DestinationPath "AutoSimulatedUniverse_${{ github.ref_name }}.zip" -Force
 
     - name: Install dependencies for cpu mode
-      run:
+      run: |
         pip uninstall onnxruntime-directml -y
         pip install onnxruntime
 
