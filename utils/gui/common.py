@@ -32,10 +32,7 @@ def show_snack_bar(page, text, color, selectable=False):
 
 
 def cleanup():
-    try:
-        win32gui.ShowWindow(mynd, 1)
-    except:
-        pass
+    pass
 
 
 def enum_windows_callback(hwnd, hwnds, name):
