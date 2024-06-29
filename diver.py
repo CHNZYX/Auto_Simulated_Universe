@@ -295,8 +295,8 @@ class DivergentUniverse(UniverseUtils):
             prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
             if self.quan and self.allow_e:
                 prefer_portal['战斗'] = 2
-        if self.debug:
-            prefer_portal.update({'商店':1, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':2})
+        if config.enable_portal_prior:
+            prefer_portal.update(config.portal_prior)
         prefer_portal.update({'首领':4, '休整':4})
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1, mode=2)
