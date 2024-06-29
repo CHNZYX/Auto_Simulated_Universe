@@ -26,6 +26,9 @@ config:
   save: 4
   timezone: Default
   max_run: 34
+  # 图像识别精度，默认1440，越高越精确，但是也越慢（最高1920）
+  # 只推荐低性能运行环境调小数值，建议不能低于960
+  accuracy: 1440
 
 key_mapping:
 # 交互键，只能是单个字母

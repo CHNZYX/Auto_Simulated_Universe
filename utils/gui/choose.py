@@ -56,6 +56,7 @@ def choose_view(page: Page):
         else:
             show_snack_bar(page, "校准失败（⊙.⊙）", ft.colors.RED)
         try:
+            guind = list_handles('AutoSimulatedUniverse')
             win32gui.SetForegroundWindow(guind)
         except:
             pass
@@ -93,6 +94,7 @@ def choose_view(page: Page):
         run(page.su.start)
         txt = " "
         try:
+            guind = list_handles('AutoSimulatedUniverse')
             win32gui.SetForegroundWindow(guind)
         except:
             pass
@@ -164,8 +166,6 @@ def choose_view(page: Page):
 
     def bonus_changed(e):
         config_simul.bonus = not config_simul.bonus
-
-    guind = list_handles('AutoSimulatedUniverse')
 
     # View
     page.views.append(

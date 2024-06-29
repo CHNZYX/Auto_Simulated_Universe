@@ -23,6 +23,7 @@ class Config:
         self.speed_mode = 0
         self.cpu_mode = 0
         self.save_cnt = 4
+        self.accuracy = 1440
         self.team = '终结技'
         self.timezones = ['America', 'Asia', 'Europe', 'Default']
         self.timezone = 'Default'
@@ -77,6 +78,7 @@ class Config:
                     self.timezone = config['timezone']
                     self.max_run = config['max_run']
                     self.save_cnt = config['save']
+                    self.accuracy = config['accuracy']
                 except:
                     pass
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
@@ -99,7 +101,8 @@ class Config:
                     "skill": self.skill_char,
                     "save": self.save_cnt,
                     "timezone": self.timezone,
-                    "max_run": self.max_run
+                    "max_run": self.max_run,
+                    "accuracy": self.accuracy
                 },
                 "key_mapping": self.mapping
             }, f, allow_unicode=True, sort_keys=False)

@@ -148,7 +148,7 @@ class UniverseUtils:
                 if Text == "崩坏：星穹铁道":
                     time.sleep(1)
                     if self.xx != 1920 or self.yy != 1080:
-                        log.error("分辨率错误")
+                        log.error(f"分辨率错误 {self.xx} {self.yy} 请设为1920*1080")
                     break
                 else:
                     time.sleep(0.3)

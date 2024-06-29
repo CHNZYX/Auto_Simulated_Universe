@@ -833,7 +833,7 @@ class DivergentUniverse(UniverseUtils):
         )
         if self.debug == 0 and self.check_bonus == 0 and self.nums <= self.my_cnt and self.nums >= 0:
             log.info('已完成上限，准备停止运行')
-            self.end = 1
+            self._stop = True
         self.floor = 0
         self.init_floor()
 

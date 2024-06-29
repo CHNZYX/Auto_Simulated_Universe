@@ -9,6 +9,7 @@ pillow
 keyboard
 requests
 onnxruntime-directml
+onnxruntime
 shapely
 pyclipper
 pyscreeze==0.1.28
