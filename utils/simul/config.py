@@ -11,7 +11,7 @@ class Config:
             self.abspath = '.'
         self.order_text = "1 2 3 4"
         self.angle = "1.0"
-        self.difficult = "4"
+        self.difficult = "5"
         self.allow_difficult = [1, 2, 3, 4, 5]
         self.text = "info_old.yml"
         self.fate = "巡猎"
@@ -65,6 +65,7 @@ class Config:
                     self.show_map_mode = config['show_map_mode']
                     self.debug_mode = config['debug_mode']
                     self.speed_mode = config['speed_mode']
+                    self.bonus = config['bonus']
                     self.long_press_sprint = config['long_press_sprint']
                     self.use_consumable = config['use_consumable']
                     self.force_update = config['force_update']
@@ -154,6 +155,7 @@ class Config:
                     "show_map_mode": self.show_map_mode,
                     "debug_mode": self.debug_mode,
                     "speed_mode": self.speed_mode,
+                    "bonus": self.bonus,
                     "long_press_sprint": self.long_press_sprint,
                     "use_consumable": self.use_consumable,
                     "slow_mode": self.slow_mode,

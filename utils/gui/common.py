@@ -43,7 +43,7 @@ def enum_windows_callback(hwnd, hwnds, name):
     window_name = win32gui.GetWindowText(hwnd)
     try:
         if (
-            name in window_name
+            name == window_name
         ):
             hwnds.append(hwnd)
     except:

@@ -26,6 +26,8 @@ config:
   debug_mode: 0
   speed_mode: 0
   slow_mode: 0
+  #是否自动领取沉浸奖励
+  bonus: 0
   #是否使用长按进入疾跑状态，0代表不启用，1代表启用
   long_press_sprint: 0
   #0代表不使用消耗品，1代表最终boss使用消耗品，2代表最后两个boss使用消耗品，3代表所有boss都使用消耗品
