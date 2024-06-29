@@ -36,7 +36,7 @@ This software is open source, free of charge and for learning and exchange purpo
 
 **第一次运行**
 
-建议使用anaconda，创建虚拟环境并安装依赖库
+建议使用anaconda，创建虚拟环境并安装依赖库（conda需要在cmd下运行，powershell可能无法切换虚拟环境）
 
 ```plaintext
 conda create -n asu python=3.12 -y
