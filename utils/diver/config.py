@@ -24,6 +24,8 @@ class Config:
         self.cpu_mode = 0
         self.save_cnt = 4
         self.accuracy = 1440
+        self.enable_portal_prior = 0
+        self.portal_prior = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
         self.team = '终结技'
         self.timezones = ['America', 'Asia', 'Europe', 'Default']
         self.timezone = 'Default'
@@ -79,6 +81,8 @@ class Config:
                     self.max_run = config['max_run']
                     self.save_cnt = config['save']
                     self.accuracy = config['accuracy']
+                    self.enable_portal_prior = config['enable_portal_prior']
+                    self.portal_prior = config['portal_prior']
                 except:
                     pass
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
@@ -102,7 +106,9 @@ class Config:
                     "save": self.save_cnt,
                     "timezone": self.timezone,
                     "max_run": self.max_run,
-                    "accuracy": self.accuracy
+                    "accuracy": self.accuracy,
+                    "enable_portal_prior": self.enable_portal_prior,
+                    "portal_prior": self.portal_prior
                 },
                 "key_mapping": self.mapping
             }, f, allow_unicode=True, sort_keys=False)

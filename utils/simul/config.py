@@ -26,8 +26,6 @@ class Config:
         self.force_update = 0
         self.unlock = 0
         self.bonus = 0
-        self.enable_portal_prior = 0
-        self.portal_prior = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
         self.timezones = ['America', 'Asia', 'Europe', 'Default']
         self.timezone = 'Default'
         self.origin_key = ['f','m','shift','v','e','w','a','s','d','1','2','3','4']
@@ -74,8 +72,6 @@ class Config:
                     self.timezone = config['timezone']
                     self.slow_mode = config['slow_mode']
                     self.max_run = config['max_run']
-                    self.enable_portal_prior = config['enable_portal_prior']
-                    self.portal_prior = config['portal_prior']
                 except:
                     pass
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:
@@ -165,9 +161,7 @@ class Config:
                     "slow_mode": self.slow_mode,
                     "force_update": self.force_update,
                     "timezone": self.timezone,
-                    "max_run": self.max_run,
-                    "enable_portal_prior": self.enable_portal_prior,
-                    "portal_prior": self.portal_prior
+                    "max_run": self.max_run
                 },
                 "prior": prior,
                 "key_mapping": self.mapping
