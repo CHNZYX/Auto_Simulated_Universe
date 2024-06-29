@@ -653,10 +653,9 @@ class UniverseUtils:
         if self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.95):
             if not check_text:
                 return 1
-            ans = self.ts.find_with_box([1200, 1380, 580, 630])
-            print(ans)
-            if len(ans):
-                text = ans[0]['raw_text']
+            text = self.ts.ocr_one_row(self.screen, [1206, 1437, 587, 635])
+            print(text)
+            if len(text):
                 log.info('识别到交互信息：'+text)
                 for i in is_in:
                     if i in text:

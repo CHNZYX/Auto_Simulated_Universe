@@ -375,7 +375,6 @@ class DivergentUniverse(UniverseUtils):
                 self.get_screen()
                 if self.check_f(check_text=0):
                     keyops.keyUp('w')
-                    self.ts.forward(self.get_screen())
                     print(portal['type'] if portal else '区域')
                     if self.check_f(is_in=[portal['type'] if portal else '区域']):
                         self.press('f')
@@ -534,7 +533,7 @@ class DivergentUniverse(UniverseUtils):
                 find = 1
         if not find:
             event_text = self.find_event_text(1)
-        self.ts.forward(self.get_screen())
+        self.get_screen()
         if self.check_f(is_in=['事件','奖励','遭遇','交易']):
             self.press('f')
             return
@@ -664,7 +663,7 @@ class DivergentUniverse(UniverseUtils):
                         if self.check_f(check_text=0):
                             self.press('f')
                         else:
-                            self.press('s', 0.3)
+                            self.press('s', 0.5)
                             self.align_event('d')
                     self.area_state += 1
                 else:
@@ -930,10 +929,17 @@ class DivergentUniverse(UniverseUtils):
                 pass
             if not self._stop:
                 self.stop()
-        except:
-            stack_trace_list = traceback.format_stack()
-            print(''.join(stack_trace_list))
-
+        except Exception as e:
+            traceback.print_exc()
+            log.info(str(e))
+            stk = traceback.extract_stack()
+            for i in range(4):
+                try:
+                    print(stk[-2].name,stk[-3-i].filename.split('\\')[-1].split('.')[0],stk[-3-i].name,stk[-3-i].lineno)
+                except:
+                    pass
+            log.info("发生错误，尝试停止运行")
+            self.stop()
 
 def main():
     log.info(f"debug: {args.debug}")
