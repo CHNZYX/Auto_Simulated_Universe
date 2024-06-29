@@ -11,6 +11,7 @@ from copy import deepcopy
 import math
 import random
 import win32gui, win32com.client, pythoncom
+import io
 import os
 import sys
 import ctypes
@@ -146,15 +147,13 @@ class UniverseUtils:
                 # xx yy:窗口大小
                 # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
                 if Text == "崩坏：星穹铁道":
-                    time.sleep(1)
                     if self.xx != 1920 or self.yy != 1080:
                         log.error(f"分辨率错误 {self.xx} {self.yy} 请设为1920*1080")
                     break
                 else:
                     time.sleep(0.3)
             except Exception:
-                traceback.print_exc()
-                time.sleep(0.3)
+                self.print_exc()
                 pass
         self.sct = Screen()
 
@@ -1245,14 +1244,19 @@ class UniverseUtils:
                     return 0
         return 1
 
-    def print_stack(self, num=1):
-        if self.debug:
+    def print_stack(self, num=1, force=0):
+        if self.debug or force:
             stk = traceback.extract_stack()
             for i in range(num):
                 try:
                     print(stk[-2].name,stk[-3-i].filename.split('\\')[-1].split('.')[0],stk[-3-i].name,stk[-3-i].lineno)
                 except:
                     pass
+    
+    def print_exc(self):
+        with io.StringIO() as buf, open("logs/error_log.txt", "a") as f:
+            traceback.print_exc(file=buf)
+            f.write(buf.getvalue())
 
     def check_auto(self):
         auto = self.check("z", 0.0878,0.9630, large=False, mask="mask_auto")

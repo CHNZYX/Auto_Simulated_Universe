@@ -929,14 +929,9 @@ class DivergentUniverse(UniverseUtils):
             if not self._stop:
                 self.stop()
         except Exception as e:
+            self.print_exc()
             traceback.print_exc()
             log.info(str(e))
-            stk = traceback.extract_stack()
-            for i in range(4):
-                try:
-                    print(stk[-2].name,stk[-3-i].filename.split('\\')[-1].split('.')[0],stk[-3-i].name,stk[-3-i].lineno)
-                except:
-                    pass
             log.info("发生错误，尝试停止运行")
             self.stop()
 
