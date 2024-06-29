@@ -1,4 +1,6 @@
 import logging
+import io
+import traceback
 from logging import (
     getLogger,
     StreamHandler,
@@ -51,3 +53,8 @@ set_debug()
 def my_print(*args, **kwargs):
     log.info(" ".join(map(str, args)))
     print(*args, **kwargs)
+
+def print_exc(self):
+    with io.StringIO() as buf, open("logs/error_log.txt", "a") as f:
+        traceback.print_exc(file=buf)
+        f.write(buf.getvalue())

@@ -13,6 +13,8 @@ from utils.simul.config import config as config_simul
 from utils.simul.update_map import update_map
 from utils.simul.utils import notif
 from utils.diver.args import args
+from utils.log import my_print as print
+from utils.log import print_exc
 import time
 
 
@@ -34,11 +36,9 @@ def choose_view(page: Page):
             res = func(*args, **kwargs)
             change_all_button(False)
             return res
-        except ValueError as e:
-            pass
         except Exception:
             print("E: 运行函数时出现错误")
-            traceback.print_exc()
+            print_exc()
         finally:
             change_all_button(False)
 

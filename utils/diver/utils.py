@@ -11,7 +11,6 @@ from copy import deepcopy
 import math
 import random
 import win32gui, win32com.client, pythoncom
-import io
 import os
 import sys
 import ctypes
@@ -27,6 +26,7 @@ import utils.diver.keyops as keyops
 from utils.screenshot import Screen
 import threading
 from utils.log import my_print as print
+from utils.log import print_exc
 
 
 def notif(title, msg, cnt=None):
@@ -153,7 +153,7 @@ class UniverseUtils:
                 else:
                     time.sleep(0.3)
             except Exception:
-                self.print_exc()
+                print_exc()
                 pass
         self.sct = Screen()
 
@@ -1252,11 +1252,6 @@ class UniverseUtils:
                     print(stk[-2].name,stk[-3-i].filename.split('\\')[-1].split('.')[0],stk[-3-i].name,stk[-3-i].lineno)
                 except:
                     pass
-    
-    def print_exc(self):
-        with io.StringIO() as buf, open("logs/error_log.txt", "a") as f:
-            traceback.print_exc(file=buf)
-            f.write(buf.getvalue())
 
     def check_auto(self):
         auto = self.check("z", 0.0878,0.9630, large=False, mask="mask_auto")

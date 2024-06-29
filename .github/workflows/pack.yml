@@ -58,6 +58,33 @@ jobs:
         $files = Get-ChildItem -Path AutoSimulatedUniverse
         Compress-Archive -Path $files.FullName -DestinationPath "AutoSimulatedUniverse_${{ github.ref_name }}.zip" -Force
 
+    - name: Install dependencies for cpu mode
+      run:
+        pip uninstall onnxruntime-directml -y
+        pip install onnxruntime
+
+    - name: Pack Flet Application
+      run: flet pack gui.py --icon imgs/icon_m.png --uac-admin --add-data "utils/models;utils/models" -y
+
+    - name: Pyinstaller Application
+      run: |
+        pyinstaller --uac-admin -F --i imgs/icon.png -w notif.py
+
+    - name: Move assets to dist directory
+      run: |
+        xcopy imgs dist\imgs /I /E
+        xcopy actions dist\actions /I /E
+        xcopy info_example.yml dist
+        xcopy info_example_old.yml dist
+        xcopy README.md dist
+        ren dist AutoSimulatedUniverse_cpu
+
+    - name: Create zip archive
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        $files = Get-ChildItem -Path AutoSimulatedUniverse_cpu
+        Compress-Archive -Path $files.FullName -DestinationPath "AutoSimulatedUniverse_${{ github.ref_name }}_cpu.zip" -Force
+
     - name: Create release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
@@ -65,6 +92,7 @@ jobs:
         name: ${{ github.ref_name }}
         files: |
           AutoSimulatedUniverse_${{ github.ref_name }}.zip
+          AutoSimulatedUniverse_${{ github.ref_name }}_cpu.zip
         prerelease: true
         
     - name: Upload artifact

@@ -12,6 +12,7 @@ import sys
 from copy import deepcopy
 from utils.log import log, set_debug
 from utils.log import my_print as print
+from utils.log import print_exc
 from utils.diver.args import args
 from utils.diver.utils import UniverseUtils, set_forground, notif
 import os
@@ -38,9 +39,10 @@ class DivergentUniverse(UniverseUtils):
         self.floor = 0
         self.allow_e = 1
         self.count = self.my_cnt = 0
-        self.debug = debug
-        self.nums = nums
-        self.speed = speed
+        if not hasattr(self, 'hot_init'):
+            self.debug = debug
+            self.nums = nums
+            self.speed = speed
         self.init_tm = time.time()
         self.area_now = None
         self.action_history = []
@@ -908,12 +910,12 @@ class DivergentUniverse(UniverseUtils):
         self._stop = True
     
     def on_key_press(self, event):
-        global stop_flag
         if event.name == "f8":
             print("F8 已被按下，尝试停止运行")
             self.stop()
 
     def start(self):
+        self.hot_init = 1
         self.__init__()
         self._stop = False
         keyboard.on_press(self.on_key_press)
@@ -929,7 +931,7 @@ class DivergentUniverse(UniverseUtils):
             if not self._stop:
                 self.stop()
         except Exception as e:
-            self.print_exc()
+            print_exc()
             traceback.print_exc()
             log.info(str(e))
             log.info("发生错误，尝试停止运行")
@@ -943,7 +945,7 @@ def main():
     # except ValueError as e:
     #     pass
     except Exception:
-        traceback.print_exc()
+        print_exc()
     finally:
         su.stop()
 
