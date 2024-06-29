@@ -36,7 +36,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Pack Flet Application
-      run: flet pack gui.py --icon imgs/icon.ico --uac-admin --add-data "utils/models;utils/models" -y
+      run: flet pack gui.py --icon imgs/icon_m.png --uac-admin --add-data "utils/models;utils/models" -y
 
     - name: Pyinstaller Application
       run: |
