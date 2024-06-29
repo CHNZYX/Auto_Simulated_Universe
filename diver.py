@@ -34,6 +34,7 @@ class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
         self._stop = True
+        self.end = 0
         self.floor = 0
         self.allow_e = 1
         self.count = self.my_cnt = 0
@@ -111,6 +112,11 @@ class DivergentUniverse(UniverseUtils):
                     if static_res != '':
                         print(static_res)
                         break
+        if self.end and res == '加载界面':
+            self.press('esc')
+            time.sleep(2)
+            self.press('esc')
+            self._stop = True
         
     def do_action(self, action) -> int:
         if type(action) == str:
@@ -833,7 +839,7 @@ class DivergentUniverse(UniverseUtils):
         )
         if self.debug == 0 and self.check_bonus == 0 and self.nums <= self.my_cnt and self.nums >= 0:
             log.info('已完成上限，准备停止运行')
-            self._stop = True
+            self.end = 1
         self.floor = 0
         self.init_floor()
 
@@ -907,6 +913,7 @@ class DivergentUniverse(UniverseUtils):
             self.stop()
 
     def start(self):
+        self.__init__()
         self._stop = False
         keyboard.on_press(self.on_key_press)
         self.keys = KeyController(self)
