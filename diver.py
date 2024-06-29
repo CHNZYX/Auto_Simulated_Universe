@@ -228,7 +228,7 @@ class DivergentUniverse(UniverseUtils):
         time.sleep(2.5)
         self.init_floor()
         if not click:
-            if time.time() - self.fail_tm < 60:
+            if time.time() - self.fail_tm < 90:
                 click = True
                 self.fail_tm = 0
             else:
@@ -344,7 +344,7 @@ class DivergentUniverse(UniverseUtils):
         moving = 0
         if static:
             # win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
-            angles = [0, 90, 90, 90, 45, -90, -90, -90]
+            angles = [0, 90, 90, 90, 45, -90, -90, -90, -45]
             for i,angle in enumerate(angles):
                 self.mouse_move(angle)
                 time.sleep(0.2)
@@ -633,7 +633,7 @@ class DivergentUniverse(UniverseUtils):
             self.area_now = area_now
         else:
             area_now = self.area_now
-        if self.portal_cnt > 2:
+        if self.portal_cnt > 1:
             self.close_and_exit(click = False)
             return
         print('floor:',self.floor,'state:',self.area_state,'area:',area_now,'text:',self.area_text)
