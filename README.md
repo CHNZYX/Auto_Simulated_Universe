@@ -30,13 +30,21 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ## 命令行用法
 
-只支持1920\*1080(窗口化或全屏幕)，关闭hdr，文本语言选择简体中文。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
+只支持1920\*1080(窗口化或全屏幕)，关闭hdr，文本语言选择简体中文，游戏界面不能有任何遮挡。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
 
 如果没怎么接触过python，建议直接在[release](https://github.com/CHNZYX/Auto_Simulated_Universe/releases/latest)中下载gui版本，并直接阅读GUI使用方法
 
 **第一次运行**
 
-双击`install_requirements.bat`安装依赖库
+建议使用anaconda，创建虚拟环境并安装依赖库
+
+```plaintext
+conda create -n asu python=3.12 -y
+conda activate asu
+pip install -r requirements.txt
+```
+
+或者直接安装（不建议）：双击`install_requirements.bat`安装依赖库
 
 重命名info_example.yml为info.yml
 
@@ -111,19 +119,9 @@ config:
 
 如果出现视角转动过大/过小而导致迷路的问题，可能是校准值出问题了，可以尝试手动校准：
 
-进入游戏，将人物传送到黑塔的办公室，然后双击 `align.bat`，等待视角转换/原地转圈结束
-
-如果`align.bat`闪退，可以尝试命令行
-```plaintext
-python align_angle.py
-```
+进入游戏，将人物传送到黑塔的办公室，然后命令行运行 `python align_angle.py`，等待视角转换/原地转圈结束
 
 改变鼠标dpi可能会影响校准值，此时需要重新校准。
-
-**更新文件**
-
-双击`update.bat`
-
 
 ## GUI使用方法
 
@@ -163,7 +161,7 @@ F8/‘停止’按钮停止运行。
 
 ## 更新
 
-双击update.exe
+~~双击update.exe~~
 
 ## 通知插件使用方法（notif.exe）
 
