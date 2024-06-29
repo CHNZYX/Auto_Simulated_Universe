@@ -5,7 +5,7 @@ import win32gui
 from flet_core import MainAxisAlignment, CrossAxisAlignment
 
 from align_angle import main as align_angle
-from utils.gui.common import show_snack_bar, mynd, Page, guind
+from utils.gui.common import show_snack_bar, Page, list_handles
 from simul import SimulatedUniverse
 from diver import DivergentUniverse, version
 from utils.diver.config import config as config_diver
@@ -112,17 +112,6 @@ def choose_view(page: Page):
         if page.su is not None:
             run(page.su.stop)
 
-    def hide(_e):
-        try:
-            if win32gui.IsWindowVisible(mynd):
-                show_snack_bar(page, "隐藏命令行窗口", ft.colors.GREEN)
-                win32gui.ShowWindow(mynd, 0)  # 隐藏命令行窗口
-            else:
-                show_snack_bar(page, "显示命令行窗口", ft.colors.GREEN)
-                win32gui.ShowWindow(mynd, 1)  # 显示命令行窗口
-        except:
-            pass
-
     def update_maps(_e):
         show_snack_bar(page, "更新地图功能已经弃用（´・н・‘）", ft.colors.RED)
         return
@@ -176,6 +165,8 @@ def choose_view(page: Page):
     def bonus_changed(e):
         config_simul.bonus = not config_simul.bonus
 
+    guind = list_handles('AutoSimulatedUniverse')
+
     # View
     page.views.append(
         ft.View(
@@ -201,6 +192,7 @@ def choose_view(page: Page):
                                 size=20,
                             ),
                         ),
+                        ft.Container(),
                         ft.ElevatedButton(
                             content=ft.Row(
                                 [
@@ -234,7 +226,7 @@ def choose_view(page: Page):
                             on_click=stops,
                             width=120,
                         ),
-                        ft.Container(height=25),
+                        ft.Container(height=5),
                         ft.Row([
                             ft.Column([
                                 ft.Text("模拟宇宙", size=18, weight=ft.FontWeight.W_600, offset=ft.Offset(x=0.3, y=0), color=ft.colors.PINK_600),

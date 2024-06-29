@@ -48,7 +48,8 @@ def main(page: Page):
 
 def cleanup():
     current_process = psutil.Process(os.getpid())
-    if current_process.name().endswith('.exe'):
+    name = current_process.name()
+    if name.endswith('.exe') and name != 'python.exe':
         try:
             father = current_process.parent()
             try:

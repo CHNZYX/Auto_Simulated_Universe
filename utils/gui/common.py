@@ -51,11 +51,8 @@ def enum_windows_callback(hwnd, hwnds, name):
     return True
 
 
-def list_handles(name):
+def list_handles(name='AutoSimulatedUniverse'):
     hwnds = []
     win32gui.EnumWindows(lambda a,b:enum_windows_callback(a,b,name=name), hwnds)
     hwnds.append(0)
-    return hwnds
-
-mynd = list_handles('gui')[0]
-guind = list_handles('AutoSimulatedUniverse')[0]
+    return hwnds[0]
