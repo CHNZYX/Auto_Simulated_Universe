@@ -27,7 +27,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.05"
+version = "v7.06"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -339,7 +339,6 @@ class DivergentUniverse(UniverseUtils):
             return
         if deep == 0:
             self.portal_cnt += 1
-        tm = time.time()
         portal = None
         moving = 0
         if static:
@@ -367,6 +366,7 @@ class DivergentUniverse(UniverseUtils):
                     if portal['type'] == portal_type:
                         portal = portal_pre
                         self.mouse_move(-bias)
+        tm = time.time()
         while time.time() - tm < 5 + 2 * (portal is not None):
             if aimed == 0:
                 if portal is None:
@@ -387,29 +387,23 @@ class DivergentUniverse(UniverseUtils):
                         keyops.keyDown('w')
                         time.sleep(0.5)
             if portal is not None and not aimed:
-                x = self.portal_bias(portal)
-                if abs(x) > 50:
-                    if moving:
-                        keyops.keyUp('w')
-                        moving = 0
-                        self.press('s',min(max(self.ocr_time_list), 0.4))
-                        continue
-                    else:
-                        print('aiming...')
-                        tmp_portal = self.aim_portal(portal)
-                        if tmp_portal is None:
-                            self.portal_opening_days(aimed=0, static=1, deep=deep+1)
-                            return
-                        else:
-                            portal = tmp_portal
-                            aimed = 1
-                        moving = 1
-                        keyops.keyDown('w')
+                if moving:
+                    print('stop moving')
+                    keyops.keyUp('w')
+                    moving = 0
+                    self.press('s',min(max(self.ocr_time_list), 0.4))
+                    continue
                 else:
-                    aimed = 1
-                    if not moving:
-                        moving = 1
-                        keyops.keyDown('w')
+                    print('aiming...')
+                    tmp_portal = self.aim_portal(portal)
+                    if tmp_portal is None:
+                        self.portal_opening_days(aimed=0, static=1, deep=deep+1)
+                        return
+                    else:
+                        portal = tmp_portal
+                        aimed = 1
+                    moving = 1
+                    keyops.keyDown('w')
             elif portal is None:
                 if not moving:
                     keyops.keyDown('w')
@@ -568,6 +562,15 @@ class DivergentUniverse(UniverseUtils):
                 for _ in range(-sub):
                     self.press('a',0.2)
                     time.sleep(0.1)
+            keyops.keyDown('w')
+            self.keys.fff = 1
+            tm = time.time()
+            while time.time() - tm < 3:
+                if self.get_now_area() == None:
+                    self.keys.fff = 0
+                    keyops.keyUp('w')
+                    return
+            keyops.keyUp('w')
         else:
             if key == 'a':
                 return
@@ -575,14 +578,6 @@ class DivergentUniverse(UniverseUtils):
                 self.press('w',[0,0.3,0.5][deep])
                 self.align_event(key, deep+1)
             return
-        keyops.keyDown('w')
-        self.keys.fff = 1
-        tm = time.time()
-        while time.time() - tm < 3:
-            if self.get_now_area() == None:
-                self.keys.fff = 0
-                keyops.keyUp('w')
-                return
             
     def skill(self, quan=0):
         if not self.allow_e:
@@ -650,25 +645,21 @@ class DivergentUniverse(UniverseUtils):
                 self.align_event('a')
                 self.area_state += 1
             elif self.area_state==1:
-                if self.event_solved:
-                    self.keys.fff = 1
-                    self.press('a', 1.3)
-                    time.sleep(0.4)
-                    self.keys.fff = 0
+                self.keys.fff = 1
+                self.press('a', 1.3)
+                time.sleep(0.4)
+                self.keys.fff = 0
+                self.get_screen()
+                if self.get_now_area() is not None:
+                    self.press('w', 0.3)
+                    time.sleep(0.6)
                     self.get_screen()
-                    if self.get_now_area() is not None:
-                        self.press('w', 0.3)
-                        time.sleep(0.6)
-                        self.get_screen()
-                        if self.check_f(check_text=0):
-                            self.press('f')
-                        else:
-                            self.press('s', 0.5)
-                            self.align_event('d')
-                    self.area_state += 1
-                else:
-                    self.align_event('a')
-                    self.event_solved = 1
+                    if self.check_f(check_text=0):
+                        self.press('f')
+                    else:
+                        self.press('s', 0.5)
+                        self.align_event('d')
+                self.area_state += 1
             else:
                 self.portal_opening_days(static=1)
         elif area_now == '休整':
