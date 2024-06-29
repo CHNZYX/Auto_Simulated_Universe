@@ -1,15 +1,16 @@
-
 import atexit
-
 import flet as ft
 import pyuac
 import win32gui
+import os
+import sys
+import psutil
 
 from utils.gui.choose import choose_view
 from utils.gui.config_simul import config_view as config_view_simul
 from utils.gui.config_diver import config_view as config_view_diver
 from utils.gui.abyss import abyss_view
-from utils.gui.common import cleanup, mynd, Page, init_page
+from utils.gui.common import mynd, Page, init_page
 
 
 def main(page: Page):
@@ -29,6 +30,7 @@ def main(page: Page):
         top_view = page.views[-1]
         page.go(top_view.route)
 
+
     init_page(page)
     page.theme = ft.Theme(
         color_scheme_seed=ft.colors.PINK,
@@ -42,18 +44,30 @@ def main(page: Page):
     page.window_width = 800
     page.window_height = 670
     page.window_min_height = 650
-    page.favicon = "imgs/icon.ico"
     page.go(page.route)
 
-
+def cleanup():
+    current_process = psutil.Process(os.getpid())
+    if current_process.name().endswith('.exe'):
+        try:
+            father = current_process.parent()
+            try:
+                father.terminate()
+            except:
+                pass
+            try:
+                father.kill()
+            except:
+                pass
+            psutil.wait_procs([father], timeout=5)
+        except:
+            pass
+    os._exit(0)
 
 if __name__ == "__main__":
     atexit.register(cleanup)
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:
-        try:
-            win32gui.ShowWindow(mynd, 0)
-        except:
-            pass
         ft.app(target=main)
+    cleanup()

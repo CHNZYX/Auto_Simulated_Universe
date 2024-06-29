@@ -4,7 +4,6 @@ import time
 from PIL import Image
 from pystray import Icon, MenuItem as item
 import threading
-import pygame
 import sys
 import os
 from winotify import Notification
@@ -58,39 +57,6 @@ def notify():
                 notif(s[1].strip('\n'),s[2].strip('\n'))
             last = os.path.getmtime(file_name)
 
-running = 0
-
-def genshin():
-    global running
-    running = 1
-    pygame.init()
-    if getattr(sys, 'frozen', False):
-        base_path = sys._MEIPASS
-    else:
-        base_path = os.path.abspath(".")
-    audio_file = os.path.join(base_path, "start.mp3")
-    pygame.mixer.music.load(audio_file)
-    initial_volume = 0.3
-    pygame.mixer.music.set_volume(initial_volume)
-    st = 0
-    while running:
-        f = 0
-        for process in psutil.process_iter(['name']):
-            if process.info['name'] == 'YuanShen.exe':
-                f = 1
-        if st == 0 and f == 1:
-            pygame.mixer.music.play()
-        st = f
-        time.sleep(0.1)
-
-def start():
-    global running
-    if not running:
-        t_start = threading.Thread(target=genshin)
-        t_start.start()
-    else:
-        running = 0
-
 def main():
     # 检测程序是否已经在运行
     mutex = ctypes.windll.kernel32.CreateMutexW(None, False, "YEYANG_MyProgramMutex")
@@ -104,7 +70,6 @@ def main():
     menu = (
         item('冒泡', maopao),
         item('清零', clear),
-        item('原神，启动', start),
         item('退出', exit_program),
     )
     icon.menu = menu

@@ -27,7 +27,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.03"
+version = "v7.04"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -380,7 +380,7 @@ class DivergentUniverse(UniverseUtils):
                     if self.check_f(is_in=[portal['type'] if portal else '区域']):
                         self.press('f')
                         for _ in range(2):
-                            self.press('s',0.25)
+                            self.press('s',0.2)
                             self.press('f')
                         self.init_floor()
                         return
@@ -664,7 +664,7 @@ class DivergentUniverse(UniverseUtils):
                         if self.check_f(check_text=0):
                             self.press('f')
                         else:
-                            self.press('s', 0.5)
+                            self.press('s', 0.3)
                             self.align_event('d')
                     self.area_state += 1
                 else:
