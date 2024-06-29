@@ -54,7 +54,7 @@ def my_print(*args, **kwargs):
     log.info(" ".join(map(str, args)))
     print(*args, **kwargs)
 
-def print_exc(self):
+def print_exc():
     with io.StringIO() as buf, open("logs/error_log.txt", "a") as f:
         traceback.print_exc(file=buf)
         f.write(buf.getvalue())
