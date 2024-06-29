@@ -560,14 +560,15 @@ class DivergentUniverse(UniverseUtils):
                 print('sub:', sub)
                 if sub < 60:
                     sub = 100
-                sub = int((event_text_after - 950) / min(150, sub))
-                sub = min(5, max(-5, int(sub)))
-                for _ in range(sub):
-                    self.press('d',0.2)
-                    time.sleep(0.1)
-                for _ in range(-sub):
-                    self.press('a',0.2)
-                    time.sleep(0.1)
+                if sub < 200:
+                    sub = int((event_text_after - 950) / min(150, sub))
+                    sub = min(5, max(-5, int(sub)))
+                    for _ in range(sub):
+                        self.press('d',0.2)
+                        time.sleep(0.1)
+                    for _ in range(-sub):
+                        self.press('a',0.2)
+                        time.sleep(0.1)
             keyops.keyDown('w')
             self.keys.fff = 1
             tm = time.time()
