@@ -1044,11 +1044,6 @@ class UniverseUtils:
             y = -30 // fine
         else:
             y = x
-        print(y,self.multi,self.scale)
-        try:
-            self.print_stack(3)
-        except:
-            pass
         dx = int(16.5 * y * self.multi * self.scale)
         if self._stop == 0 and self.stop_move == 0:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, dx, 0)  # 进行视角移动
