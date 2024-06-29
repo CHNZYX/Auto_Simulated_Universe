@@ -177,7 +177,7 @@ class DivergentUniverse(UniverseUtils):
         self.click_position([125, 175+int((self.diffi-1)*(605-175)/4)])
 
     def read_csv(self, file_path, name):
-        with open(file_path, mode='r', newline='') as file:
+        with open(file_path, mode='r', newline='', encoding='cp936') as file:
             reader = csv.reader(file)
             next(reader)
             if name == 'char':
