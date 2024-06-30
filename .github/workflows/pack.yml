@@ -37,7 +37,7 @@ jobs:
         pip install numpy==1.26.4
 
     - name: Pack Flet Application
-      run: flet pack gui.py --icon imgs/icon_m.png --uac-admin --add-data "utils/models;utils/models" --add-data "dependency/*;." -y
+      run: flet pack gui.py --icon imgs/icon_m.png --uac-admin --add-data "utils/models;utils/models" -y
 
     - name: Pyinstaller Application
       run: |

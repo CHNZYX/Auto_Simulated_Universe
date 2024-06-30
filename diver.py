@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.1"
+version = "v7.11"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -90,7 +90,7 @@ class DivergentUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            # self.click_target('imgs/divergent/arrow.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            # self.click_target('imgs/divergent/sile.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             self.loop()
         log.info("停止运行")
 
@@ -339,6 +339,27 @@ class DivergentUniverse(UniverseUtils):
             else:
                 portal = portal_after
         return portal
+    
+    def forward_until(self, text_list=[], timeout=5, moving=0):
+        tm = time.time()
+        if not moving:
+            keyops.keyDown('w')
+        while time.time() - tm < timeout:
+            self.get_screen()
+            if self.check_f(check_text=0):
+                keyops.keyUp('w')
+                print(text_list)
+                if self.check_f(is_in=text_list):
+                    self.press('f')
+                    for _ in range(2):
+                        self.press('s',0.2)
+                        self.press('f')
+                    return 1
+                else:
+                    keyops.keyDown('w')
+                    time.sleep(0.5)
+        keyops.keyUp('w')
+        return 0
 
     def portal_opening_days(self, aimed=0, static=0, deep=0):
         if deep > 1:
@@ -380,20 +401,11 @@ class DivergentUniverse(UniverseUtils):
                 if portal is None:
                     portal = self.find_portal()
             else:
-                self.get_screen()
-                if self.check_f(check_text=0):
-                    keyops.keyUp('w')
-                    print(portal['type'] if portal else '区域')
-                    if self.check_f(is_in=[portal['type'] if portal else '区域']):
-                        self.press('f')
-                        for _ in range(2):
-                            self.press('s',0.2)
-                            self.press('f')
-                        self.init_floor()
-                        return
-                    else:
-                        keyops.keyDown('w')
-                        time.sleep(0.5)
+                if self.forward_until([portal['type'] if portal else '区域'], timeout=3, moving=moving):
+                    self.init_floor()
+                    return
+                else:
+                    moving = 0
             if portal is not None and not aimed:
                 if moving:
                     print('stop moving')
@@ -416,6 +428,8 @@ class DivergentUniverse(UniverseUtils):
                 if not moving:
                     keyops.keyDown('w')
                     moving = 1
+        if moving:
+            keyops.keyUp('w')
 
     def event_score(self, text, event):
         score = 0
@@ -571,15 +585,7 @@ class DivergentUniverse(UniverseUtils):
                     for _ in range(-sub):
                         self.press('a',0.2)
                         time.sleep(0.1)
-            keyops.keyDown('w')
-            self.keys.fff = 1
-            tm = time.time()
-            while time.time() - tm < 3:
-                if self.get_now_area() == None:
-                    self.keys.fff = 0
-                    keyops.keyUp('w')
-                    return
-            keyops.keyUp('w')
+            self.forward_until(['事件','奖励','遭遇','交易'], timeout=3, moving=0)
         else:
             if key == 'a':
                 return
@@ -601,6 +607,12 @@ class DivergentUniverse(UniverseUtils):
             else:
                 time.sleep(1.5*self.allow_e)
 
+    def check_dead(self):
+        self.get_screen()
+        if self.check("divergent/sile", 0.5010,0.7519, threshold=0.96):
+            self.click_position([1188, 813])
+            time.sleep(2.5)
+
     def area(self):
         area_now = self.get_now_area()
         time.sleep(0.5)
@@ -619,7 +631,7 @@ class DivergentUniverse(UniverseUtils):
             self.floor = now_floor
             if self.floor in [5,10]:
                 time.sleep(3)
-        time.sleep(1)
+        time.sleep(0.8)
         if self.area_state == 0:
             if '黄泉' in self.team_member and '黄泉' in config.skill_char:
                 self.quan = 1
@@ -627,12 +639,14 @@ class DivergentUniverse(UniverseUtils):
                 self.press(str(self.team_member['黄泉']+1))
             else:
                 self.press(self.long_range)
+        self.get_screen()
         if self.check("divergent/arrow", 0.7833,0.9231, threshold=0.96):
             keyops.keyDown('alt')
             time.sleep(0.2)
             self.click_position([413, 79])
             keyops.keyUp('alt')
-        time.sleep(0.6)
+        time.sleep(0.7)
+        self.check_dead()
         if area_now is not None:
             self.area_now = area_now
         else:
@@ -699,9 +713,10 @@ class DivergentUniverse(UniverseUtils):
                 for c in config.skill_char:
                     if c in self.team_member and self.allow_e:
                         self.press(str(self.team_member[c]+1))
-                        time.sleep(1)
+                        time.sleep(0.8)
+                        self.check_dead()
                         self.skill()
-                        time.sleep(1)
+                        time.sleep(1.5)
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
