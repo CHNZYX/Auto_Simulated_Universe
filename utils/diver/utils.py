@@ -369,7 +369,7 @@ class UniverseUtils:
             threshold = self.threshold
         path = self.format_path(path)
         target = cv.imread(path)
-        if path == './imgs/f.jpg' and config.mapping[0]!='f':
+        if path == 'imgs/f.jpg' and config.mapping[0]!='f':
             target = self.gen_hotkey_img(config.mapping[0])
             threshold -= 0.01
         target = cv.resize(
