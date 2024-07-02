@@ -39,10 +39,9 @@ class DivergentUniverse(UniverseUtils):
         self.floor = 0
         self.allow_e = 1
         self.count = self.my_cnt = 0
-        if not hasattr(self, 'hot_init'):
-            self.debug = debug
-            self.nums = nums
-            self.speed = speed
+        self.debug = debug
+        self.nums = nums
+        self.speed = speed
         self.init_tm = time.time()
         self.area_now = None
         self.action_history = []
@@ -190,7 +189,7 @@ class DivergentUniverse(UniverseUtils):
         return data
 
     def clean_text(self, text, char=1):
-        symbols = r"[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~—“”‘’«»„…·¿¡£¥€©®™°±÷×¶§‰]，。！？；：（）【】「」《》、￥"
+        symbols = r"[!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~—“”‘’«»„…·¿¡£¥€©®™°±÷×¶§‰]，。！？；：（）【】「」《》、￥ "
         if char:
             symbols += r"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         translator = str.maketrans('', '', symbols)
@@ -228,11 +227,13 @@ class DivergentUniverse(UniverseUtils):
 
     def close_and_exit(self, click=True):
         self.press('esc')
-        if self.debug:
+        if self.debug and self.floor < 13:
             with open('test.txt', 'a') as f:
                 format_string = "%H:%M:%S"
                 formatted_time = time.strftime(format_string, time.localtime())
                 f.write(formatted_time + '\n')
+            while 1:
+                time.sleep(1)
         time.sleep(2.5)
         self.init_floor()
         if not click:
@@ -302,7 +303,7 @@ class DivergentUniverse(UniverseUtils):
         prefer_portal.update({'首领':4, '休整':4})
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1, mode=2)
-        portal = {'score':-1,'nums':0}
+        portal = {'score':0,'nums':0,'type':''}
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
                 portal_type = self.get_text_type(i['raw_text'], prefer_portal)
@@ -310,13 +311,12 @@ class DivergentUniverse(UniverseUtils):
                     i.update({'score':prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
                     if i['score'] > portal['score']:
                         portal = i
+                elif '冒险' in i['raw_text']:
+                    portal['nums'] += 1
         ocr_time = time.time() - tm
         self.ocr_time_list = self.ocr_time_list[-5:] + [ocr_time]
         print(f'识别时间:{int(ocr_time*1000)}ms', text, portal)
-        if portal['score'] == -1:
-            return None
-        else:
-            return portal
+        return portal
     
     def sleep(self, tm=2):
         time.sleep(tm)
@@ -334,10 +334,12 @@ class DivergentUniverse(UniverseUtils):
                 return portal
             time.sleep(0.2)
             portal_after = self.find_portal(portal['type'])
-            if portal_after is None:
-                return portal
-            else:
-                portal = portal_after
+            if portal_after['score'] == 0:
+                self.press('w', 1)
+                portal_after = self.find_portal(portal['type'])
+                if portal_after['score'] == 0:
+                    return portal
+            portal = portal_after
         return portal
     
     def forward_until(self, text_list=[], timeout=5, moving=0):
@@ -356,6 +358,7 @@ class DivergentUniverse(UniverseUtils):
                         self.press('f')
                     return 1
                 else:
+                    tm += 0.7
                     keyops.keyDown('w')
                     time.sleep(0.5)
         keyops.keyUp('w')
@@ -368,7 +371,7 @@ class DivergentUniverse(UniverseUtils):
             return
         if deep == 0:
             self.portal_cnt += 1
-        portal = None
+        portal = {'score':0,'nums':0,'type':''}
         moving = 0
         if static:
             # win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
@@ -377,10 +380,10 @@ class DivergentUniverse(UniverseUtils):
                 self.mouse_move(angle)
                 time.sleep(0.2)
                 portal = self.find_portal()
-                if portal is not None:
+                if portal['score']:
                     break
             if self.floor in [1,2,4,5,6,7,9,10]:
-                if portal is not None and portal['nums'] == 1 and portal['score'] < 2:
+                if portal['nums'] == 1 and portal['score'] < 2:
                     portal_pre = portal
                     portal_type = portal['type']
                     bias = 0
@@ -389,24 +392,24 @@ class DivergentUniverse(UniverseUtils):
                         bias += angles[i]
                         time.sleep(0.2)
                         portal_after = self.find_portal()
-                        if portal_after is not None and portal_type != portal_after['type']:
+                        if portal_after['score'] and portal_type != portal_after['type']:
                             portal = portal_after
                             break
                     if portal['type'] == portal_type:
                         portal = portal_pre
                         self.mouse_move(-bias)
         tm = time.time()
-        while time.time() - tm < 5 + 2 * (portal is not None):
+        while time.time() - tm < 5 + 2 * (portal['score'] != 0):
             if aimed == 0:
-                if portal is None:
+                if portal['score'] == 0:
                     portal = self.find_portal()
             else:
-                if self.forward_until([portal['type'] if portal else '区域'], timeout=3, moving=moving):
+                if self.forward_until([portal['type'] if portal['score'] else '区域'], timeout=3, moving=moving):
                     self.init_floor()
                     return
                 else:
                     moving = 0
-            if portal is not None and not aimed:
+            if portal['score'] and not aimed:
                 if moving:
                     print('stop moving')
                     keyops.keyUp('w')
@@ -416,7 +419,7 @@ class DivergentUniverse(UniverseUtils):
                 else:
                     print('aiming...')
                     tmp_portal = self.aim_portal(portal)
-                    if tmp_portal is None:
+                    if tmp_portal['score'] == 0:
                         self.portal_opening_days(aimed=0, static=1, deep=deep+1)
                         return
                     else:
@@ -424,7 +427,7 @@ class DivergentUniverse(UniverseUtils):
                         aimed = 1
                     moving = 1
                     keyops.keyDown('w')
-            elif portal is None:
+            elif portal['score'] == 0:
                 if not moving:
                     keyops.keyDown('w')
                     moving = 1
@@ -446,6 +449,7 @@ class DivergentUniverse(UniverseUtils):
         tm = time.time()
         while time.time() - tm < 20:
             title_text = self.merge_text(self.ts.find_with_box([170, 850, 900, 1020], redundancy=0), char=0)
+            print(title_text)
             if event_id[0] == -1:
                 for i, e in enumerate(self.event_prior):
                     if e in title_text and len(e) > len(event_id[1]):
@@ -453,6 +457,10 @@ class DivergentUniverse(UniverseUtils):
                 start = self.now_event == event_id[1]
                 self.now_event = event_id[1]
                 print('event_id:', event_id)
+                if self.debug and event_id[0] == -1:
+                    print(self.ts.res)
+                    while 1:
+                        time.sleep(1)
             if '事件' not in self.merge_text(self.ts.find_with_box([92, 195, 54, 88])):
                 return
             
@@ -523,8 +531,10 @@ class DivergentUniverse(UniverseUtils):
         print('event_text:', text)
         for i in text:
             box = i['box']
-            if 'ms' in i['raw_text'] or '状态效' in i['raw_text'] or len(i['raw_text']) < 2 \
+            if 'ms' in i['raw_text'] or '状态效' in i['raw_text'] or len(i['raw_text']) < 2 or (box[0] > 1470 and box[2] < 75)\
                   or (box[0] > 1800 and box[2] < 120) or (box[0] > 1600 and box[2] > 290) or (box[1] < 400 and box[3] < 160):
+                continue
+            if '?' not in i['raw_text'] and '？' not in i['raw_text'] and len(self.clean_text(i['raw_text'], 1)) == 0:
                 continue
             w, h = box[1] - box[0], box[3] - box[2]
             if w < 40 or h > 40:
@@ -553,17 +563,24 @@ class DivergentUniverse(UniverseUtils):
         if self.check_f(is_in=['事件','奖励','遭遇','交易']):
             self.press('f')
             return
-        elif self.check_f(is_in=['混沌','药箱']):
-            self.press('f')
-            time.sleep(2.5)
-            self.run_static(action_list=['混沌药箱'], skip_check=1)
-            tm = time.time()
-            while time.time() - tm < 3:
-                self.ts.forward(self.get_screen())
-                res = self.run_static(action_list=['点击空白处关闭'])
-                if len(res):
-                    tm = time.time()
-            return
+        # elif self.check_f(is_in=['混沌','药箱']):
+        #     self.press('f')
+        #     time.sleep(2.5)
+        #     self.run_static(action_list=['混沌药箱'], skip_check=1)
+        #     tm = time.time()
+        #     while time.time() - tm < 3:
+        #         self.ts.forward(self.get_screen())
+        #         res = self.run_static(action_list=['点击空白处关闭'])
+        #         if len(res):
+        #             tm = time.time()
+        #     time.sleep(2)
+        #     if deep == 0:
+        #         self.align_event(key, deep+1)
+        #     return
+
+        if not event_text and key == 'a':
+            event_text = 950
+
         if event_text:
             if abs(event_text - 950) > 40:
                 self.press(key,0.2)
@@ -585,10 +602,8 @@ class DivergentUniverse(UniverseUtils):
                     for _ in range(-sub):
                         self.press('a',0.2)
                         time.sleep(0.1)
-            self.forward_until(['事件','奖励','遭遇','交易'], timeout=3, moving=0)
+            self.forward_until(['事件','奖励','遭遇','交易'], timeout=2.5, moving=0)
         else:
-            if key == 'a':
-                return
             if deep < 3:
                 self.press('w',[0,0.3,0.5][deep])
                 self.align_event(key, deep+1)
@@ -698,10 +713,10 @@ class DivergentUniverse(UniverseUtils):
             pyautogui.click()
             time.sleep(0.8)
             keyops.keyDown('w')
-            time.sleep(1.3)
+            time.sleep(1.6)
             self.press('d',0.4)
             keyops.keyUp('w')
-            time.sleep(1)
+            time.sleep(0.6)
             self.portal_opening_days(static=1)
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
@@ -711,8 +726,8 @@ class DivergentUniverse(UniverseUtils):
             if self.area_state == 0:
                 self.press('w',3)
                 for c in config.skill_char:
-                    if c in self.team_member and self.allow_e:
-                        self.press(str(self.team_member[c]+1))
+                    if (c in self.team_member or c.isdigit()) and self.allow_e:
+                        self.press(int(c) if c.isdigit() else str(self.team_member[c]+1))
                         time.sleep(0.8)
                         self.check_dead()
                         self.skill()
@@ -775,7 +790,7 @@ class DivergentUniverse(UniverseUtils):
                 self.press('w', 0.5)
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
-            self.press('w',3)
+            self.press('w',2.7)
             pyautogui.click()
             time.sleep(0.6)
             keyops.keyDown('w')
@@ -784,7 +799,8 @@ class DivergentUniverse(UniverseUtils):
             self.press('a', 0.5)
             time.sleep(0.35)
             keyops.keyUp('w')
-            if self.find_portal() is None:
+            time.sleep(0.6)
+            if self.find_portal()['score'] == 0:
                 self.press('a', 0.4)
                 self.press('s', 0.7)
                 self.press('w', 0.5)
@@ -930,8 +946,6 @@ class DivergentUniverse(UniverseUtils):
             self.stop()
 
     def start(self):
-        self.hot_init = 1
-        self.__init__()
         self._stop = False
         keyboard.on_press(self.on_key_press)
         self.keys = KeyController(self)

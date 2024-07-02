@@ -52,7 +52,8 @@ set_debug()
 
 def my_print(*args, **kwargs):
     log.info(" ".join(map(str, args)))
-    print(*args, **kwargs)
+    if len(kwargs):
+        print(*args, **kwargs)
 
 def print_exc():
     with io.StringIO() as buf, open("logs/error_log.txt", "a") as f:

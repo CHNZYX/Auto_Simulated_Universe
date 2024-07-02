@@ -120,10 +120,10 @@ class My_TS:
     def find_with_box(self, box=None, redundancy=10, forward=0, mode=0):
         if forward and box is not None:
             self.forward(self.filter_non_white(self.father.get_screen()[box[2]:box[3],box[0]:box[1]], mode=mode))
-            # if box[3]==540 or box[3] == 350:
-            #     tm = str(int(time.time()*100)%1000000)
-            #     cv.imwrite('img/'+tm+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
-            #     cv.imwrite('img/'+tm+'w.jpg',self.filter_non_white(self.father.screen[box[2]:box[3],box[0]:box[1]]))
+            if box[3]==540 or box[3] == 350 and self.father.debug:
+                tm = str(int(time.time()*100)%1000000)
+                cv.imwrite('img/'+tm+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
+                cv.imwrite('img/'+tm+'w.jpg',self.filter_non_white(self.father.screen[box[2]:box[3],box[0]:box[1]]))
         ans = []
         for res in self.res:
             if box is None:

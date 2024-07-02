@@ -65,6 +65,9 @@ class Config:
                 i = self.match[i]
             if i in self.all_list:
                 self.skill_char.append(i)
+            elif i in ['1', '2', '3', '4']:
+                self.skill_char.append(i)
+
 
     def read(self):
         if os.path.exists(os.path.join(self.abspath, self.text)):

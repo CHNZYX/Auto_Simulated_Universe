@@ -223,6 +223,12 @@
                 "press": "esc"
             },
             {
+                "sleep": "1"
+            },
+            {
+                "position": [1177, 672]
+            },
+            {
                 "sleep": "2"
             },
             "close_and_exit"
@@ -429,9 +435,6 @@
             },
             {
                 "position": [1680, 527]
-            },
-            {
-                "sleep": 1
             }
         ]
     },
