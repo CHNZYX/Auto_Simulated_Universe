@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.11"
+version = "v7.13"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -457,10 +457,6 @@ class DivergentUniverse(UniverseUtils):
                 start = self.now_event == event_id[1]
                 self.now_event = event_id[1]
                 print('event_id:', event_id)
-                if self.debug and event_id[0] == -1:
-                    print(self.ts.res)
-                    while 1:
-                        time.sleep(1)
             if '事件' not in self.merge_text(self.ts.find_with_box([92, 195, 54, 88])):
                 return
             
@@ -472,6 +468,10 @@ class DivergentUniverse(UniverseUtils):
                 self.click((self.tx, self.ty))
             # 事件选择界面
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
+                if self.debug and event_id[0] == -1:
+                    print(self.ts.res)
+                    while 1:
+                        time.sleep(1)
                 tx, ty = self.tx, self.ty
                 self.ts.forward(self.screen)
                 clicked = 0
@@ -585,23 +585,24 @@ class DivergentUniverse(UniverseUtils):
             if abs(event_text - 950) > 40:
                 self.press(key,0.2)
                 event_text_after = self.find_event_text()
-                if event_text_after == 0:
-                    return
-                sub = event_text - event_text_after
-                if key == 'a':
-                    sub = -sub
-                print('sub:', sub)
-                if sub < 60:
-                    sub = 100
-                if sub < 200:
-                    sub = int((event_text_after - 950) / min(150, sub))
-                    sub = min(5, max(-5, int(sub)))
-                    for _ in range(sub):
-                        self.press('d',0.2)
-                        time.sleep(0.1)
-                    for _ in range(-sub):
-                        self.press('a',0.2)
-                        time.sleep(0.1)
+                if event_text_after:
+                    sub = event_text - event_text_after
+                    if key == 'a':
+                        sub = -sub
+                    print('sub:', sub)
+                    if sub < 60:
+                        sub = 100
+                    if sub < 200:
+                        sub = int((event_text_after - 950) / min(150, sub))
+                        sub = min(5, max(-5, int(sub)))
+                        for _ in range(sub):
+                            self.press('d',0.2)
+                            time.sleep(0.1)
+                        for _ in range(-sub):
+                            self.press('a',0.2)
+                            time.sleep(0.1)
+                else:
+                    self.press('a' if key == 'd' else 'd', 0.2)
             self.forward_until(['事件','奖励','遭遇','交易'], timeout=2.5, moving=0)
         else:
             if deep < 3:

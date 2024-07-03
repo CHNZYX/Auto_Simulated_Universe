@@ -123,7 +123,7 @@ class My_TS:
             if box[3]==540 or box[3] == 350 and self.father.debug:
                 tm = str(int(time.time()*100)%1000000)
                 cv.imwrite('img/'+tm+'.jpg',self.father.screen[box[2]:box[3],box[0]:box[1]])
-                cv.imwrite('img/'+tm+'w.jpg',self.filter_non_white(self.father.screen[box[2]:box[3],box[0]:box[1]]))
+                cv.imwrite('img/'+tm+'w.jpg',self.filter_non_white(self.father.screen[box[2]:box[3],box[0]:box[1]], mode=mode))
         ans = []
         for res in self.res:
             if box is None:
