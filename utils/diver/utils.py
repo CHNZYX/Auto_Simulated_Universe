@@ -405,6 +405,20 @@ class UniverseUtils:
                 log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
             self.last_info = path
         return max_val > threshold
+    
+    def check_box(self, path, box=[0,1920,0,1080], threshold=0.96):
+        path = self.format_path(path)
+        target = cv.imread(path)
+        local_screen = self.screen[box[2]:box[3],box[0]:box[1]]
+        result = cv.matchTemplate(local_screen, target, cv.TM_CCORR_NORMED)
+        min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+        self.tx, self.ty = (max_loc[0]+box[0], max_loc[1]+box[2])
+        self.tm = max_val
+        if max_val > threshold:
+            if self.last_info != path:
+                log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
+            self.last_info = path
+        return max_val > threshold
 
     def get_end_point(self, mask=0):
         self.get_screen()

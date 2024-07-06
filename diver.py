@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.13"
+version = "v7.15"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -59,6 +59,8 @@ class DivergentUniverse(UniverseUtils):
         self.saved_num = 0
         self.default_json_path = "actions/default.json"
         self.default_json = self.load_actions(self.default_json_path)
+        if config.weekly_mode:
+            self.default_json['模式选择'][0]['actions'][1]['text'] = '周期演算'
         if debug != 2:
             pyautogui.FAILSAFE = False
         self.update_count()
@@ -353,7 +355,7 @@ class DivergentUniverse(UniverseUtils):
                 print(text_list)
                 if self.check_f(is_in=text_list):
                     self.press('f')
-                    for _ in range(2):
+                    for _ in range(1):
                         self.press('s',0.2)
                         self.press('f')
                     return 1
@@ -439,7 +441,7 @@ class DivergentUniverse(UniverseUtils):
         event_weight = [2*self.speed, 1, -10]
         for i in range(3):
             for e in event[i].split('-'):
-                if e in text:
+                if e in text and len(e):
                     score += event_weight[i]
         return score
 
@@ -479,11 +481,13 @@ class DivergentUniverse(UniverseUtils):
                     text = self.ts.find_with_box([1300, 1920, 100, 1080], redundancy=30)
                     events = []
                     event_now = None
+                    last_star = 0
                     for i in text:
-                        if i['raw_text'].startswith('米'):
+                        if self.check_box("star", [1250, 1460, i['box'][2]-30, i['box'][3]+30]) and last_star<self.ty-20:
+                            last_star = self.ty
                             if event_now is not None:
                                 events.append(event_now)
-                            event_now = {'raw_text': i['raw_text'][1:], 'box': i['box']}
+                            event_now = {'raw_text': i['raw_text'].lstrip('米'), 'box': i['box']}
                         else:
                             if event_now is not None:
                                 event_now['raw_text'] += i['raw_text']
@@ -772,10 +776,10 @@ class DivergentUniverse(UniverseUtils):
                     keyops.keyUp('d')
                     self.portal_opening_days(static=1)
                 else:
-                    self.portal_opening_days()
+                    self.portal_opening_days(static=1)
             else:
                 time.sleep(1)
-                self.portal_opening_days()
+                self.portal_opening_days(static=1)
         elif area_now == '战斗':
             if self.area_state == 0:
                 self.press('w', 3)
@@ -808,6 +812,8 @@ class DivergentUniverse(UniverseUtils):
             self.keys.fff = 0
             self.portal_opening_days(static=1)
         elif area_now == '位面':
+            pyautogui.click()
+            time.sleep(2)
             self.close_and_exit()
         else:
             self.press('F4')

@@ -11,6 +11,8 @@ config:
   team: 终结技
   # 速通模式
   speed_mode: 0
+  # 周期演算
+  weekly_mode: 0
   # 图像识别强制使用cpu
   cpu_mode: 0
   # 首领房间需要开秘技的角色，按顺序开
@@ -23,7 +25,7 @@ config:
     - 阮梅
     - 黄泉
   # 自动存档数量，0-4，0代表不存档，1-4代表自动存档到前1-4个存档位
-  save: 4
+  save: 0
   timezone: Default
   max_run: 34
   # 图像识别精度，默认1440，越高越精确，但是也越慢（最高1920）

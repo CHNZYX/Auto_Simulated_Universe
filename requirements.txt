@@ -7,7 +7,7 @@ pyuac
 pillow
 keyboard
 requests
-onnxruntime-directml
+onnxruntime-directml==1.18.0
 shapely
 pyclipper
 pyscreeze==0.1.28

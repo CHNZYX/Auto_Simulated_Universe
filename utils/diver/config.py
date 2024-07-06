@@ -21,6 +21,7 @@ class Config:
         self.long_press_sprint = 0
         self.debug_mode = 0
         self.speed_mode = 0
+        self.weekly_mode = 0
         self.cpu_mode = 0
         self.save_cnt = 4
         self.accuracy = 1440
@@ -78,6 +79,7 @@ class Config:
                     self.difficult = config['difficulty']
                     self.team = config['team']
                     self.speed_mode = config['speed_mode']
+                    self.weekly_mode = config['weekly_mode']
                     self.cpu_mode = config['cpu_mode']
                     self.update_skill(config['skill'])
                     self.timezone = config['timezone']
@@ -104,6 +106,7 @@ class Config:
                     "difficulty": self.diffi,
                     "team": self.team,
                     "speed_mode": self.speed_mode,
+                    "weekly_mode": self.weekly_mode,
                     "cpu_mode": self.cpu_mode,
                     "skill": self.skill_char,
                     "save": self.save_cnt,

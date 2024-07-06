@@ -23,6 +23,9 @@ def config_view(page: Page):
     def speed_checkbox_changed(_e):
         config.speed_mode = not config.speed_mode
 
+    def weekly_checkbox_changed(_e):
+        config.weekly_mode = not config.weekly_mode
+
     def cpu_checkbox_changed(_e):
         config.cpu_mode = not config.cpu_mode
 
@@ -141,6 +144,13 @@ def config_view(page: Page):
                                             scale=1.2
                                         ),
                                         ft.Switch(
+                                            label="周期演算",
+                                            value=get_info_mode(config.weekly_mode),
+                                            on_change=weekly_checkbox_changed,
+                                            label_position='left',
+                                            scale=1.2
+                                        ),
+                                        ft.Switch(
                                             label="禁用GPU加速",
                                             value=get_info_mode(config.cpu_mode),
                                             on_change=cpu_checkbox_changed,
@@ -214,7 +224,7 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
-                                ft.Container(height=20),
+                                ft.Container(height=15),
                                 ft.Row(
                                     [
                                         ft.Text("秘技角色:",weight=ft.FontWeight.W_600,size=18),
@@ -224,7 +234,7 @@ def config_view(page: Page):
                                         ),
                                     ]
                                 ),
-                                ft.Container(height=20),
+                                ft.Container(height=5),
                                 ft.Row(
                                     [
                                         txt,
@@ -246,7 +256,7 @@ def config_view(page: Page):
                                         ft.Text("次",weight=ft.FontWeight.W_400,size=18),
                                     ]
                                 ),
-                                ft.Container(height=40),
+                                ft.Container(height=20),
                                 ft.ElevatedButton(
                                     content=ft.Row(
                                         [
