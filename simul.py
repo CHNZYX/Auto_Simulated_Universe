@@ -692,6 +692,7 @@ class SimulatedUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
             self.press("esc")
+            self.press("w", 2)
             tm = time.time()
             while time.time()-tm<2 and not self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96) and not self.isrun():
                 self.get_screen()
