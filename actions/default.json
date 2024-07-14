@@ -307,6 +307,25 @@
         "name": "确认界面",
         "trigger":{ 
             "text": "确认",
+            "box": [1111, 1225, 750, 792],
+            "redundancy": 30
+        },
+        "actions":
+        [
+            {
+                "text": "确认",
+                "box": [1111, 1225, 750, 792],
+                "redundancy": 30
+            },
+            {
+                "sleep": 1
+            }
+        ]
+    },
+    {
+        "name": "确认界面",
+        "trigger":{ 
+            "text": "确认",
             "box": [1111, 1225, 648, 678],
             "redundancy": 30
         },

@@ -101,20 +101,24 @@ class DivergentUniverse(UniverseUtils):
         # exit()
         res = self.run_static()
         if res == '':
-            text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
-            if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
-                print('ready to stop')
-                time.sleep(6)
-                tm = time.time()
-                while time.time() - tm < 15:
-                    print('trying to stop')
-                    self.press('esc')
-                    time.sleep(2)
-                    self.ts.forward(self.get_screen())
-                    static_res = self.run_static(action_list=['过量转化'])
-                    if static_res != '':
-                        print(static_res)
-                        break
+            area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
+            if '位面' in area_text or '区域' in area_text or '第' in area_text:
+                self.area()
+            else:
+                text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
+                if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
+                    print('ready to stop')
+                    time.sleep(6)
+                    tm = time.time()
+                    while time.time() - tm < 15:
+                        print('trying to stop')
+                        self.press('esc')
+                        time.sleep(2)
+                        self.ts.forward(self.get_screen())
+                        static_res = self.run_static(action_list=['过量转化'])
+                        if static_res != '':
+                            print(static_res)
+                            break
         if self.end and res == '加载界面':
             self.press('esc')
             time.sleep(2)
@@ -406,7 +410,7 @@ class DivergentUniverse(UniverseUtils):
                 if portal['score'] == 0:
                     portal = self.find_portal()
             else:
-                if self.forward_until([portal['type'] if portal['score'] else '区域'], timeout=3, moving=moving):
+                if self.forward_until([portal['type']] if portal['score'] else ['区域','结束','退出'], timeout=3, moving=moving):
                     self.init_floor()
                     return
                 else:
@@ -450,7 +454,7 @@ class DivergentUniverse(UniverseUtils):
         self.event_solved = 1
         tm = time.time()
         while time.time() - tm < 20:
-            title_text = self.merge_text(self.ts.find_with_box([170, 850, 900, 1020], redundancy=0), char=0)
+            title_text = self.clean_text(self.ts.ocr_one_row(self.screen, [185, 820, 945, 1005]), char=0)
             print(title_text)
             if event_id[0] == -1:
                 for i, e in enumerate(self.event_prior):
@@ -711,8 +715,9 @@ class DivergentUniverse(UniverseUtils):
             keyops.keyDown('w')
             self.press('a', 0.3)
             time.sleep(3)
-            self.press('d', 0.3)
+            self.press('d', 0.2)
             keyops.keyUp('w')
+            time.sleep(0.25)
             self.portal_opening_days(aimed=1)
         elif area_now == '商店':
             pyautogui.click()
@@ -725,7 +730,10 @@ class DivergentUniverse(UniverseUtils):
             self.portal_opening_days(static=1)
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
-                self.close_and_exit()
+                if config.weekly_mode:
+                    self.portal_opening_days(aimed=1)
+                else:
+                    self.close_and_exit()
                 self.end_of_uni()
                 return
             if self.area_state == 0:
