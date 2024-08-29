@@ -30,7 +30,9 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ## 命令行用法
 
-只支持1920\*1080(窗口化或全屏幕)，关闭hdr，文本语言选择简体中文，游戏界面不能有任何遮挡。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
+只支持x\*1080(x>=1920,窗口化或全屏幕)，关闭hdr，文本语言选择简体中文，游戏界面不能有任何遮挡。代码版[下载链接](https://github.com/CHNZYX/Auto_Simulated_Universe/archive/refs/heads/main.zip)
+
+\[新增\]: v7.2后支持云·星穹铁道，关闭网速和延迟显示；同时需要设置为全屏幕，并且屏幕分辨率为x\*1080(x>=1920)。若无法达到要求，建议在多用户下开启。
 
 如果没怎么接触过python，建议直接在[release](https://github.com/CHNZYX/Auto_Simulated_Universe/releases/latest)中下载gui版本，并直接阅读GUI使用方法
 
