@@ -88,7 +88,7 @@ def clean_temp_files():
             if 'ppocr_keys_v1.txt' not in models_list or 'v3_det.onnx' not in models_list or 'v4_rec.onnx' not in models_list:
                 continue
             try:
-                shutil.rmtree(file_path)
+                shutil.rmtree(file_path, ignore_errors=True)
             except:
                 pass
 

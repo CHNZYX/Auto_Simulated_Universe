@@ -350,7 +350,8 @@ class SimulatedUniverse(UniverseUtils):
             if self.speed and not self.quan and self.check("huangquan", 0.0578,0.7083):
                 self.quan = 1
             if self.floor_init == 0:
-                self.get_level()
+                if self.get_level() == -1:
+                    return 1
                 self.floor_init = 1
             self.lst_changed = bk_lst_changed
             self.battle = 0

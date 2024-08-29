@@ -620,9 +620,12 @@ class UniverseUtils:
         return ang
 
     def get_level(self):
-        while not self.isrun():
+        tm = time.time()
+        while not self.isrun() and time.time() - tm < 8:
             time.sleep(0.1)
             self.get_screen()
+        if time.time() - tm >= 8:
+            return -1
         time.sleep(max(0, (self.fail_count - 1) * 10))
         time.sleep(1)
         self.press("m", 0.2)
@@ -639,6 +642,7 @@ class UniverseUtils:
                     break
         self.press("m", 0.2)
         time.sleep(1)
+        return 0
 
     def goodf(self):
         if not self.check("f", 0.4443, 0.4417, mask="mask_f1", threshold=0.96):
