@@ -659,7 +659,7 @@ class DivergentUniverse(UniverseUtils):
         if self.area_state == 0:
             if '黄泉' in self.team_member and '黄泉' in config.skill_char:
                 self.quan = 1
-            if area_now == '战斗' and self.quan and self.allow_e and self.floor > 1:
+            if area_now == '战斗' and self.quan and self.allow_e:
                 self.press(str(self.team_member['黄泉']+1))
             else:
                 self.press(self.long_range)
