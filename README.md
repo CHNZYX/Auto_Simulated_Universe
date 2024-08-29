@@ -28,7 +28,7 @@ This software is open source, free of charge and for learning and exchange purpo
 
 ## 安装GUI [![](https://img.shields.io/github/downloads/CHNZYX/Auto_Simulated_Universe/total?color=66ccff)](https://github.com/CHNZYX/Auto_Simulated_Universe/releases)
 
-\[新增\]: v7.2后支持云·星穹铁道。需要关闭网速和延迟显示；同时需要设置为全屏幕，并且物理屏幕分辨率为x\*1080(x>=1920)。若无法达到要求，建议在多用户下开启。
+\[新增\]: v7.2后支持云·星穹铁道。云崩铁要用网页应用打开，直接在网页打开会无法识别。需要关闭网速和延迟显示；同时需要设置为全屏幕，并且物理屏幕分辨率为x\*1080(x>=1920)。若无法达到要求，建议在多用户下开启。
 
 ## 命令行用法
 
