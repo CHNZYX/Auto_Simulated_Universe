@@ -104,6 +104,8 @@ class DivergentUniverse(UniverseUtils):
             area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
             if '位面' in area_text or '区域' in area_text or '第' in area_text:
                 self.area()
+            elif self.check("c", 0.9417, 0.1204, threshold=0.965):
+                self.press('v')
             else:
                 text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
                 if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
@@ -730,10 +732,7 @@ class DivergentUniverse(UniverseUtils):
             self.portal_opening_days(static=1)
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
-                if config.weekly_mode:
-                    self.portal_opening_days(aimed=1)
-                else:
-                    self.close_and_exit()
+                self.close_and_exit()
                 self.end_of_uni()
                 return
             if self.area_state == 0:
