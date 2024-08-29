@@ -70,6 +70,8 @@ def set_forground():
         else:
             shell.SendKeys("")
         game_nd = win32gui.FindWindow("UnityWndClass", "崩坏：星穹铁道")
+        if game_nd == 0:
+            game_nd = win32gui.FindWindow(None, "云·星穹铁道")
         win32gui.SetForegroundWindow(game_nd)
     except:
         pass
@@ -152,7 +154,7 @@ class UniverseUtils:
                 # x01y01:窗口左上右下坐标
                 # xx yy:窗口大小
                 # scx scy:当前窗口和基准窗口（1920*1080）缩放大小比例
-                if Text == "崩坏：星穹铁道":
+                if Text == "崩坏：星穹铁道" or Text == "云·星穹铁道":
                     time.sleep(1)
                     if self.xx != 1920 or self.yy != 1080:
                         log.error("分辨率错误")
