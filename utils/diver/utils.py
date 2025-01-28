@@ -344,11 +344,11 @@ class UniverseUtils:
                 print(result["max_val"])
                 points = self.calculated(result, target.shape)
                 self.get_point(*points)
-                exit()
-                # log.info("target shape: %s" % target.shape)
+                # exit()
+                log.info(f"target shape: {target.shape}")
                 # self.click(points)
                 return
-            if flag == False:
+            if not flag:
                 return
 
     # 在截图中裁剪需要匹配的部分
