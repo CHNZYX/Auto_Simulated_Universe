@@ -106,7 +106,6 @@ class DivergentUniverse(UniverseUtils):
             if '位面' in area_text or '区域' in area_text or '第' in area_text:
                 self.area()
             elif self.check("c", 0.988, 0.1028, threshold=0.925):
-                log.info("tigger c")
                 self.press('v')
             else:
                 text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
