@@ -100,11 +100,12 @@ class DivergentUniverse(UniverseUtils):
         # self.ts.find_with_box()
         # exit()
         res = self.run_static()
+        # self.click_target("imgs/c.jpg", threshold=0.9, flag=False)
         if res == '':
             area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
             if '位面' in area_text or '区域' in area_text or '第' in area_text:
                 self.area()
-            elif self.check("c", 0.9417, 0.1204, threshold=0.965):
+            elif self.check("c", 0.988, 0.1028, threshold=0.925):
                 self.press('v')
             else:
                 text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
