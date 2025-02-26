@@ -8,8 +8,9 @@
         },
         "actions":
         [
+            "select_difficulty",
             {
-                "position": [1529, 884]
+                "position": [1680, 967]
             }
         ]
     },
@@ -166,6 +167,15 @@
         "actions": ["bless"]
     },
     {
+        "name": "金血选择",
+        "trigger":{
+            "text": "金血",
+            "box": [1651, 1855, 43, 82],
+            "redundancy": 30
+        },
+        "actions": ["bless_blood"]
+    },
+    {
         "name": "祝福选择",
         "trigger":{
             "text": "祝福",
@@ -270,7 +280,7 @@
         "name": "探索结束",
         "trigger":{
             "text": "返回主界面",
-            "box": [646, 767, 942, 966],
+            "box": [678, 803, 957, 990],
             "redundancy": 30
         },
         "actions": ["save_or_exit"]

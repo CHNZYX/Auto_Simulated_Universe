@@ -240,8 +240,8 @@ class DivergentUniverse(UniverseUtils):
                 format_string = "%H:%M:%S"
                 formatted_time = time.strftime(format_string, time.localtime())
                 f.write(formatted_time + '\n')
-            while 1:
-                time.sleep(1)
+            # while 1:
+            #     time.sleep(1)
         time.sleep(2.5)
         self.init_floor()
         if not click:
@@ -264,8 +264,11 @@ class DivergentUniverse(UniverseUtils):
     def find_team_member(self):
         boxes = [[1620, 1790, 289, 335],[1620, 1790, 384, 427],[1620, 1790, 478, 521],[1620, 1790, 570, 618]]
         team_member = {}
+        correct = {"飞雪":"飞霄","飞雷":"飞霄"}
         for i,b in enumerate(boxes):
             name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
+            if name in correct:
+                name = correct[name]
             if name in self.character_prior:
                 team_member[name] = i
         return team_member
@@ -478,8 +481,12 @@ class DivergentUniverse(UniverseUtils):
             elif self.check("star", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
                 if self.debug and event_id[0] == -1:
                     print(self.ts.res)
-                    while 1:
-                        time.sleep(1)
+                    with open('test.txt', 'a') as f:
+                        format_string = "%H:%M:%S"
+                        formatted_time = time.strftime(format_string, time.localtime())
+                        f.write(formatted_time + ' new event' + '\n')
+                    # while 1:
+                    #     time.sleep(1)
                 tx, ty = self.tx, self.ty
                 self.ts.forward(self.screen)
                 clicked = 0
@@ -547,13 +554,28 @@ class DivergentUniverse(UniverseUtils):
             if '?' not in i['raw_text'] and '？' not in i['raw_text'] and len(self.clean_text(i['raw_text'], 1)) == 0:
                 continue
             w, h = box[1] - box[0], box[3] - box[2]
-            if w < 40 or h > 40:
+            if w < 40 or h > 45:
                 continue
             if (box[0] + box[1]) // 2 > res or self.event_text in i['raw_text'] or i['raw_text'] in self.event_text:
                 res = (box[0] + box[1]) // 2
                 event_text = i['raw_text']
             debug_res.append(i)
-        print(debug_res, res, event_text)
+        if self.debug:
+            print(debug_res, res, event_text)
+        if res == 0:
+            scr = np.copy(self.screen)
+            mask = np.zeros(scr.shape[:2], dtype=np.uint8)
+            mask[np.sum((scr - np.array([255, 255, 255])) ** 2, axis=-1) <= 400] = 255
+            kernel = np.ones((20, 6), np.uint8)
+            mask = cv.dilate(mask, kernel, iterations=2)
+            contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+            for contour in contours:
+                x, y, rect_w, rect_h = cv.boundingRect(contour)
+                box = [x, x + rect_w, y, y + rect_h]
+                if rect_w < 90 or rect_h > 70 or box[0] < 400 or box[1] > 1470:
+                    continue
+                if abs(res - 950) > abs((box[0] + box[1]) // 2 - 950):
+                    res = (box[0] + box[1]) // 2
         if save:
             self.event_text = event_text
         return res
@@ -661,12 +683,14 @@ class DivergentUniverse(UniverseUtils):
         if self.area_state == 0:
             if '黄泉' in self.team_member and '黄泉' in config.skill_char:
                 self.quan = 1
+            elif '黄泉' not in self.team_member:
+                self.quan = 0
             if area_now == '战斗' and self.quan and self.allow_e:
                 self.press(str(self.team_member['黄泉']+1))
             else:
                 self.press(self.long_range)
         self.get_screen()
-        if self.check("divergent/arrow", 0.7833,0.9231, threshold=0.96):
+        if self.check("divergent/arrow", 0.7833,0.9231, threshold=0.95):
             keyops.keyDown('alt')
             time.sleep(0.2)
             self.click_position([413, 79])
@@ -716,7 +740,7 @@ class DivergentUniverse(UniverseUtils):
             time.sleep(0.8)
             keyops.keyDown('w')
             self.press('a', 0.3)
-            time.sleep(3)
+            time.sleep(2)
             self.press('d', 0.2)
             keyops.keyUp('w')
             time.sleep(0.25)
@@ -790,7 +814,7 @@ class DivergentUniverse(UniverseUtils):
         elif area_now == '战斗':
             if self.area_state == 0:
                 self.press('w', 3)
-                if self.quan and self.allow_e and self.floor > 1:
+                if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)
                     self.press('w')
@@ -844,9 +868,12 @@ class DivergentUniverse(UniverseUtils):
         return score
 
     def drop_bless(self):
-        self.bless(0)
+        self.bless(reverse=0)
+        
+    def bless_blood(self):
+        self.bless(blood=1)
 
-    def bless(self, reverse=1):
+    def bless(self, reverse=1, blood=0):
         self.bless_solved = 1
         text = self.ts.find_with_box([350, 1550, 795, 819])
         if len(text) == 0:
@@ -867,7 +894,10 @@ class DivergentUniverse(UniverseUtils):
         box = blesses[0]['box']
         for _ in range(1):
             self.click_position([(box[0] + box[1]) // 2, 500])
-        self.click_position([1695, 962])
+        if blood:
+            self.click_position([960, 975])
+        else:
+            self.click_position([1695, 962])
         time.sleep(1)
 
     def end_of_uni(self):
