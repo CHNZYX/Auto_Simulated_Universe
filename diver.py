@@ -55,6 +55,8 @@ class DivergentUniverse(UniverseUtils):
         self.quan = 0
         self.event_text = ''
         self.long_range = '1'
+        self.event_mask = cv.imread('imgs/divergent/event_mask.jpg', cv.IMREAD_GRAYSCALE) > 70
+        self.event_mask_clean = cv.imread('imgs/divergent/event_mask_clean.jpg', cv.IMREAD_GRAYSCALE) > 70
         self.init_floor()
         self.saved_num = 0
         self.default_json_path = "actions/default.json"
@@ -416,11 +418,14 @@ class DivergentUniverse(UniverseUtils):
                 if portal['score'] == 0:
                     portal = self.find_portal()
             else:
-                if self.forward_until([portal['type']] if portal['score'] else ['区域','结束','退出'], timeout=3, moving=moving):
+                if self.forward_until([portal['type']] if portal['score'] else ['区域','结束','退出'], timeout=2.5, moving=moving):
                     self.init_floor()
                     return
                 else:
+                    keyops.keyUp('w')
                     moving = 0
+                    self.portal_opening_days(aimed=0, static=1, deep=deep+1)
+                    return
             if portal['score'] and not aimed:
                 if moving:
                     print('stop moving')
@@ -541,6 +546,13 @@ class DivergentUniverse(UniverseUtils):
                 self.ts.forward(self.get_screen())
 
     def find_event_text(self, save=0):
+        self.get_screen()
+        res = self.get_text_position(clean=1)
+        res = sorted(res, key=lambda x: x[0])
+        if len(res):
+            return res[-1][0]
+        else:
+            return 0
         time.sleep(0.3)
         text = self.ts.find_with_box([300, 1920, 0, 350], forward=1, mode=2)
         res = 0
@@ -596,23 +608,11 @@ class DivergentUniverse(UniverseUtils):
         if self.check_f(is_in=['事件','奖励','遭遇','交易']):
             self.press('f')
             return
-        # elif self.check_f(is_in=['混沌','药箱']):
-        #     self.press('f')
-        #     time.sleep(2.5)
-        #     self.run_static(action_list=['混沌药箱'], skip_check=1)
-        #     tm = time.time()
-        #     while time.time() - tm < 3:
-        #         self.ts.forward(self.get_screen())
-        #         res = self.run_static(action_list=['点击空白处关闭'])
-        #         if len(res):
-        #             tm = time.time()
-        #     time.sleep(2)
-        #     if deep == 0:
-        #         self.align_event(key, deep+1)
-        #     return
 
         if not event_text and key == 'a':
             event_text = 950
+        if event_text and event_text < 910 and key == 'd':
+            key = 'a'
 
         if event_text:
             if abs(event_text - 950) > 40:
@@ -709,15 +709,34 @@ class DivergentUniverse(UniverseUtils):
         if area_now in ['事件', '奖励', '遭遇']:
             if self.area_state==0:
                 keyops.keyDown('w')
-                time.sleep(2.2)
-                keyops.keyDown('d')
-                time.sleep(0.4)
+                tm = time.time()
+                self.get_screen()
+                self.get_text_position()
+                while time.time() - tm < 5:
+                    self.get_screen()
+                    if self.get_text_position():
+                        break
                 keyops.keyUp('w')
-                time.sleep(0.2)
-                keyops.keyUp('d')
-                time.sleep(0.2)
-                self.align_event('a')
-                self.area_state += 1
+                time.sleep(0.3)
+                self.get_screen()
+                total_events = self.get_text_position(1)
+                if len(total_events) < 2:
+                    self.press('w', 0.4)
+                    time.sleep(0.3)
+                    self.get_screen()
+                    total_events_after = self.get_text_position(1)
+                    if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
+                        total_events = total_events_after
+                    elif len(total_events_after) < len(total_events):
+                        self.press('s', 0.5)
+                        time.sleep(0.3)
+                total_events = sorted(total_events, key=lambda x: x[0])
+                portal = self.find_portal()
+                if portal['nums'] > 0:
+                    self.area_state = 2
+                else:
+                    self.align_event('d')
+                    self.area_state += 1 + (len(total_events) == 1)
             elif self.area_state==1:
                 self.keys.fff = 1
                 self.press('a', 1.3)

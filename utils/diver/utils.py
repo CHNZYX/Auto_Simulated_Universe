@@ -102,6 +102,7 @@ class UniverseUtils:
         self.img_map = dict()
         self.tk = ocr.text_keys(self.my_fate)
         self.debug, self.find = 0, 1
+        self.lst_mask = None
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
         self.tss = "ey.jpg"
@@ -1586,3 +1587,44 @@ class UniverseUtils:
             self.get_screen()
             if not self.check("choose_bless", 0.9266, 0.9491, threshold=0.945):
                 return
+
+    def get_text_position(self, clean=0):
+        scr = self.screen
+        mask = np.zeros(scr.shape[:2], dtype=np.uint8)
+        mask_zero = np.zeros(scr.shape[:2], dtype=np.uint8)
+        mask[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)>247)] = 255
+        mask_zero[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)<21)] = 255
+        kernel = np.ones((10, 30), np.uint8)
+        mask_zero = cv.dilate(mask_zero, kernel, iterations=1)
+        mask[487:] = 0
+        mask &= mask_zero
+        if clean:
+            mask[self.event_mask_clean] = 0
+        else:
+            mask[self.event_mask] = 0
+        if clean == 0 and self.lst_mask is not None:
+            mask[self.lst_mask] = 0
+        self.lst_mask = mask
+        kernel = np.ones((8, 35), np.uint8)
+        mask = cv.dilate(mask, kernel, iterations=1)
+        kernel = np.ones((6, 30), np.uint8)
+        mask = cv.erode(mask, kernel, iterations=2)
+        contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        mx_area, mx_cnt = 0, None
+        for cnt in contours:
+            x, y, w, h = cv.boundingRect(cnt)
+            # print(w,h)
+            if h > 22:
+                continue
+            if mx_area < w * h:
+                mx_area = w * h
+                mx_cnt = cnt
+        res = []
+        if mx_area < 4:
+            return res
+        xx, yy, ww, hh = cv.boundingRect(mx_cnt)
+        for cnt in contours:
+            x, y, w, h = cv.boundingRect(cnt)
+            if w * h >= 4 and abs(y - yy) < 20:
+                res.append((x+w//2,y+h//2))
+        return res
