@@ -613,6 +613,7 @@ class DivergentUniverse(UniverseUtils):
             event_text = 950
         if event_text and event_text < 910 and key == 'd':
             key = 'a'
+        print(event_text, key)
 
         if event_text:
             if abs(event_text - 950) > 40:
@@ -625,8 +626,8 @@ class DivergentUniverse(UniverseUtils):
                     print('sub:', sub)
                     if sub < 60:
                         sub = 100
-                    if sub < 200:
-                        sub = int((event_text_after - 950) / min(150, sub))
+                    if sub < 400:
+                        sub = int((event_text_after - 950) / sub)
                         sub = min(5, max(-5, int(sub)))
                         for _ in range(sub):
                             self.press('d',0.2)
@@ -720,8 +721,9 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(0.3)
                 self.get_screen()
                 total_events = self.get_text_position(1)
+                print('total_events:', total_events)
                 if len(total_events) < 2:
-                    self.press('w', 0.4)
+                    self.press('s', 0.4)
                     time.sleep(0.3)
                     self.get_screen()
                     total_events_after = self.get_text_position(1)
@@ -730,11 +732,11 @@ class DivergentUniverse(UniverseUtils):
                     elif len(total_events_after) < len(total_events):
                         self.press('s', 0.5)
                         time.sleep(0.3)
-                total_events = sorted(total_events, key=lambda x: x[0])
                 portal = self.find_portal()
                 if portal['nums'] > 0:
                     self.area_state = 2
                 else:
+                    print('aligning...')
                     self.align_event('d')
                     self.area_state += 1 + (len(total_events) == 1)
             elif self.area_state==1:
@@ -760,11 +762,11 @@ class DivergentUniverse(UniverseUtils):
             time.sleep(0.8)
             keyops.keyDown('w')
             self.press('a', 0.3)
-            time.sleep(2)
+            time.sleep(1.4)
             self.press('d', 0.2)
             keyops.keyUp('w')
             time.sleep(0.25)
-            self.portal_opening_days(aimed=1)
+            self.portal_opening_days(static=1)
         elif area_now == '商店':
             pyautogui.click()
             time.sleep(0.8)
@@ -792,42 +794,6 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(0.2)
                 pyautogui.click()
                 self.area_state += 1
-            elif self.area_state == 1:
-                if self.bless_solved:
-                    if not self.speed:
-                        keyops.keyDown('w')
-                        tm = time.time()
-                        while time.time() - tm < 1.8:
-                            self.get_screen()
-                            if self.check_f(check_text=0):
-                                break
-                        keyops.keyUp('w')
-                        self.press('f')
-                        self.area_state += 1
-                    else:
-                        self.press('w', 1)
-                        self.press('f')
-                        self.area_state = 5
-                else:
-                    self.press('w', 0.5)
-                    self.area_state = 4
-            elif self.area_state == 2:
-                self.press('d', 0.55)
-                self.press('f')
-                self.area_state += 1
-            elif self.area_state == 3:
-                self.press('a', 0.95)
-                self.press('f')
-                self.area_state += 1
-            elif self.area_state == 4:
-                if self.bless_solved:
-                    keyops.keyDown('d')
-                    self.press('s', 0.2)
-                    time.sleep(0.2)
-                    keyops.keyUp('d')
-                    self.portal_opening_days(static=1)
-                else:
-                    self.portal_opening_days(static=1)
             else:
                 time.sleep(1)
                 self.portal_opening_days(static=1)

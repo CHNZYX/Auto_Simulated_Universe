@@ -191,7 +191,12 @@
             "box": [94, 240, 58, 84],
             "redundancy": 30
         },
-        "actions": ["bless"]
+        "actions": [
+            {
+                "sleep": "0.6"
+            },
+            "bless"
+        ]
     },
     {
         "name": "事件选择",
