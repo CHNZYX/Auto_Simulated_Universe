@@ -103,6 +103,7 @@ class UniverseUtils:
         self.tk = ocr.text_keys(self.my_fate)
         self.debug, self.find = 0, 1
         self.lst_mask = None
+        self.event_mask = None
         self.bx, self.by = 1920, 1080
         log.warning("等待游戏窗口")
         self.tss = "ey.jpg"
@@ -1501,11 +1502,12 @@ class UniverseUtils:
         if self.check('snack', 0.3844,0.5065, mask='mask_snack'):
             self.click((self.tx,self.ty))
             time.sleep(0.3)
-            self.click((0.3807,0.2472))
+            self.click_position([1184, 815])
             time.sleep(0.4)
         else:
             self.allow_e = 0
-        self.press('esc')
+            time.sleep(1.0)
+        self.click_position([768, 815])
         time.sleep(0.6)
         if self.allow_e:
             self.press('e')
@@ -1589,14 +1591,16 @@ class UniverseUtils:
                 return
 
     def get_text_position(self, clean=0):
-        scr = self.screen
-        mask = np.zeros(scr.shape[:2], dtype=np.uint8)
-        mask_zero = np.zeros(scr.shape[:2], dtype=np.uint8)
+        if self.event_mask is None:
+            self.event_mask = (cv.imread('imgs/divergent/event_mask.jpg', cv.IMREAD_GRAYSCALE) > 70)[:487]
+            self.event_mask_clean = (cv.imread('imgs/divergent/event_mask_clean.jpg', cv.IMREAD_GRAYSCALE) > 70)[:487]
+        scr = self.screen[:487]
+        mask = np.zeros((487, scr.shape[1]), dtype=np.uint8)
+        mask_zero = np.zeros((487, scr.shape[1]), dtype=np.uint8)
         mask[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)>247)] = 255
         mask_zero[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)<21)] = 255
         kernel = np.ones((10, 30), np.uint8)
         mask_zero = cv.dilate(mask_zero, kernel, iterations=1)
-        mask[487:] = 0
         mask &= mask_zero
         if clean:
             mask[self.event_mask_clean] = 0
@@ -1627,4 +1631,5 @@ class UniverseUtils:
             x, y, w, h = cv.boundingRect(cnt)
             if w * h >= 4 and abs(y - yy) < 20:
                 res.append((x+w//2,y+h//2))
+        res = sorted(res, key=lambda x: x[0])
         return res

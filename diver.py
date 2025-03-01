@@ -55,8 +55,6 @@ class DivergentUniverse(UniverseUtils):
         self.quan = 0
         self.event_text = ''
         self.long_range = '1'
-        self.event_mask = cv.imread('imgs/divergent/event_mask.jpg', cv.IMREAD_GRAYSCALE) > 70
-        self.event_mask_clean = cv.imread('imgs/divergent/event_mask_clean.jpg', cv.IMREAD_GRAYSCALE) > 70
         self.init_floor()
         self.saved_num = 0
         self.default_json_path = "actions/default.json"
@@ -224,6 +222,7 @@ class DivergentUniverse(UniverseUtils):
     def save_or_exit(self):
         print('saved_num:', self.saved_num, 'save_cnt:', config.save_cnt)
         if self.saved_num < config.save_cnt:
+            time.sleep(1.5)
             self.saved_num += 1
             self.click_position([1204, 959])
             time.sleep(1)
@@ -243,8 +242,8 @@ class DivergentUniverse(UniverseUtils):
                 format_string = "%H:%M:%S"
                 formatted_time = time.strftime(format_string, time.localtime())
                 f.write(formatted_time + '\n')
-            # while 1:
-            #     time.sleep(1)
+            while 1:
+                time.sleep(1)
         time.sleep(2.5)
         self.init_floor()
         if not click:
@@ -593,23 +592,23 @@ class DivergentUniverse(UniverseUtils):
             self.event_text = event_text
         return res
     
-    def align_event(self, key, deep=0):
+    def align_event(self, key, deep=0, event_text=None):
         find = 0
-        if deep == 0 and key == 'd':
+        if deep == 0 and key == 'd' and event_text is None:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
             event_text = self.find_event_text(1)
             if not event_text:
                 self.press('s', 1)
             else:
                 find = 1
-        if not find:
+        if not find and event_text is None:
             event_text = self.find_event_text(1)
         self.get_screen()
         if self.check_f(is_in=['事件','奖励','遭遇','交易']):
             self.press('f')
             return
 
-        if not event_text and key == 'a':
+        if not event_text:
             event_text = 950
         if event_text and event_text < 910 and key == 'd':
             key = 'a'
@@ -628,7 +627,7 @@ class DivergentUniverse(UniverseUtils):
                         sub = 100
                     if sub < 400:
                         sub = int((event_text_after - 950) / sub)
-                        sub = min(5, max(-5, int(sub)))
+                        sub = min(3, max(-3, int(sub)))
                         for _ in range(sub):
                             self.press('d',0.2)
                             time.sleep(0.1)
@@ -716,13 +715,17 @@ class DivergentUniverse(UniverseUtils):
                 while time.time() - tm < 5:
                     self.get_screen()
                     if self.get_text_position():
-                        break
-                keyops.keyUp('w')
-                time.sleep(0.3)
-                self.get_screen()
-                total_events = self.get_text_position(1)
+                        keyops.keyUp('w')
+                        time.sleep(0.6)
+                        self.get_screen()
+                        total_events = self.get_text_position(1)
+                        if len(total_events):
+                            break
+                        else:
+                            keyops.keyDown('w')
+                            tm += 0.5
                 print('total_events:', total_events)
-                if len(total_events) < 2:
+                if not total_events or not (933 <= total_events[0][0] <= 972):
                     self.press('s', 0.4)
                     time.sleep(0.3)
                     self.get_screen()
@@ -732,12 +735,14 @@ class DivergentUniverse(UniverseUtils):
                     elif len(total_events_after) < len(total_events):
                         self.press('s', 0.5)
                         time.sleep(0.3)
+                if not total_events:
+                    total_events = [(950, 0)]
                 portal = self.find_portal()
                 if portal['nums'] > 0:
                     self.area_state = 2
                 else:
                     print('aligning...')
-                    self.align_event('d')
+                    self.align_event('d', event_text=total_events[-1][0])
                     self.area_state += 1 + (len(total_events) == 1)
             elif self.area_state==1:
                 self.keys.fff = 1
@@ -762,8 +767,7 @@ class DivergentUniverse(UniverseUtils):
             time.sleep(0.8)
             keyops.keyDown('w')
             self.press('a', 0.3)
-            time.sleep(1.4)
-            self.press('d', 0.2)
+            time.sleep(1.5)
             keyops.keyUp('w')
             time.sleep(0.25)
             self.portal_opening_days(static=1)
@@ -771,8 +775,8 @@ class DivergentUniverse(UniverseUtils):
             pyautogui.click()
             time.sleep(0.8)
             keyops.keyDown('w')
-            time.sleep(1.6)
-            self.press('d',0.4)
+            time.sleep(1.8)
+            # self.press('d',0.4)
             keyops.keyUp('w')
             time.sleep(0.6)
             self.portal_opening_days(static=1)
@@ -812,22 +816,24 @@ class DivergentUniverse(UniverseUtils):
                 self.press('w', 0.5)
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
-            self.press('w',2.7)
+            self.press('w',2.1)
             pyautogui.click()
             time.sleep(0.6)
             keyops.keyDown('w')
             time.sleep(0.2)
             self.keys.fff = 1
             self.press('a', 0.5)
-            time.sleep(0.35)
+            time.sleep(1.1)
             keyops.keyUp('w')
-            time.sleep(0.6)
-            if self.find_portal()['score'] == 0:
-                self.press('a', 0.4)
-                self.press('s', 0.7)
-                self.press('w', 0.5)
             self.keys.fff = 0
-            self.portal_opening_days(static=1)
+            time.sleep(1.0)
+            self.get_screen()
+            portal = self.find_portal()
+            area_after = self.get_now_area()
+            if not portal['score'] and (area_after != area_now or area_after is None):
+                return
+            else:
+                self.portal_opening_days(static=1)
         elif area_now == '位面':
             pyautogui.click()
             time.sleep(2)
