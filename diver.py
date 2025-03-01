@@ -423,6 +423,7 @@ class DivergentUniverse(UniverseUtils):
                 else:
                     keyops.keyUp('w')
                     moving = 0
+                    self.press('d', 0.6)
                     self.portal_opening_days(aimed=0, static=1, deep=deep+1)
                     return
             if portal['score'] and not aimed:
