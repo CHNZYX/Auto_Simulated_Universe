@@ -1568,3 +1568,11 @@ class UniverseUtils:
             self.get_screen()
             if not self.check("choose_bless", 0.9266, 0.9491, threshold=0.945):
                 return
+
+    def click_box(self, box):
+        x = (box[0] + box[1]) / 2
+        y = (box[2] + box[3]) / 2
+        self.click((1 - x / self.xx, 1 - y / self.yy))
+
+    def click_position(self, position):
+        self.click_box([position[0], position[0], position[1], position[1]])

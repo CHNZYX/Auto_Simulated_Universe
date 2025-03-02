@@ -593,7 +593,7 @@ class DivergentUniverse(UniverseUtils):
             self.event_text = event_text
         return res
     
-    def align_event(self, key, deep=0, event_text=None):
+    def align_event(self, key, deep=0, event_text=None, click=0):
         find = 0
         if deep == 0 and key == 'd' and event_text is None:
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
@@ -635,6 +635,9 @@ class DivergentUniverse(UniverseUtils):
                         for _ in range(-sub):
                             self.press('a',0.2)
                             time.sleep(0.1)
+                    if click:
+                        pyautogui.click()
+                        time.sleep(0.5)
                 else:
                     self.press('a' if key == 'd' else 'd', 0.2)
             self.forward_until(['事件','奖励','遭遇','交易'], timeout=2.5, moving=0)
@@ -734,7 +737,7 @@ class DivergentUniverse(UniverseUtils):
                     if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
                         total_events = total_events_after
                     elif len(total_events_after) < len(total_events):
-                        self.press('s', 0.5)
+                        self.press('w', 0.4)
                         time.sleep(0.3)
                 if not total_events:
                     total_events = [(950, 0)]
@@ -743,7 +746,7 @@ class DivergentUniverse(UniverseUtils):
                     self.area_state = 2
                 else:
                     print('aligning...')
-                    self.align_event('d', event_text=total_events[-1][0])
+                    self.align_event('d', event_text=total_events[-1][0], click=1)
                     self.area_state += 1 + (len(total_events) == 1)
             elif self.area_state==1:
                 self.keys.fff = 1
@@ -804,7 +807,7 @@ class DivergentUniverse(UniverseUtils):
                 self.portal_opening_days(static=1)
         elif area_now == '战斗':
             if self.area_state == 0:
-                self.press('w', 3)
+                self.press('w', 2.5)
                 if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)

@@ -1609,9 +1609,9 @@ class UniverseUtils:
         if clean == 0 and self.lst_mask is not None:
             mask[self.lst_mask] = 0
         self.lst_mask = mask
-        kernel = np.ones((8, 35), np.uint8)
+        kernel = np.ones((8, 55), np.uint8)
         mask = cv.dilate(mask, kernel, iterations=1)
-        kernel = np.ones((6, 30), np.uint8)
+        kernel = np.ones((6, 40), np.uint8)
         mask = cv.erode(mask, kernel, iterations=2)
         contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
         mx_area, mx_cnt = 0, None
