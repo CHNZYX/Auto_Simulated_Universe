@@ -324,6 +324,8 @@ class DivergentUniverse(UniverseUtils):
                     i.update({'score':prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
                     if i['score'] > portal['score']:
                         portal = i
+                    else:
+                        portal['nums'] = i['nums']
                 elif '冒险' in i['raw_text']:
                     portal['nums'] += 1
         ocr_time = time.time() - tm
@@ -595,7 +597,7 @@ class DivergentUniverse(UniverseUtils):
     
     def align_event(self, key, deep=0, event_text=None, click=0):
         find = 0
-        if deep == 0 and key == 'd' and event_text is None:
+        if deep == 0 and key == 'd' and (event_text is None or event_text != 950):
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
             event_text = self.find_event_text(1)
             if not event_text:
@@ -734,11 +736,11 @@ class DivergentUniverse(UniverseUtils):
                     time.sleep(0.3)
                     self.get_screen()
                     total_events_after = self.get_text_position(1)
-                    if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
-                        total_events = total_events_after
-                    elif len(total_events_after) < len(total_events):
+                    if len(total_events_after) <= len(total_events):
                         self.press('w', 0.4)
                         time.sleep(0.3)
+                    if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
+                        total_events = total_events_after
                 if not total_events:
                     total_events = [(950, 0)]
                 portal = self.find_portal()
@@ -817,25 +819,27 @@ class DivergentUniverse(UniverseUtils):
                     pyautogui.click()
                 self.area_state += 1
             else:
-                self.press('w', 0.5)
+                # self.press('w', 0.5)
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
             self.press('w',2.1)
             pyautogui.click()
             time.sleep(0.6)
-            keyops.keyDown('w')
-            time.sleep(0.2)
-            self.keys.fff = 1
             self.press('a', 0.5)
-            time.sleep(1.1)
-            keyops.keyUp('w')
-            self.keys.fff = 0
-            time.sleep(1.0)
+            self.forward_until(text_list=['战利品', '药箱'], timeout=3.0, moving=0)
+            time.sleep(1.4)
             self.get_screen()
             portal = self.find_portal()
             area_after = self.get_now_area()
-            if not portal['score'] and (area_after != area_now or area_after is None):
-                return
+            if not portal['score']:
+                if (area_after != area_now or area_after is None):
+                    return
+                else:
+                    pyautogui.click()
+                    time.sleep(1.2)
+                    self.forward_until(text_list=['战利品', '药箱'], timeout=1.0, moving=0)
+                    time.sleep(1.4)
+                    self.portal_opening_days(static=1)
             else:
                 self.portal_opening_days(static=1)
         elif area_now == '位面':
