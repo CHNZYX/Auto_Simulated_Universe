@@ -2,6 +2,7 @@ opencv_python
 PyAutoGUI
 pywin32
 flet
+flet_core
 pyinstaller
 pyuac
 pillow

@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v8.0"
+version = "v8.01"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -91,7 +91,7 @@ class DivergentUniverse(UniverseUtils):
                 Text = win32gui.GetWindowText(hwnd)
             if self._stop:
                 break
-            # self.click_target('imgs/divergent/sile.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
+            # self.click_target('imgs/zz.jpg',0.9,True) # 如果需要输出某张图片在游戏窗口中的坐标，可以用这个
             self.loop()
         log.info("停止运行")
 
@@ -810,7 +810,14 @@ class DivergentUniverse(UniverseUtils):
                 self.portal_opening_days(static=1)
         elif area_now == '战斗':
             if self.area_state == 0:
-                self.press('w', 3.0)
+                keyops.keyDown('w')
+                tm = time.time()
+                while time.time() - tm < 3:
+                    self.get_screen()
+                    if self.check("divergent/z",0.5771,0.9546,mask="mask_z",threshold=0.96):
+                        break
+                time.sleep(1.5)
+                keyops.keyUp('w')
                 if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)
@@ -823,26 +830,20 @@ class DivergentUniverse(UniverseUtils):
                 # self.press('w', 0.5)
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
-            self.press('w',2.1)
-            pyautogui.click()
-            time.sleep(0.6)
+            keyops.keyDown('w')
+            time.sleep(1.0)
             self.press('a', 0.5)
-            self.forward_until(text_list=['战利品', '药箱'], timeout=3.0, moving=0)
+            time.sleep(0.6)
+            keyops.keyUp('w')
+            pyautogui.click()
+            time.sleep(1.2)
+            res = self.forward_until(text_list=['战利品', '药箱'], timeout=3.0, moving=0)
+            if not res:
+                pyautogui.click()
+                time.sleep(1.2)
+                self.forward_until(text_list=['战利品', '药箱'], timeout=1.0, moving=0)
             time.sleep(1.4)
-            self.get_screen()
-            portal = self.find_portal()
-            area_after = self.get_now_area()
-            if not portal['score']:
-                if (area_after != area_now or area_after is None):
-                    return
-                else:
-                    pyautogui.click()
-                    time.sleep(1.2)
-                    self.forward_until(text_list=['战利品', '药箱'], timeout=1.0, moving=0)
-                    time.sleep(1.4)
-                    self.portal_opening_days(static=1)
-            else:
-                self.portal_opening_days(static=1)
+            self.portal_opening_days(static=1)
         elif area_now == '位面':
             pyautogui.click()
             time.sleep(2)
