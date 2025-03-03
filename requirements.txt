@@ -1,8 +1,8 @@
 opencv_python
 PyAutoGUI
 pywin32
-flet
-flet_core
+flet==0.23.2
+flet_core==0.23.2
 pyinstaller
 pyuac
 pillow
