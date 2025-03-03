@@ -45,12 +45,12 @@ jobs:
 
     - name: Move assets to dist directory
       run: |
-        xcopy imgs dist\imgs /I /E
-        xcopy actions dist\actions /I /E
-        xcopy info_example.yml dist
-        xcopy info_example_old.yml dist
-        xcopy README.md dist
-        ren dist AutoSimulatedUniverse
+        xcopy imgs dist\gui\imgs /I /E
+        xcopy actions dist\gui\actions /I /E
+        xcopy info_example.yml dist\gui
+        xcopy info_example_old.yml dist\gui
+        xcopy README.md dist\gui
+        ren dist\gui AutoSimulatedUniverse
 
     - name: Create zip archive
       if: startsWith(github.ref, 'refs/tags/')
@@ -72,12 +72,12 @@ jobs:
 
     - name: Move assets to dist directory
       run: |
-        xcopy imgs dist\imgs /I /E
-        xcopy actions dist\actions /I /E
-        xcopy info_example.yml dist
-        xcopy info_example_old.yml dist
-        xcopy README.md dist
-        ren dist AutoSimulatedUniverse_cpu
+        xcopy imgs dist\gui\imgs /I /E
+        xcopy actions dist\gui\actions /I /E
+        xcopy info_example.yml dist\gui
+        xcopy info_example_old.yml dist\gui
+        xcopy README.md dist\gui
+        ren dist\gui AutoSimulatedUniverse_cpu
 
     - name: Create zip archive
       if: startsWith(github.ref, 'refs/tags/')
