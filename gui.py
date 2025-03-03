@@ -2,7 +2,7 @@ import atexit
 import flet as ft
 import pyuac
 import threading
-import os
+import os, time
 import sys
 import psutil
 import shutil
@@ -53,6 +53,8 @@ def cleanup():
     if name.endswith('.exe') and name != 'python.exe':
         try:
             father = current_process.parent()
+            print(father.name())
+            time.sleep(10000)
             try:
                 father.terminate()
             except:
@@ -93,10 +95,10 @@ def clean_temp_files():
                 pass
 
 if __name__ == "__main__":
-    atexit.register(cleanup)
+    # atexit.register(cleanup)
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:
         threading.Thread(target=clean_temp_files).start()
         ft.app(target=main)
-    cleanup()
+    # cleanup()

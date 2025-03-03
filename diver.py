@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v8.0"
+version = "v8.01"
 
 
 class DivergentUniverse(UniverseUtils):
