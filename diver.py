@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v7.2"
+version = "v8.0"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -220,14 +220,15 @@ class DivergentUniverse(UniverseUtils):
             keyops.keyUp(i)
 
     def save_or_exit(self):
-        print('saved_num:', self.saved_num, 'save_cnt:', config.save_cnt)
-        if self.saved_num < config.save_cnt:
-            time.sleep(1.5)
-            self.saved_num += 1
-            self.click_position([1204, 959])
-            time.sleep(1)
-        else:
-            self.click_position([716, 959])
+        # print('saved_num:', self.saved_num, 'save_cnt:', config.save_cnt)
+        # if self.saved_num < config.save_cnt:
+        #     time.sleep(1.5)
+        #     self.saved_num += 1
+        #     self.click_position([1204, 959])
+        #     time.sleep(1)
+        # else:
+        #     self.click_position([716, 959])
+        self.click_position([716, 959])
         time.sleep(1.5)
 
     def select_save(self):
@@ -731,16 +732,16 @@ class DivergentUniverse(UniverseUtils):
                             keyops.keyDown('w')
                             tm += 0.5
                 print('total_events:', total_events)
-                if not total_events or not (933 <= total_events[0][0] <= 972):
-                    self.press('s', 0.4)
-                    time.sleep(0.3)
-                    self.get_screen()
-                    total_events_after = self.get_text_position(1)
-                    if len(total_events_after) <= len(total_events):
-                        self.press('w', 0.4)
-                        time.sleep(0.3)
-                    if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
-                        total_events = total_events_after
+                # if not total_events or not (933 <= total_events[0][0] <= 972):
+                #     self.press('s', 0.4)
+                #     time.sleep(0.3)
+                #     self.get_screen()
+                #     total_events_after = self.get_text_position(1)
+                #     if len(total_events_after) <= len(total_events):
+                #         self.press('w', 0.4)
+                #         time.sleep(0.3)
+                #     if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
+                #         total_events = total_events_after
                 if not total_events:
                     total_events = [(950, 0)]
                 portal = self.find_portal()
@@ -809,7 +810,7 @@ class DivergentUniverse(UniverseUtils):
                 self.portal_opening_days(static=1)
         elif area_now == '战斗':
             if self.area_state == 0:
-                self.press('w', 2.5)
+                self.press('w', 3.0)
                 if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)
