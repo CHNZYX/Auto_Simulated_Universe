@@ -48,24 +48,6 @@ def main(page: Page):
     page.go(page.route)
 
 def cleanup():
-    current_process = psutil.Process(os.getpid())
-    name = current_process.name()
-    if name.endswith('.exe') and name != 'python.exe':
-        try:
-            father = current_process.parent()
-            print(father.name())
-            time.sleep(10000)
-            try:
-                father.terminate()
-            except:
-                pass
-            try:
-                father.kill()
-            except:
-                pass
-            psutil.wait_procs([father], timeout=5)
-        except:
-            pass
     os._exit(0)
 
 def clean_temp_files():
@@ -95,10 +77,10 @@ def clean_temp_files():
                 pass
 
 if __name__ == "__main__":
-    # atexit.register(cleanup)
+    atexit.register(cleanup)
     if not pyuac.isUserAdmin():
         pyuac.runAsAdmin()
     else:
         threading.Thread(target=clean_temp_files).start()
         ft.app(target=main)
-    # cleanup()
+    cleanup()
