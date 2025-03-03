@@ -50,6 +50,7 @@ jobs:
         xcopy info_example.yml dist\gui
         xcopy info_example_old.yml dist\gui
         xcopy README.md dist\gui
+        xcopy dist\notif.exe dist\gui
         ren dist\gui AutoSimulatedUniverse
 
     - name: Create zip archive
@@ -77,6 +78,7 @@ jobs:
         xcopy info_example.yml dist\gui
         xcopy info_example_old.yml dist\gui
         xcopy README.md dist\gui
+        xcopy dist\notif.exe dist\gui
         ren dist\gui AutoSimulatedUniverse_cpu
 
     - name: Create zip archive
