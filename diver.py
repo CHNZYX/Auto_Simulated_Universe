@@ -719,6 +719,7 @@ class DivergentUniverse(UniverseUtils):
                 tm = time.time()
                 self.get_screen()
                 self.get_text_position()
+                total_events = []  # 初始化 total_events
                 while time.time() - tm < 5:
                     self.get_screen()
                     if self.get_text_position():
