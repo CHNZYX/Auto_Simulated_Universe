@@ -104,8 +104,7 @@ class My_TS:
         ans = []
         for txt in text:
             for res in self.res:
-                self.text = res['raw_text']
-                if self.sim(txt):
+                if res['raw_text'] in txt or txt in res['raw_text']:
                     print("识别到文本：",txt,"匹配文本：",self.text)
                     ans.append({'text':text, **res})
         return sorted(ans, key=lambda x: x['score'], reverse=True)

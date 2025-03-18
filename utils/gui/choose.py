@@ -135,6 +135,20 @@ def choose_view(page: Page):
         dlg.open = True
         page.update()
 
+    def go_test(e=None):
+        args.cpu = int(config_diver.cpu_mode)
+        page.su = run(
+            DivergentUniverse,
+            int(config_diver.debug_mode),
+            int(config_diver.max_run),
+            int(config_diver.speed_mode)
+        )
+        run(page.su.screen_test)
+        txt = " "
+        if page.su is not None:
+            run(page.su.stop)
+        notif("已完成截图测试", txt)
+
     def go_money(e=None):
         dlg = ft.AlertDialog(
             title=ft.Text("送杯咖啡喵 QWQ"), content=ft.Image("imgs/money.jpg")
@@ -224,6 +238,17 @@ def choose_view(page: Page):
                                 alignment=ft.MainAxisAlignment.SPACE_AROUND,
                             ),
                             on_click=stops,
+                            width=120,
+                        ),
+                        ft.ElevatedButton(
+                            content=ft.Row(
+                                [
+                                    ft.Icon(ft.icons.TRACK_CHANGES),
+                                    ft.Text("测试", weight=ft.FontWeight.W_600),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                            ),
+                            on_click=go_test,
                             width=120,
                         ),
                         ft.Container(height=5),

@@ -260,10 +260,11 @@ class UniverseUtils:
     def click_position(self, position):
         self.click_box([position[0], position[0], position[1], position[1]])
 
-    def click_text(self, text, env=None, click=1):
+    def click_text(self, text, click=1):
         img = self.get_screen()
-        pt = self.ts.find_text(img, text, env=env)
-        if pt is not None:
+        pt = self.ts.find_with_text([text])
+        if pt:
+            pt = pt[0]['box']
             if click:
                 self.click(
                     (
@@ -409,6 +410,17 @@ class UniverseUtils:
                 log.info("匹配到图片 %s 相似度 %f 阈值 %f" % (path, max_val, threshold))
             self.last_info = path
         return max_val > threshold
+    
+    def click_img(self, path, threshold=0.95):
+        path = self.format_path(path)
+        target = cv.imread(path)
+        result = cv.matchTemplate(self.screen, target, cv.TM_CCORR_NORMED)
+        min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+        if max_val > threshold:
+            x, y = max_loc
+            self.click_position((x + target.shape[1]//2, y + target.shape[0]//2))
+            return 1
+        return 0
     
     def check_box(self, path, box=[0,1920,0,1080], threshold=0.96):
         path = self.format_path(path)
@@ -1592,11 +1604,11 @@ class UniverseUtils:
 
     def get_text_position(self, clean=0):
         if self.event_mask is None:
-            self.event_mask = (cv.imread('imgs/divergent/event_mask.jpg', cv.IMREAD_GRAYSCALE) > 70)[:487]
-            self.event_mask_clean = (cv.imread('imgs/divergent/event_mask_clean.jpg', cv.IMREAD_GRAYSCALE) > 70)[:487]
-        scr = self.screen[:487]
-        mask = np.zeros((487, scr.shape[1]), dtype=np.uint8)
-        mask_zero = np.zeros((487, scr.shape[1]), dtype=np.uint8)
+            self.event_mask = (cv.imread('imgs/divergent/event_mask.jpg', cv.IMREAD_GRAYSCALE) > 70)[:497]
+            self.event_mask_clean = (cv.imread('imgs/divergent/event_mask_clean.jpg', cv.IMREAD_GRAYSCALE) > 70)[:497]
+        scr = self.screen[:497]
+        mask = np.zeros((497, scr.shape[1]), dtype=np.uint8)
+        mask_zero = np.zeros((497, scr.shape[1]), dtype=np.uint8)
         mask[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)>247)] = 255
         mask_zero[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)<21)] = 255
         kernel = np.ones((10, 30), np.uint8)
@@ -1632,4 +1644,6 @@ class UniverseUtils:
             if w * h >= 4 and abs(y - yy) < 20:
                 res.append((x+w//2,y+h//2))
         res = sorted(res, key=lambda x: x[0])
+        if len(res) == 2 and res[1][0]-res[0][0] < 150:
+            res = [((res[0][0]+res[1][0])//2,res[0][1])]
         return res

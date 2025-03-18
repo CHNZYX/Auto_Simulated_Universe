@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v8.01"
+version = "v8.02"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -321,14 +321,14 @@ class DivergentUniverse(UniverseUtils):
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
                 portal_type = self.get_text_type(i['raw_text'], prefer_portal)
-                if portal_type is not None:
+                if '冒' in i['raw_text'] or '险' in i['raw_text']:
+                    portal['nums'] += 1
+                elif portal_type is not None:
                     i.update({'score':prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
                     if i['score'] > portal['score']:
                         portal = i
                     else:
                         portal['nums'] = i['nums']
-                elif '冒险' in i['raw_text']:
-                    portal['nums'] += 1
         ocr_time = time.time() - tm
         self.ocr_time_list = self.ocr_time_list[-5:] + [ocr_time]
         print(f'识别时间:{int(ocr_time*1000)}ms', text, portal)
@@ -358,7 +358,7 @@ class DivergentUniverse(UniverseUtils):
             portal = portal_after
         return portal
     
-    def forward_until(self, text_list=[], timeout=5, moving=0):
+    def forward_until(self, text_list=[], timeout=5, moving=0, chaos=0):
         tm = time.time()
         if not moving:
             keyops.keyDown('w')
@@ -367,6 +367,23 @@ class DivergentUniverse(UniverseUtils):
             if self.check_f(check_text=0):
                 keyops.keyUp('w')
                 print(text_list)
+                if chaos:
+                    if self.check_f(is_in=['混沌', '战利品']):
+                        self.press('f')
+                        for _ in range(1):
+                            self.press('s',0.2)
+                            self.press('f')
+                        time.sleep(0.8)
+                        tmm = time.time()
+                        while time.time() - tmm < 8:
+                            self.ts.forward(self.get_screen())
+                            area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
+                            if '位面' in area_text or '区域' in area_text or '第' in area_text:
+                                break
+                            self.run_static()
+                        time.sleep(0.6)
+                        tm = time.time()
+                        keyops.keyDown('w')
                 if self.check_f(is_in=text_list):
                     self.press('f')
                     for _ in range(1):
@@ -531,8 +548,11 @@ class DivergentUniverse(UniverseUtils):
                             break
                 if not clicked:
                     self.click((tx, ty))
-                    time.sleep(0.3)
-                    self.click((0.1167, ty - 0.4685 + 0.3546))
+                    time.sleep(0.4)
+                    if self.check("confirm", 0.1828, 0.5000, mask="mask_event", threshold=0.965):
+                        self.click((self.tx, self.ty))
+                    else:
+                        self.click((0.1167, ty - 0.4685 + 0.3546 + 0.02))
                 time.sleep(0.8)
                 start = 0
             else:
@@ -599,7 +619,7 @@ class DivergentUniverse(UniverseUtils):
     def align_event(self, key, deep=0, event_text=None, click=0):
         find = 0
         if deep == 0 and key == 'd' and (event_text is None or event_text != 950):
-            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
+            # win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-200 * self.multi * self.scale))
             event_text = self.find_event_text(1)
             if not event_text:
                 self.press('s', 1)
@@ -619,31 +639,35 @@ class DivergentUniverse(UniverseUtils):
         print(event_text, key)
 
         if event_text:
-            if abs(event_text - 950) > 40:
+            if abs(950-event_text) >= 50:
                 self.press(key,0.2)
-                event_text_after = self.find_event_text()
-                if event_text_after:
-                    sub = event_text - event_text_after
-                    if key == 'a':
-                        sub = -sub
-                    print('sub:', sub)
-                    if sub < 60:
-                        sub = 100
-                    if sub < 400:
-                        sub = int((event_text_after - 950) / sub)
-                        sub = min(3, max(-3, int(sub)))
-                        for _ in range(sub):
-                            self.press('d',0.2)
-                            time.sleep(0.1)
-                        for _ in range(-sub):
-                            self.press('a',0.2)
-                            time.sleep(0.1)
-                    if click:
-                        pyautogui.click()
-                        time.sleep(0.5)
-                else:
-                    self.press('a' if key == 'd' else 'd', 0.2)
-            self.forward_until(['事件','奖励','遭遇','交易'], timeout=2.5, moving=0)
+            event_text_after = self.find_event_text()
+            if event_text_after:
+                sub = event_text - event_text_after
+                if key == 'a':
+                    sub = -sub
+                print('sub:', sub)
+            else:
+                sub = 100000
+            if sub < 60:
+                sub = 100
+            if sub < 400:
+                sub = int((event_text_after - 950) / sub)
+                sub = min(3, max(-3, int(sub)))
+            else:
+                sub = 2
+            if abs(950-event_text) < 50:
+                sub = 0
+            for _ in range(sub):
+                self.press('d',0.2)
+                time.sleep(0.1)
+            for _ in range(-sub):
+                self.press('a',0.2)
+                time.sleep(0.1)
+            if click:
+                pyautogui.click()
+                time.sleep(0.5)
+            self.forward_until(['事件','奖励','遭遇','交易'], timeout=2.5, moving=0, chaos=1)
         else:
             if deep < 3:
                 self.press('w',[0,0.3,0.5][deep])
@@ -654,12 +678,12 @@ class DivergentUniverse(UniverseUtils):
         if not self.allow_e:
             return
         self.press('e')
-        time.sleep(0.5)
+        time.sleep(0.4)
         self.get_screen()
         if self.check('e',0.4995,0.7500):
             self.solve_snack()
             if quan and self.allow_e:
-                time.sleep(0.5)
+                time.sleep(0.4)
             else:
                 time.sleep(1.5*self.allow_e)
 
@@ -719,10 +743,12 @@ class DivergentUniverse(UniverseUtils):
                 tm = time.time()
                 self.get_screen()
                 self.get_text_position()
+                total_events = None
                 while time.time() - tm < 5:
                     self.get_screen()
                     if self.get_text_position():
                         keyops.keyUp('w')
+                        # self.press('s', 0.25)
                         time.sleep(0.6)
                         self.get_screen()
                         total_events = self.get_text_position(1)
@@ -731,17 +757,20 @@ class DivergentUniverse(UniverseUtils):
                         else:
                             keyops.keyDown('w')
                             tm += 0.5
+                keyops.keyUp('w')
                 print('total_events:', total_events)
-                # if not total_events or not (933 <= total_events[0][0] <= 972):
-                #     self.press('s', 0.4)
-                #     time.sleep(0.3)
-                #     self.get_screen()
-                #     total_events_after = self.get_text_position(1)
-                #     if len(total_events_after) <= len(total_events):
-                #         self.press('w', 0.4)
-                #         time.sleep(0.3)
-                #     if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
-                #         total_events = total_events_after
+                if not total_events or not (933 <= total_events[0][0] <= 972):
+                    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-100 * self.multi * self.scale))
+                    time.sleep(0.3)
+                    self.get_screen()
+                    total_events_after = self.get_text_position(1)
+                    if len(total_events_after) <= 2 and len(total_events_after) >= len(total_events):
+                        total_events = total_events_after
+                    else:
+                        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
+                if total_events is None:
+                    self.press('d', 0.5)
+                    return
                 if not total_events:
                     total_events = [(950, 0)]
                 portal = self.find_portal()
@@ -773,7 +802,7 @@ class DivergentUniverse(UniverseUtils):
             pyautogui.click()
             time.sleep(0.8)
             keyops.keyDown('w')
-            self.press('a', 0.3)
+            self.press('a', 0.45)
             time.sleep(1.5)
             keyops.keyUp('w')
             time.sleep(0.25)
@@ -811,13 +840,16 @@ class DivergentUniverse(UniverseUtils):
         elif area_now == '战斗':
             if self.area_state == 0:
                 keyops.keyDown('w')
+                time.sleep(0.2)
+                keyops.keyDown('shift')
                 tm = time.time()
                 while time.time() - tm < 3:
                     self.get_screen()
                     if self.check("divergent/z",0.5771,0.9546,mask="mask_z",threshold=0.96):
                         break
-                time.sleep(1.5)
+                time.sleep(0.9)
                 keyops.keyUp('w')
+                keyops.keyUp('shift')
                 if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)
@@ -827,13 +859,13 @@ class DivergentUniverse(UniverseUtils):
                     pyautogui.click()
                 self.area_state += 1
             else:
-                # self.press('w', 0.5)
+                if not (self.quan and self.allow_e):
+                    self.press('w', 0.25)
                 self.portal_opening_days(static=1)
         elif area_now == '财富':
             keyops.keyDown('w')
-            time.sleep(1.0)
+            time.sleep(1.6)
             self.press('a', 0.5)
-            time.sleep(0.6)
             keyops.keyUp('w')
             pyautogui.click()
             time.sleep(1.2)
@@ -894,7 +926,7 @@ class DivergentUniverse(UniverseUtils):
         blesses = sorted(blesses, key=lambda x: x['score'], reverse=reverse)
         print(blesses)
         box = blesses[0]['box']
-        for _ in range(1):
+        if not self.click_img("new"):
             self.click_position([(box[0] + box[1]) // 2, 500])
         if blood:
             self.click_position([960, 975])
@@ -1011,6 +1043,10 @@ class DivergentUniverse(UniverseUtils):
             log.info(str(e))
             log.info("发生错误，尝试停止运行")
             self.stop()
+
+    def screen_test(self):
+        cv.imshow("screen", self.get_screen())
+        cv.waitKey(0)
 
 def main():
     log.info(f"debug: {args.debug}")
