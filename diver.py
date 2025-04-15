@@ -34,6 +34,9 @@ version = "v8.02"
 class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
+        self.is_get_team = True #首次进入差分宇宙后,获取队伍成员
+        self.team = [] #队伍成员
+
         self._stop = True
         self.end = 0
         self.floor = 0
@@ -69,6 +72,7 @@ class DivergentUniverse(UniverseUtils):
 
     def route(self):
         self.threshold = 0.97
+        self.is_get_team = True #启动后重置状态
         while True:
             if self._stop:
                 break
@@ -265,6 +269,12 @@ class DivergentUniverse(UniverseUtils):
         return None
     
     def find_team_member(self):
+        if self.is_get_team:
+            # 打开T,获取队伍成员信息
+            pass
+        else:
+            # 已经获取过队伍成员信息,跳过
+            pass
         boxes = [[1620, 1790, 289, 335],[1620, 1790, 384, 427],[1620, 1790, 478, 521],[1620, 1790, 570, 618]]
         team_member = {}
         correct = {"飞雪":"飞霄","飞雷":"飞霄"}
