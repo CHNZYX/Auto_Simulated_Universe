@@ -35,7 +35,7 @@ class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
         self.is_get_team = True #首次进入差分宇宙后,获取队伍成员
-        self.team = [] #队伍成员
+        self.team = {} #队伍成员
 
         self._stop = True
         self.end = 0
@@ -269,22 +269,36 @@ class DivergentUniverse(UniverseUtils):
         return None
     
     def find_team_member(self):
+
         if self.is_get_team:
+            self.is_get_team = False #获取过队伍成员信息,下次不再获取
             # 打开T,获取队伍成员信息
-            pass
+            # 从左到右,坐标区域[x0,x1,y0,y1]
+            boxes =[
+                [399,399+140,770,770+34], #1号
+                [866,866+140,844,844+34], #2号
+                [1278,1278+140,800,800+34], #3号
+                [1615,1615+140,834,834+34], #4号
+            ]
+            self.team.clear #清空队伍成员信息
+
+            self.press('t', 1) #打开队伍
+            time.sleep(0.5)
+
+            for i,b in enumerate(boxes):
+                name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
+
+                if name in self.character_prior:
+                    self.team[name] = i
+
+            self.press('t', 1) #打开队伍
+            time.sleep(0.5)
+            
         else:
             # 已经获取过队伍成员信息,跳过
             pass
-        boxes = [[1620, 1790, 289, 335],[1620, 1790, 384, 427],[1620, 1790, 478, 521],[1620, 1790, 570, 618]]
-        team_member = {}
-        correct = {"飞雪":"飞霄","飞雷":"飞霄"}
-        for i,b in enumerate(boxes):
-            name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
-            if name in correct:
-                name = correct[name]
-            if name in self.character_prior:
-                team_member[name] = i
-        return team_member
+
+        return self.team
 
     def get_now_area(self, deep=0):
         team_member = self.find_team_member()
