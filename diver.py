@@ -35,12 +35,15 @@ class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
         self.is_get_team = True #首次进入差分宇宙后,获取队伍成员
-        self.team = {} #队伍成员
+        self.team_detect = {} #队伍成员检测
 
         self._stop = True
         self.end = 0
         self.floor = 0
+
+        # 允许使用秘技,秘技消耗品不足的时候就用不了
         self.allow_e = 1
+
         self.count = self.my_cnt = 0
         self.debug = debug
         self.nums = nums
@@ -55,9 +58,18 @@ class DivergentUniverse(UniverseUtils):
         self.team_member = {}
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
-        self.quan = 0
+
+        # 对黄泉角色的优化,判断是否需要使用黄泉角色
+        self.quan = 0 
+
+        # 对大黑塔角色的优化,判断是否需要使用大黑塔角色,同时存在大黑塔和黄泉时,优先使用大黑塔,或许后面可以考虑自定义优先级
+        self.da_hei_ta = False
+        self.da_hei_ta_effecting = False # 秘技生效中,进战清除
+
         self.event_text = ''
-        self.long_range = '1'
+
+        self.long_range = '1' # 默认角色 选用1号位
+
         self.init_floor()
         self.saved_num = 0
         self.default_json_path = "actions/default.json"
@@ -109,8 +121,15 @@ class DivergentUniverse(UniverseUtils):
             area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
             if '位面' in area_text or '区域' in area_text or '第' in area_text:
                 self.area()
+
             elif self.check("c", 0.988, 0.1028, threshold=0.925):
+                # 未检查到自动战斗,已经入站,清除秘技持续
+                self.da_hei_ta_effecting = False
                 self.press('v')
+
+            elif False: # 补充一个入战检测
+                self.da_hei_ta_effecting = False
+
             else:
                 text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
                 if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
@@ -268,19 +287,41 @@ class DivergentUniverse(UniverseUtils):
                 return i
         return None
     
+    def test(self):
+        self.find_team_member()
+
+
     def find_team_member(self):
 
         if self.is_get_team:
             self.is_get_team = False #获取过队伍成员信息,下次不再获取
             # 打开T,获取队伍成员信息
             # 从左到右,坐标区域[x0,x1,y0,y1]
-            boxes =[
-                [399,399+140,770,770+34], #1号
-                [866,866+140,844,844+34], #2号
-                [1278,1278+140,800,800+34], #3号
-                [1615,1615+140,834,834+34], #4号
+
+            # 预设区域宽度和高度
+            width = 140
+            height = 34
+
+            # 定义区域起点x,y
+            points = [
+                [399,770], #1号
+                [866,844], #2号
+                [1278,800], #3号
+                [1615,834], #4号
             ]
-            self.team.clear #清空队伍成员信息
+
+            # 根据points和宽高生成最终区域参数boxes
+            boxes = []
+            for point in points:
+                x0 = point[0]
+                x1 = point[0] + width
+                y0 = point[1]
+                y1 = point[1] + height
+                boxes.append([x0, x1, y0, y1])
+            
+            log.info(f"获取队伍成员信息区域, boxes: {boxes}")
+            
+            self.team_detect.clear #清空队伍成员信息
 
             self.press('t', 1) #打开队伍
             time.sleep(0.5)
@@ -289,16 +330,18 @@ class DivergentUniverse(UniverseUtils):
                 name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
 
                 if name in self.character_prior:
-                    self.team[name] = i
+                    self.team_detect[name] = i
 
-            self.press('t', 1) #打开队伍
+            log.info(f"获取队伍成员信息, team_detect: {self.team_detect}")
+
+            self.press('t', 1) #关闭队伍
             time.sleep(0.5)
             
         else:
             # 已经获取过队伍成员信息,跳过
             pass
-
-        return self.team
+        
+        return self.team_detect
 
     def get_now_area(self, deep=0):
         team_member = self.find_team_member()
@@ -310,14 +353,18 @@ class DivergentUniverse(UniverseUtils):
                 if i not in self.team_member or team_member[i] != self.team_member[i]:
                     check_ok = 0
                     break
+
             if not check_ok:
                 self.team_member = team_member
                 print('team_member:', team_member)
                 for i in self.team_member:
+
+                    # 从当前队伍中,选取处于内置远程角色列表中的第一个远程角色
                     if i in config.long_range_list:
-                        self.long_range = str(self.team_member[i]+1)
+                        self.long_range = str(self.team_member[i]+1) # 更新默认远程角色
                         break
-            res = self.get_text_type(self.area_text, ['事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])
+
+            res = self.get_text_type(self.area_text, ['事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])            
             if (res == '位面' or res is None) and deep == 0:
                 self.mouse_move(20)
                 scr = self.screen
@@ -421,6 +468,7 @@ class DivergentUniverse(UniverseUtils):
         keyops.keyUp('w')
         return 0
 
+    # 这个方法是通过本层么?
     def portal_opening_days(self, aimed=0, static=0, deep=0):
         if deep > 1:
             self.close_and_exit(click = self.fail_count > 1)
@@ -736,15 +784,50 @@ class DivergentUniverse(UniverseUtils):
             if self.floor in [5,10]:
                 time.sleep(3)
         time.sleep(0.8)
+
         if self.area_state == 0:
-            if '黄泉' in self.team_member and '黄泉' in config.skill_char:
+            # 判断队伍成员状态
+            da_hei_ta_in_team = '大黑塔' in self.team_member
+            huang_quan_in_team = '黄泉' in self.team_member
+
+            # 判断秘技状态
+            da_hei_ta_has_skill = '大黑塔' in config.skill_char
+            huang_quan_has_skill = '黄泉' in config.skill_char            
+
+            # 优先级: 大黑塔 -> 黄泉 -> 远程角色
+            if da_hei_ta_in_team and da_hei_ta_has_skill:
+                # 使用大黑塔
+                self.da_hei_ta = True
+
+            elif huang_quan_in_team and huang_quan_has_skill:
+                # 使用黄泉
                 self.quan = 1
-            elif '黄泉' not in self.team_member:
-                self.quan = 0
-            if area_now == '战斗' and self.quan and self.allow_e:
-                self.press(str(self.team_member['黄泉']+1))
+
             else:
+                # 使用远程角色
+                self.da_hei_ta = False
+                self.quan = 0
+
+            # 决策站场角色
+            # 大黑塔:通用  黄泉:战斗
+
+            if self.allow_e:
+
+                # 存在大黑塔时,直接使用大黑塔作为站场角色
+                if self.da_hei_ta:
+                    self.press(str(self.team_member['大黑塔']+1))
+
+                elif self.quan and area_now == '战斗':
+                    # 无大黑塔,那就切黄泉
+                    self.press(str(self.team_member['黄泉']+1))
+                else:
+                    # 切远程角色
+                    self.press(self.long_range)
+            
+            else:
+                # 无秘技,切远程角色
                 self.press(self.long_range)
+
         self.get_screen()
         if self.check("divergent/arrow", 0.7833,0.9231, threshold=0.95):
             keyops.keyDown('alt')
@@ -752,18 +835,29 @@ class DivergentUniverse(UniverseUtils):
             self.click_position([413, 79])
             keyops.keyUp('alt')
         time.sleep(0.7)
+        
         self.check_dead()
+
         if area_now is not None:
             self.area_now = area_now
         else:
             area_now = self.area_now
+
         if self.portal_cnt > 1:
+            # 这里考虑的是全局异常暂离次数达到2次,就结束本次探索,或许可以考虑改为单个区域
             self.close_and_exit(click = False)
             return
+        
         print('floor:',self.floor,'state:',self.area_state,'area:',area_now,'text:',self.area_text)
+
         if area_now in ['事件', '奖励', '遭遇']:
-            if area_now == '遭遇':
+            # 如果存在大黑塔,还是切过来,毕竟这些事件都可能入战
+            if self.da_hei_ta and self.allow_e and not self.da_hei_ta_effecting:
                 self.skill()
+
+            # 这些层都可能存在单或者双的情况,同时还可能存在宝箱,抽奖机,后面再考虑
+            # 单的情况,事件在最中间,双的情况,分为两边,而且事件距离人物的距离也不一致
+
 
             if self.area_state==0:
                 keyops.keyDown('w')
@@ -807,6 +901,7 @@ class DivergentUniverse(UniverseUtils):
                     print('aligning...')
                     self.align_event('d', event_text=total_events[-1][0], click=1)
                     self.area_state += 1 + (len(total_events) == 1)
+
             elif self.area_state==1:
                 self.keys.fff = 1
                 self.press('a', 1.3)
@@ -823,8 +918,10 @@ class DivergentUniverse(UniverseUtils):
                         self.press('s', 0.5)
                         self.align_event('d')
                 self.area_state += 1
+
             else:
                 self.portal_opening_days(static=1)
+
         elif area_now == '休整':
             pyautogui.click()
             time.sleep(0.8)
@@ -834,6 +931,7 @@ class DivergentUniverse(UniverseUtils):
             keyops.keyUp('w')
             time.sleep(0.25)
             self.portal_opening_days(static=1)
+
         elif area_now == '商店':
             pyautogui.click()
             time.sleep(0.8)
@@ -843,12 +941,14 @@ class DivergentUniverse(UniverseUtils):
             keyops.keyUp('w')
             time.sleep(0.6)
             self.portal_opening_days(static=1)
+
         elif area_now == '首领':
             if self.floor == 13 and self.area_state > 0:
+                # 已经结束战斗了
                 self.close_and_exit()
                 self.end_of_uni()
                 return
-            self.skill()
+
             if self.area_state == 0:
                 self.press('w',3)
                 for c in config.skill_char:
@@ -865,8 +965,12 @@ class DivergentUniverse(UniverseUtils):
             else:
                 time.sleep(1)
                 self.portal_opening_days(static=1)
+
         elif area_now == '战斗':
-            self.skill()
+            # 如果大黑塔秘技使能,先使用秘技,前面应该已经切换到了大黑塔
+            if self.da_hei_ta and self.allow_e and not self.da_hei_ta_effecting:
+                self.skill()
+
             if self.area_state == 0:                
                 keyops.keyDown('w')
                 time.sleep(0.2)
@@ -891,6 +995,7 @@ class DivergentUniverse(UniverseUtils):
                 if not (self.quan and self.allow_e):
                     self.press('w', 0.25)
                 self.portal_opening_days(static=1)
+
         elif area_now == '财富':
             keyops.keyDown('w')
             time.sleep(1.6)
@@ -905,10 +1010,12 @@ class DivergentUniverse(UniverseUtils):
                 self.forward_until(text_list=['战利品', '药箱'], timeout=1.0, moving=0)
             time.sleep(1.4)
             self.portal_opening_days(static=1)
+
         elif area_now == '位面':
             pyautogui.click()
             time.sleep(2)
             self.close_and_exit()
+
         else:
             self.press('F4')
     
@@ -1091,7 +1198,9 @@ def main():
 
 
 if __name__ == "__main__":
-    if not pyuac.isUserAdmin():
-        pyuac.runAsAdmin()
-    else:
-        main()
+    # if not pyuac.isUserAdmin():
+    #     pyuac.runAsAdmin()
+    # else:
+    #     main()
+    su = DivergentUniverse(args.debug, args.nums, args.speed)
+    su.test()
