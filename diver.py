@@ -738,6 +738,9 @@ class DivergentUniverse(UniverseUtils):
             return
         print('floor:',self.floor,'state:',self.area_state,'area:',area_now,'text:',self.area_text)
         if area_now in ['事件', '奖励', '遭遇']:
+            if area_now == '遭遇':
+                self.skill()
+
             if self.area_state==0:
                 keyops.keyDown('w')
                 tm = time.time()
@@ -821,6 +824,7 @@ class DivergentUniverse(UniverseUtils):
                 self.close_and_exit()
                 self.end_of_uni()
                 return
+            self.skill()
             if self.area_state == 0:
                 self.press('w',3)
                 for c in config.skill_char:
@@ -838,7 +842,8 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(1)
                 self.portal_opening_days(static=1)
         elif area_now == '战斗':
-            if self.area_state == 0:
+            self.skill()
+            if self.area_state == 0:                
                 keyops.keyDown('w')
                 time.sleep(0.2)
                 keyops.keyDown('shift')
