@@ -127,9 +127,10 @@ class DivergentUniverse(UniverseUtils):
                 self.da_hei_ta_effecting = False
                 self.press('v')
 
-            elif False: # 补充一个入战检测
-                self.da_hei_ta_effecting = False
-
+            elif self.check("auto_on", 1, 0.2, threshold=0.5): # 补充一个入战检测
+                if self.da_hei_ta_effecting:
+                    self.da_hei_ta_effecting = False
+                    log.info("秘技生效中,入战清除")
             else:
                 text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
                 if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
@@ -304,10 +305,10 @@ class DivergentUniverse(UniverseUtils):
 
             # 定义区域起点x,y
             points = [
-                [399,770], #1号
-                [866,844], #2号
-                [1278,800], #3号
-                [1615,834], #4号
+                [257,735], #1号
+                [715,800], #2号
+                [1153,761], #3号
+                [1510,794], #4号
             ]
 
             # 根据points和宽高生成最终区域参数boxes
@@ -326,9 +327,13 @@ class DivergentUniverse(UniverseUtils):
             self.press('t', 1) #打开队伍
             time.sleep(0.5)
 
-            for i,b in enumerate(boxes):
-                name = self.clean_text(self.ts.ocr_one_row(self.get_screen(), b))
+            sc = self.get_screen()
 
+            for i,b in enumerate(boxes):                
+                name = self.clean_text(self.ts.ocr_one_row(sc, b))
+                log.info(f"获取队伍成员信息, name: {name}, box: {b}")
+
+                # 这里不太明白character_prior的作用
                 if name in self.character_prior:
                     self.team_detect[name] = i
 
@@ -565,7 +570,7 @@ class DivergentUniverse(UniverseUtils):
                         event_id = (i, e)
                 start = self.now_event == event_id[1]
                 self.now_event = event_id[1]
-                print('event_id:', event_id)
+                log.info(f"event:{event_id},start:{start}")
             if '事件' not in self.merge_text(self.ts.find_with_box([92, 195, 54, 88])):
                 return
             
@@ -708,7 +713,8 @@ class DivergentUniverse(UniverseUtils):
             event_text = 950
         if event_text and event_text < 910 and key == 'd':
             key = 'a'
-        print(event_text, key)
+
+        log.info(f"align_event: {event_text}, key: {key}")
 
         if event_text:
             if abs(950-event_text) >= 50:
@@ -719,27 +725,36 @@ class DivergentUniverse(UniverseUtils):
                 if key == 'a':
                     sub = -sub
                 print('sub:', sub)
+                log.info(f"event_text_after: {event_text_after}, sub: {sub}")
             else:
                 sub = 100000
+
             if sub < 60:
                 sub = 100
+
             if sub < 400:
                 sub = int((event_text_after - 950) / sub)
                 sub = min(3, max(-3, int(sub)))
             else:
                 sub = 2
+
             if abs(950-event_text) < 50:
                 sub = 0
+
             for _ in range(sub):
                 self.press('d',0.2)
                 time.sleep(0.1)
+
             for _ in range(-sub):
                 self.press('a',0.2)
                 time.sleep(0.1)
+
             if click:
                 pyautogui.click()
                 time.sleep(0.5)
+
             self.forward_until(['事件','奖励','遭遇','交易'], timeout=2.5, moving=0, chaos=1)
+
         else:
             if deep < 3:
                 self.press('w',[0,0.3,0.5][deep])
@@ -848,15 +863,19 @@ class DivergentUniverse(UniverseUtils):
             self.close_and_exit(click = False)
             return
         
-        print('floor:',self.floor,'state:',self.area_state,'area:',area_now,'text:',self.area_text)
+        log.info(f"floor:{self.floor}, state:{self.area_state}, area:{area_now}, text:{self.area_text}")
 
         if area_now in ['事件', '奖励', '遭遇']:
             # 如果存在大黑塔,还是切过来,毕竟这些事件都可能入战
             if self.da_hei_ta and self.allow_e and not self.da_hei_ta_effecting:
                 self.skill()
+                self.da_hei_ta_effecting = True
 
             # 这些层都可能存在单或者双的情况,同时还可能存在宝箱,抽奖机,后面再考虑
             # 单的情况,事件在最中间,双的情况,分为两边,而且事件距离人物的距离也不一致
+            # 基本思想是前进,监视中间区域出现汉字,确定事件数量,分为单和双逻辑进行寻路
+            # 如果是单事件,一直前进,然后寻找F
+            # 如果是双事件,优先右侧事件,然后再左侧事件
 
 
             if self.area_state==0:
@@ -865,21 +884,26 @@ class DivergentUniverse(UniverseUtils):
                 self.get_screen()
                 self.get_text_position()
                 total_events = None
-                while time.time() - tm < 5:
+
+                while time.time() - tm < 15:
                     self.get_screen()
                     if self.get_text_position():
                         keyops.keyUp('w')
                         # self.press('s', 0.25)
-                        time.sleep(0.6)
+                        time.sleep(0.5)
                         self.get_screen()
                         total_events = self.get_text_position(1)
-                        if len(total_events):
+                        if len(total_events) and total_events[0][0] < 1600:
+                            # 有时候会锁定到右边的状态效果那个字
                             break
                         else:
                             keyops.keyDown('w')
-                            tm += 0.5
+                            time.sleep(1)
+                            tm += 1.5
+
                 keyops.keyUp('w')
-                print('total_events:', total_events)
+                log.info(f"total_events step: {total_events}")
+                
                 if not total_events or not (933 <= total_events[0][0] <= 972):
                     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-100 * self.multi * self.scale))
                     time.sleep(0.3)
@@ -889,18 +913,25 @@ class DivergentUniverse(UniverseUtils):
                         total_events = total_events_after
                     else:
                         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(100 * self.multi * self.scale))
+
                 if total_events is None:
                     self.press('d', 0.5)
                     return
+                
                 if not total_events:
                     total_events = [(950, 0)]
+
                 portal = self.find_portal()
+                log.info(f"portal_detail: {portal['nums']}")
+                log.info(f"area_state_update: {self.area_state}")
+
                 if portal['nums'] > 0:
                     self.area_state = 2
                 else:
-                    print('aligning...')
+                    log.info('对齐中...')
                     self.align_event('d', event_text=total_events[-1][0], click=1)
                     self.area_state += 1 + (len(total_events) == 1)
+                    log.info(f"对齐完成, area_state: {self.area_state}")
 
             elif self.area_state==1:
                 self.keys.fff = 1
@@ -953,11 +984,15 @@ class DivergentUniverse(UniverseUtils):
                 self.press('w',3)
                 for c in config.skill_char:
                     if (c in self.team_member or c.isdigit()) and self.allow_e:
+                        if c == '大黑塔' and self.da_hei_ta_effecting:
+                            # 大黑塔秘技生效中,跳过
+                            continue
                         self.press(int(c) if c.isdigit() else str(self.team_member[c]+1))
                         time.sleep(0.8)
                         self.check_dead()
                         self.skill()
                         time.sleep(1.5)
+
                 pyautogui.click()
                 time.sleep(0.2)
                 pyautogui.click()
@@ -970,6 +1005,7 @@ class DivergentUniverse(UniverseUtils):
             # 如果大黑塔秘技使能,先使用秘技,前面应该已经切换到了大黑塔
             if self.da_hei_ta and self.allow_e and not self.da_hei_ta_effecting:
                 self.skill()
+                self.da_hei_ta_effecting = True
 
             if self.area_state == 0:                
                 keyops.keyDown('w')
