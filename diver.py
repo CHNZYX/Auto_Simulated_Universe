@@ -243,14 +243,14 @@ class DivergentUniverse(UniverseUtils):
                 format_string = "%H:%M:%S"
                 formatted_time = time.strftime(format_string, time.localtime())
                 f.write(formatted_time + '\n')
-            while 1:
-                time.sleep(1)
         time.sleep(2.5)
         self.init_floor()
         if not click:
             if time.time() - self.fail_tm < 90:
                 click = True
                 self.fail_tm = 0
+                if self.debug:
+                    exit()
             else:
                 self.fail_tm = time.time()
         if click:
