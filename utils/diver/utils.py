@@ -28,6 +28,9 @@ import threading
 from utils.log import my_print as print
 from utils.log import print_exc
 
+from pathlib import Path
+from datetime import datetime
+
 
 def notif(title, msg, cnt=None):
     # if '完成' in title:
@@ -546,6 +549,28 @@ class UniverseUtils:
             Text = win32gui.GetWindowText(hwnd)
         self.screen = self.sct.grab(self.x0, self.y0)
         return self.screen
+    
+    def save_screen(self, save_path=r"D:\debug", name=""):
+        """
+        获取截图并保存到指定路径
+        :param save_path: 保存截图的路径
+        """
+        # 获取截图
+        sc = self.screen
+
+        # 如果截图是 numpy.ndarray 类型，将其转换为 PIL.Image
+        if isinstance(sc, np.ndarray):
+            sc = Image.fromarray(sc)
+
+        # 确保路径存在
+        save_path = Path(save_path)
+        save_path.mkdir(parents=True, exist_ok=True)
+
+        # 构造文件名，使用当前时间戳
+        filename = name + datetime.now().strftime("%Y%m%d_%H%M%S") + ".png"
+
+        # 保存截图
+        sc.save(save_path / filename)
 
     # 移动视角，获得小地图中不变的部分（白线、灰块）
     def take_fine_minimap(self, n=5, dt=0.01, dy=200):
