@@ -759,7 +759,7 @@ class DivergentUniverse(UniverseUtils):
                             tm += 0.5
                 keyops.keyUp('w')
                 print('total_events:', total_events)
-                if not total_events or not (933 <= total_events[0][0] <= 972):
+                if total_events is not None and (not total_events or not (933 <= total_events[0][0] <= 972)):
                     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, int(-100 * self.multi * self.scale))
                     time.sleep(0.3)
                     self.get_screen()
