@@ -3,11 +3,11 @@
 # Auto_Simulated_Universe
 星穹铁道-模拟宇宙全自动化
 
-快速上手，请访问：[项目文档](https://asu.stysqy.top/) [备用](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/index.md)
+快速上手，请访问：[项目文档](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/index.md)
 
-遇到问题，请在提问前查看：[Q&A](https://asu.stysqy.top/guide/qa.html) [备用](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/qa.md)
+遇到问题，请在提问前查看：[Q&A](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/qa.md)
 
-运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://asu.stysqy.top/guide/bs.html) [备用](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/bs.md)
+运行自动化时不能用电脑做其他事？试试多用户后台运行！[后台运行](https://github.com/Night-stars-1/Auto_Simulated_Universe_Docs/blob/docs/docs/guide/bs.md)
 
 此页面主要介绍差分宇宙自动化，如需详细的普通模拟宇宙自动化介绍请移步[普通宇宙](https://github.com/CHNZYX/Auto_Simulated_Universe/blob/old/README.md)
 
