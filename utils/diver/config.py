@@ -36,7 +36,19 @@ class Config:
         self.origin_key = ['f','m','shift','v','e','w','a','s','d','1','2','3','4']
         self.mapping = self.origin_key
         self.max_run = 34
-        self.match = json.load(open('actions/character.json', 'r', encoding='utf-8'))
+
+        # 获取角色数据
+        # 首先角色ID建议根据游戏内的游戏工具名单提供,防止遗漏
+        # 其次,游戏id唯一,整数,通过id与名称组成键值对
+        # 最后,通过名称键名获取相应的人物属性
+        # 人物属性分为普通攻击距离,区分长短手
+        # 以及技能类型,分为"攻击/领域/增益",攻击类型使用后会入战,领域类型无法叠加,增益类型可以叠加
+        # 仅有攻击类型的技能才会设置技能距离
+        self.characters = json.load(open('actions/character.json', 'r', encoding='utf-8'))
+
+        # 秘技次序,如果为空就使用内置逻辑,存在就使用自定义逻辑
+        self.skill_order = []
+
         self.read()
 
     @property
@@ -66,9 +78,59 @@ class Config:
         for i in skill:
             i = self.clean_text(i, 0)
 
-            # 匹配character.json中的数据,这里面是为了对策ocr无法准确识别导致的错别字么,但是还有很多别名?
-            if i in self.match:
-                i = self.match[i]
+            # 匹配全部角色,是不是考虑配置为外部json更合适?
+            if i in self.all_list:
+                self.skill_char.append(i)
+
+            elif i in ['1', '2', '3', '4']:
+                self.skill_char.append(i)
+
+        # 未导入log类,暂时用print应付调试
+        print(f"秘技列表:{self.skill_char}")
+
+    def update_skill_order(self, skill_order_custom: List[str], team_member: Dict[str, int]):
+
+        self.skill_order = []
+
+        # 如果skill_order_custom不为空,则使用自定义的技能顺序
+        # 但是需要确认队伍成员是否存在,存在则录入,否额删除
+        if skill_order_custom:
+            # 遍历skill_order_custom,查看成员在不在队伍成员中team_member
+            for i in skill_order_custom:
+                i = self.clean_text(i, 0)
+
+                # 如果在队伍成员中,则添加到skill_order
+                if i in team_member:
+                    self.skill_order.append(i)
+
+        else:
+            # 自定义技能顺序为空,采用内置逻辑
+            # 优先使用增益,然后使用第一个领域技能,最后使用攻击技能
+
+            # 遍历队伍成员,获取技能信息
+            for i in team_member:
+
+                # 获取技能信息
+                skill_info = self.characters['name'][i]
+
+                # 技能类型
+                skill_type = skill_info['type']
+
+                # 遍历技能信息,获取增益技能,领域技能,攻击技能
+                for j in skill_info:
+                    if skill_info[j]['type'] == '增益':
+                        self.skill_order.append(i)
+                        break
+
+                # 如果已经添加了增益技能,则跳出循环
+                if len(self.skill_order) > 0:
+                    break
+
+                
+
+
+        for i in skill:
+            i = self.clean_text(i, 0)
 
             # 匹配全部角色,是不是考虑配置为外部json更合适?
             if i in self.all_list:
