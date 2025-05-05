@@ -336,7 +336,7 @@ class DivergentUniverse(UniverseUtils):
             log.info(f"获取队伍成员信息, name: {name}, box: {b}")
 
             # 判断name在characters内,则加入到队伍信息,如果不在,应该是识别精度的问题
-            if name in self.config.characters["name"]:
+            if name in config.characters["name"]:
                 self.team_info[name] = i
 
 
@@ -351,39 +351,55 @@ class DivergentUniverse(UniverseUtils):
         # 首先设置长手角色,选第一个就好了
         # 遍历队伍成员,获取attack_range
         for i in self.team_info:
-            if self.team_info["name"][i]['attack_range'] == '远':
-                self.long_range = str(i + 1)
+            if i in config.characters["name"] and config.characters["name"][i]['attack_range'] == '远':
+                self.long_range = str(self.team_info[i] + 1)
                 break
 
         # 这里要不要考虑4个近战的情况呢? 算了 先不考虑
 
         # 设置技能顺序
-        # 优先增益,然后释放首个领域,最后释放攻击类型技能
+        # 强化后台->弱化->领域(首个)->强化前台(普攻入战)->攻
         # 暂不考虑节约秘技点的策略
         # 遍历队伍成员,获取skill_type,skill_range
-        for i in self.team_info:
-            # 获取技能信息
-            skill_info = self.characters['name'][i]
 
-            # 技能类型
-            skill_type = skill_info['skill_type']
+        # 如果用户已经自定义了顺序,则直接使用,不过需要判断是否存在角色
+        if config.skill_order:
+            log.info(f"自定义技能顺序: {config.skill_order}")
+            for i in config.skill_order:
+                if i not in self.team_info:
+                    # 从队伍成员中删除
+                    self.skill_order = [j for j in config.skill_order if j in self.team_info]
+                    log.warning(f"自定义技能顺序中角色{i}不在队伍中,移除")
 
-            # 技能距离
-            skill_range = skill_info['skill_range']
+        else:
 
-            # 遍历技能信息,获取增益技能,领域技能,攻击技能
-            for j in skill_info:
-                if skill_info[j]['type'] == '增益':
+            # 初始化技能顺序
+            self.skill_order = []
+            has_field_skill = False  # 标记是否已经存在领域技能
+            for i in self.team_info:
+                # 技能类型
+                skill_type = config.characters['name'][i]['skill_type']
+
+                # 按照优先级添加技能
+                if skill_type == '强化后台':
                     self.skill_order.append(i)
-                    break
+                elif skill_type == '弱化':
+                    self.skill_order.append(i)
+                elif skill_type == '领域' and not has_field_skill:
+                    self.skill_order.append(i)
+                    has_field_skill = True
+                elif skill_type == '强化前台':
+                    # 如果已经存在攻击技能，移除攻击技能，保留强化前台
+                    if '攻击' in [self.characters['name'][j]['skill_type'] for j in self.skill_order]:
+                        self.skill_order = [j for j in self.skill_order if self.characters['name'][j]['skill_type'] != '攻击']
+                    self.skill_order.append(i)
+                elif skill_type == '攻击':
+                    # 只有在没有强化前台技能时才添加攻击技能
+                    if '强化前台' not in [self.characters['name'][j]['skill_type'] for j in self.skill_order]:
+                        self.skill_order.append(i)
 
-            # 如果已经添加了增益技能,则跳出循环
-            if len(self.skill_order) > 0:
-                break
-
-
-
-        
+        # 打印调试信息
+        log.info(f"最终技能顺序: {self.skill_order}")
 
 
     def get_now_area(self, deep=0):
@@ -394,7 +410,6 @@ class DivergentUniverse(UniverseUtils):
 
             self.find_team_member()
             self.update_skill_attack_info()
-
             
         self.area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
         print('area_text:', self.area_text, 'deep:', deep)

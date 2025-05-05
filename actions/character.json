@@ -1,36 +1,437 @@
 {
     "id": {
-        "1": "符玄",
-        "2": "阮梅",
-        "3": "黄泉",
-        "4": "丹恒饮月",
-        "5": "克拉拉"
+        "1": "三月七",
+        "2": "丹恒",
+        "3": "阿兰",
+        "4": "艾丝妲",
+        "5": "黑塔",
+        "6": "希露瓦",
+        "7": "娜塔莎",
+        "8": "佩拉",
+        "9": "桑博",
+        "10": "虎克",
+        "11": "玲可",
+        "12": "卢卡",
+        "13": "青雀",
+        "14": "停云",
+        "15": "素裳",
+        "16": "驭空",
+        "17": "桂乃芬",
+        "18": "雪衣",
+        "19": "寒鸦",
+        "20": "貊泽",
+        "21": "仙舟三月七",
+        "22": "加拉赫",
+        "23": "米沙",
+        "24": "开拓者毁灭",
+        "25": "开拓者毁灭",
+        "26": "开拓者存护",
+        "27": "开拓者存护",
+        "28": "开拓者同谐",
+        "29": "开拓者同谐",
+        "30": "姬子",
+        "31": "瓦尔特",
+        "32": "卡芙卡",
+        "33": "布洛妮娅",
+        "34": "希儿",
+        "35": "杰帕德",
+        "36": "克拉拉",
+        "37": "托帕账账",
+        "38": "罗刹",
+        "39": "刃",
+        "40": "符玄",
+        "41": "彦卿",
+        "42": "白露",
+        "43": "镜流",
+        "44": "银枝",
+        "45": "阮梅",
+        "46": "花火",
+        "47": "丹恒饮月",
+        "48": "黑天鹅",
+        "49": "乱破",
+        "50": "砂金",
+        "51": "景元",
+        "52": "流萤",
+        "53": "翡翠",
+        "54": "飞霄",
+        "55": "灵砂",
+        "56": "大黑塔",
+        "57": "开拓者记忆",
+        "58": "开拓者记忆",
+        "59": "银狼",
+        "60": "知更鸟",
+        "61": "波提欧",
+        "62": "阿格莱雅",
+        "63": "星期日",
+        "64": "缇宝",
+        "65": "云璃",
+        "66": "藿藿",
+        "67": "万敌",
+        "68": "黄泉",
+        "69": "椒丘",
+        "70": "忘归人",
+        "71": "遐蝶",
+        "72": "风堇",
+        "73": "赛飞儿",
+        "74": "真理医生",
+        "75": "那刻夏"
     },
+
     "name": {
-        "符玄": {
+        "三月七": {
             "attack_range": "远",
             "skill_type": "攻击",
             "skill_range": "远"
         },
-        "阮梅": {
+        "丹恒": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "阿兰": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "艾丝妲": {
+            "attack_range": "远",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "黑塔": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "希露瓦": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "娜塔莎": {
+            "attack_range": "远",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "佩拉": {
+            "attack_range": "远",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "桑博": {
+            "attack_range": "近",
+            "skill_type": "弱化",
+            "skill_range": null
+        },
+        "虎克": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "玲可": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "卢卡": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "青雀": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "停云": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "素裳": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "驭空": {
+            "attack_range": "远",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "桂乃芬": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "雪衣": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "寒鸦": {
+            "attack_range": "远",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "貊泽": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "仙舟三月七": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "加拉赫": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "米沙": {
             "attack_range": "近",
             "skill_type": "领域",
             "skill_range": null
         },
-        "黄泉": {
+        "开拓者毁灭": {
             "attack_range": "近",
-            "skill_type": "buff",
+            "skill_type": "强化后台",
             "skill_range": null
         },
-        "丹恒饮月": {
+        "开拓者存护": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "开拓者同谐": {
             "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "姬子": {
+            "attack_range": "近",
+            "skill_type": "领域",
+            "skill_range": null
+        },
+        "瓦尔特": {
+            "attack_range": "近",
+            "skill_type": "领域",
+            "skill_range": null
+        },
+        "卡芙卡": {
+            "attack_range": "近",
             "skill_type": "攻击",
-            "skill_range": "远"
+            "skill_range": "近"
+        },
+        "布洛妮娅": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "希儿": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "杰帕德": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
         },
         "克拉拉": {
             "attack_range": "近",
             "skill_type": "攻击",
+            "skill_range": null
+        },
+        "托帕账账": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "罗刹": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "刃": {
+            "attack_range": "近",
+            "skill_type": "攻击",
             "skill_range": "近"
+        },
+        "符玄": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "彦卿": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "白露": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "镜流": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "银枝": {
+            "attack_range": "近",
+            "skill_type": "弱化",
+            "skill_range": null
+        },
+        "阮梅": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "花火": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "丹恒饮月": {
+            "attack_range": "远",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "黑天鹅": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "乱破": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "砂金": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "景元": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "流萤": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "翡翠": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "飞霄": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "灵砂": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "大黑塔": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "开拓者记忆": {
+            "attack_range": "远",
+            "skill_type": "领域",
+            "skill_range": null
+        },
+        "银狼": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "知更鸟": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "波提欧": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "阿格莱雅": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "星期日": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "缇宝": {
+            "attack_range": "远",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "云璃": {
+            "attack_range": "近",
+            "skill_type": "强化后台",
+            "skill_range": null
+        },
+        "藿藿": {
+            "attack_range": "近",
+            "skill_type": "弱化",
+            "skill_range": null
+        },
+        "万敌": {
+            "attack_range": "近",
+            "skill_type": "弱化",
+            "skill_range": null
+        },
+        "黄泉": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "椒丘": {
+            "attack_range": "远",
+            "skill_type": "领域",
+            "skill_range": null
+        },
+        "忘归人": {
+            "attack_range": "远",
+            "skill_type": "弱化",
+            "skill_range": null
+        },
+        "遐蝶": {
+            "attack_range": "近",
+            "skill_type": "强化前台",
+            "skill_range": null
+        },
+        "风堇": {
+            "attack_range": "近",
+            "skill_type": "攻击",
+            "skill_range": "近"
+        },
+        "赛飞儿": {
+            "attack_range": "远",
+            "skill_type": "攻击",
+            "skill_range": "远"
+        },
+        "真理医生": {
+            "attack_range": "近",
+            "skill_type": "领域",
+            "skill_range": null
+        },
+        "那刻夏": {
+            "attack_range": "远",
+            "skill_type": "弱化",
+            "skill_range": null
         }
     }
 }

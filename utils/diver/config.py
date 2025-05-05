@@ -42,11 +42,16 @@ class Config:
         # 其次,游戏id唯一,整数,通过id与名称组成键值对
         # 最后,通过名称键名获取相应的人物属性
         # 人物属性分为普通攻击距离,区分长短手
-        # 以及技能类型,分为"攻击/领域/增益",攻击类型使用后会入战,领域类型无法叠加,增益类型可以叠加
+        # 以及技能类型,
+        # "攻击",使用后入战
+        # "强化后台",强化型buff,切人后不会消失,比如大黑塔,花火(虽然花火有时间限制)
+        # "强化前台",强化型buff,切人消失,比如驭空,丹恒饮月
+        # "弱化",弱化型buff,可以叠加释放,比如忘归人,藿藿
+        # "领域",场地型buff,释放第二个会顶掉前一个
         # 仅有攻击类型的技能才会设置技能距离
         self.characters = json.load(open('actions/character.json', 'r', encoding='utf-8'))
 
-        # 秘技次序,如果为空就使用内置逻辑,存在就使用自定义逻辑
+        # 自定义秘技顺序
         self.skill_order = []
 
         self.read()
@@ -154,7 +159,7 @@ class Config:
                     self.speed_mode = config['speed_mode']
                     self.weekly_mode = config['weekly_mode']
                     self.cpu_mode = config['cpu_mode']
-                    self.update_skill(config['skill'])
+                    self.skill_order = config['skill']
                     self.timezone = config['timezone']
                     self.max_run = config['max_run']
                     self.save_cnt = config['save']
@@ -181,7 +186,7 @@ class Config:
                     "speed_mode": self.speed_mode,
                     "weekly_mode": self.weekly_mode,
                     "cpu_mode": self.cpu_mode,
-                    "skill": self.skill_char,
+                    "skill": self.skill_order,
                     "save": self.save_cnt,
                     "timezone": self.timezone,
                     "max_run": self.max_run,
