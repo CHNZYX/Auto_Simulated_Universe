@@ -190,19 +190,27 @@ class DivergentUniverse(UniverseUtils):
         return res
 
     def run_static(self, json_path=None, json_file=None, action_list=[], skip_check=0) -> str:
+
         if json_file is None:
             if json_path is None:
                 json_file = self.default_json
             else:
+                # 加载外部json配置
                 json_file = self.load_actions(json_path)
+
         for j in action_list if len(action_list) else json_file:
             for i in json_file[j]:
                 trigger = i["trigger"]
+
                 text = self.ts.find_with_box(trigger["box"], redundancy=trigger.get("redundancy", 30))
+
                 if skip_check or (len(text) and trigger["text"] in self.merge_text(text)):
+
                     log.info(f"触发 {i['name']}:{trigger['text']}")
+
                     for j in i["actions"]:
                         self.do_action(j)
+                        
                     self.action_history.append(i["name"])
                     self.action_history = self.action_history[-10:]
                     return i['name']
@@ -458,7 +466,7 @@ class DivergentUniverse(UniverseUtils):
         返回:
             dict: 传送门优先级字典。
         """
-        # 默认优先级
+        # 默认优先级,没有冒险,是因为无法处理么?
         self.prefer_portal = {
             '首领': 19,
             '休整': 19,
