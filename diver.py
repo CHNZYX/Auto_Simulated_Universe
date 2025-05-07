@@ -375,31 +375,55 @@ class DivergentUniverse(UniverseUtils):
 
             # 初始化技能顺序
             self.skill_order = []
-            has_field_skill = False  # 标记是否已经存在领域技能
-            for i in self.team_info:
-                # 技能类型
-                skill_type = config.characters['name'][i]['skill_type']
 
-                # 按照优先级添加技能
-                if skill_type == '强化后台':
-                    self.skill_order.append(i)
-                elif skill_type == '弱化':
-                    self.skill_order.append(i)
-                elif skill_type == '领域' and not has_field_skill:
-                    self.skill_order.append(i)
-                    has_field_skill = True
+            # 定义技能类型的优先级
+            skill_priority = {
+                '强化后台': 1,
+                '弱化': 2,
+                '领域': 3,
+                '强化前台': 4,
+                '攻击': 5
+            }
+
+            # 按照优先级对队伍成员进行排序
+            sorted_team = sorted(
+                self.team_info.keys(),
+                key=lambda name: skill_priority[config.characters['name'][name]['skill_type']]
+            )
+
+            # 标记是否已经存在领域技能和强化前台技能
+            has_field_skill = False
+            has_front_skill = False
+
+            # 遍历排序后的队伍成员，按规则处理技能
+            for name in sorted_team:
+                skill_type = config.characters['name'][name]['skill_type']
+
+                if skill_type == '领域':
+                    # 只保留第一个领域技能
+                    if not has_field_skill:
+                        self.skill_order.append(name)
+                        has_field_skill = True
                 elif skill_type == '强化前台':
-                    # 如果已经存在攻击技能，移除攻击技能，保留强化前台
-                    if '攻击' in [self.characters['name'][j]['skill_type'] for j in self.skill_order]:
-                        self.skill_order = [j for j in self.skill_order if self.characters['name'][j]['skill_type'] != '攻击']
-                    self.skill_order.append(i)
+                    # 强化前台优先于攻击，且只保留一个
+                    if not has_front_skill:
+                        # 移除已有的攻击技能
+                        self.skill_order = [
+                            n for n in self.skill_order
+                            if config.characters['name'][n]['skill_type'] != '攻击'
+                        ]
+                        self.skill_order.append(name)
+                        has_front_skill = True
                 elif skill_type == '攻击':
                     # 只有在没有强化前台技能时才添加攻击技能
-                    if '强化前台' not in [self.characters['name'][j]['skill_type'] for j in self.skill_order]:
-                        self.skill_order.append(i)
+                    if not has_front_skill:
+                        self.skill_order.append(name)
+                else:
+                    # 其他技能直接添加
+                    self.skill_order.append(name)
 
         # 打印调试信息
-        log.info(f"最终技能顺序: {self.skill_order}")
+        log.info(f"最终技能顺序: {self.skill_order}, 远程角色位置: {self.long_range}")
 
 
     def get_now_area(self, deep=0):
