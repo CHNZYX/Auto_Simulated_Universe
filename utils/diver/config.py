@@ -93,61 +93,6 @@ class Config:
         # 未导入log类,暂时用print应付调试
         print(f"秘技列表:{self.skill_char}")
 
-    def update_skill_order(self, skill_order_custom: List[str], team_member: Dict[str, int]):
-
-        self.skill_order = []
-
-        # 如果skill_order_custom不为空,则使用自定义的技能顺序
-        # 但是需要确认队伍成员是否存在,存在则录入,否额删除
-        if skill_order_custom:
-            # 遍历skill_order_custom,查看成员在不在队伍成员中team_member
-            for i in skill_order_custom:
-                i = self.clean_text(i, 0)
-
-                # 如果在队伍成员中,则添加到skill_order
-                if i in team_member:
-                    self.skill_order.append(i)
-
-        else:
-            # 自定义技能顺序为空,采用内置逻辑
-            # 优先使用增益,然后使用第一个领域技能,最后使用攻击技能
-
-            # 遍历队伍成员,获取技能信息
-            for i in team_member:
-
-                # 获取技能信息
-                skill_info = self.characters['name'][i]
-
-                # 技能类型
-                skill_type = skill_info['type']
-
-                # 遍历技能信息,获取增益技能,领域技能,攻击技能
-                for j in skill_info:
-                    if skill_info[j]['type'] == '增益':
-                        self.skill_order.append(i)
-                        break
-
-                # 如果已经添加了增益技能,则跳出循环
-                if len(self.skill_order) > 0:
-                    break
-
-                
-
-
-        for i in skill:
-            i = self.clean_text(i, 0)
-
-            # 匹配全部角色,是不是考虑配置为外部json更合适?
-            if i in self.all_list:
-                self.skill_char.append(i)
-
-            elif i in ['1', '2', '3', '4']:
-                self.skill_char.append(i)
-
-        # 未导入log类,暂时用print应付调试
-        print(f"秘技列表:{self.skill_char}")
-
-
     def read(self):
         if os.path.exists(os.path.join(self.abspath, self.text)):
             with open(os.path.join(self.abspath, self.text), "r", encoding="utf-8", errors='ignore') as f:

@@ -35,7 +35,6 @@ class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
         self.is_get_team = True #首次进入差分宇宙后,获取队伍成员
-        self.team_detect = {} #队伍成员检测
 
         self.is_update_team = True # 首次进入差分宇宙后,获取队伍成员,更新技能和攻击信息
         self.team_info = {} # 队伍成员信息
@@ -60,7 +59,6 @@ class DivergentUniverse(UniverseUtils):
         self.character_prior = self.read_csv("actions/character.csv", name='char')
         self.all_bless = self.read_csv("actions/bless.csv", name='bless')
         self.bless_prior = defaultdict(int)
-        self.team_member = {}
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
 
@@ -72,7 +70,6 @@ class DivergentUniverse(UniverseUtils):
         self.da_hei_ta_effecting = False # 秘技生效中,进战清除
 
         self.event_text = ''
-
 
         self.init_floor()
         self.saved_num = 0
@@ -324,8 +321,6 @@ class DivergentUniverse(UniverseUtils):
         
         log.info(f"获取队伍成员信息区域, boxes: {boxes}")
         
-        self.team_detect.clear #清空队伍成员信息
-
         self.press('t', 1) #打开队伍
         time.sleep(0.5)
 
@@ -872,8 +867,8 @@ class DivergentUniverse(UniverseUtils):
 
         if self.area_state == 0:
             # 判断队伍成员状态
-            da_hei_ta_in_team = '大黑塔' in self.team_member
-            huang_quan_in_team = '黄泉' in self.team_member
+            da_hei_ta_in_team = '大黑塔' in self.team_info
+            huang_quan_in_team = '黄泉' in self.team_info
 
             # 判断秘技状态
             da_hei_ta_has_skill = '大黑塔' in config.skill_char
@@ -900,11 +895,11 @@ class DivergentUniverse(UniverseUtils):
 
                 # 存在大黑塔时,直接使用大黑塔作为站场角色
                 if self.da_hei_ta:
-                    self.press(str(self.team_member['大黑塔']+1))
+                    self.press(str(self.team_info['大黑塔']+1))
 
                 elif self.quan and area_now == '战斗':
                     # 无大黑塔,那就切黄泉
-                    self.press(str(self.team_member['黄泉']+1))
+                    self.press(str(self.team_info['黄泉']+1))
                 else:
                     # 切远程角色
                     self.press(self.long_range)
@@ -1053,11 +1048,11 @@ class DivergentUniverse(UniverseUtils):
             if self.area_state == 0:
                 self.press('w',3)
                 for c in config.skill_char:
-                    if (c in self.team_member or c.isdigit()) and self.allow_e:
+                    if (c in self.team_info or c.isdigit()) and self.allow_e:
                         if c == '大黑塔' and self.da_hei_ta_effecting:
                             # 大黑塔秘技生效中,跳过
                             continue
-                        self.press(int(c) if c.isdigit() else str(self.team_member[c]+1))
+                        self.press(int(c) if c.isdigit() else str(self.team_info[c]+1))
                         time.sleep(0.8)
                         self.check_dead()
                         self.skill()
@@ -1127,7 +1122,7 @@ class DivergentUniverse(UniverseUtils):
     
     def update_bless_prior(self):
         self.bless_prior = defaultdict(int)
-        for i in list(self.team_member) + ['全局', config.team]:
+        for i in ['全局', config.team]:
             if i in self.character_prior:
                 prior = self.character_prior[i]
                 for j in prior:
