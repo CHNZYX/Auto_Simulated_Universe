@@ -48,6 +48,9 @@ class DivergentUniverse(UniverseUtils):
         # 允许使用秘技,秘技消耗品不足的时候就用不了
         self.allow_e = 1
 
+        # 传送门优先级
+        self.prefer_portal = None
+
         self.count = self.my_cnt = 0
         self.debug = debug
         self.nums = nums
@@ -429,6 +432,7 @@ class DivergentUniverse(UniverseUtils):
 
             self.find_team_member()
             self.update_skill_attack_info()
+            self.initialize_portal_priority()
             
         self.area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
         print('area_text:', self.area_text, 'deep:', deep)
@@ -446,26 +450,60 @@ class DivergentUniverse(UniverseUtils):
             return res
         else:
             return None
+        
+    def initialize_portal_priority(self):
+        """
+        初始化传送门优先级。
+
+        返回:
+            dict: 传送门优先级字典。
+        """
+        # 默认优先级
+        self.prefer_portal = {
+            '首领': 19,
+            '休整': 19,
+            '奖励': 6,
+            '事件': 5,
+            '战斗': 4,
+            '遭遇': 3,
+            '商店': 2,
+            '财富': 1,
+        }
+
+        # 速通模式调整优先级
+        if self.speed:
+            if self.da_hei_ta and self.allow_e:
+                # 提高战斗的优先级
+                self.prefer_portal['战斗'] += 10
+            elif self.quan and self.allow_e:
+                # 提高战斗的优先级
+                self.prefer_portal['战斗'] += 10
+            else:
+                # 提高非战斗优先级
+                self.prefer_portal['奖励'] += 10
+                self.prefer_portal['商店'] += 10
+                self.prefer_portal['财富'] += 10
+
+        # 加载自定义优先级
+        if config.enable_portal_prior:
+            self.prefer_portal.update(config.portal_prior)
+
+        # 输出最终优先级
+        log.info(f"最终优先级: {self.prefer_portal}")
+
     
     def find_portal(self, type=None):
-        prefer_portal = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
-        if self.speed:
-            prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
-            if self.quan and self.allow_e:
-                prefer_portal['战斗'] = 2
-        if config.enable_portal_prior:
-            prefer_portal.update(config.portal_prior)
-        prefer_portal.update({'首领':4, '休整':4})
+
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1, mode=2)
         portal = {'score':0,'nums':0,'type':''}
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
-                portal_type = self.get_text_type(i['raw_text'], prefer_portal)
+                portal_type = self.get_text_type(i['raw_text'], self.prefer_portal)
                 if '冒' in i['raw_text'] or '险' in i['raw_text']:
                     portal['nums'] += 1
                 elif portal_type is not None:
-                    i.update({'score':prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
+                    i.update({'score':self.prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
                     if i['score'] > portal['score']:
                         portal = i
                     else:
