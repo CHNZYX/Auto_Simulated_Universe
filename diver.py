@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v8.02"
+version = "v8.03"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -1234,9 +1234,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # if not pyuac.isUserAdmin():
-    #     pyuac.runAsAdmin()
-    # else:
-    #     main()
-    su = DivergentUniverse(args.debug, args.nums, args.speed)
-    su.test()
+    if not pyuac.isUserAdmin():
+        pyuac.runAsAdmin()
+    else:
+        main()
