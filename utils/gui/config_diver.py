@@ -17,6 +17,18 @@ def config_view(page: Page):
         page.go("/")
         page.update()
 
+    # 定义下拉框内容改变时的回调函数
+    def dropdown_changed(e: ControlEvent, index: int):
+        # 如果选择的是 "0.自动识别"，将对应值设置为 None
+        if e.data == "0.自动识别":
+            config.skill_order[index] = None
+        else:
+            # 从 "id.name" 格式中提取 name 部分
+            config.skill_order[index] = e.data.split(".", 1)[1]
+        
+        print(f"角色 {index + 1} 的新值: {config.skill_order[index]}")
+        page.update()
+
     def debug_checkbox_changed(_e):
         config.debug_mode = not config.debug_mode
 
@@ -83,6 +95,26 @@ def config_view(page: Page):
         return cnt
 
     txt = ft.Text('已通关'+getnum()+'次',weight=ft.FontWeight.W_600,size=20)
+
+    # 提取角色 ID 和名称
+    character_list = [f"{id_}.{name}" for id_, name in config.characters["id"].items()]
+    character_list.insert(0, "0.自动识别")
+
+    # 创建 4 个下拉框,用于自定义秘技顺序
+    dropdowns = [
+        ft.Dropdown(
+            width=150,
+            label=f"角色 {i + 1}",
+            hint_text="选择角色",
+            options=[ft.dropdown.Option(name) for name in character_list],
+            value="0.自动识别" if config.skill_order[i] is None else next(
+            (f"{id_}.{name}" for id_, name in config.characters["id"].items() if name == config.skill_order[i]),
+            "0.自动识别"),  
+            on_change=lambda e, idx=i: dropdown_changed(e, idx),  # 绑定回调函数，传递索引
+        )
+        for i in range(4)
+    ]
+    
     page.views.append(
         ft.View(
             "/config",
@@ -227,11 +259,20 @@ def config_view(page: Page):
                                 ft.Container(height=15),
                                 ft.Row(
                                     [
-                                        ft.Text("秘技角色:",weight=ft.FontWeight.W_600,size=18),
-                                        ft.TextButton(
-                                            text='-'.join(config.skill_char),
-                                            on_click=lambda _: go_input_y(page),
-                                        ),
+                                        ft.Text("四个都设置自动识别时,会自动排序,否则按设置的顺序在boos释放秘技",weight=ft.FontWeight.W_600,size=18),
+                                    ]
+                                ),
+                                ft.Container(height=15),
+                                ft.Row(
+                                    [
+                                        ft.Text("另外,列表中存在的角色即支持秘技释放",weight=ft.FontWeight.W_600,size=18),
+                                    ]
+                                ),
+                                ft.Container(height=15),                                
+                                ft.Row(
+                                    [
+                                        ft.Text("秘技顺序:",weight=ft.FontWeight.W_600,size=18),
+                                        *dropdowns,
                                     ]
                                 ),
                                 ft.Container(height=5),
@@ -318,35 +359,35 @@ def go_input_x(page):
     page.update()
 
 def go_input_y(page):
-    def close_dialog(e, cancel=False):
-        if not cancel:
-            try:
-                new_x = str(textfield_ref.value).split('-')
-                config.update_skill(new_x)
-                x_button.text = '-'.join(config.skill_char)
-                page.update()
-            except:
-                pass
-        dialog.open = False
-        page.update()
-    x_button = page.views[-1].controls[-1].controls[-1].controls[-6].controls[1]
-    textfield_ref = ft.TextField(
-        label="按输入顺序开角色秘技",
-        value='-'.join(config.skill_char),
-        keyboard_type=ft.KeyboardType.TEXT,
-        on_submit=close_dialog,
-    )
+    # def close_dialog(e, cancel=False):
+    #     if not cancel:
+    #         try:
+    #             new_x = str(textfield_ref.value).split('-')
+    #             config.update_skill(new_x)
+    #             x_button.text = '-'.join(config.skill_char)
+    #             page.update()
+    #         except:
+    #             pass
+    #     dialog.open = False
+    #     page.update()
+    # x_button = page.views[-1].controls[-1].controls[-1].controls[-6].controls[1]
+    # textfield_ref = ft.TextField(
+    #     label="按输入顺序开角色秘技",
+    #     value='-'.join(config.skill_char),
+    #     keyboard_type=ft.KeyboardType.TEXT,
+    #     on_submit=close_dialog,
+    # )
     
-    dialog = ft.AlertDialog(
-        title=ft.Text("秘技角色，用-分隔"),
-        content=textfield_ref,
-        actions=[
-            ft.TextButton("取消", on_click=lambda e: close_dialog(e, cancel=True)),
-            ft.TextButton("确认", on_click=close_dialog),
-        ],
-        actions_alignment=ft.MainAxisAlignment.END,
-    )
+    # dialog = ft.AlertDialog(
+    #     title=ft.Text("秘技角色，用-分隔"),
+    #     content=textfield_ref,
+    #     actions=[
+    #         ft.TextButton("取消", on_click=lambda e: close_dialog(e, cancel=True)),
+    #         ft.TextButton("确认", on_click=close_dialog),
+    #     ],
+    #     actions_alignment=ft.MainAxisAlignment.END,
+    # )
 
-    page.dialog = dialog
-    dialog.open = True
-    page.update()
+    # page.dialog = dialog
+    # dialog.open = True
+    # page.update()

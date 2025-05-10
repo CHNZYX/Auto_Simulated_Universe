@@ -131,7 +131,7 @@ class DivergentUniverse(UniverseUtils):
                 self.da_hei_ta_effecting = False
                 self.press('v')
 
-            elif self.check("auto_on", 1, 0.2, threshold=0.5): # 补充一个入战检测
+            elif self.check("auto_on", 1, 0.2, threshold=0.75): # 补充一个入战检测
                 if self.da_hei_ta_effecting:
                     self.da_hei_ta_effecting = False
                     log.info("秘技生效中,入战清除")
@@ -350,6 +350,20 @@ class DivergentUniverse(UniverseUtils):
 
         self.press('t', 1) #关闭队伍
         time.sleep(0.5)
+
+        # 优先级: 大黑塔 -> 黄泉 -> 远程角色
+        if '大黑塔' in self.team_info:
+            # 使用大黑塔
+            self.da_hei_ta = True
+
+        elif '黄泉' in self.team_info:
+            # 使用黄泉
+            self.quan = 1
+
+        else:
+            # 使用远程角色
+            self.da_hei_ta = False
+            self.quan = 0
         
     # 根据队伍成员更新技能和普通攻击信息
     def update_skill_attack_info(self):
@@ -382,7 +396,7 @@ class DivergentUniverse(UniverseUtils):
             # 初始化技能顺序
             self.skill_order = []
 
-            # 定义技能类型的优先级
+            # 定义技能类型的优先级,数字低优先
             skill_priority = {
                 '强化后台': 1,
                 '弱化': 2,
@@ -911,28 +925,7 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(3)
         time.sleep(0.8)
 
-        if self.area_state == 0:
-            # 判断队伍成员状态
-            da_hei_ta_in_team = '大黑塔' in self.team_info
-            huang_quan_in_team = '黄泉' in self.team_info
-
-            # 判断秘技状态
-            da_hei_ta_has_skill = '大黑塔' in config.skill_char
-            huang_quan_has_skill = '黄泉' in config.skill_char            
-
-            # 优先级: 大黑塔 -> 黄泉 -> 远程角色
-            if da_hei_ta_in_team and da_hei_ta_has_skill:
-                # 使用大黑塔
-                self.da_hei_ta = True
-
-            elif huang_quan_in_team and huang_quan_has_skill:
-                # 使用黄泉
-                self.quan = 1
-
-            else:
-                # 使用远程角色
-                self.da_hei_ta = False
-                self.quan = 0
+        if self.area_state == 0:            
 
             # 决策站场角色
             # 大黑塔:通用  黄泉:战斗
@@ -1093,12 +1086,16 @@ class DivergentUniverse(UniverseUtils):
 
             if self.area_state == 0:
                 self.press('w',3)
-                for c in config.skill_char:
-                    if (c in self.team_info or c.isdigit()) and self.allow_e:
-                        if c == '大黑塔' and self.da_hei_ta_effecting:
-                            # 大黑塔秘技生效中,跳过
+                for name in self.skill_order:
+                    if self.allow_e:
+                        if name == '大黑塔' and self.da_hei_ta_effecting:
+                            # 大黑塔秘技生效中，跳过
                             continue
-                        self.press(int(c) if c.isdigit() else str(self.team_info[c]+1))
+
+                        # 根据名称获取队伍位置
+                        index = self.team_info.get(name)
+
+                        self.press(str(index + 1))
                         time.sleep(0.8)
                         self.check_dead()
                         self.skill()

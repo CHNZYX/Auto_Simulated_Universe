@@ -13,7 +13,6 @@ class Config:
         self.difficult = "5"
         self.allow_difficult = [1, 2, 3, 4, 5]
         self.text = "info.yml"
-        self.skill_char = ['符玄', '阮梅', '黄泉']
 
         # 推测定义的是远程角色
         self.long_range_list = ['丹恒饮月','克拉拉','青雀','波提欧','托帕账账','彦卿','符玄','砂金','三月七','娜塔莎','阮梅','知更鸟','布洛妮娅','艾丝妲','驭空','黑天鹅','瓦尔特杨','佩拉','大黑塔','忘归人','星期日','灵砂','缇宝']
@@ -52,7 +51,7 @@ class Config:
         self.characters = json.load(open('actions/character.json', 'r', encoding='utf-8'))
 
         # 自定义秘技顺序
-        self.skill_order = []
+        self.skill_order = [None] * 4  # 初始化为长度为 4 的列表，默认值为 None
 
         self.read()
 
@@ -77,21 +76,6 @@ class Config:
             symbols += r"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         translator = str.maketrans('', '', symbols)
         return text.translate(translator)
-    
-    def update_skill(self, skill: List[str]):
-        self.skill_char = []
-        for i in skill:
-            i = self.clean_text(i, 0)
-
-            # 匹配全部角色,是不是考虑配置为外部json更合适?
-            if i in self.all_list:
-                self.skill_char.append(i)
-
-            elif i in ['1', '2', '3', '4']:
-                self.skill_char.append(i)
-
-        # 未导入log类,暂时用print应付调试
-        print(f"秘技列表:{self.skill_char}")
 
     def read(self):
         if os.path.exists(os.path.join(self.abspath, self.text)):
