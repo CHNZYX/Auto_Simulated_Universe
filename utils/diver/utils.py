@@ -1628,47 +1628,105 @@ class UniverseUtils:
                 return
 
     def get_text_position(self, clean=0):
+        """
+        获取文本位置。
+
+        此方法通过处理屏幕图像来检测文本的位置。它使用图像处理技术，如掩码生成、膨胀、腐蚀和轮廓检测，
+        来确定文本区域的中心点。
+        可惜还是不太理解,对计算机视觉不熟,只能大概知道,该方法能判断事件文本框出现没有
+
+        参数:
+            clean (int): 指定是否使用干净的事件掩码。
+                         - clean=0: 使用默认事件掩码。
+                         - clean=1: 使用干净的事件掩码。
+
+        返回:
+            list[tuple[int, int]]: 返回检测到的文本中心点坐标列表，每个坐标为 (x, y)。
+                                   如果未检测到文本，则返回空列表。
+        """
+        # 如果事件掩码尚未加载，则加载事件掩码和干净事件掩码
         if self.event_mask is None:
             self.event_mask = (cv.imread('imgs/divergent/event_mask.jpg', cv.IMREAD_GRAYSCALE) > 70)[:497]
             self.event_mask_clean = (cv.imread('imgs/divergent/event_mask_clean.jpg', cv.IMREAD_GRAYSCALE) > 70)[:497]
+
+        # 获取屏幕的前497行作为处理区域
         scr = self.screen[:497]
+
+        # 初始化两个掩码：一个用于检测高亮区域，一个用于检测暗色区域
         mask = np.zeros((497, scr.shape[1]), dtype=np.uint8)
         mask_zero = np.zeros((497, scr.shape[1]), dtype=np.uint8)
-        mask[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)>247)] = 255
-        mask_zero[((scr.max(axis=-1)-scr.min(axis=-1)) < 3)&(scr.max(axis=-1)<21)] = 255
+
+        # 检测屏幕中亮度变化小且亮度高的区域
+        mask[((scr.max(axis=-1) - scr.min(axis=-1)) < 3) & (scr.max(axis=-1) > 247)] = 255
+
+        # 检测屏幕中亮度变化小且亮度低的区域
+        mask_zero[((scr.max(axis=-1) - scr.min(axis=-1)) < 3) & (scr.max(axis=-1) < 21)] = 255
+
+        # 对暗色区域掩码进行膨胀操作
         kernel = np.ones((10, 30), np.uint8)
         mask_zero = cv.dilate(mask_zero, kernel, iterations=1)
+
+        # 将亮色区域掩码与暗色区域掩码相交
         mask &= mask_zero
+
+        # 根据是否使用干净事件掩码，移除对应的掩码区域
         if clean:
             mask[self.event_mask_clean] = 0
         else:
             mask[self.event_mask] = 0
+
+        # 如果未使用干净掩码且存在上一次的掩码，则移除上一次掩码的区域
         if clean == 0 and self.lst_mask is not None:
             mask[self.lst_mask] = 0
+
+        # 保存当前掩码以供下次使用
         self.lst_mask = mask
+
+        # 对掩码进行膨胀和腐蚀操作，以增强文本区域
         kernel = np.ones((8, 55), np.uint8)
         mask = cv.dilate(mask, kernel, iterations=1)
         kernel = np.ones((6, 40), np.uint8)
         mask = cv.erode(mask, kernel, iterations=2)
+
+        # 查找掩码中的轮廓
         contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+
+        # 初始化最大面积和对应的轮廓
         mx_area, mx_cnt = 0, None
+
+        # 遍历所有轮廓，找到面积最大的轮廓
         for cnt in contours:
             x, y, w, h = cv.boundingRect(cnt)
-            # print(w,h)
+            # 排除高度过大的轮廓
             if h > 22:
                 continue
+            # 更新最大面积和对应的轮廓
             if mx_area < w * h:
                 mx_area = w * h
                 mx_cnt = cnt
+
+        # 初始化结果列表
         res = []
+
+        # 如果最大面积小于4，返回空列表
         if mx_area < 4:
             return res
+
+        # 获取最大轮廓的边界框
         xx, yy, ww, hh = cv.boundingRect(mx_cnt)
+
+        # 遍历所有轮廓，找到与最大轮廓在同一水平线上的轮廓
         for cnt in contours:
             x, y, w, h = cv.boundingRect(cnt)
             if w * h >= 4 and abs(y - yy) < 20:
-                res.append((x+w//2,y+h//2))
+                res.append((x + w // 2, y + h // 2))
+
+        # 按照x坐标对结果排序
         res = sorted(res, key=lambda x: x[0])
-        if len(res) == 2 and res[1][0]-res[0][0] < 150:
-            res = [((res[0][0]+res[1][0])//2,res[0][1])]
+
+        # 如果检测到两个文本区域且它们之间的距离较小，则合并为一个
+        if len(res) == 2 and res[1][0] - res[0][0] < 150:
+            res = [((res[0][0] + res[1][0]) // 2, res[0][1])]
+
+        # 返回文本区域的中心点列表
         return res

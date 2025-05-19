@@ -35,7 +35,11 @@ class DivergentUniverse(UniverseUtils):
     def __init__(self, debug=0, nums=-1, speed=0):
         super().__init__()
         self.is_get_team = True #首次进入差分宇宙后,获取队伍成员
-        self.team_detect = {} #队伍成员检测
+
+        self.is_update_team = True # 首次进入差分宇宙后,获取队伍成员,更新技能和攻击信息
+        self.team_info = {} # 队伍成员信息
+        self.long_range = '1' # 默认角色 选用1号位,远程角色
+        self.skill_order = [] # 技能顺序
 
         self._stop = True
         self.end = 0
@@ -43,6 +47,9 @@ class DivergentUniverse(UniverseUtils):
 
         # 允许使用秘技,秘技消耗品不足的时候就用不了
         self.allow_e = 1
+
+        # 传送门优先级
+        self.prefer_portal = None
 
         self.count = self.my_cnt = 0
         self.debug = debug
@@ -55,7 +62,6 @@ class DivergentUniverse(UniverseUtils):
         self.character_prior = self.read_csv("actions/character.csv", name='char')
         self.all_bless = self.read_csv("actions/bless.csv", name='bless')
         self.bless_prior = defaultdict(int)
-        self.team_member = {}
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
 
@@ -67,8 +73,6 @@ class DivergentUniverse(UniverseUtils):
         self.da_hei_ta_effecting = False # 秘技生效中,进战清除
 
         self.event_text = ''
-
-        self.long_range = '1' # 默认角色 选用1号位
 
         self.init_floor()
         self.saved_num = 0
@@ -127,7 +131,7 @@ class DivergentUniverse(UniverseUtils):
                 self.da_hei_ta_effecting = False
                 self.press('v')
 
-            elif self.check("auto_on", 1, 0.2, threshold=0.5): # 补充一个入战检测
+            elif self.check("auto_on", 1, 0.2, threshold=0.75): # 补充一个入战检测
                 if self.da_hei_ta_effecting:
                     self.da_hei_ta_effecting = False
                     log.info("秘技生效中,入战清除")
@@ -186,19 +190,27 @@ class DivergentUniverse(UniverseUtils):
         return res
 
     def run_static(self, json_path=None, json_file=None, action_list=[], skip_check=0) -> str:
+
         if json_file is None:
             if json_path is None:
                 json_file = self.default_json
             else:
+                # 加载外部json配置
                 json_file = self.load_actions(json_path)
+
         for j in action_list if len(action_list) else json_file:
             for i in json_file[j]:
                 trigger = i["trigger"]
+
                 text = self.ts.find_with_box(trigger["box"], redundancy=trigger.get("redundancy", 30))
+
                 if skip_check or (len(text) and trigger["text"] in self.merge_text(text)):
+
                     log.info(f"触发 {i['name']}:{trigger['text']}")
+
                     for j in i["actions"]:
                         self.do_action(j)
+                        
                     self.action_history.append(i["name"])
                     self.action_history = self.action_history[-10:]
                     return i['name']
@@ -291,83 +303,162 @@ class DivergentUniverse(UniverseUtils):
     def test(self):
         self.find_team_member()
 
-
+    # 获取队伍成员
     def find_team_member(self):
 
-        if self.is_get_team:
-            self.is_get_team = False #获取过队伍成员信息,下次不再获取
-            # 打开T,获取队伍成员信息
-            # 从左到右,坐标区域[x0,x1,y0,y1]
+        # 打开T,获取队伍成员信息
+        # 从左到右,坐标区域[x0,x1,y0,y1]
 
-            # 预设区域宽度和高度
-            width = 140
-            height = 34
+        # 预设区域宽度和高度
+        width = 140
+        height = 34
 
-            # 定义区域起点x,y
-            points = [
-                [257,735], #1号
-                [715,800], #2号
-                [1153,761], #3号
-                [1510,794], #4号
-            ]
+        # 定义区域起点x,y
+        points = [
+            [257,735], #1号
+            [715,800], #2号
+            [1153,761], #3号
+            [1510,794], #4号
+        ]
 
-            # 根据points和宽高生成最终区域参数boxes
-            boxes = []
-            for point in points:
-                x0 = point[0]
-                x1 = point[0] + width
-                y0 = point[1]
-                y1 = point[1] + height
-                boxes.append([x0, x1, y0, y1])
-            
-            log.info(f"获取队伍成员信息区域, boxes: {boxes}")
-            
-            self.team_detect.clear #清空队伍成员信息
-
-            self.press('t', 1) #打开队伍
-            time.sleep(0.5)
-
-            sc = self.get_screen()
-
-            for i,b in enumerate(boxes):                
-                name = self.clean_text(self.ts.ocr_one_row(sc, b))
-                log.info(f"获取队伍成员信息, name: {name}, box: {b}")
-
-                # 这里不太明白character_prior的作用
-                if name in self.character_prior:
-                    self.team_detect[name] = i
-
-            log.info(f"获取队伍成员信息, team_detect: {self.team_detect}")
-
-            self.press('t', 1) #关闭队伍
-            time.sleep(0.5)
-            
-        else:
-            # 已经获取过队伍成员信息,跳过
-            pass
+        # 根据points和宽高生成最终区域参数boxes
+        boxes = []
+        for point in points:
+            x0 = point[0]
+            x1 = point[0] + width
+            y0 = point[1]
+            y1 = point[1] + height
+            boxes.append([x0, x1, y0, y1])
         
-        return self.team_detect
+        log.info(f"获取队伍成员信息区域, boxes: {boxes}")
+        
+        self.press('t', 1) #打开队伍
+        time.sleep(0.5)
+
+        sc = self.get_screen()
+
+        for i,b in enumerate(boxes):                
+            name = self.clean_text(self.ts.ocr_one_row(sc, b))
+            log.info(f"获取队伍成员信息, name: {name}, box: {b}")
+
+            # 判断name在characters内,则加入到队伍信息,如果不在,应该是识别精度的问题
+            if name in config.characters["name"]:
+                self.team_info[name] = i
+
+
+        log.info(f"获取队伍成员信息, team_info: {self.team_info}")
+
+        self.press('t', 1) #关闭队伍
+        time.sleep(0.5)
+
+        # 优先级: 大黑塔 -> 黄泉 -> 远程角色
+        if '大黑塔' in self.team_info:
+            # 使用大黑塔
+            self.da_hei_ta = True
+
+        elif '黄泉' in self.team_info:
+            # 使用黄泉
+            self.quan = 1
+
+        else:
+            # 使用远程角色
+            self.da_hei_ta = False
+            self.quan = 0
+        
+    # 根据队伍成员更新技能和普通攻击信息
+    def update_skill_attack_info(self):
+
+        # 首先设置长手角色,选第一个就好了
+        # 遍历队伍成员,获取attack_range
+        for i in self.team_info:
+            if i in config.characters["name"] and config.characters["name"][i]['attack_range'] == '远':
+                self.long_range = str(self.team_info[i] + 1)
+                break
+
+        # 这里要不要考虑4个近战的情况呢? 算了 先不考虑
+
+        # 设置技能顺序
+        # 强化后台->弱化->领域(首个)->强化前台(普攻入战)->攻
+        # 暂不考虑节约秘技点的策略
+        # 遍历队伍成员,获取skill_type,skill_range
+
+        # 如果用户已经自定义了顺序,则直接使用,不过需要判断是否存在角色
+        if config.skill_order and any(config.skill_order):  # 检查是否存在有效的技能顺序
+            log.info(f"自定义技能顺序: {config.skill_order}")
+            for i in config.skill_order:
+                if i not in self.team_info:
+                    # 从队伍成员中删除
+                    self.skill_order = [j for j in config.skill_order if j in self.team_info]
+                    log.warning(f"自定义技能顺序中角色{i}不在队伍中,移除")
+
+        else:
+
+            # 初始化技能顺序
+            self.skill_order = []
+
+            # 定义技能类型的优先级,数字低优先
+            skill_priority = {
+                '强化后台': 1,
+                '弱化': 2,
+                '领域': 3,
+                '强化前台': 4,
+                '攻击': 5
+            }
+
+            # 按照优先级对队伍成员进行排序
+            sorted_team = sorted(
+                self.team_info.keys(),
+                key=lambda name: skill_priority[config.characters['name'][name]['skill_type']]
+            )
+
+            # 标记是否已经存在领域技能和强化前台技能
+            has_field_skill = False
+            has_front_skill = False
+
+            # 遍历排序后的队伍成员，按规则处理技能
+            for name in sorted_team:
+                skill_type = config.characters['name'][name]['skill_type']
+
+                if skill_type == '领域':
+                    # 只保留第一个领域技能
+                    if not has_field_skill:
+                        self.skill_order.append(name)
+                        has_field_skill = True
+                elif skill_type == '强化前台':
+                    # 强化前台优先于攻击，且只保留一个
+                    if not has_front_skill:
+                        # 移除已有的攻击技能
+                        self.skill_order = [
+                            n for n in self.skill_order
+                            if config.characters['name'][n]['skill_type'] != '攻击'
+                        ]
+                        self.skill_order.append(name)
+                        has_front_skill = True
+                elif skill_type == '攻击':
+                    # 只有在没有强化前台技能时才添加攻击技能
+                    if not has_front_skill:
+                        self.skill_order.append(name)
+                else:
+                    # 其他技能直接添加
+                    self.skill_order.append(name)
+
+        # 打印调试信息
+        log.info(f"最终技能顺序: {self.skill_order}, 远程角色位置: {self.long_range}")
+
 
     def get_now_area(self, deep=0):
-        team_member = self.find_team_member()
+
+        # 首次获取队伍与技能等信息
+        if self.is_update_team:
+            self.is_update_team = False
+
+            self.find_team_member()
+            self.update_skill_attack_info()
+            self.initialize_portal_priority()
+            
         self.area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
         print('area_text:', self.area_text, 'deep:', deep)
         if '位面' in self.area_text or '区域' in self.area_text or '第' in self.area_text:
-            check_ok = 1
-            for i in team_member:
-                if i not in self.team_member or team_member[i] != self.team_member[i]:
-                    check_ok = 0
-                    break
-
-            if not check_ok:
-                self.team_member = team_member
-                print('team_member:', team_member)
-                for i in self.team_member:
-
-                    # 从当前队伍中,选取处于内置远程角色列表中的第一个远程角色
-                    if i in config.long_range_list:
-                        self.long_range = str(self.team_member[i]+1) # 更新默认远程角色
-                        break
 
             res = self.get_text_type(self.area_text, ['事件', '奖励', '遭遇', '商店', '首领', '战斗', '财富', '休整', '位面'])            
             if (res == '位面' or res is None) and deep == 0:
@@ -381,26 +472,60 @@ class DivergentUniverse(UniverseUtils):
             return res
         else:
             return None
+        
+    def initialize_portal_priority(self):
+        """
+        初始化传送门优先级。
+
+        返回:
+            dict: 传送门优先级字典。
+        """
+        # 默认优先级,没有冒险,是因为无法处理么?
+        self.prefer_portal = {
+            '首领': 19,
+            '休整': 19,
+            '奖励': 6,
+            '事件': 5,
+            '战斗': 4,
+            '遭遇': 3,
+            '商店': 2,
+            '财富': 1,
+        }
+
+        # 速通模式调整优先级
+        if self.speed:
+            if self.da_hei_ta and self.allow_e:
+                # 提高战斗的优先级
+                self.prefer_portal['战斗'] += 10
+            elif self.quan and self.allow_e:
+                # 提高战斗的优先级
+                self.prefer_portal['战斗'] += 10
+            else:
+                # 提高非战斗优先级
+                self.prefer_portal['奖励'] += 10
+                self.prefer_portal['商店'] += 10
+                self.prefer_portal['财富'] += 10
+
+        # 加载自定义优先级
+        if config.enable_portal_prior:
+            self.prefer_portal.update(config.portal_prior)
+
+        # 输出最终优先级
+        log.info(f"最终优先级: {self.prefer_portal}")
+
     
     def find_portal(self, type=None):
-        prefer_portal = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
-        if self.speed:
-            prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
-            if self.quan and self.allow_e:
-                prefer_portal['战斗'] = 2
-        if config.enable_portal_prior:
-            prefer_portal.update(config.portal_prior)
-        prefer_portal.update({'首领':4, '休整':4})
+
         tm = time.time()
         text = self.ts.find_with_box([0,1920,0,540], forward=1, mode=2)
         portal = {'score':0,'nums':0,'type':''}
         for i in text:
             if ('区' in i['raw_text'] or '域' in i['raw_text']) and (i['box'][0] > 400 or i['box'][2] > 60):
-                portal_type = self.get_text_type(i['raw_text'], prefer_portal)
+                portal_type = self.get_text_type(i['raw_text'], self.prefer_portal)
                 if '冒' in i['raw_text'] or '险' in i['raw_text']:
                     portal['nums'] += 1
                 elif portal_type is not None:
-                    i.update({'score':prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
+                    i.update({'score':self.prefer_portal[portal_type]+10*(portal_type==type), 'type':portal_type, 'nums':portal['nums']+1})
                     if i['score'] > portal['score']:
                         portal = i
                     else:
@@ -800,28 +925,7 @@ class DivergentUniverse(UniverseUtils):
                 time.sleep(3)
         time.sleep(0.8)
 
-        if self.area_state == 0:
-            # 判断队伍成员状态
-            da_hei_ta_in_team = '大黑塔' in self.team_member
-            huang_quan_in_team = '黄泉' in self.team_member
-
-            # 判断秘技状态
-            da_hei_ta_has_skill = '大黑塔' in config.skill_char
-            huang_quan_has_skill = '黄泉' in config.skill_char            
-
-            # 优先级: 大黑塔 -> 黄泉 -> 远程角色
-            if da_hei_ta_in_team and da_hei_ta_has_skill:
-                # 使用大黑塔
-                self.da_hei_ta = True
-
-            elif huang_quan_in_team and huang_quan_has_skill:
-                # 使用黄泉
-                self.quan = 1
-
-            else:
-                # 使用远程角色
-                self.da_hei_ta = False
-                self.quan = 0
+        if self.area_state == 0:            
 
             # 决策站场角色
             # 大黑塔:通用  黄泉:战斗
@@ -830,11 +934,11 @@ class DivergentUniverse(UniverseUtils):
 
                 # 存在大黑塔时,直接使用大黑塔作为站场角色
                 if self.da_hei_ta:
-                    self.press(str(self.team_member['大黑塔']+1))
+                    self.press(str(self.team_info['大黑塔']+1))
 
                 elif self.quan and area_now == '战斗':
                     # 无大黑塔,那就切黄泉
-                    self.press(str(self.team_member['黄泉']+1))
+                    self.press(str(self.team_info['黄泉']+1))
                 else:
                     # 切远程角色
                     self.press(self.long_range)
@@ -890,7 +994,7 @@ class DivergentUniverse(UniverseUtils):
                     if self.get_text_position():
                         keyops.keyUp('w')
                         # self.press('s', 0.25)
-                        time.sleep(0.5)
+                        time.sleep(1)
                         self.get_screen()
                         total_events = self.get_text_position(1)
                         if len(total_events) and total_events[0][0] < 1600:
@@ -899,7 +1003,7 @@ class DivergentUniverse(UniverseUtils):
                         else:
                             keyops.keyDown('w')
                             time.sleep(1)
-                            tm += 1.5
+                            tm += 2
 
                 keyops.keyUp('w')
                 log.info(f"total_events step: {total_events}")
@@ -982,12 +1086,20 @@ class DivergentUniverse(UniverseUtils):
 
             if self.area_state == 0:
                 self.press('w',3)
-                for c in config.skill_char:
-                    if (c in self.team_member or c.isdigit()) and self.allow_e:
-                        if c == '大黑塔' and self.da_hei_ta_effecting:
-                            # 大黑塔秘技生效中,跳过
+                for name in self.skill_order:
+                    # 跳过None
+                    if name is None:
+                        continue
+
+                    if self.allow_e:
+                        if name == '大黑塔' and self.da_hei_ta_effecting:
+                            # 大黑塔秘技生效中，跳过
                             continue
-                        self.press(int(c) if c.isdigit() else str(self.team_member[c]+1))
+
+                        # 根据名称获取队伍位置
+                        index = self.team_info.get(name)
+
+                        self.press(str(index + 1))
                         time.sleep(0.8)
                         self.check_dead()
                         self.skill()
@@ -1008,17 +1120,22 @@ class DivergentUniverse(UniverseUtils):
                 self.da_hei_ta_effecting = True
 
             if self.area_state == 0:                
-                keyops.keyDown('w')
-                time.sleep(0.2)
+                keyops.keyDown('w')                
                 keyops.keyDown('shift')
                 tm = time.time()
-                while time.time() - tm < 3:
+
+                while time.time() - tm < 10:
                     self.get_screen()
                     if self.check("divergent/z",0.5771,0.9546,mask="mask_z",threshold=0.96):
                         break
-                time.sleep(0.9)
+                    time.sleep(0.1)
+
+                # 发现敌人后,第一时间不一定a得到
+                time.sleep(0.5)
+
                 keyops.keyUp('w')
                 keyops.keyUp('shift')
+
                 if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)
@@ -1057,7 +1174,7 @@ class DivergentUniverse(UniverseUtils):
     
     def update_bless_prior(self):
         self.bless_prior = defaultdict(int)
-        for i in list(self.team_member) + ['全局', config.team]:
+        for i in ['全局', config.team]:
             if i in self.character_prior:
                 prior = self.character_prior[i]
                 for j in prior:
