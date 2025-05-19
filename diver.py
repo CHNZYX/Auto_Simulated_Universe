@@ -383,7 +383,7 @@ class DivergentUniverse(UniverseUtils):
         # 遍历队伍成员,获取skill_type,skill_range
 
         # 如果用户已经自定义了顺序,则直接使用,不过需要判断是否存在角色
-        if config.skill_order:
+        if config.skill_order and any(config.skill_order):  # 检查是否存在有效的技能顺序
             log.info(f"自定义技能顺序: {config.skill_order}")
             for i in config.skill_order:
                 if i not in self.team_info:
@@ -994,7 +994,7 @@ class DivergentUniverse(UniverseUtils):
                     if self.get_text_position():
                         keyops.keyUp('w')
                         # self.press('s', 0.25)
-                        time.sleep(0.5)
+                        time.sleep(1)
                         self.get_screen()
                         total_events = self.get_text_position(1)
                         if len(total_events) and total_events[0][0] < 1600:
@@ -1003,7 +1003,7 @@ class DivergentUniverse(UniverseUtils):
                         else:
                             keyops.keyDown('w')
                             time.sleep(1)
-                            tm += 1.5
+                            tm += 2
 
                 keyops.keyUp('w')
                 log.info(f"total_events step: {total_events}")
@@ -1087,6 +1087,10 @@ class DivergentUniverse(UniverseUtils):
             if self.area_state == 0:
                 self.press('w',3)
                 for name in self.skill_order:
+                    # 跳过None
+                    if name is None:
+                        continue
+
                     if self.allow_e:
                         if name == '大黑塔' and self.da_hei_ta_effecting:
                             # 大黑塔秘技生效中，跳过
@@ -1116,17 +1120,22 @@ class DivergentUniverse(UniverseUtils):
                 self.da_hei_ta_effecting = True
 
             if self.area_state == 0:                
-                keyops.keyDown('w')
-                time.sleep(0.2)
+                keyops.keyDown('w')                
                 keyops.keyDown('shift')
                 tm = time.time()
-                while time.time() - tm < 3:
+
+                while time.time() - tm < 10:
                     self.get_screen()
                     if self.check("divergent/z",0.5771,0.9546,mask="mask_z",threshold=0.96):
                         break
-                time.sleep(0.9)
+                    time.sleep(0.1)
+
+                # 发现敌人后,第一时间不一定a得到
+                time.sleep(0.5)
+
                 keyops.keyUp('w')
                 keyops.keyUp('shift')
+
                 if self.quan and self.allow_e:
                     for _ in range(4):
                         self.skill(1)
