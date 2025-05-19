@@ -359,35 +359,36 @@ def go_input_x(page):
     page.update()
 
 def go_input_y(page):
-    # def close_dialog(e, cancel=False):
-    #     if not cancel:
-    #         try:
-    #             new_x = str(textfield_ref.value).split('-')
-    #             config.update_skill(new_x)
-    #             x_button.text = '-'.join(config.skill_char)
-    #             page.update()
-    #         except:
-    #             pass
-    #     dialog.open = False
-    #     page.update()
-    # x_button = page.views[-1].controls[-1].controls[-1].controls[-6].controls[1]
-    # textfield_ref = ft.TextField(
-    #     label="按输入顺序开角色秘技",
-    #     value='-'.join(config.skill_char),
-    #     keyboard_type=ft.KeyboardType.TEXT,
-    #     on_submit=close_dialog,
-    # )
+    pass
+    def close_dialog(e, cancel=False):
+        if not cancel:
+            try:
+                new_x = str(textfield_ref.value).split('-')
+                config.update_skill(new_x)
+                x_button.text = '-'.join(config.skill_char)
+                page.update()
+            except:
+                pass
+        dialog.open = False
+        page.update()
+    x_button = page.views[-1].controls[-1].controls[-1].controls[-6].controls[1]
+    textfield_ref = ft.TextField(
+        label="按输入顺序开角色秘技",
+        value='-'.join(config.skill_char),
+        keyboard_type=ft.KeyboardType.TEXT,
+        on_submit=close_dialog,
+    )
     
-    # dialog = ft.AlertDialog(
-    #     title=ft.Text("秘技角色，用-分隔"),
-    #     content=textfield_ref,
-    #     actions=[
-    #         ft.TextButton("取消", on_click=lambda e: close_dialog(e, cancel=True)),
-    #         ft.TextButton("确认", on_click=close_dialog),
-    #     ],
-    #     actions_alignment=ft.MainAxisAlignment.END,
-    # )
+    dialog = ft.AlertDialog(
+        title=ft.Text("秘技角色，用-分隔"),
+        content=textfield_ref,
+        actions=[
+            ft.TextButton("取消", on_click=lambda e: close_dialog(e, cancel=True)),
+            ft.TextButton("确认", on_click=close_dialog),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
 
-    # page.dialog = dialog
-    # dialog.open = True
-    # page.update()
+    page.dialog = dialog
+    dialog.open = True
+    page.update()
