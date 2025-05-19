@@ -64,7 +64,7 @@ def choose_view(page: Page):
     def start(_e, name):
         if page.first == 1:
             go_about()
-            time.sleep(1)
+            time.sleep(8)
             page.first = 0
             page.dialog.open = False
             page.update()
