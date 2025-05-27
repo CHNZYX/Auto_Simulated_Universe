@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v8.04"
+version = "v8.041"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -58,6 +58,7 @@ class DivergentUniverse(UniverseUtils):
         self.team_member = {}
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
+        self.last_action_time = 0
 
         # 对黄泉角色的优化,判断是否需要使用黄泉角色
         self.quan = 0 
@@ -121,16 +122,12 @@ class DivergentUniverse(UniverseUtils):
             area_text = self.clean_text(self.ts.ocr_one_row(self.screen, [50, 350, 3, 35]), char=0)
             if '位面' in area_text or '区域' in area_text or '第' in area_text:
                 self.area()
+                self.last_action_time = time.time()
 
             elif self.check("c", 0.988, 0.1028, threshold=0.925):
                 # 未检查到自动战斗,已经入站,清除秘技持续
                 self.da_hei_ta_effecting = False
                 self.press('v')
-
-            elif self.check("auto_on", 1, 0.2, threshold=0.5): # 补充一个入战检测
-                if self.da_hei_ta_effecting:
-                    self.da_hei_ta_effecting = False
-                    log.info("秘技生效中,入战清除")
             else:
                 text = self.merge_text(self.ts.find_with_box([400, 1920, 100, 600], redundancy=0))
                 if self.speed and '转化' in text and '继续战斗' not in text and ('数据' in text or '过量' in text):
@@ -146,6 +143,13 @@ class DivergentUniverse(UniverseUtils):
                         if static_res != '':
                             print(static_res)
                             break
+                else:
+                    if time.time() - self.last_action_time > 60:
+                        self.click((0.5, 0.1))
+                        self.click((0.5, 0.25))
+                        self.last_action_time = time.time()
+        else:
+            self.last_action_time = time.time()
         if self.end and res == '加载界面':
             self.press('esc')
             time.sleep(2)
@@ -745,10 +749,10 @@ class DivergentUniverse(UniverseUtils):
         area_now = self.get_now_area()
         time.sleep(0.5)
         if self.get_now_area() != area_now or area_now is None:
-            return
+            return 0
         if self.area_state == -1:
             self.close_and_exit(click = False)
-            return
+            return 1
         now_floor = self.floor
         for i in range(1,14):
             if f'{i}13' in self.area_text:
@@ -822,7 +826,7 @@ class DivergentUniverse(UniverseUtils):
         if self.portal_cnt > 1:
             # 这里考虑的是全局异常暂离次数达到2次,就结束本次探索,或许可以考虑改为单个区域
             self.close_and_exit(click = False)
-            return
+            return 1
         
         log.info(f"floor:{self.floor}, state:{self.area_state}, area:{area_now}, text:{self.area_text}")
 
@@ -863,6 +867,9 @@ class DivergentUniverse(UniverseUtils):
                             tm += 1.5
 
                 keyops.keyUp('w')
+                if total_events is None:
+                    self.close_and_exit()
+                    return 1
                 log.info(f"total_events step: {total_events}")
                 
                 if not total_events or not (933 <= total_events[0][0] <= 972):
@@ -877,7 +884,7 @@ class DivergentUniverse(UniverseUtils):
 
                 if total_events is None:
                     self.press('d', 0.5)
-                    return
+                    return 1
                 
                 if not total_events:
                     total_events = [(950, 0)]
@@ -941,7 +948,7 @@ class DivergentUniverse(UniverseUtils):
                 # 已经结束战斗了
                 self.close_and_exit()
                 self.end_of_uni()
-                return
+                return 1
 
             if self.area_state == 0:
                 self.press('w',3)
@@ -1018,6 +1025,7 @@ class DivergentUniverse(UniverseUtils):
             self.close_and_exit()
         else:
             self.press('F4')
+        return 1
     
     def update_bless_prior(self):
         self.bless_prior = defaultdict(int)
