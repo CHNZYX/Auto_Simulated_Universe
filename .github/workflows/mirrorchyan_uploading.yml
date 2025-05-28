@@ -9,17 +9,17 @@ jobs:
     runs-on: macos-latest
     steps:
 
-    - id: latest-release
-      uses: pozetroninc/github-action-get-latest-release@master
-      with:
-        owner: CHNZYX
-        repo: Auto_Simulated_Universe
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - id: latest-release
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          owner: CHNZYX
+          repo: Auto_Simulated_Universe
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: MirrorChyan/uploading-action@v1
         with:
           filetype: latest-release
-          // non-cpu version
+          # non-cpu version
           filename: "AutoSimulatedUniverse_${{ steps.latest-release.outputs.release }}.zip"
           mirrorchyan_rid: ASU
 
