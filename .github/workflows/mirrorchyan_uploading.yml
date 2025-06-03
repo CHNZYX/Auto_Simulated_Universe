@@ -1,0 +1,40 @@
+name: mirrorchyan_uploading
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  mirrorchyan:
+    runs-on: macos-latest
+    steps:
+
+      - id: latest-release
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          owner: CHNZYX
+          repo: Auto_Simulated_Universe
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          # non-cpu version
+          filename: "AutoSimulatedUniverse_${{ steps.latest-release.outputs.release }}.zip"
+          mirrorchyan_rid: ASU
+
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          owner: CHNZYX
+          repo: Auto_Simulated_Universe
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
+
+      - uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          filename: "AutoSimulatedUniverse_*_cpu.zip"
+          mirrorchyan_rid: ASU_cpu
+
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          owner: CHNZYX
+          repo: Auto_Simulated_Universe
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}

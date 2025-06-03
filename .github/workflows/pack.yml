@@ -62,7 +62,7 @@ jobs:
     - name: Install dependencies for cpu mode
       run: |
         pip uninstall onnxruntime-directml -y
-        pip install onnxruntime
+        pip install onnxruntime==1.19.2
 
     - name: Pack Flet Application
       run: flet pack gui.py --icon imgs/icon_m.png --uac-admin --add-data "utils/models;utils/models" -D -y
@@ -96,7 +96,16 @@ jobs:
           AutoSimulatedUniverse_${{ github.ref_name }}.zip
           AutoSimulatedUniverse_${{ github.ref_name }}_cpu.zip
         prerelease: true
-        
+
+    - name: Trigger MirrorChyanUploading
+      if: startsWith(github.ref, 'refs/tags/')
+      shell: bash
+      run: |
+        gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan_uploading
+        gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan_release_note
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
