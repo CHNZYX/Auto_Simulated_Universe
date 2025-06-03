@@ -62,7 +62,7 @@ jobs:
     - name: Install dependencies for cpu mode
       run: |
         pip uninstall onnxruntime-directml -y
-        pip install onnxruntime
+        pip install onnxruntime==1.19.2
 
     - name: Pack Flet Application
       run: flet pack gui.py --icon imgs/icon_m.png --uac-admin --add-data "utils/models;utils/models" -D -y
