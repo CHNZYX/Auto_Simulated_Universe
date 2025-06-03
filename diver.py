@@ -28,7 +28,7 @@ import bisect
 from collections import defaultdict
 
 # 版本号
-version = "v8.041"
+version = "v8.042"
 
 
 class DivergentUniverse(UniverseUtils):
@@ -59,6 +59,7 @@ class DivergentUniverse(UniverseUtils):
         self.ocr_time_list = [0.5]
         self.fail_tm = 0
         self.last_action_time = 0
+        self.total_empty_saves = 1
 
         # 对黄泉角色的优化,判断是否需要使用黄泉角色
         self.quan = 0 
@@ -175,7 +176,7 @@ class DivergentUniverse(UniverseUtils):
             self.click_position(action["position"])
             return 1
         elif "sleep" in action:
-            time.sleep(float(action["sleep"]))
+            self.sleep(float(action["sleep"]))
             return 1
         elif "press" in action:
             self.press(action["press"], action["time"] if "time" in action else 0)
@@ -248,21 +249,25 @@ class DivergentUniverse(UniverseUtils):
             keyops.keyUp(i)
 
     def save_or_exit(self):
-        # print('saved_num:', self.saved_num, 'save_cnt:', config.save_cnt)
-        # if self.saved_num < config.save_cnt:
-        #     time.sleep(1.5)
-        #     self.saved_num += 1
-        #     self.click_position([1204, 959])
-        #     time.sleep(1)
-        # else:
-        #     self.click_position([716, 959])
+        print('saved_num:', self.saved_num, 'save_cnt:', config.save_cnt)
+        if self.saved_num < self.total_empty_saves:
+            time.sleep(1.5)
+            self.saved_num += 1
+            self.click_position([1204, 959])
+            time.sleep(1)
+        else:
+            self.click_position([716, 959])
         self.click_position([716, 959])
         time.sleep(1.5)
 
     def select_save(self):
-        self.click_position([186, 237 + int((self.saved_num-1) * (622 - 237) / 3)])
-        time.sleep(1)
+        # self.click_position([186, 237 + int((self.saved_num-1) * (622 - 237) / 3)])
+        time.sleep(0.5)
         self.ts.forward(self.get_screen())
+        txt = self.merge_text(self.ts.find_with_box([0, 1920, 0, 1080], redundancy=0))
+        empty_saves = len(txt.split('无存档')) - 1
+        if self.total_empty_saves == 1:
+            self.total_empty_saves = empty_saves
 
     def close_and_exit(self, click=True):
         self.press('esc')
@@ -369,6 +374,7 @@ class DivergentUniverse(UniverseUtils):
     
     def sleep(self, tm=2):
         time.sleep(tm)
+        self.ts.forward(self.get_screen())
         
     def portal_bias(self, portal):
         return (portal['box'][0] + portal['box'][1]) // 2 - 950
@@ -651,11 +657,15 @@ class DivergentUniverse(UniverseUtils):
         return res
     
     def check_pop(self):
+        in_time = time.time()
         while True:
             time.sleep(0.5)
+            self.ts.forward(self.get_screen())
+            if self.get_now_area() is not None:
+                break
             if self.run_static(action_list=['点击空白处关闭']):
                 time.sleep(0.3)
-            else:
+            elif time.time() - in_time > 3:
                 break
     
     def align_event(self, key, deep=0, event_text=None, click=0):
@@ -986,7 +996,7 @@ class DivergentUniverse(UniverseUtils):
                     self.get_screen()
                     if self.check("divergent/z",0.5771,0.9546,mask="mask_z",threshold=0.96):
                         break
-                time.sleep(0.9)
+                time.sleep(0.8)
                 keyops.keyUp('w')
                 keyops.keyUp('shift')
                 if self.quan and self.allow_e:
