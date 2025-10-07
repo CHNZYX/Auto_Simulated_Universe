@@ -696,6 +696,7 @@ class DivergentUniverse(UniverseUtils):
         if event_text:
             if abs(950-event_text) >= 50:
                 self.press(key,0.2)
+                time.sleep(0.5)
             event_text_after = self.find_event_text()
             if event_text_after:
                 sub = event_text - event_text_after
@@ -720,11 +721,11 @@ class DivergentUniverse(UniverseUtils):
 
             for _ in range(sub):
                 self.press('d',0.2)
-                time.sleep(0.1)
+                time.sleep(0.5)
 
             for _ in range(-sub):
                 self.press('a',0.2)
-                time.sleep(0.1)
+                time.sleep(0.5)
 
             if click:
                 pyautogui.click()
