@@ -1078,8 +1078,12 @@ class DivergentUniverse(UniverseUtils):
 
     def bless(self, reverse=1, blood=0):
         self.bless_solved = 1
-        text = self.ts.find_with_box([350, 1550, 795, 819])
+        # 屏幕下方
+        # text = self.ts.find_with_box([350, 1550, 795, 819])
+        # 金血祝福的位置会上下浮动, 故加大识别区域
+        text = self.ts.find_with_box([350, 1550, 750, 900])
         if len(text) == 0:
+            # 屏幕中间 (祝福名称)
             text = self.ts.find_with_box([350, 1550, 480, 530])
         if len(text) == 0:
             return
