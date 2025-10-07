@@ -68,6 +68,8 @@ class DivergentUniverse(UniverseUtils):
         self.da_hei_ta = False
         self.da_hei_ta_effecting = False # 秘技生效中,进战清除
 
+        self.bai_e = 0 # 是否启用白厄
+
         self.event_text = ''
 
         self.long_range = '1' # 默认角色 选用1号位
@@ -348,7 +350,7 @@ class DivergentUniverse(UniverseUtils):
         prefer_portal = {'奖励':3, '事件':3, '战斗':2, '遭遇':2, '商店':1, '财富':1}
         if self.speed:
             prefer_portal = {'商店':3, '财富':3, '奖励':2, '事件':2, '战斗':1, '遭遇':1}
-            if self.quan and self.allow_e:
+            if (self.quan or self.bai_e) and self.allow_e:
                 prefer_portal['战斗'] = 2
         if config.enable_portal_prior:
             prefer_portal.update(config.portal_prior)
@@ -778,14 +780,20 @@ class DivergentUniverse(UniverseUtils):
         if self.area_state == 0:
             # 判断队伍成员状态
             da_hei_ta_in_team = '大黑塔' in self.team_member
+            bai_e_in_team = '白厄' in self.team_member
             huang_quan_in_team = '黄泉' in self.team_member
 
             # 判断秘技状态
             da_hei_ta_has_skill = '大黑塔' in config.skill_char
+            bai_e_has_skill = '白厄' in config.skill_char
             huang_quan_has_skill = '黄泉' in config.skill_char            
 
-            # 优先级: 大黑塔 -> 黄泉 -> 远程角色
-            if da_hei_ta_in_team and da_hei_ta_has_skill:
+            # 优先级: 白厄 -> 大黑塔 -> 黄泉 -> 远程角色
+            if bai_e_in_team and bai_e_has_skill:
+                # 使用白厄
+                self.bai_e = 1
+
+            elif da_hei_ta_in_team and da_hei_ta_has_skill:
                 # 使用大黑塔
                 self.da_hei_ta = True
 
@@ -796,6 +804,7 @@ class DivergentUniverse(UniverseUtils):
             else:
                 # 使用远程角色
                 self.da_hei_ta = False
+                self.bai_e = 0
                 self.quan = 0
 
             # 决策站场角色
@@ -806,9 +815,11 @@ class DivergentUniverse(UniverseUtils):
                 # 存在大黑塔时,直接使用大黑塔作为站场角色
                 if self.da_hei_ta:
                     self.press(str(self.team_member['大黑塔']+1))
-
+                elif self.bai_e and area_now == '战斗':
+                    # 无大黑塔,那就切白厄
+                    self.press(str(self.team_member['白厄']+1))
                 elif self.quan and area_now == '战斗':
-                    # 无大黑塔,那就切黄泉
+                    # 无大黑塔/白厄,那就切黄泉
                     self.press(str(self.team_member['黄泉']+1))
                 else:
                     # 切远程角色
@@ -1004,11 +1015,15 @@ class DivergentUniverse(UniverseUtils):
                         self.skill(1)
                     self.press('w')
                     time.sleep(1.5)
+                elif self.bai_e and self.allow_e:
+                    for _ in range(4):
+                        self.skill(1)
+                    time.sleep(1.5)
                 else:
                     pyautogui.click()
                 self.area_state += 1
             else:
-                if not (self.quan and self.allow_e):
+                if not ((self.quan or self.bai_e) and self.allow_e):
                     self.press('w', 0.25)
                 self.portal_opening_days(static=1)
 
