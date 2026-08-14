@@ -204,4 +204,4 @@ F8/‘停止’按钮停止运行。
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=CHNZYX/Auto_Simulated_Universe&type=Date)](https://star-history.com/#CHNZYX/Auto_Simulated_Universe&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=CHNZYX/Auto_Simulated_Universe&type=Date)](https://star-history.dera.page/#CHNZYX/Auto_Simulated_Universe&Date)
